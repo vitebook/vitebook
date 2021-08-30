@@ -1,0 +1,16 @@
+{
+  "name": "@vitebook/vue-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "vitebook:dev": "vitebook dev",
+    "vitebook:build": "vitebook build",
+    "vitebook:serve": "vitebook serve"
+  },
+  "dependencies": {
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@vitebook/vue": "*"
+  }
+}

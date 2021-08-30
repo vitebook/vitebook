@@ -1,0 +1,51 @@
+{
+  "name": "create-vitebook",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.6.0"
+  },
+  "main": "bin/create-vitebook.js",
+  "bin": {
+    "create-vitebook": "bin/create-vitebook.js"
+  },
+  "files": [
+    "bin/",
+    "template-*"
+  ],
+  "contributors": [
+    "Rahim Alwer <rahim.alwer@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitebook/vitebook.git",
+    "directory": "packages/create"
+  },
+  "bugs": {
+    "url": "https://github.com/vitebook/vitebook/issues"
+  },
+  "devDependencies": {
+    "@types/node": "^16.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": "./bin/create-vitebook.js",
+    "./package.json": "./package.json"
+  },
+  "keywords": [
+    "create",
+    "esm",
+    "lit",
+    "lightweight",
+    "modern",
+    "react",
+    "svelte",
+    "storybook",
+    "vite",
+    "vue",
+    "vitebook"
+  ]
+}

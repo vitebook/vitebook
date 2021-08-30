@@ -1,0 +1,57 @@
+{
+  "name": "vitebook-workspace",
+  "private": true,
+  "engines": {
+    "node": ">=16"
+  },
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "lint": "run-s lint:*",
+    "lint:eslint": "eslint --ext .js,.ts,.tsx,.svelte,.vue . --ignore-path .gitignore",
+    "lint:prettier": "prettier . --check --ignore-path .gitignore --loglevel warn",
+    "format": "run-s format:*",
+    "format:eslint": "npm run lint:eslint -- --fix",
+    "format:prettier": "npm run lint:prettier -- --write",
+    "core:build": "npm run build --workspace=@vitebook/core",
+    "core:watch": "npm run build:watch --workspace=@vitebook/core",
+    "vue:dev": "npm run vitebook:dev --workspace=@vitebook/vue-example",
+    "vue:build": "npm run vitebook:build --workspace=@vitebook/vue-example",
+    "vue:serve": "npm run vitebook:serve --workspace=@vitebook/vue-example",
+    "release": "echo \"Release command not created. Skipping...\"",
+    "typecheck": "tsc -p tsconfig.eslint.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^16.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "@typescript-eslint/parser": "^4.24.0",
+    "eslint": "^7.17.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-svelte3": "^3.2.0",
+    "eslint-plugin-vue": "^7.16.0",
+    "lint-staged": "^11.0.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.4.2",
+    "yorkie": "^2.0.0"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "none",
+    "useTabs": false,
+    "tabWidth": 2
+  },
+  "gitHooks": {
+    "pre-commit": "npm run typecheck && lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx,svelte,vue}": "eslint --cache --fix",
+    "*.{js,ts,tsx,vue,md,json}": "prettier --write"
+  }
+}

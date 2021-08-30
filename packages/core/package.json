@@ -1,0 +1,56 @@
+{
+  "name": "@vitebook/core",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "bin": {
+    "vitebook": "bin/vitebook.js"
+  },
+  "files": [
+    "bin/",
+    "dist/"
+  ],
+  "engines": {
+    "node": ">=14.6.0"
+  },
+  "contributors": [
+    "Rahim Alwer <rahim.alwer@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitebook/vitebook.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/vitebook/vitebook/issues"
+  },
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "build:watch": "npm run build -- -w",
+    "clean": "rimraf *.tsbuildinfo dist"
+  },
+  "dependencies": {
+    "@types/temp": "^0.9.1",
+    "temp": "^0.9.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      ".": [
+        "./dist/index.d.ts"
+      ],
+      "*": [
+        "./dist/*"
+      ]
+    }
+  }
+}
