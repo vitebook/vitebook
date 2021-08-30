@@ -33,6 +33,8 @@
   },
   "dependencies": {
     "@types/temp": "^0.9.1",
+    "kleur": "^4.1.4",
+    "ora": "^6.0.0",
     "temp": "^0.9.4"
   },
   "publishConfig": {
