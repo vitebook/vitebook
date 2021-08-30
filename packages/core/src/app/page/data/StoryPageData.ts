@@ -1,6 +1,6 @@
-import type { PageData } from './PageData.js';
+import type { BasePageData } from './BasePageData.js';
 
-export type StoryPageData = PageData & {
+export type StoryPageData = BasePageData & {
   /**
    * Page type.
    */

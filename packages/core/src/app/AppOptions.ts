@@ -1,6 +1,6 @@
 import type { UserConfig as ViteConfig } from 'vite';
 
-import type { MarkdownConfig } from './markdown/MarkdownOptions.js';
+import type { MarkdownOptions } from './markdown/Markdown.js';
 import type { PluginConfig } from './plugin/PluginOptions.js';
 import type { SiteConfig } from './site/SiteOptions.js';
 import type { ThemeConfig } from './site/theme/ThemeOptions.js';
@@ -55,7 +55,7 @@ export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
    *
    * @see https://github.com/markdown-it/markdown-it
    */
-  markdown: MarkdownConfig;
+  markdown: MarkdownOptions;
 
   /**
    * Options to pass on to `vite`.

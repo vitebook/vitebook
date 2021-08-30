@@ -1,3 +1,4 @@
+import type { FSWatcher } from 'chokidar';
 import type { ViteDevServer } from 'vite';
 
 import type { AppOptions } from './AppOptions.js';
@@ -10,15 +11,17 @@ export type App = {
   dirs: AppDirs;
   layouts: Record<string, string>;
   markdown: AppMarkdown;
-  meta: AppMeta;
+  env: AppEnv;
   options: AppOptions;
   pages: Page[];
   pluginApi: unknown;
   site: AppSite;
   version: string;
+  watcher: FSWatcher;
   init: () => Promise<void>;
   dev: () => Promise<ViteDevServer>;
   build: () => Promise<unknown>;
+  close(): Promise<void>;
 };
 
 export type AppDirs = {
@@ -37,7 +40,7 @@ export type AppDir = {
   write: (filePath: string, contents: string) => Promise<void>;
 };
 
-export type AppMeta = {
+export type AppEnv = {
   isBuild: boolean;
   isDev: boolean;
   isDebug: boolean;

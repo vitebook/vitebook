@@ -32,10 +32,23 @@
     "clean": "rimraf *.tsbuildinfo dist"
   },
   "dependencies": {
+    "@types/debug": "^4.1.7",
+    "@types/fs-extra": "^9.0.12",
+    "@types/hash-sum": "^1.0.0",
+    "@types/markdown-it": "^12.2.1",
     "@types/temp": "^0.9.1",
+    "chokidar": "^3.5.2",
+    "debug": "^4.3.2",
+    "fast-glob": "^3.2.7",
+    "fs-extra": "^10.0.0",
+    "hash-sum": "^2.0.0",
     "kleur": "^4.1.4",
+    "markdown-it": "^12.2.0",
+    "markdown-it-anchor": "^8.3.0",
+    "markdown-it-emoji": "^2.0.0",
     "ora": "^6.0.0",
-    "temp": "^0.9.4"
+    "temp": "^0.9.4",
+    "upath": "^2.0.1"
   },
   "publishConfig": {
     "access": "public"

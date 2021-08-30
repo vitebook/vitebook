@@ -44,6 +44,13 @@ export function isArray(value: unknown): value is unknown[] {
 }
 
 /**
+ * Check if a value is a `function`.
+ */
+export function isFunction(value: unknown): value is () => void {
+  return typeof value === 'function';
+}
+
+/**
  * Check if a value is plain `object`.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

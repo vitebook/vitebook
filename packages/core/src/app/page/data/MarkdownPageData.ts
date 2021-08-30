@@ -1,7 +1,7 @@
 import type { HeadConfig } from '../../site/HeadConfig.js';
-import type { PageData } from './PageData.js';
+import type { BasePageData } from './BasePageData.js';
 
-export type MarkdownPageData = PageData & {
+export type MarkdownPageData = BasePageData & {
   /**
    * Page type.
    */
@@ -18,7 +18,10 @@ export type MarkdownPageData = PageData & {
   headers: MarkdownPageHeader[];
 };
 
-export type MarkdownPageFrontmatter = {
+export type MarkdownPageFrontmatter<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  T extends Record<any, any> = Record<string, unknown>
+> = Partial<T> & {
   date?: string | Date;
   description?: string;
   head?: HeadConfig[];
