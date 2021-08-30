@@ -17,9 +17,9 @@
     "format:prettier": "npm run lint:prettier -- --write",
     "core:build": "npm run build --workspace=@vitebook/core",
     "core:watch": "npm run build:watch --workspace=@vitebook/core",
-    "vue:dev": "npm run vitebook:dev --workspace=@vitebook/vue-example",
-    "vue:build": "npm run vitebook:build --workspace=@vitebook/vue-example",
-    "vue:serve": "npm run vitebook:serve --workspace=@vitebook/vue-example",
+    "vue:dev": "npm run vitebook:dev --workspace=@vitebook/example-vue",
+    "vue:build": "npm run vitebook:build --workspace=@vitebook/example-vue",
+    "vue:serve": "npm run vitebook:serve --workspace=@vitebook/example-vue",
     "release": "echo \"Release command not created. Skipping...\"",
     "typecheck": "tsc -p tsconfig.eslint.json --noEmit"
   },

@@ -1,5 +1,5 @@
 {
-  "name": "@vitebook/vue-example",
+  "name": "@vitebook/example-vue",
   "private": true,
   "type": "module",
   "scripts": {
