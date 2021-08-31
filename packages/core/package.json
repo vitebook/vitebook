@@ -1,10 +1,36 @@
 {
   "name": "@vitebook/core",
   "version": "0.0.0",
-  "type": "module",
+  "bugs": {
+    "url": "https://github.com/vitebook/vitebook/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitebook/vitebook.git",
+    "directory": "packages/core"
+  },
   "license": "MIT",
+  "contributors": [
+    "Rahim Alwer <rahim.alwer@gmail.com>"
+  ],
   "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*",
+    "./package.json": "./package.json"
+  },
   "types": "dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      ".": [
+        "./dist/index.d.ts"
+      ],
+      "*": [
+        "./dist/*"
+      ]
+    }
+  },
   "bin": {
     "vitebook": "bin/vitebook.js"
   },
@@ -12,20 +38,6 @@
     "bin/",
     "dist/"
   ],
-  "engines": {
-    "node": ">=14.6.0"
-  },
-  "contributors": [
-    "Rahim Alwer <rahim.alwer@gmail.com>"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vitebook/vitebook.git",
-    "directory": "packages/core"
-  },
-  "bugs": {
-    "url": "https://github.com/vitebook/vitebook/issues"
-  },
   "scripts": {
     "build": "npm run clean && tsc",
     "build:watch": "npm run build -- -w",
@@ -52,22 +64,10 @@
     "toml": "^3.0.0",
     "upath": "^2.0.1"
   },
+  "engines": {
+    "node": ">=14.6.0"
+  },
   "publishConfig": {
     "access": "public"
-  },
-  "exports": {
-    ".": "./dist/index.js",
-    "./*": "./dist/*",
-    "./package.json": "./package.json"
-  },
-  "typesVersions": {
-    "*": {
-      ".": [
-        "./dist/index.d.ts"
-      ],
-      "*": [
-        "./dist/*"
-      ]
-    }
   }
 }
