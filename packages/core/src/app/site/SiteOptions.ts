@@ -24,7 +24,6 @@ export type SiteOptions<Theme extends ThemeConfig = ThemeConfig> =
      * @example 'vitebook-theme-foo'
      * @example 'foo'
      * @example path.resolve(__dirname, './path/to/local/theme')
-     * @default 'vitebook-theme-default'
      */
     theme: string;
 

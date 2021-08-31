@@ -7,7 +7,7 @@ export const createSiteOptions = ({
   description = '',
   head = [],
   locales = {},
-  theme = '@vitebook/default',
+  theme = '@vitebook/vue-default',
   themeConfig = {}
 }: SiteConfig): SiteOptions => ({
   baseUrl,
