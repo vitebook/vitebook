@@ -24,6 +24,8 @@
     "typecheck": "tsc -p tsconfig.eslint.json --noEmit"
   },
   "devDependencies": {
+    "@commitlint/cli": "^13.1.0",
+    "@commitlint/config-conventional": "^13.1.0",
     "@types/node": "^16.0.1",
     "@typescript-eslint/eslint-plugin": "^4.28.4",
     "@typescript-eslint/parser": "^4.24.0",
