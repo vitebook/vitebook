@@ -8,7 +8,7 @@ import { resolveLanguage } from './resolveLanguage.js';
 import { resolveLineNumbers } from './resolveLineNumbers.js';
 import { resolveVPre } from './resolveVPre.js';
 
-export interface CodePluginOptions {
+export type CodePluginOptions = {
   /**
    * Enable highlight lines or not.
    */
@@ -36,7 +36,7 @@ export interface CodePluginOptions {
    * Add `v-pre` directive to `<pre>` tag or not.
    */
   vPre?: boolean;
-}
+};
 
 /**
  * Code plugin.

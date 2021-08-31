@@ -15,7 +15,7 @@ export const resolvePageDataInfo = ({
   dataFilePathRelative: string;
 } => {
   const dataFilePathRelative = path.join('pages', `${htmlFilePathRelative}.js`);
-  const dataFilePath = app.dirs.temp.resolve(dataFilePathRelative);
+  const dataFilePath = app.dirs.tmp.resolve(dataFilePathRelative);
 
   return {
     dataFilePath,

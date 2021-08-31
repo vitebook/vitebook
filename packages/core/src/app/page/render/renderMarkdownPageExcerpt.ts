@@ -19,7 +19,7 @@ export const renderMarkdownPageExcerpt = ({
   filePathRelative: string | null;
 }): string => {
   const markdownEnv: MarkdownEnv = {
-    baseUrl: app.options.baseUrl,
+    baseUrl: app.site.options.baseUrl,
     filePath,
     filePathRelative,
     frontmatter

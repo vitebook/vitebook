@@ -4,11 +4,6 @@ import type { BasePageData } from './BasePageData.js';
 
 export type MarkdownPageData = BasePageData & {
   /**
-   * Title of the page.
-   */
-  title: string;
-
-  /**
    * Excerpt of the page.
    */
   excerpt: string;

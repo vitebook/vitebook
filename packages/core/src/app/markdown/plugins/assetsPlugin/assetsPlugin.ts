@@ -4,12 +4,12 @@ import type { RenderRule } from 'markdown-it/lib/renderer';
 import type { MarkdownEnv } from '../../Markdown.js';
 import { resolveLink } from './resovleLink.js';
 
-export interface AssetsPluginOptions {
+export type AssetsPluginOptions = {
   /**
    * Prefix to add to relative assets links.
    */
   relativePathPrefix?: string;
-}
+};
 
 /**
  * Plugin to handle assets links.

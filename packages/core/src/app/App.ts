@@ -1,9 +1,11 @@
 import type { FSWatcher } from 'chokidar';
 import type { ViteDevServer } from 'vite';
 
+import type { loadModule } from '../utils/module.js';
 import type { AppOptions } from './AppOptions.js';
 import type { Markdown, MarkdownOptions } from './markdown/Markdown.js';
 import type { Page } from './page/Page.js';
+import type { DefaultPluginOptions, Plugin } from './plugin/Plugin.js';
 import type { PluginManager } from './plugin/PluginManager.js';
 import type { SiteOptions } from './site/SiteOptions.js';
 
@@ -20,25 +22,30 @@ export type App = {
   watcher: FSWatcher;
   init: () => Promise<void>;
   prepare: () => Promise<void>;
+  use: <T extends DefaultPluginOptions>(
+    plugin: Plugin<T> | string,
+    config?: Partial<T>
+  ) => Promise<App>;
   dev: () => Promise<ViteDevServer>;
   build: () => Promise<unknown>;
-  close(): Promise<void>;
 };
 
 export type AppDirs = {
-  cache: AppDir;
-  temp: AppDir;
-  source: AppDir;
-  dest: AppDir;
-  public: AppDir;
-  client: AppDir;
+  cache: AppDirUtils;
+  config: AppDirUtils;
+  cwd: AppDirUtils;
+  tmp: AppDirUtils;
+  src: AppDirUtils;
+  out: AppDirUtils;
+  public: AppDirUtils;
+  client: AppDirUtils;
 };
 
-export type AppDir = {
-  loadModule: <T>(...path: string[]) => Promise<T>;
-  read: (filePath: string) => Promise<string>;
+export type AppDirUtils = {
+  loadModule: typeof loadModule;
+  read: (relativeFilePath: string) => string;
   resolve: (...path: string[]) => string;
-  write: (filePath: string, contents: string) => Promise<void>;
+  write: (relativeFilePath: string, data: string) => void;
 };
 
 export type AppEnv = {

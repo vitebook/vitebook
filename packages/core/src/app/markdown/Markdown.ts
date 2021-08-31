@@ -1,4 +1,4 @@
-import MarkdownIt from 'markdown-it';
+import type MarkdownIt from 'markdown-it';
 
 import type {
   MarkdownPageFrontmatter,
@@ -38,11 +38,11 @@ export type MarkdownHeader = MarkdownPageHeader;
 /**
  * Internal links in markdown file. Used for file existence check.
  */
-export interface MarkdownLink {
+export type MarkdownLink = {
   raw: string;
   relative: string;
   absolute: string;
-}
+};
 
 /**
  * The `env` object to be passed to `markdown-it` render function.

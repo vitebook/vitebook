@@ -2,8 +2,9 @@ import debug from 'debug';
 
 import { fs } from '../../../utils/fs.js';
 import type { PageOptions } from '../Page.js';
+import { PageType } from '../PageType.js';
 
-const log = debug('vuepress:core/page');
+const log = debug('vitebook:core/page');
 
 /**
  * Resolve page file content according to `filePath` or `options` content.
@@ -17,7 +18,6 @@ export const resolvePageFileContent = async ({
 }): Promise<string> => {
   if (filePath) {
     try {
-      // Read page content from file.
       const content = await fs.readFile(filePath, 'utf-8');
       return content;
     } catch (e) {
@@ -25,5 +25,7 @@ export const resolvePageFileContent = async ({
     }
   }
 
-  return options.content ?? '';
+  return (
+    (options.type === PageType.Markdown ? options.content : undefined) ?? ''
+  );
 };

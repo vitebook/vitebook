@@ -21,7 +21,7 @@ export type StoryConfig = Partial<StoryOptions>;
 
 export type StoryLocaleData = {
   /**
-   * The name of the story/variant/collection.
+   * The name of the story.
    *
    * @example 'Button'
    * @example 'Form Text Input'
@@ -29,7 +29,7 @@ export type StoryLocaleData = {
   name: string;
 
   /**
-   * Describes the story/variant/collection.
+   * Describes the story.
    *
    * @example 'My awesome button.'
    */

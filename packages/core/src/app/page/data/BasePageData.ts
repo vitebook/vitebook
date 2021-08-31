@@ -1,5 +1,10 @@
 export type BasePageData = {
   /**
+   * Title of the page.
+   */
+  title: string;
+
+  /**
    * Identifier of the page. It'll also be used as the component name.
    *
    * @example 'v-foobar'

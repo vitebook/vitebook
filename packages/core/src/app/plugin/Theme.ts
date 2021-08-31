@@ -20,7 +20,7 @@ export type ThemeFunction<T extends ThemeConfig = ThemeConfig> = PluginFunction<
   ThemeObject
 >;
 
-export interface ThemeObject extends PluginObject {
+export type ThemeObject = PluginObject & {
   /**
    * Parent theme to extend.
    */
@@ -35,7 +35,7 @@ export interface ThemeObject extends PluginObject {
    * Theme specific plugins.
    */
   plugins?: PluginConfig[];
-}
+};
 
 /**
  * Theme config to be used in user config file. It will be used by a theme itself, but not by
@@ -43,3 +43,18 @@ export interface ThemeObject extends PluginObject {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ThemeConfig = Record<string, any>;
+
+/**
+ * Resolved theme info.
+ */
+export type ThemeInfo = {
+  /**
+   * Layout components.
+   */
+  layouts: Record<string, string>;
+
+  /**
+   * Plugins, including theme itself and plugins used by theme.
+   */
+  plugins: PluginObject[];
+};

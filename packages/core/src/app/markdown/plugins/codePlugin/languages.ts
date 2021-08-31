@@ -1,7 +1,7 @@
 /**
  * Language type for syntax highlight.
  */
-export interface HighlightLanguage {
+export type HighlightLanguage = {
   /**
    * Name of the language.
    *
@@ -20,7 +20,7 @@ export interface HighlightLanguage {
    * Aliases that point to this language. Do not conflict with other languages.
    */
   aliases: string[];
-}
+};
 
 export const languageBash: HighlightLanguage = {
   name: 'bash',

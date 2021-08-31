@@ -27,13 +27,13 @@ export const resolvePageFilePath = ({
   if (path.isAbsolute(filePath)) {
     return {
       filePath,
-      filePathRelative: path.relative(app.dirs.source.resolve(), filePath)
+      filePathRelative: path.relative(app.dirs.src.resolve(), filePath)
     };
   }
 
   // Relative file path.
   return {
-    filePath: app.dirs.source.resolve(filePath),
+    filePath: app.dirs.src.resolve(filePath),
     filePathRelative: filePath
   };
 };

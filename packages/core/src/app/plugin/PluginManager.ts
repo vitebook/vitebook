@@ -1,7 +1,7 @@
 import type { PluginObject } from './Plugin.js';
 import type { PluginHookNames, PluginHookQueue } from './PluginHooks.js';
 
-export interface PluginManager {
+export type PluginManager = {
   plugins: PluginObject[];
 
   hooks: {
@@ -9,9 +9,7 @@ export interface PluginManager {
   };
 
   /**
-   * Register hooks of plugins.
-   *
-   * Should be invoked before applying a hook.
+   * Register hooks of all plugins. Should be invoked before applying a hook.
    */
   registerHooks: () => void;
-}
+};

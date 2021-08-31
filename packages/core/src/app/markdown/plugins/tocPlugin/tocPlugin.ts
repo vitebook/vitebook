@@ -8,7 +8,7 @@ import type { MarkdownHeader } from '../../Markdown.js';
 import { createRenderHeaders } from './createRenderHeader.js';
 import { createTocBlockRule } from './createTocBlockRule.js';
 
-export interface TocPluginOptions {
+export type TocPluginOptions = {
   /**
    * The pattern serving as the TOC placeholder in your markdown.
    */
@@ -66,7 +66,7 @@ export interface TocPluginOptions {
    * The class for the link tag inside `<li>`.
    */
   linkClass?: string;
-}
+};
 
 /**
  * Generate table of contents.

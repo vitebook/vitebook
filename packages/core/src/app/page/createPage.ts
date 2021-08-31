@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { path as fsPath } from '../../utils/path.js';
 import type { App } from '../App.js';
 import type { MarkdownPage } from './MarkdownPage.js';
 import type { Page, PageOptions } from './Page.js';
@@ -25,6 +24,7 @@ import { resolvePagePermalink } from './resolve/resolvePagePermalink';
 import { resolvePageSlug } from './resolve/resolvePageSlug.js';
 import { resolveStoryPageData } from './resolve/resolveStoryPageData.js';
 import { resolveStoryPageOptions } from './resolve/resolveStoryPageOptions.js';
+import type { StoryOptions } from './StoryOptions.js';
 import type { StoryPage } from './StoryPage.js';
 
 export const createPage = async (
@@ -174,25 +174,25 @@ export const createPage = async (
       links: links!
     };
 
-    (page as MarkdownPage).data = await resolveMarkdownPageData({ app, page });
+    const data = await resolveMarkdownPageData({ app, page });
 
-    return page as MarkdownPage;
+    return {
+      ...page,
+      data
+    };
   } else {
-    const name =
-      options.name ?? fsPath.trimExt(fsPath.basename(filePath ?? ''));
-    const description = options.description ?? '';
-    const component = options.component ?? '';
-
     const page: Omit<StoryPage, 'data'> = {
+      title: '', // Overriden by options spread 1 line down. Used to silence error.
+      ...(options as StoryOptions),
       ...basePage,
-      type: options.type,
-      name,
-      description,
-      component
+      type: options.type
     };
 
-    (page as StoryPage).data = await resolveStoryPageData({ app, page });
+    const data = await resolveStoryPageData({ app, page });
 
-    return page as StoryPage;
+    return {
+      ...page,
+      data
+    };
   }
 };

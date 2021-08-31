@@ -7,41 +7,49 @@ import type { SiteConfig } from './site/SiteOptions.js';
 
 export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
   /**
-   * The base URL the site will be deployed at. You will need to set this if you plan to deploy
-   * your site under a sub path, for example, GitHub pages. If you plan to deploy your site to
-   * `https://foo.github.io/bar/`, then you should set base to `'/bar/'`. It should always start
-   * and end with a slash.
+   * The current working directory.
    *
-   * The `base` is automatically prepended to all the URLs that start with `/` in other options,
-   * so you only need to specify it once.
-   *
-   * @default '/'
+   * @default process.cwd()
    */
-  baseUrl: string;
+  cwd: string;
+
+  /**
+   * The Vitebook config directory. The value can be either an absolute file system path
+   * or a path relative to `<cwd>`.
+   *
+   * @default '<cwd>/.vitebook'
+   */
+  configDir: string;
 
   /**
    * Directory to serve as plain static assets. Files in this directory are served and copied to
    * build dist dir as-is without transform. The value can be either an absolute file system path
-   * or a path relative to `<root>`.
+   * or a path relative to `<configDir>`.
    *
-   * Set to `false` or an empty string to disable copied static assets to build `dist` dir.
-   *
-   * @default 'public'
+   * @default '<configDir>/public'
    */
-  publicDir: string | false;
+  publicDir: string;
 
   /**
    * Path to directory where source code lives. The path can be absolute or relative to the
-   * current working directory `process.cwd()`.
+   * current working directory current working directory (`cwd`).
    *
-   * @default 'src'
+   * @default '<cwd>/src'
    */
   srcDir: string;
 
   /**
+   * The build output directory. The value can be either an absolute file system path or a path
+   * relative to `<configDir>`.
+   *
+   * @default '<configDir>/dist'
+   */
+  outDir: string;
+
+  /**
    * Globs pointing to page files to be included in Vitebook. These are relative to the `<srcDir>`.
    *
-   * @default ['**\/*.md', '**\/*.{collection,story,stories}.{js,ts,tsx}']
+   * @default ['**\/*.md', '**\/*.{story,stories}.{js,ts,tsx}']
    */
   pages: string[];
 
@@ -65,7 +73,30 @@ export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
   /**
    * General plugins to use and their respective configurations.
    */
-  plugins: PluginConfig;
+  plugins: PluginConfig[];
+
+  /**
+   * Whether to load in debug mode.
+   *
+   * @default false
+   */
+  debug: boolean;
+
+  /**
+   * Cache directory. The value can be either an absolute file system path or a path
+   * relative to `<configDir>`.
+   *
+   * @default '<configDir>/.cache'
+   */
+  cacheDir: string;
+
+  /**
+   * Temp directory. The value can be either an absolute file system path or a path
+   * relative to `<configDir>`.
+   *
+   * @default '<configDir>/.temp'
+   */
+  tmpDir: string;
 };
 
 export type AppConfig = Partial<AppOptions>;

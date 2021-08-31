@@ -27,11 +27,7 @@ export const createPluginHookQueue = <T extends PluginHookNames>(
 
       // Process all PluginHook items.
       for (const item of items) {
-        log(
-          `process ${kleur.magenta(name)} from ${kleur.magenta(
-            item.pluginName
-          )}`
-        );
+        log(`process ${kleur.bold(name)} from ${kleur.bold(item.pluginName)}`);
 
         try {
           // Process and get the result of the the PluginHook item.
@@ -47,7 +43,7 @@ export const createPluginHookQueue = <T extends PluginHookNames>(
         } catch (error) {
           logger.error(
             formatErrorMsg(
-              `error in PluginHook ${kleur.magenta(name)} from ${kleur.magenta(
+              `error in PluginHook ${kleur.bold(name)} from ${kleur.bold(
                 item.pluginName
               )}`
             )

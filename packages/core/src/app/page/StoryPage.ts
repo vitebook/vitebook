@@ -1,6 +1,7 @@
 import type { BasePage } from './BasePage.js';
 import type { StoryPageData } from './data/StoryPageData.js';
 import type { PageType } from './PageType.js';
+import type { StoryOptions } from './StoryOptions.js';
 
 export type StoryPage = BasePage<StoryPageData> & {
   /**
@@ -9,12 +10,8 @@ export type StoryPage = BasePage<StoryPageData> & {
   type: PageType.Story;
 };
 
-export type StoryPageOptions = {
+export type StoryPageOptions = Partial<StoryOptions> & {
   type: PageType.Story;
-  name?: string;
-  description?: string;
-  component?: string;
-  content?: string;
   path?: string;
   filePath?: string;
 };

@@ -16,7 +16,7 @@ export const resolvePageComponentFileInfo = async ({
     `${htmlFilePathRelative}.vue`
   );
 
-  const componentFilePath = app.dirs.temp.resolve(componentFilePathRelative);
+  const componentFilePath = app.dirs.tmp.resolve(componentFilePathRelative);
 
   return {
     componentFilePath,

@@ -19,6 +19,12 @@ export function pathExists(
   }
 }
 
+export const resolveRelativePathIfNotAbs = (
+  base: string,
+  filePath: string
+): string =>
+  path.isAbsolute(filePath) ? filePath : path.resolve(base, filePath);
+
 /**
  * Resolve absolute and relative paths according to the `base` and `filePathRelative`.
  */

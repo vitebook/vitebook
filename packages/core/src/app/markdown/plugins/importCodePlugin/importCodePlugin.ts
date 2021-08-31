@@ -4,12 +4,12 @@ import type { MarkdownEnv } from '../../Markdown.js';
 import { createImportCodeBlockRule } from './createImportCodeBlockRule.js';
 import { resolveImportCode } from './resolveImportCode.js';
 
-export interface ImportCodePluginOptions {
+export type ImportCodePluginOptions = {
   /**
    * A function to handle the import path.
    */
   handleImportPath?: (str: string) => string;
-}
+};
 
 export const importCodePlugin: PluginWithOptions<ImportCodePluginOptions> = (
   md,

@@ -30,7 +30,7 @@ export const renderMarkdownPageContent = async ({
   title: string;
 }> => {
   const markdownEnv: MarkdownEnv = {
-    baseUrl: app.options.baseUrl,
+    baseUrl: app.site.options.baseUrl,
     filePath,
     filePathRelative,
     frontmatter
