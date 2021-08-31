@@ -4,6 +4,7 @@ import { createMarkdownIt } from '../../markdown/createMarkdown.js';
 import { createPluginManager } from '../../plugin/createPluginManager.js';
 import { initApp } from '../initApp.js';
 import { prepareApp } from '../prepareApp.js';
+import { resolveClientInfo } from '../resolve/resolveClientInfo.js';
 import { resolvePluginsFromConfig } from '../resolve/resolvePluginsFromConfig.js';
 import { resolveThemeInfo } from '../resolve/resolveThemeInfo.js';
 import { usePlugin } from '../usePlugin.js';
@@ -50,8 +51,17 @@ export const createApp = async (
     prepare
   } as App;
 
-  // Theme
-  const themeInfo = await resolveThemeInfo(app, site.options.theme);
+  // Client Plugin
+  const clientInfo = await resolveClientInfo(app, app.options.client[0]);
+
+  for (const clientPlugin of clientInfo.plugins) {
+    await use(app, clientPlugin);
+  }
+
+  app.client = clientInfo;
+
+  // Theme Plugin
+  const themeInfo = await resolveThemeInfo(app, site.options.theme[0]);
 
   for (const themePlugin of themeInfo.plugins) {
     await use(app, themePlugin);
@@ -59,7 +69,7 @@ export const createApp = async (
 
   app.layouts = themeInfo.layouts;
 
-  // Plugins
+  // General Plugins
   const plugins = await resolvePluginsFromConfig(app, options.plugins);
 
   for (const plugin of plugins) {

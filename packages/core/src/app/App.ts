@@ -5,6 +5,7 @@ import type { loadModule } from '../utils/module.js';
 import type { AppOptions } from './AppOptions.js';
 import type { Markdown, MarkdownOptions } from './markdown/Markdown.js';
 import type { Page } from './page/Page.js';
+import type { ClientPluginInfo } from './plugin/ClientPlugin.js';
 import type { DefaultPluginOptions, Plugin } from './plugin/Plugin.js';
 import type { PluginManager } from './plugin/PluginManager.js';
 import type { SiteOptions } from './site/SiteOptions.js';
@@ -14,6 +15,7 @@ export type App = {
   layouts: Record<string, string>;
   markdown: AppMarkdown;
   env: AppEnv;
+  client: ClientPluginInfo;
   options: AppOptions;
   pages: Page[];
   pluginManager: PluginManager;

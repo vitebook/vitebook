@@ -1,16 +1,13 @@
 import type { App } from '../../App.js';
-import type { ThemeInfo } from '../../plugin/Theme.js';
+import type { ThemePluginInfo } from '../../plugin/ThemePlugin.js';
 import { resolvePluginsFromConfig } from './resolvePluginsFromConfig.js';
 import { resolveTheme } from './resolveTheme.js';
 import { resolveThemeLayouts } from './resolveThemeLayouts.js';
 
-/**
- * Resolve theme info and its parent theme info.
- */
 export const resolveThemeInfo = async (
   app: App,
   themeName: string
-): Promise<ThemeInfo> => {
+): Promise<ThemePluginInfo> => {
   const theme = await resolveTheme(app, themeName);
 
   const themeInfo = {

@@ -12,9 +12,8 @@ type RouteItem = [
  * Generate routes temp file.
  */
 export const preparePagesRoutes = async (app: App): Promise<void> => {
-  // TODO(CLIENT-PLUGIN): component needs to be determined by client plugin.
   const content = `\
-import { Vitebook } from '@vitebook/client/components/Vitebook'
+import Vitebook from '${app.client.vitebookImportSpecifier}'
 
 const routeItems = [\
 ${app.pages

@@ -1,8 +1,8 @@
-import type { ThemeConfig } from '../plugin/Theme.js';
+import type { ThemePluginConfig } from '../plugin/ThemePlugin.js';
 import type { HeadConfig } from './HeadConfig';
 import type { LocaleConfig } from './LocaleConfig';
 
-export type SiteOptions<Theme extends ThemeConfig = ThemeConfig> =
+export type SiteOptions<Theme extends ThemePluginConfig = ThemePluginConfig> =
   SiteLocaleData & {
     /**
      * The base URL the site will be deployed at. You will need to set this if you plan to deploy
@@ -18,19 +18,16 @@ export type SiteOptions<Theme extends ThemeConfig = ThemeConfig> =
     baseUrl: string;
 
     /**
-     * Name or absolute path of theme your want to use. This option accepts theme name, theme name
-     * shorthand, or absolute path to theme.
+     * Name or absolute path of theme you want to use and it's respective configuration options.
+     * The name can be a theme name, theme name shorthand, or absolute path to theme.
+     *
+     * The configuration options will vary depending on the theme you are using.
      *
      * @example 'vitebook-theme-foo'
      * @example 'foo'
      * @example path.resolve(__dirname, './path/to/local/theme')
      */
-    theme: string;
-
-    /**
-     * Theme configuration options. The options will vary depending on the theme you are using.
-     */
-    themeConfig: Theme;
+    theme: [string, Theme];
 
     /**
      * Localization config for site.
@@ -38,9 +35,8 @@ export type SiteOptions<Theme extends ThemeConfig = ThemeConfig> =
     locales: SiteLocaleConfig;
   };
 
-export type SiteConfig<Theme extends ThemeConfig = ThemeConfig> = Partial<
-  SiteOptions<Theme>
->;
+export type SiteConfig<Theme extends ThemePluginConfig = ThemePluginConfig> =
+  Partial<SiteOptions<Theme>>;
 
 export type SiteLocaleData = {
   /**

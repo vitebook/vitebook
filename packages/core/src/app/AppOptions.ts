@@ -1,11 +1,15 @@
 import type { UserConfig as ViteConfig } from 'vite';
 
 import type { MarkdownOptions } from './markdown/Markdown.js';
+import type { ClientPluginConfig } from './plugin/ClientPlugin.js';
 import type { PluginConfig } from './plugin/Plugin.js';
-import type { ThemeConfig } from './plugin/Theme.js';
+import type { ThemePluginConfig } from './plugin/ThemePlugin.js';
 import type { SiteConfig } from './site/SiteOptions.js';
 
-export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
+export type AppOptions<
+  Client extends ClientPluginConfig = ClientPluginConfig,
+  Theme extends ThemePluginConfig = ThemePluginConfig
+> = {
   /**
    * The current working directory.
    *
@@ -52,6 +56,18 @@ export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
    * @default ['**\/*.md', '**\/*.{story,stories}.{js,ts,tsx}']
    */
   pages: string[];
+
+  /**
+   * Name or absolute path of client you want to use and it's respective configuration options.
+   * The name can be a client name, client name shorthand, or absolute path to the client.
+   *
+   * The configuration options will vary depending on the client you are using.
+   *
+   * @example 'vitebook-client-vue'
+   * @example 'vue'
+   * @example path.resolve(__dirname, './path/to/local/client')
+   */
+  client: [string, Client];
 
   /**
    * Site-wide options for setting the base language, document title, description, locales, etc.
