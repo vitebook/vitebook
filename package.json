@@ -51,7 +51,8 @@
     "tabWidth": 2
   },
   "gitHooks": {
-    "pre-commit": "npm run typecheck && lint-staged"
+    "pre-commit": "npm run typecheck && lint-staged",
+    "commit-msg": "npx commitlint --edit $1"
   },
   "lint-staged": {
     "*.{js,ts,tsx,svelte,vue}": "eslint --cache --fix",
