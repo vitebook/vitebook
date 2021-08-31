@@ -1,6 +1,15 @@
 {
   "name": "@vitebook/core",
   "version": "0.0.0",
+  "keywords": [
+    "core",
+    "esm",
+    "lightweight",
+    "modern",
+    "storybook",
+    "vite",
+    "vitebook"
+  ],
   "bugs": {
     "url": "https://github.com/vitebook/vitebook/issues"
   },

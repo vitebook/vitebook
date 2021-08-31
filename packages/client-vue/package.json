@@ -1,20 +1,33 @@
 {
-  "name": "@vitebook/vue",
+  "name": "@vitebook/client-vue",
   "version": "0.0.0",
-  "description": "Vitebook Vue - blazing fast Storybook alternative.",
-  "type": "module",
-  "license": "MIT",
-  "sideEffects": false,
-  "contributors": [
-    "Rahim Alwer <rahim.alwer@gmail.com>"
+  "keywords": [
+    "client",
+    "esm",
+    "lightweight",
+    "modern",
+    "plugin",
+    "storybook",
+    "vite",
+    "vitebook",
+    "vue"
   ],
+  "bugs": {
+    "url": "https://github.com/vitebook/vitebook/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/vitebook/vitebook.git",
     "directory": "packages/vue"
   },
-  "bugs": {
-    "url": "https://github.com/vitebook/vitebook/issues"
+  "license": "MIT",
+  "contributors": [
+    "Rahim Alwer <rahim.alwer@gmail.com>"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    "./*": "./*"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^1.5.0",
@@ -31,17 +44,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "exports": {
-    "./*": "./*"
-  },
-  "keywords": [
-    "esm",
-    "lightweight",
-    "modern",
-    "vue",
-    "storybook",
-    "vite",
-    "vitebook"
-  ]
+  }
 }

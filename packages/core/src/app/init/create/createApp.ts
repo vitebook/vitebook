@@ -55,7 +55,7 @@ export const createApp = async (
   const clientInfo = await resolveClientInfo(app, app.options.client[0]);
 
   for (const clientPlugin of clientInfo.plugins) {
-    await use(app, clientPlugin);
+    await usePlugin(app, clientPlugin);
   }
 
   app.client = clientInfo;
@@ -64,7 +64,7 @@ export const createApp = async (
   const themeInfo = await resolveThemeInfo(app, site.options.theme[0]);
 
   for (const themePlugin of themeInfo.plugins) {
-    await use(app, themePlugin);
+    await usePlugin(app, themePlugin);
   }
 
   app.layouts = themeInfo.layouts;

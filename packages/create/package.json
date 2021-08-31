@@ -4,14 +4,10 @@
   "keywords": [
     "create",
     "esm",
-    "lit",
     "lightweight",
     "modern",
-    "react",
-    "svelte",
     "storybook",
     "vite",
-    "vue",
     "vitebook"
   ],
   "bugs": {
