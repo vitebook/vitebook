@@ -1,9 +1,6 @@
 {
   "name": "vitebook-workspace",
   "private": true,
-  "engines": {
-    "node": ">=16"
-  },
   "workspaces": [
     "packages/*",
     "examples/*"
@@ -21,7 +18,19 @@
     "vue:build": "npm run vitebook:build --workspace=@vitebook/example-vue",
     "vue:serve": "npm run vitebook:serve --workspace=@vitebook/example-vue",
     "release": "echo \"Release command not created. Skipping...\"",
-    "typecheck": "tsc -p tsconfig.eslint.json --noEmit"
+    "typecheck": "tsc -p tsconfig.eslint.json --noEmit",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx,svelte,vue}": "eslint --cache --fix",
+    "*.{js,ts,tsx,vue,md,json}": "prettier --write",
+    "package.json": "sort-package-json"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "none",
+    "useTabs": false
   },
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
@@ -36,27 +45,15 @@
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-svelte3": "^3.2.0",
     "eslint-plugin-vue": "^7.16.0",
+    "husky": "^7.0.0",
     "lint-staged": "^11.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
     "sort-package-json": "^1.50.0",
-    "typescript": "^4.4.2",
-    "yorkie": "^2.0.0"
+    "typescript": "^4.4.2"
   },
-  "prettier": {
-    "singleQuote": true,
-    "trailingComma": "none",
-    "useTabs": false,
-    "tabWidth": 2
-  },
-  "gitHooks": {
-    "pre-commit": "npm run typecheck && lint-staged",
-    "commit-msg": "npx commitlint --edit $1"
-  },
-  "lint-staged": {
-    "*.{js,ts,tsx,svelte,vue}": "eslint --cache --fix",
-    "*.{js,ts,tsx,vue,md,json}": "prettier --write",
-    "package.json": "sort-package-json"
+  "engines": {
+    "node": ">=16"
   }
 }
