@@ -65,3 +65,27 @@ export const resolvePaths = (
     relativePath
   };
 };
+
+/**
+ * Ensure a url `string` has an ending slash `/`.
+ */
+export const ensureEndingSlash = (str: string): string =>
+  /(\.html|\/)$/.test(str) ? str : str + '/';
+
+/**
+ * Ensure a url `string` has a leading slash `/`.
+ */
+export const ensureLeadingSlash = (str: string): string =>
+  str.replace(/^\/?/, '/');
+
+/**
+ * Remove leading slash `/` from a `string`.
+ */
+export const removeLeadingSlash = (str: string): string =>
+  str.replace(/^\//, '');
+
+/**
+ * Remove ending slash `/` from a `string`.
+ */
+export const removeEndingSlash = (str: string): string =>
+  str.replace(/\/$/, '');

@@ -1,10 +1,5 @@
 export type BasePageData = {
   /**
-   * Page type.
-   */
-  type: string;
-
-  /**
    * Identifier of the page. It'll also be used as the component name.
    *
    * @example 'v-foobar'
@@ -17,16 +12,6 @@ export type BasePageData = {
    * @example '/guide/index.html'
    */
   path: string;
-
-  /**
-   * Title of the page.
-   */
-  title: string;
-
-  /**
-   * Excerpt of the page.
-   */
-  excerpt: string;
 
   /**
    * Language of the page.

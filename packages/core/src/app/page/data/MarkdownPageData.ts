@@ -1,11 +1,22 @@
 import type { HeadConfig } from '../../site/HeadConfig.js';
+import type { PageType } from '../PageType.js';
 import type { BasePageData } from './BasePageData.js';
 
 export type MarkdownPageData = BasePageData & {
   /**
+   * Title of the page.
+   */
+  title: string;
+
+  /**
+   * Excerpt of the page.
+   */
+  excerpt: string;
+
+  /**
    * Page type.
    */
-  type: 'markdown';
+  type: PageType.Markdown;
 
   /**
    * Frontmatter of the page.

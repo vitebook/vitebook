@@ -1,9 +1,9 @@
 import type { UserConfig as ViteConfig } from 'vite';
 
 import type { MarkdownOptions } from './markdown/Markdown.js';
-import type { PluginConfig } from './plugin/PluginOptions.js';
+import type { PluginConfig } from './plugin/Plugin.js';
+import type { ThemeConfig } from './plugin/Theme.js';
 import type { SiteConfig } from './site/SiteOptions.js';
-import type { ThemeConfig } from './site/theme/ThemeOptions.js';
 
 export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
   /**
@@ -63,7 +63,7 @@ export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
   vite: ViteConfig;
 
   /**
-   * Plugins to use and their respective configurations.
+   * General plugins to use and their respective configurations.
    */
   plugins: PluginConfig;
 };

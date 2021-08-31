@@ -2,9 +2,9 @@ import type { FSWatcher } from 'chokidar';
 import type { ViteDevServer } from 'vite';
 
 import type { AppOptions } from './AppOptions.js';
-import type { Markdown } from './markdown/Markdown.js';
-import type { MarkdownOptions } from './markdown/MarkdownOptions.js';
+import type { Markdown, MarkdownOptions } from './markdown/Markdown.js';
 import type { Page } from './page/Page.js';
+import type { PluginManager } from './plugin/PluginManager.js';
 import type { SiteOptions } from './site/SiteOptions.js';
 
 export type App = {
@@ -14,11 +14,12 @@ export type App = {
   env: AppEnv;
   options: AppOptions;
   pages: Page[];
-  pluginApi: unknown;
+  pluginManager: PluginManager;
   site: AppSite;
   version: string;
   watcher: FSWatcher;
   init: () => Promise<void>;
+  prepare: () => Promise<void>;
   dev: () => Promise<ViteDevServer>;
   build: () => Promise<unknown>;
   close(): Promise<void>;

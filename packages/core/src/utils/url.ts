@@ -1,18 +1,6 @@
 export const EXTERNAL_URL_REGEX = /^https?:/i;
 
 /**
- * Ensure a url `string` has an ending slash `/`.
- */
-export const ensureEndingSlash = (str: string): string =>
-  /(\.html|\/)$/.test(str) ? str : str + '/';
-
-/**
- * Ensure a url `string` has a leading slash `/`.
- */
-export const ensureLeadingSlash = (str: string): string =>
-  str.replace(/^\/?/, '/');
-
-/**
  * Determine if a link is a http link or not.
  *
  * - http://github.com
@@ -48,15 +36,3 @@ export const isLinkMailto = (link: string): boolean => /^mailto:/.test(link);
  * Determine if a link is a `tel` address or not
  */
 export const isLinkTel = (link: string): boolean => /^tel:/.test(link);
-
-/**
- * Remove leading slash `/` from a `string`.
- */
-export const removeLeadingSlash = (str: string): string =>
-  str.replace(/^\//, '');
-
-/**
- * Remove ending slash `/` from a `string`.
- */
-export const removeEndingSlash = (str: string): string =>
-  str.replace(/\/$/, '');

@@ -2,11 +2,6 @@ import { PageData } from './data/PageData.js';
 
 export type BasePage<Data extends PageData = PageData> = PageData & {
   /**
-   * Page type.
-   */
-  type: string;
-
-  /**
    * Data of the page, which will be available in client code.
    */
   data: Data;
@@ -15,11 +10,6 @@ export type BasePage<Data extends PageData = PageData> = PageData & {
    * Raw Content of the page.
    */
   content: string;
-
-  /**
-   * Rendered content of the page.
-   */
-  contentRendered: string;
 
   /**
    * Path of the page that inferred from file path. If the page does not come from a file, it

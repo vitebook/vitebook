@@ -4,12 +4,18 @@ import type {
   MarkdownPageData,
   MarkdownPageFrontmatter
 } from './data/MarkdownPageData.js';
+import type { PageType } from './PageType.js';
 
 export type MarkdownPage = BasePage<MarkdownPageData> & {
   /**
    * Page type.
    */
-  type: 'markdown';
+  type: PageType.Markdown;
+
+  /**
+   * Rendered content of the page.
+   */
+  contentRendered: string;
 
   /**
    * Date of the page, in 'yyyy-MM-dd' format.
@@ -37,9 +43,10 @@ export type MarkdownPage = BasePage<MarkdownPageData> & {
 /**
  * Options to create markdown page.
  */
-export type CreateMarkdownPageOptions = {
+export type MarkdownPageOptions = {
+  type: PageType.Markdown;
+  content?: string;
   path?: string;
   filePath?: string;
   frontmatter?: MarkdownPageFrontmatter;
-  content?: string;
 };

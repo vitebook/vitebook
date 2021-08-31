@@ -1,8 +1,8 @@
 import type { PluginWithOptions } from 'markdown-it';
 import type * as Token from 'markdown-it/lib/token';
 
-import { isLinkExternal } from '../../../utils/network.js';
 import { resolvePaths } from '../../../utils/path.js';
+import { isLinkExternal } from '../../../utils/url.js';
 import type { MarkdownEnv } from '../Markdown.js';
 
 export type LinksPluginOptions = {
