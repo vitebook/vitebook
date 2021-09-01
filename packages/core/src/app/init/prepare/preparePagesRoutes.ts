@@ -13,7 +13,7 @@ type RouteItem = [
  */
 export const preparePagesRoutes = async (app: App): Promise<void> => {
   const content = `\
-import Vitebook from '${app.client.vitebookImportSpecifier}'
+import Vitebook from '${app.client.vitebookImportPath}'
 
 const routeItems = [\
 ${app.pages

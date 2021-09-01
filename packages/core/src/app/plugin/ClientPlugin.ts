@@ -67,7 +67,7 @@ export type ClientPluginInfo = {
    *
    * @example '@vitebook/vue/client/components/Vitebook'
    */
-  vitebookImportSpecifier: string;
+  vitebookImportPath: string;
 
   /**
    * Plugins, including client itself and plugins used by it.
