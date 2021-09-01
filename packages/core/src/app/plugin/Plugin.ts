@@ -1,62 +1,43 @@
+import type { Plugin as VitePlugin } from 'vite';
+
 import type { App } from '../App.js';
-import type { PluginHooksExposed } from './PluginHooks.js';
+import type { ServerPage } from '../site/Page.js';
+import type { SiteOptions } from '../site/SiteOptions.js';
 
-/**
- * Vitebook plugin.
- *
- * A plugin should be rather:
- * - an object (`PluginObject`)
- * - a function that returns an object (`PluginFunction`)
- *
- * A plugin package should have a `Plugin` as the default export.
- */
-export type Plugin<
-  T extends DefaultPluginOptions = DefaultPluginOptions,
-  U extends PluginObject = PluginObject
-> = U | PluginFunction<T, U>;
-
-/**
- * Vitebook plugin function.
- *
- * It accepts plugin options and Vitebook app, returns a plugin object.
- */
-export type PluginFunction<
-  T extends DefaultPluginOptions = DefaultPluginOptions,
-  U extends PluginObject = PluginObject
-> = (config: Partial<T>, app: App) => U;
-
-/**
- * Vitebook plugin object.
- */
-export type PluginObject = Partial<PluginHooksExposed> & {
+export type Plugin = VitePlugin & {
   /**
-   * Plugin name.
+   * Configure the Vitebook nodejs application. This can also be used to store a reference to the
+   * app for use in other hooks. Use the `context` property to store global data.
    */
-  name: string;
+  configureApp?: (app: App) => void | Promise<void>;
+
+  /**
+   * Modify site data before it's resolved. This hook can either mutate the passed-in object
+   * directly, or return a partial object which will be deeply merged into existing data.
+   *
+   * This can also be used to update theme data (`site.options.theme`).
+   */
+  siteData?: <T extends SiteOptions>(
+    options: T
+  ) => T | null | void | Promise<T | null | void>;
+
+  /**
+   * Use this hook to read and store the final resolved site data.
+   */
+  siteDataResolved?: <T extends SiteOptions>(options: T) => Promise<void>;
+
+  /**
+   * Server-side Vitebook will resolve the `pages` glob array the user has provided which will
+   * return a list of file paths that are possible pages. The file paths will be resolved to a page
+   * via this hook.
+   *
+   * Similar to the Rollup `resolve` hook, this hook will be run sequentially until a plugin
+   * successfully resolves a page. If no plugin is found a warning will be logged to the user, and
+   * the file will not be included in the resovled pages set.
+   */
+  resolvePage(id: string, ssr?: boolean): ServerPage | null | void;
 };
 
-/**
- * Vitebook plugin default options.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type DefaultPluginOptions = Record<string, any>;
+export type PluginOption = Plugin | false | null | undefined;
 
-/**
- * Plugin config to be used in user config file.
- *
- * Users can use this config to control which plugins to be used, and set the plugin options.
- */
-export type PluginConfig<
-  T extends DefaultPluginOptions = DefaultPluginOptions
-> =
-  | string
-  | Plugin<T>
-  | [string | Plugin<T>]
-  | [string | Plugin<T>, Partial<T> | boolean];
-
-/**
- * Normalized plugin config.
- */
-export type PluginConfigNormalized<
-  T extends DefaultPluginOptions = DefaultPluginOptions
-> = [Plugin<T> | string, Partial<T> | boolean];
+export type Plugins = (PluginOption | PluginOption[])[];

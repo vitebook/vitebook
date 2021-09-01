@@ -1,15 +1,12 @@
 import type { UserConfig as ViteConfig } from 'vite';
 
-import type { MarkdownOptions } from './markdown/Markdown.js';
-import type { ClientPluginConfig } from './plugin/ClientPlugin.js';
-import type { PluginConfig } from './plugin/Plugin.js';
-import type { ThemePluginConfig } from './plugin/ThemePlugin.js';
+import type { Plugins } from './plugin/Plugin.js';
 import type { SiteConfig } from './site/SiteOptions.js';
+import type { ThemeConfig } from './site/Theme.js';
 
-export type AppOptions<
-  Client extends ClientPluginConfig = ClientPluginConfig,
-  Theme extends ThemePluginConfig = ThemePluginConfig
-> = {
+export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
+  [optionName: string]: unknown;
+
   /**
    * The current working directory.
    *
@@ -58,28 +55,9 @@ export type AppOptions<
   pages: string[];
 
   /**
-   * Name or absolute path of client you want to use and it's respective configuration options.
-   * The name can be a client name, client name shorthand, or absolute path to the client.
-   *
-   * The configuration options will vary depending on the client you are using.
-   *
-   * @example 'vitebook-client-vue'
-   * @example 'vue'
-   * @example path.resolve(__dirname, './path/to/local/client')
-   */
-  client: [string, Client];
-
-  /**
    * Site-wide options for setting the base language, document title, description, locales, etc.
    */
   site: SiteConfig<Theme>;
-
-  /**
-   * Markdown options to pass to `markdown-it`.
-   *
-   * @see https://github.com/markdown-it/markdown-it
-   */
-  markdown: MarkdownOptions;
 
   /**
    * Options to pass on to `vite`.
@@ -89,7 +67,7 @@ export type AppOptions<
   /**
    * General plugins to use and their respective configurations.
    */
-  plugins: PluginConfig[];
+  plugins: Plugins;
 
   /**
    * Whether to load in debug mode.
@@ -116,5 +94,3 @@ export type AppOptions<
 };
 
 export type AppConfig = Partial<AppOptions>;
-
-export type UserConfig = AppConfig;
