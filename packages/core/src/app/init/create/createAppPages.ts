@@ -12,12 +12,13 @@ const log = debug('vitebook:core/app');
 export const createAppPages = async (app: App): Promise<Page[]> => {
   log('createAppPages start');
 
-  const pagePaths = await globby.sync(app.options.pages, {
+  const pageFilePaths = await globby.sync(app.options.pages, {
+    absolute: true,
     cwd: app.dirs.src.resolve()
   });
 
   const pages = await Promise.all(
-    pagePaths.map(async (filePath) => {
+    pageFilePaths.map(async (filePath) => {
       const isMarkdownPage = /(\.md)$/.test(filePath);
 
       const options = isMarkdownPage

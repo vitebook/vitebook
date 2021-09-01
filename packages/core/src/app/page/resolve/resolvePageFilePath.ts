@@ -1,3 +1,6 @@
+import kleur from 'kleur';
+
+import { formatErrorMsg, logger } from '../../../utils/logger.js';
 import { path } from '../../../utils/path.js';
 import type { App } from '../../App.js';
 import type { PageOptions } from '../Page.js';
@@ -23,17 +26,14 @@ export const resolvePageFilePath = ({
     };
   }
 
-  // Absolute file path.
-  if (path.isAbsolute(filePath)) {
-    return {
-      filePath,
-      filePathRelative: path.relative(app.dirs.src.resolve(), filePath)
-    };
+  if (!path.isAbsolute(filePath)) {
+    throw logger.createError(
+      formatErrorMsg(`filePath is not absolute: ${kleur.bold(filePath)}}`)
+    );
   }
 
-  // Relative file path.
   return {
-    filePath: app.dirs.src.resolve(filePath),
-    filePathRelative: filePath
+    filePath,
+    filePathRelative: path.relative(app.dirs.src.resolve(), filePath)
   };
 };

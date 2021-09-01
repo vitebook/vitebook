@@ -11,10 +11,7 @@ export const resolveStoryPageOptions = async ({
   const options = { ...optionsRaw };
 
   const extendsPageOptions =
-    await app.pluginManager.hooks.extendStoryPageOptions.process(
-      optionsRaw,
-      app
-    );
+    await app.pluginManager.hooks.extendStoryPageOptions.process(options, app);
 
   extendsPageOptions.forEach((item) => Object.assign(options, item));
 

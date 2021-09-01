@@ -11,7 +11,17 @@ export type StoryPage = BasePage<StoryPageData> & {
 };
 
 export type StoryPageOptions = Partial<StoryOptions> & {
+  /**
+   * Page type.
+   */
   type: PageType.Story;
+  /**
+   * If this option is set, it will be used as the final route path
+   * of the page.
+   */
   path?: string;
+  /**
+   * Absolute file path of the markdown source file.
+   */
   filePath?: string;
 };

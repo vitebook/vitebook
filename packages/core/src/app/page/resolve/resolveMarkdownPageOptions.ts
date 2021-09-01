@@ -12,7 +12,7 @@ export const resolveMarkdownPageOptions = async ({
 
   const extendsPageOptions =
     await app.pluginManager.hooks.extendMarkdownPageOptions.process(
-      optionsRaw,
+      options,
       app
     );
 

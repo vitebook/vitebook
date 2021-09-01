@@ -44,9 +44,34 @@ export type MarkdownPage = BasePage<MarkdownPageData> & {
  * Options to create markdown page.
  */
 export type MarkdownPageOptions = {
+  /**
+   * Page type.
+   */
   type: PageType.Markdown;
+  /**
+   * If `filePath` is not set, this option will be used as the raw
+   * markdown content of the page.
+   *
+   * If `filePath` is set, this option will be ignored, while the
+   * content of the file will be used.
+   */
   content?: string;
+
+  /**
+   * If this option is set, it will be used as the final route path
+   * of the page, ignoring the relative path and permalink.
+   */
   path?: string;
+
+  /**
+   * Absolute file path of the markdown source file.
+   */
   filePath?: string;
+
+  /**
+   * Default frontmatter of the page, which could be overridden by
+   * the frontmatter of the markdown content.
+   */
+
   frontmatter?: MarkdownPageFrontmatter;
 };
