@@ -4,7 +4,7 @@ export const createAppEnv = ({
   command = 'serve',
   isDebug = false,
   isDev = true,
-  isProd = false,
+  isProd = !isDev,
   mode = 'serve'
 }: Partial<AppEnv>): AppEnv => ({
   command,

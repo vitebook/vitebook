@@ -46,11 +46,15 @@ export type Plugin = VitePlugin & {
   resolvePage?(
     id: string,
     env: AppEnv
-  ): ServerPage | null | void | Promise<ServerPage | null | void>;
+  ):
+    | Omit<ServerPage, 'filePath'>
+    | null
+    | void
+    | Promise<Omit<ServerPage, 'filePath'> | null | void>;
 };
 
 export type PluginOption = Plugin | false | null | undefined;
 
 export type Plugins = (PluginOption | PluginOption[])[];
 
-export type FlattenedPlugins = PluginOption[];
+export type FilteredPlugins = Plugin[];

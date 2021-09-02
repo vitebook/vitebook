@@ -52,7 +52,10 @@ program
     options.srcDir = srcDir;
     options.baseUrl = options.base;
     options.pages = options.page?.split(',');
-    devCommand(options).catch((err) => {
+    devCommand({
+      command: 'dev',
+      ...options
+    }).catch((err) => {
       logger.error('\n', err, '\n');
       process.exit(1);
     });
@@ -63,7 +66,10 @@ program
   .command('build [srcDir]', 'Build to static site')
   .action(function runBuildCommand(srcDir, options) {
     options.srcDir = srcDir;
-    buildCommand(options).catch((err) => {
+    buildCommand({
+      command: 'build',
+      ...options
+    }).catch((err) => {
       logger.error('\n', err, '\n');
       process.exit(1);
     });
@@ -74,7 +80,10 @@ program
   .command('serve [dir]', 'Serve production build')
   .action(function runServeCommand(dir, options) {
     options.dir = dir;
-    serveCommand(options).catch((err) => {
+    serveCommand({
+      command: 'serve',
+      ...options
+    }).catch((err) => {
       logger.error('\n', err, '\n');
       process.exit(1);
     });

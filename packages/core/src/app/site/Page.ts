@@ -29,11 +29,21 @@ export type DefaultPageComponentModule = { default: DefaultPageComponent };
 
 // Server
 
-export type ServerPage = Omit<Page, 'component' | 'data'> & {
+export type ServerPage = Omit<Page, 'component' | 'data' | 'path'> & {
+  /** Absolute system file path to page. */
+  filePath: string;
+
   /**
-   * An absolute or virtual file path to a page component that will be dynamically imported client-side.
+   * An absolute or virtual file path to a page component that will be dynamically imported
+   * client-side.
    */
   component: string;
+
+  /**
+   * Route path to this page such as `/components/button.html`. If not defined it'll be inferred
+   * by the file path.
+   */
+  path?: string;
 
   /**
    * An absolute or virtual file path to page data that will be dynamically imported client-side.

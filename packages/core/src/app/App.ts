@@ -2,24 +2,30 @@ import type { ViteDevServer } from 'vite';
 
 import type { loadModule } from '../utils/module.js';
 import type { AppOptions } from './AppOptions.js';
+import type { DisposalBin } from './create/DisposalBin.js';
 import type { ClientPlugin } from './plugin/ClientPlugin.js';
-import type { FlattenedPlugins } from './plugin/Plugin.js';
+import type { FilteredPlugins } from './plugin/Plugin.js';
+import type { ServerPage } from './site/Page.js';
 import type { SiteOptions } from './site/SiteOptions.js';
 
 export type App = {
   /** Plugin extensions. */
   [x: string]: unknown;
   version: string;
+  configPath?: string;
   dirs: AppDirs;
   env: AppEnv;
   client: ClientPlugin;
   options: AppOptions;
   site: AppSite;
-  plugins: FlattenedPlugins;
+  plugins: FilteredPlugins;
   context: Record<string, unknown>;
+  pages: ServerPage[];
+  disposal: DisposalBin;
   dev: () => Promise<ViteDevServer>;
   build: () => Promise<void>;
   serve: () => Promise<void>;
+  close: () => Promise<void>;
 };
 
 export type AppDirs = {

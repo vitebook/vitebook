@@ -1,10 +1,16 @@
 import type { UserConfig as ViteConfig } from 'vite';
 
+import { CLIArgs } from '../cli/args.js';
 import type { Plugins } from './plugin/Plugin.js';
 import type { SiteConfig } from './site/SiteOptions.js';
 import type { ThemeConfig } from './site/Theme.js';
 
 export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
+  /**
+   * Parsed CLI arguments.
+   */
+  cliArgs: CLIArgs;
+
   /**
    * The current working directory. The value can be either an absolute file system path
    * or a path relative to `process.cwd()`.

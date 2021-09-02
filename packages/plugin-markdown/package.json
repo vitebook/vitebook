@@ -1,0 +1,12 @@
+{
+  "name": "@vitebook/plugin-markdown",
+  "version": "0.0.0",
+  "dependencies": {
+    "@types/markdown-it": "^12.2.1",
+    "gray-matter": "^4.0.3",
+    "markdown-it": "^12.2.0",
+    "markdown-it-anchor": "^8.3.0",
+    "markdown-it-emoji": "^2.0.0",
+    "toml": "^3.0.0"
+  }
+}

@@ -8,10 +8,20 @@ export const virtualFileIds = {
   clientEntry: '@vitebook/core/client'
 } as const;
 
-export const virtualFileRequestPaths = Object.values(virtualFileIds).reduce(
+// eg => { noop: '/@vitbook/core/noop', ... }
+export const virtualFileRequestPaths = Object.keys(virtualFileIds).reduce(
   (prev, id) => ({
     ...prev,
-    [id]: '/' + id
+    [id]: '/' + virtualFileIds[id]
   }),
   {} as { [P in keyof typeof virtualFileIds]: string }
+);
+
+// eg => { '@vitebook/core/noop': '/@vitbook/core/noop', ... }
+export const virtualFileAliases = Object.keys(virtualFileRequestPaths).reduce(
+  (aliases, id) => ({
+    ...aliases,
+    [virtualFileIds[id]]: virtualFileRequestPaths[id]
+  }),
+  {}
 );

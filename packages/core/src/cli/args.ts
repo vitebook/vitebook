@@ -1,5 +1,6 @@
 export type DevCommandArgs = {
   '--': string[];
+  command: string;
   cwd?: string;
   srcDir?: string;
   baseUrl?: string;
@@ -20,10 +21,12 @@ export type DevCommandArgs = {
 
 export type BuildCommandArgs = {
   '--': string[];
+  command: string;
 };
 
 export type ServeCommandArgs = {
   '--': string[];
+  command: string;
 };
 
 export type CLIArgs = DevCommandArgs & BuildCommandArgs & ServeCommandArgs;

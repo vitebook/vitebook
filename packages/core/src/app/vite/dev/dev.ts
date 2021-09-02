@@ -14,6 +14,6 @@ export async function dev(
     publicDir: app.dirs.public.path,
     ...app.options.vite,
     ...(config ?? {}),
-    plugins: [corePlugin(app), ...app.plugins, ...(config?.plugins ?? [])]
+    plugins: [await corePlugin(app), ...app.plugins, ...(config?.plugins ?? [])]
   });
 }

@@ -4,7 +4,6 @@ import { mkdirSync as mkTmpDirSync, track as trackTmpDir } from 'temp';
 import { fileURLToPath } from 'url';
 
 import { fs, isCommonJsFile, isTypeScriptFile } from './fs.js';
-import { prettyJsonStr } from './json.js';
 import { path } from './path.js';
 import { isObject } from './unit.js';
 
@@ -17,12 +16,6 @@ export const hasDefaultExport = <T = unknown>(
   isObject(mod) &&
   !!mod.__esModule &&
   Object.prototype.hasOwnProperty.call(mod, 'default');
-
-/**
- * Build default export string for given `obj` using `JSON.stringify()`.
- */
-export const buildExportDefaultObj = (obj: unknown): string =>
-  `export default ${prettyJsonStr(obj)};`;
 
 /**
  * Node CJS `require` equivalent for ESM.

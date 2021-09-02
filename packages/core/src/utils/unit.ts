@@ -39,7 +39,8 @@ export function isBoolean(value: any): value is boolean {
 /**
  * Check if a value is an `array`.
  */
-export function isArray(value: unknown): value is unknown[] {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+export function isArray(value: any): value is any[] {
   return Array.isArray(value);
 }
 

@@ -2,6 +2,7 @@ import { path, resolveRelativePath } from '../../utils/path.js';
 import type { AppConfig, AppOptions } from '../AppOptions.js';
 
 export const createAppOptions = ({
+  cliArgs = { command: 'serve', '--': [] },
   cwd = process.cwd(),
   configDir = path.resolve(cwd, '.vitebook'),
   srcDir = path.resolve(cwd, 'src'),
@@ -17,6 +18,7 @@ export const createAppOptions = ({
   const _cwd = resolveRelativePath(process.cwd(), cwd);
   const _configDir = resolveRelativePath(_cwd, configDir);
   return {
+    cliArgs,
     cwd: _cwd,
     site: {},
     debug,
