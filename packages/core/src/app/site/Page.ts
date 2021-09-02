@@ -30,9 +30,14 @@ export type DefaultPageComponentModule = { default: DefaultPageComponent };
 // Server
 
 export type ServerPage = Omit<Page, 'component' | 'data'> & {
-  /** An absolute file path to a page component that will be dynamically imported client-side. */
+  /**
+   * An absolute or virtual file path to a page component that will be dynamically imported client-side.
+   */
   component: string;
-  /** An absolute file path to page data that will be dynamically imported client-side. */
+
+  /**
+   * An absolute or virtual file path to page data that will be dynamically imported client-side.
+   */
   data?: string;
 };
 

@@ -5,10 +5,9 @@ import type { SiteConfig } from './site/SiteOptions.js';
 import type { ThemeConfig } from './site/Theme.js';
 
 export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
-  [optionName: string]: unknown;
-
   /**
-   * The current working directory.
+   * The current working directory. The value can be either an absolute file system path
+   * or a path relative to `process.cwd()`.
    *
    * @default process.cwd()
    */
@@ -50,7 +49,7 @@ export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
   /**
    * Globs pointing to page files to be included in Vitebook. These are relative to the `<srcDir>`.
    *
-   * @default ['**\/*.md', '**\/*.{story,stories}.{js,ts,tsx}']
+   * @default ['!.vitebook', '!node_modules']
    */
   pages: string[];
 

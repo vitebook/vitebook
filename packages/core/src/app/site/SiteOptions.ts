@@ -4,6 +4,9 @@ import { ThemeConfig } from './Theme.js';
 
 export type SiteOptions<Theme extends ThemeConfig = ThemeConfig> =
   SiteLocaleData & {
+    /** Plugin extensions. */
+    [optionName: string]: unknown;
+
     /**
      * The base URL the site will be deployed at. You will need to set this if you plan to deploy
      * your site under a sub path, for example, GitHub pages. If you plan to deploy your site to
@@ -45,14 +48,14 @@ export type SiteLocaleData = {
   /**
    * Title for the site. This will be the suffix for all page titles, and displayed in the navbar.
    *
-   * @default 'Storyboard'
+   * @default ''
    */
   title: string;
 
   /**
    * Description for the site. This will render as a `<meta>` tag in the page HTML.
    *
-   * @default 'A Storyboard site 🎨'
+   * @default ''
    */
   description: string;
 

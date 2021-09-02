@@ -1,11 +1,15 @@
 import type { AppEnv } from '../App.js';
-import type { AppOptions } from '../AppOptions.js';
 
-export const createAppEnv = (
-  options: AppOptions,
-  isBuild: boolean
-): AppEnv => ({
-  isBuild,
-  isDev: !isBuild,
-  isDebug: options.debug
+export const createAppEnv = ({
+  command = 'serve',
+  isDebug = false,
+  isDev = true,
+  isProd = false,
+  mode = 'serve'
+}: Partial<AppEnv>): AppEnv => ({
+  command,
+  isProd,
+  isDev,
+  isDebug,
+  mode
 });

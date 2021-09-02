@@ -25,6 +25,7 @@ export const createAppDirUtil = (baseDir: string): AppDirUtils => {
   };
 
   return {
+    path: baseDir,
     resolve,
     read,
     write,

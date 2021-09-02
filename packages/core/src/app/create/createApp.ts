@@ -1,13 +1,15 @@
 import { mergeConfig } from 'vite';
 
-import { formatErrorMsg, logger } from '../../utils/logger.js';
+import { logger } from '../../utils/logger.js';
 import { isObject } from '../../utils/unit.js';
-import type { App } from '../App.js';
+import type { App, AppEnv } from '../App.js';
 import type { AppConfig } from '../AppOptions.js';
 import type { ClientPlugin } from '../plugin/ClientPlugin.js';
+import type { FlattenedPlugins } from '../plugin/Plugin.js';
 import type { SiteOptions } from '../site/SiteOptions.js';
-import { createBuild } from '../vite/build/createBuild.js';
-import { createDev } from '../vite/dev/createDev.js';
+import { build } from '../vite/build/build.js';
+import { dev } from '../vite/dev/dev.js';
+import { serve } from '../vite/server/serve.js';
 import { createAppDirs } from './createAppDirs.js';
 import { createAppEnv } from './createAppEnv.js';
 import { createAppOptions } from './createAppOptions.js';
@@ -16,12 +18,16 @@ import { getAppVersion } from './getAppVersion.js';
 
 export const createApp = async (
   config: AppConfig,
-  isBuild = false
+  envConfig?: Partial<AppEnv>
 ): Promise<App> => {
   const version = getAppVersion();
   const options = createAppOptions(config);
   const dirs = createAppDirs(options);
-  const env = createAppEnv(options, isBuild);
+
+  const env = createAppEnv({
+    ...envConfig,
+    isDebug: options.debug ?? envConfig?.isDebug
+  });
 
   const site = {
     options: createSiteOptions(config.site ?? {})
@@ -31,10 +37,16 @@ export const createApp = async (
     .flat()
     .find((plugin) => plugin && 'entry' in plugin);
 
-  if (!client) {
-    // TODO: add docs link in msg later when available.
-    throw logger.createError(formatErrorMsg('No client plugin was provided.'));
-  }
+  // TODO: re-enable && add docs link in msg later when available.
+  // if (!client) {
+  //   throw logger.createError('No client plugin was found.');
+  // }
+
+  const plugins: FlattenedPlugins = [
+    client,
+    ...options.plugins.flat(),
+    ...(options.vite.plugins ?? []).flat()
+  ];
 
   const app: App = {
     version,
@@ -42,19 +54,20 @@ export const createApp = async (
     env,
     dirs,
     site,
+    plugins,
     context: {},
     client: client as ClientPlugin,
-    dev: () => createDev(app),
-    build: () => createBuild(app)
+    dev: () => dev(app, config),
+    build: () => build(app, config),
+    serve: () => serve(app)
   };
 
-  for (const plugin of options.plugins.flat()) {
+  for (const plugin of plugins) {
     if (plugin) {
-      // Configure.
-      await plugin.configureApp?.(app);
+      await plugin.configureApp?.(app, env);
 
       // Site data.
-      const siteData = await plugin.siteData?.(site.options);
+      const siteData = await plugin.siteData?.(site.options, env);
       if (isObject(siteData)) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         site.options = mergeConfig(siteData, site.options) as SiteOptions<any>;
@@ -62,7 +75,7 @@ export const createApp = async (
     }
   }
 
-  for (const plugin of options.plugins.flat()) {
+  for (const plugin of plugins) {
     if (plugin) {
       await plugin.siteDataResolved?.(site.options);
     }

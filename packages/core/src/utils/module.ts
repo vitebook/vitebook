@@ -3,7 +3,8 @@ import { createRequire } from 'module';
 import { mkdirSync as mkTmpDirSync, track as trackTmpDir } from 'temp';
 import { fileURLToPath } from 'url';
 
-import { fs, isTypeScriptFile } from './fs.js';
+import { fs, isCommonJsFile, isTypeScriptFile } from './fs.js';
+import { prettyJsonStr } from './json.js';
 import { path } from './path.js';
 import { isObject } from './unit.js';
 
@@ -16,6 +17,12 @@ export const hasDefaultExport = <T = unknown>(
   isObject(mod) &&
   !!mod.__esModule &&
   Object.prototype.hasOwnProperty.call(mod, 'default');
+
+/**
+ * Build default export string for given `obj` using `JSON.stringify()`.
+ */
+export const buildExportDefaultObj = (obj: unknown): string =>
+  `export default ${prettyJsonStr(obj)};`;
 
 /**
  * Node CJS `require` equivalent for ESM.
@@ -41,12 +48,12 @@ export const requireResolve = (request: string): string | null => {
 };
 
 let tmpDir: string;
-/** Imports an ESM module. If it's a TS file it'll be transpiled with ESBuild first. */
+/** Imports an ESM module. If it's a TS or CJS module it'll be transpiled with ESBuild first. */
 export const loadModule = async <T>(
   filePath: string,
   options: { cache?: boolean } = { cache: true }
 ): Promise<T> => {
-  if (!isTypeScriptFile(filePath)) {
+  if (!isTypeScriptFile(filePath) && !isCommonJsFile(filePath)) {
     return import(
       filePath + (!options.cache ? `?t=${Date.now()}` : '')
     ) as unknown as T;
@@ -69,9 +76,13 @@ export const loadModule = async <T>(
 
   const fileExt = path.extname(filePath);
   const code = outputFiles[0]?.text;
-  const tmpModulePath = path.resolve(tmpDir, filePath.replace(/(\\|\/)/g, '_'));
 
-  await fs.writeFile(tmpModulePath.slice(0, -fileExt.length) + '.mjs', code);
+  const tmpModulePath =
+    path
+      .resolve(tmpDir, filePath.replace(/(\\|\/)/g, '_'))
+      .slice(0, -fileExt.length) + '.mjs';
+
+  await fs.writeFile(tmpModulePath, code);
 
   return import(
     tmpModulePath + (!options.cache ? `?t=${Date.now()}` : '')

@@ -1,4 +1,4 @@
-import { path, resolveRelativePathIfNotAbs } from '../../utils/path.js';
+import { path, resolveRelativePath } from '../../utils/path.js';
 import type { AppConfig, AppOptions } from '../AppOptions.js';
 
 export const createAppOptions = ({
@@ -9,28 +9,25 @@ export const createAppOptions = ({
   tmpDir = path.resolve(configDir, '.temp'),
   cacheDir = path.resolve(configDir, '.cache'),
   publicDir = path.resolve(configDir, 'public'),
-  markdown = {},
   vite = {},
   debug = false,
-  pages = [
-    '**/*.md',
-    '**/*.{story,stories}.{js,ts,tsx}',
-    '!.vitebook',
-    '!node_modules'
-  ],
+  pages = ['!.vitebook', '!node_modules'],
   plugins = []
-}: AppConfig): AppOptions => ({
-  site: {},
-  debug,
-  cwd,
-  configDir: resolveRelativePathIfNotAbs(cwd, configDir),
-  srcDir: resolveRelativePathIfNotAbs(cwd, srcDir),
-  outDir: resolveRelativePathIfNotAbs(configDir, outDir),
-  tmpDir: resolveRelativePathIfNotAbs(configDir, tmpDir),
-  cacheDir: resolveRelativePathIfNotAbs(configDir, cacheDir),
-  publicDir: resolveRelativePathIfNotAbs(configDir, publicDir),
-  markdown,
-  vite,
-  pages,
-  plugins
-});
+}: AppConfig): AppOptions => {
+  const _cwd = resolveRelativePath(process.cwd(), cwd);
+  const _configDir = resolveRelativePath(_cwd, configDir);
+  return {
+    cwd: _cwd,
+    site: {},
+    debug,
+    configDir: _configDir,
+    srcDir: resolveRelativePath(_cwd, srcDir),
+    outDir: resolveRelativePath(_configDir, outDir),
+    tmpDir: resolveRelativePath(_configDir, tmpDir),
+    cacheDir: resolveRelativePath(_configDir, cacheDir),
+    publicDir: resolveRelativePath(_configDir, publicDir),
+    vite,
+    pages,
+    plugins
+  };
+};

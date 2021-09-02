@@ -1,28 +1,8 @@
-import { accessSync, PathLike } from 'fs';
-import * as path from 'upath';
+import path from 'upath';
 
 export { path };
 
-/**
- * Returns `true` if given `path` exists.
- */
-export function pathExists(
-  path: PathLike,
-  handleError?: (e: unknown) => void
-): boolean {
-  try {
-    accessSync(path);
-    return true;
-  } catch (e) {
-    handleError?.(e);
-    return false;
-  }
-}
-
-export const resolveRelativePathIfNotAbs = (
-  base: string,
-  filePath: string
-): string =>
+export const resolveRelativePath = (base: string, filePath: string): string =>
   path.isAbsolute(filePath) ? filePath : path.resolve(base, filePath);
 
 /**

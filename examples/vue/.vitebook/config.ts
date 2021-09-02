@@ -1,6 +1,4 @@
-import type { UserConfig } from '@vitebook/vue';
-
-const config: UserConfig = {
+const config = {
   // ...
 };
 
