@@ -1,7 +1,7 @@
 import type { Plugin as VitePlugin } from 'vite';
 
 import type { App, AppEnv } from '../App.js';
-import type { ServerPage } from '../site/Page.js';
+import type { ResolvedPluginPage } from '../site/Page.js';
 import type { SiteOptions } from '../site/SiteOptions.js';
 
 export type Plugin = VitePlugin & {
@@ -47,10 +47,10 @@ export type Plugin = VitePlugin & {
     id: string,
     env: AppEnv
   ):
-    | Omit<ServerPage, 'filePath'>
+    | ResolvedPluginPage
     | null
     | void
-    | Promise<Omit<ServerPage, 'filePath'> | null | void>;
+    | Promise<ResolvedPluginPage | null | void>;
 };
 
 export type PluginOption = Plugin | false | null | undefined;

@@ -43,6 +43,7 @@ export async function resolveApp(
             strictPort: args.strictPort ?? config.vite?.server?.strictPort,
             open: args.open ?? config.vite?.server?.open,
             fs: {
+              // TODO: remove this and replace with `allow`.
               strict: false
             }
           },
@@ -73,7 +74,6 @@ export async function resolveUserAppConfig(args: CLIArgs): Promise<AppConfig> {
   const configDir = resolveRelativePath(cwd, args.configDir ?? '.vitebook');
   const configPath = resolveConfigPath(configDir);
   return configPath
-    ? (await loadModule<{ default: AppConfig }>(configPath, { cache: false }))
-        .default ?? {}
+    ? (await loadModule<{ default: AppConfig }>(configPath)).default ?? {}
     : {};
 }

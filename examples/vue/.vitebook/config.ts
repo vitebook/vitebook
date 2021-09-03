@@ -1,5 +1,7 @@
-const config = {
-  // ...
-};
+import { defineConfig } from '@vitebook/core';
+import { markdownPlugin } from '@vitebook/plugin-markdown';
 
-export default config;
+export default defineConfig({
+  pages: ['**/*.md'],
+  plugins: [markdownPlugin()]
+});

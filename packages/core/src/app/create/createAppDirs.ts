@@ -1,5 +1,8 @@
 import { fs } from '../../utils/fs.js';
-import { loadModule as loadModuleUtil } from '../../utils/module.js';
+import {
+  loadModule as loadModuleUtil,
+  LoadModuleOptions
+} from '../../utils/module.js';
 import { path } from '../../utils/path.js';
 import type { AppDirs, AppDirUtils } from '../App.js';
 import type { AppOptions } from '../AppOptions.js';
@@ -18,7 +21,7 @@ export const createAppDirUtil = (baseDir: string): AppDirUtils => {
 
   const loadModule = async <T>(
     filePath: string,
-    options?: { cache?: boolean }
+    options?: LoadModuleOptions
   ): Promise<T> => {
     const path = resolve(filePath);
     return loadModuleUtil<T>(path, options);

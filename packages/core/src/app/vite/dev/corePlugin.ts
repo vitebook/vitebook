@@ -1,6 +1,10 @@
 import { watch } from 'chokidar';
 import kleur from 'kleur';
-import { Plugin as VitePlugin, ViteDevServer } from 'vite';
+import {
+  Plugin as VitePlugin,
+  UserConfig as ViteConfig,
+  ViteDevServer
+} from 'vite';
 
 import { prettyJsonStr } from '../../../utils/json.js';
 import { logger } from '../../../utils/logger.js';
@@ -8,7 +12,10 @@ import type { App } from '../../App.js';
 import { loadPages, resolvePages } from '../../create/resolvePages.js';
 import { resolveApp } from '../../resolveApp.js';
 import { virtualFileAliases, virtualFileRequestPaths } from './alias.js';
-import { indexHtmlMiddleware } from './middlewares/indexHtml.js';
+import {
+  indexHtmlMiddleware,
+  resolveIndexHtmlFilePath
+} from './middlewares/indexHtml.js';
 
 const virtualRequestPaths = new Set(Object.values(virtualFileRequestPaths));
 
@@ -16,10 +23,10 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
   let server: ViteDevServer;
 
   return {
-    name: '@vitebook/core',
+    name: 'vitebook/core',
     enforce: 'pre',
     config() {
-      return {
+      const config: ViteConfig = {
         resolve: {
           alias: {
             ...virtualFileAliases,
@@ -27,8 +34,15 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
             '@config': app.dirs.config.path,
             '@theme': app.dirs.theme.path
           }
+        },
+        build: {
+          rollupOptions: {
+            input: resolveIndexHtmlFilePath()
+          }
         }
       };
+
+      return config;
     },
     async configResolved(config) {
       (app.options.vite.resolve ??= {}).alias = config.resolve.alias;

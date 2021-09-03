@@ -13,7 +13,7 @@ export const indexHtmlMiddleware =
   (app: App, server: ViteDevServer) => async (req, res, next) => {
     if (req.url?.endsWith('.html')) {
       try {
-        let html = resolveIndexHtmlFile(app);
+        let html = readIndexHtmlFile(app);
         html = await server.transformIndexHtml(req.url, html, req.originalUrl);
         return send(req, res, html, 'html');
       } catch (e) {
@@ -24,11 +24,15 @@ export const indexHtmlMiddleware =
     next();
   };
 
-export function resolveIndexHtmlFile(app: App): string {
-  const indexPath = path.resolve(
+export function resolveIndexHtmlFilePath(): string {
+  return path.resolve(
     currentDirectory(import.meta),
     '../../../../../index.html'
   );
+}
+
+export function readIndexHtmlFile(app: App): string {
+  const indexPath = resolveIndexHtmlFilePath();
 
   let html = fs.readFileSync(indexPath, 'utf-8');
 

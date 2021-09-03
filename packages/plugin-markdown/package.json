@@ -1,6 +1,44 @@
 {
   "name": "@vitebook/plugin-markdown",
   "version": "0.0.0",
+  "keywords": [
+    "esm",
+    "vitebook",
+    "markdown",
+    "plugin"
+  ],
+  "bugs": {
+    "url": "https://github.com/vitebook/vitebook/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitebook/vitebook.git",
+    "directory": "packages/plugin-markdown"
+  },
+  "license": "MIT",
+  "contributors": [
+    "Rahim Alwer <rahim.alwer@gmail.com>"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "index.d.ts": [
+        "src/index.ts"
+      ],
+      "*": [
+        "src/*"
+      ]
+    }
+  },
+  "files": [
+    "src/"
+  ],
   "dependencies": {
     "@types/markdown-it": "^12.2.1",
     "gray-matter": "^4.0.3",
@@ -8,5 +46,8 @@
     "markdown-it-anchor": "^8.3.0",
     "markdown-it-emoji": "^2.0.0",
     "toml": "^3.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

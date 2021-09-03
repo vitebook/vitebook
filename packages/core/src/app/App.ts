@@ -42,7 +42,7 @@ export type AppDirs = {
 export type AppDirUtils = {
   /** Absolute path to directory. */
   path: string;
-  /** Imports an ESM module. If it's a TS or CJS module it'll be transpiled with ESBuild first. */
+  /** Transpile with ESBuild and import as an ESM module. */
   loadModule: typeof loadModule;
   /** Read contents of file relative to current directory. */
   read: (filePath: string) => string;

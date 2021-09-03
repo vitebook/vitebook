@@ -1,9 +1,9 @@
-import { build as esbuild } from 'esbuild';
+import { build as esbuild, BuildOptions } from 'esbuild';
 import { createRequire } from 'module';
 import { mkdirSync as mkTmpDirSync, track as trackTmpDir } from 'temp';
 import { fileURLToPath } from 'url';
 
-import { fs, isCommonJsFile, isTypeScriptFile } from './fs.js';
+import { fs } from './fs.js';
 import { path } from './path.js';
 import { isObject } from './unit.js';
 
@@ -42,30 +42,50 @@ export const requireResolve = (request: string): string | null => {
 };
 
 let tmpDir: string;
-/** Imports an ESM module. If it's a TS or CJS module it'll be transpiled with ESBuild first. */
+const loadModuleCache = new Map<string, unknown>();
+
+export type LoadModuleOptions = BuildOptions & {
+  cache?: boolean;
+};
+
+const esmRequireCode = [
+  "import { createRequire } from 'module';",
+  'const require = createRequire(import.meta.url)',
+  ''
+].join('\n');
+
+/** Transpile with ESBuild and import as an ESM module. */
 export const loadModule = async <T>(
   filePath: string,
-  options: { cache?: boolean } = { cache: true }
+  options: LoadModuleOptions = {}
 ): Promise<T> => {
-  if (!isTypeScriptFile(filePath) && !isCommonJsFile(filePath)) {
-    return import(
-      filePath + (!options.cache ? `?t=${Date.now()}` : '')
-    ) as unknown as T;
+  const { cache, ...buildOptions } = options;
+
+  if (cache && loadModuleCache.has(filePath)) {
+    return loadModuleCache.get(filePath) as T;
   }
+
+  // Keep for occasional testing
+  // tmpDir = path.resolve(process.cwd(), '.vitebook/.temp');
+  // await fs.ensureDir(tmpDir);
 
   if (!tmpDir) {
     trackTmpDir();
-    tmpDir = mkTmpDirSync('@vitebook/core/esbuild/');
+    tmpDir = mkTmpDirSync();
   }
 
   const { outputFiles } = await esbuild({
+    ...buildOptions,
     entryPoints: [filePath],
-    bundle: true,
-    write: false,
-    format: 'esm',
-    target: 'es2019',
-    allowOverwrite: true,
-    external: ['*.vue', '*.svelte']
+    platform: options.platform ?? 'node',
+    format: options.format ?? 'esm',
+    target: options.target ?? 'es2020',
+    allowOverwrite: options.allowOverwrite ?? true,
+    bundle: options.bundle ?? true,
+    preserveSymlinks: options.preserveSymlinks ?? true,
+    splitting: options.splitting ?? false,
+    treeShaking: options.treeShaking ?? true,
+    write: false
   });
 
   const fileExt = path.extname(filePath);
@@ -76,9 +96,10 @@ export const loadModule = async <T>(
       .resolve(tmpDir, filePath.replace(/(\\|\/)/g, '_'))
       .slice(0, -fileExt.length) + '.mjs';
 
-  await fs.writeFile(tmpModulePath, code);
+  await fs.writeFile(tmpModulePath, esmRequireCode + code);
+  const mod = import(tmpModulePath + `?t=${Date.now()}`) as unknown as T;
 
-  return import(
-    tmpModulePath + (!options.cache ? `?t=${Date.now()}` : '')
-  ) as unknown as T;
+  loadModuleCache.set(filePath, mod);
+
+  return mod;
 };
