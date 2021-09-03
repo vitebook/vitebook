@@ -17,6 +17,9 @@ export const createAppOptions = ({
 }: AppConfig): AppOptions => {
   const _cwd = resolveRelativePath(process.cwd(), cwd);
   const _configDir = resolveRelativePath(_cwd, configDir);
+  const _cacheDir = resolveRelativePath(_configDir, cacheDir);
+  const _publicDir = resolveRelativePath(_configDir, publicDir);
+
   return {
     cliArgs,
     cwd: _cwd,
@@ -26,9 +29,13 @@ export const createAppOptions = ({
     srcDir: resolveRelativePath(_cwd, srcDir),
     outDir: resolveRelativePath(_configDir, outDir),
     tmpDir: resolveRelativePath(_configDir, tmpDir),
-    cacheDir: resolveRelativePath(_configDir, cacheDir),
-    publicDir: resolveRelativePath(_configDir, publicDir),
-    vite,
+    cacheDir: _cacheDir,
+    publicDir: _publicDir,
+    vite: {
+      ...vite,
+      cacheDir: vite.cacheDir ?? _cacheDir,
+      publicDir: vite.publicDir ?? _publicDir
+    },
     pages,
     plugins
   };

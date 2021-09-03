@@ -1,6 +1,13 @@
-import { logger } from '../../utils/logger.js';
+import { resolveApp } from '../../app/resolveApp.js';
+import { resolveRelativePath } from '../../utils/path.js';
 import type { ServeCommandArgs } from '../args.js';
 
 export async function serveCommand(args: ServeCommandArgs): Promise<void> {
-  throw logger.createError('`serve` command not implemented');
+  const app = await resolveApp(args);
+
+  const root = args.root
+    ? resolveRelativePath(app.dirs.cwd.path, args.root)
+    : app.dirs.out.path;
+
+  app.serve(root);
 }

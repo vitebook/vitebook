@@ -36,3 +36,8 @@ export const isLinkMailto = (link: string): boolean => /^mailto:/.test(link);
  * Determine if a link is a `tel` address or not
  */
 export const isLinkTel = (link: string): boolean => /^tel:/.test(link);
+
+export const hashRE = /#.*$/s;
+export const queryRE = /\?.*$/s;
+export const cleanUrl = (url: string): string =>
+  url.replace(hashRE, '').replace(queryRE, '');

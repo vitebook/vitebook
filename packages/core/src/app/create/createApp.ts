@@ -6,9 +6,9 @@ import type { AppConfig } from '../AppOptions.js';
 import type { ClientPlugin } from '../plugin/ClientPlugin.js';
 import type { FilteredPlugins } from '../plugin/Plugin.js';
 import type { SiteOptions } from '../site/SiteOptions.js';
-import { build } from '../vite/build/build.js';
-import { dev } from '../vite/dev/dev.js';
-import { serve } from '../vite/server/serve.js';
+import { build } from '../vite/build.js';
+import { createServer } from '../vite/dev/createServer.js';
+import { serve } from '../vite/serve.js';
 import { createAppDirs } from './createAppDirs.js';
 import { createAppEnv } from './createAppEnv.js';
 import { createAppOptions } from './createAppOptions.js';
@@ -62,9 +62,9 @@ export const createApp = async (
     context: {},
     client: client as ClientPlugin,
     disposal: new DisposalBin(),
-    dev: () => dev(app, config),
-    build: () => build(app, config),
-    serve: () => serve(app),
+    dev: () => createServer(app),
+    build: () => build(app),
+    serve: (root) => serve(app, root),
     close: () => app.disposal.empty()
   };
 

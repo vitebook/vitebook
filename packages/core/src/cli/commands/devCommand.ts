@@ -1,6 +1,6 @@
 import type { ViteDevServer } from 'vite';
 
-import { resolveApp } from '../app.js';
+import { resolveApp } from '../../app/resolveApp.js';
 import type { DevCommandArgs } from '../args.js';
 
 export async function devCommand(args: DevCommandArgs): Promise<ViteDevServer> {

@@ -52,6 +52,10 @@ program
     options.srcDir = srcDir;
     options.baseUrl = options.base;
     options.pages = options.page?.split(',');
+    options.configDir = options.configDir ?? options.c;
+    options.port = options.port ?? options.p;
+    options.debug = options.debug ?? options.d;
+    options.mode = options.mode ?? options.m;
     devCommand({
       command: 'dev',
       ...options
@@ -64,8 +68,60 @@ program
 // Build
 program
   .command('build [srcDir]', 'Build to static site')
+  .option('--target <target>', '[string] Transpile target (default: "modules")')
+  .option(
+    '--cwd <cwd>',
+    '[string] Set path to current working directory (default: .)'
+  )
+  .option('--base <baseUrl>', '[string] Set public base path (default: /)')
+  .option(
+    '--publicDir <publicDir>',
+    '[string] Set path to public directory (default: .vitebook/public)'
+  )
+  .option(
+    '--cacheDir <cacheDir>',
+    '[string] Set path to cache directory (default: .vitebook/.cache)'
+  )
+  .option(
+    '-c, --configDir <configDir>',
+    '[string] Set path to config directory (default: .vitebook)'
+  )
+  .option('--outDir <dir>', '[string] Output directory (default: dist)')
+  .option(
+    '--emptyOutDir',
+    "[boolean] Force empty `outDir` when it's outside of root"
+  )
+  .option(
+    '--assetsDir <dir>',
+    '[string] Directory under outDir to place assets in (default: _assets)'
+  )
+  .option(
+    'assetsInlineLimit',
+    '[number] Static asset `base64` inline threshold in bytes (default: 4096)'
+  )
+  .option(
+    '--pages <globs>',
+    '[string] Specify globs to filter pages included relative to <srcDir> (example: "**/*.md,**/*.stories.ts")'
+  )
+  .option(
+    '--sourcemap',
+    '[boolean] Output source maps for build (default: false)'
+  )
+  .option(
+    '--minify [minifier]',
+    '[boolean | "terser" | "esbuild"] Enable/disable minification, or specify minifier to use (default: terser)'
+  )
+  .option('-m, --mode', '[string] Set env mode')
+  .option('-w, --watch', '[boolean] Rebuilds when modules have changed on disk')
+  .option('-d, --debug', '[boolean] Enable debug mode')
   .action(function runBuildCommand(srcDir, options) {
     options.srcDir = srcDir;
+    options.baseUrl = options.base;
+    options.pages = options.page?.split(',');
+    options.configDir = options.configDir ?? options.c;
+    options.watch = options.watch ?? options.w;
+    options.mode = options.mode ?? options.m;
+    options.debug = options.debug ?? options.d;
     buildCommand({
       command: 'build',
       ...options
@@ -77,9 +133,31 @@ program
 
 // Serve
 program
-  .command('serve [dir]', 'Serve production build')
-  .action(function runServeCommand(dir, options) {
-    options.dir = dir;
+  .command('serve [root]', 'Serve production build')
+  .option('--base <baseUrl>', '[string] Set public base path (default: /)')
+  .option(
+    '--cwd <cwd>',
+    '[string] Set path to current working directory (default: .)'
+  )
+  .option(
+    '-c, --configDir <configDir>',
+    '[string] Set path to config directory (default: .vitebook)'
+  )
+  .option('--https', '[boolean] Use TLS + HTTP/2')
+  .option('--host <host>', '[string] Use specified host (default: 0.0.0.0)')
+  .option('-p, --port <port>', '[number] Use specified port (default: 8080)')
+  .option('--cors', '[boolean] Enable CORS')
+  .option('--strictPort', '[boolean] Exit if specified port is already in use')
+  .option('--open [path]', '[boolean | string] Open browser on startup')
+  .option('-m, --mode', '[string] Set env mode')
+  .option('-d, --debug', '[boolean] Enable debug mode')
+  .action(function runServeCommand(root, options) {
+    options.baseUrl = options.base;
+    options.pages = options.page?.split(',');
+    options.configDir = options.configDir ?? options.c;
+    options.port = options.port ?? options.p;
+    options.mode = options.mode ?? options.m;
+    options.debug = options.debug ?? options.d;
     serveCommand({
       command: 'serve',
       ...options

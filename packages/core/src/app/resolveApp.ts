@@ -1,13 +1,13 @@
-import type { App } from '../app/App.js';
-import type { AppConfig } from '../app/AppOptions.js';
-import { createApp } from '../app/create/createApp.js';
-import { resolveConfigPath } from '../app/create/resolveConfigPath.js';
+import type { CLIArgs } from '../cli/args.js';
 import { loadModule } from '../utils/module.js';
 import { resolveRelativePath } from '../utils/path.js';
-import type { CLIArgs } from './args.js';
+import type { App } from './App.js';
+import type { AppConfig } from './AppOptions.js';
+import { createApp } from './create/createApp.js';
+import { resolveConfigPath } from './create/resolveConfigPath.js';
 
 export async function resolveApp(
-  args: CLIArgs,
+  args: CLIArgs = { '--': [], command: 'dev' },
   appConfig?: AppConfig
 ): Promise<App> {
   const config = appConfig ?? (await resolveUserAppConfig(args));
@@ -29,6 +29,9 @@ export async function resolveApp(
         },
         vite: {
           ...(config.vite ?? {}),
+          cacheDir: args.cacheDir ?? config.vite?.cacheDir ?? config.cacheDir,
+          publicDir:
+            args.publicDir ?? config.vite?.publicDir ?? config.publicDir,
           clearScreen: args.clearScreen ?? config.vite?.clearScreen ?? false,
           mode: args.mode ?? config.vite?.mode,
           server: {
@@ -38,15 +41,29 @@ export async function resolveApp(
             port: args.port ?? config.vite?.server?.port,
             cors: args.cors ?? config.vite?.server?.cors,
             strictPort: args.strictPort ?? config.vite?.server?.strictPort,
-            open: args.open ?? config.vite?.server?.open
+            open: args.open ?? config.vite?.server?.open,
+            fs: {
+              strict: false
+            }
+          },
+          build: {
+            ...(config.vite?.build ?? {}),
+            target: args.target ?? config.vite?.build?.target,
+            outDir: args.outDir ?? config.vite?.build?.outDir,
+            emptyOutDir: args.emptyOutDir ?? config.vite?.build?.emptyOutDir,
+            assetsDir: args.assetsDir ?? config.vite?.build?.assetsDir,
+            assetsInlineLimit:
+              args.assetsInlineLimit ?? config.vite?.build?.assetsInlineLimit,
+            sourcemap: args.sourcemap ?? config.vite?.build?.sourcemap,
+            minify: args.minify ?? config.vite?.build?.minify
           }
         }
       }
     },
     {
       command: args.command === 'build' ? 'build' : 'serve',
-      isDev: args.command === 'dev',
-      mode: args.mode ?? config.vite?.mode
+      mode: args.mode ?? config.vite?.mode,
+      isDev: args.mode ? args.mode === 'development' : args.command === 'dev'
     }
   );
 }
@@ -55,7 +72,6 @@ export async function resolveUserAppConfig(args: CLIArgs): Promise<AppConfig> {
   const cwd = resolveRelativePath(process.cwd(), args.cwd ?? '');
   const configDir = resolveRelativePath(cwd, args.configDir ?? '.vitebook');
   const configPath = resolveConfigPath(configDir);
-
   return configPath
     ? (await loadModule<{ default: AppConfig }>(configPath, { cache: false }))
         .default ?? {}

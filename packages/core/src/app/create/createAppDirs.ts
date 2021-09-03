@@ -35,6 +35,7 @@ export const createAppDirUtil = (baseDir: string): AppDirUtils => {
 
 export const createAppDirs = (options: AppOptions): AppDirs => {
   const cwd = createAppDirUtil(options.cwd);
+  const cache = createAppDirUtil(options.cacheDir);
   const config = createAppDirUtil(options.configDir);
   const tmp = createAppDirUtil(options.tmpDir);
   const src = createAppDirUtil(options.srcDir);
@@ -43,6 +44,7 @@ export const createAppDirs = (options: AppOptions): AppDirs => {
   const theme = createAppDirUtil(config.resolve('theme'));
 
   return {
+    cache,
     config,
     cwd,
     tmp,

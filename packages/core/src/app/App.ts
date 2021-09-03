@@ -24,11 +24,12 @@ export type App = {
   disposal: DisposalBin;
   dev: () => Promise<ViteDevServer>;
   build: () => Promise<void>;
-  serve: () => Promise<void>;
+  serve: (root: string) => Promise<void>;
   close: () => Promise<void>;
 };
 
 export type AppDirs = {
+  cache: AppDirUtils;
   config: AppDirUtils;
   cwd: AppDirUtils;
   tmp: AppDirUtils;
@@ -56,6 +57,7 @@ export type AppEnv = {
   isDebug: boolean;
   isDev: boolean;
   isProd: boolean;
+  isSSR?: boolean;
   /** @see https://vitejs.dev/guide/env-and-mode.html */
   mode: string;
 };

@@ -2,10 +2,10 @@
 // - they're not actual files so we can't use tsconfig paths to redirect
 // - TS doesn't allow shimming a module that starts with '/'
 export const virtualFileIds = {
-  noop: '@vitebook/core/noop',
-  siteData: '@vitebook/core/site-data',
-  pages: '@vitebook/core/pages',
-  clientEntry: '@vitebook/core/client'
+  noop: '@vitebook_virtual/core/noop',
+  siteData: '@vitebook_virtual/core/site-data',
+  pages: '@vitebook_virtual/core/pages',
+  clientEntry: '@vitebook_virtual/core/client'
 } as const;
 
 // eg => { noop: '/@vitbook/core/noop', ... }

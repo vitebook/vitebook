@@ -2,12 +2,13 @@ import { watch } from 'chokidar';
 import kleur from 'kleur';
 import { Plugin as VitePlugin, ViteDevServer } from 'vite';
 
-import { resolveApp } from '../../../cli/app.js';
 import { prettyJsonStr } from '../../../utils/json.js';
 import { logger } from '../../../utils/logger.js';
 import type { App } from '../../App.js';
 import { loadPages, resolvePages } from '../../create/resolvePages.js';
+import { resolveApp } from '../../resolveApp.js';
 import { virtualFileAliases, virtualFileRequestPaths } from './alias.js';
+import { indexHtmlMiddleware } from './middlewares/indexHtml.js';
 
 const virtualRequestPaths = new Set(Object.values(virtualFileRequestPaths));
 
@@ -46,6 +47,11 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
       devServer.httpServer?.on('close', () => {
         app.close();
       });
+
+      // Serve our index.html after Vite history fallback.
+      return () => {
+        server.middlewares.use(indexHtmlMiddleware(app, server));
+      };
     },
     resolveId(id) {
       if (id === virtualFileRequestPaths.clientEntry) {
@@ -72,6 +78,16 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
       }
 
       return null;
+    },
+    generateBundle(_, bundle) {
+      if (app.env.isSSR) {
+        // SSR build - delete all asset chunks.
+        for (const name in bundle) {
+          if (bundle[name].type === 'asset') {
+            delete bundle[name];
+          }
+        }
+      }
     },
     async handleHotUpdate(ctx) {
       const { file } = ctx;

@@ -25,8 +25,9 @@ export const esmRequire = createRequire(import.meta.url);
 /**
  * `__dirname` alternative for ESM.
  */
-export const currentDirectory = (): string =>
-  path.dirname(fileURLToPath(import.meta.url));
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+export const currentDirectory = (meta: any): string =>
+  path.dirname(fileURLToPath(meta.url));
 
 /**
  * `require.resolve` wrapper. Returns `null` if the module cannot be resolved instead of throwing

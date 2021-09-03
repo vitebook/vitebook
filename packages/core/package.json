@@ -45,7 +45,8 @@
   },
   "files": [
     "bin/",
-    "dist/"
+    "dist/",
+    "index.html"
   ],
   "scripts": {
     "build": "npm run clean && tsc",
