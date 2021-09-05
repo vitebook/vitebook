@@ -1,6 +1,5 @@
 import MarkdownIt from 'markdown-it';
 
-import type { MarkdownParser, MarkdownParserOptions } from './Markdown.js';
 import {
   anchorPlugin,
   AnchorPluginOptions,
@@ -19,6 +18,7 @@ import {
   tocPlugin,
   TocPluginOptions
 } from './plugins/index.js';
+import type { MarkdownParser, MarkdownParserOptions } from './types.js';
 import { slugify } from './utils.js';
 
 export const createMarkdownParser = async ({

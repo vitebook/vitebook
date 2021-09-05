@@ -1,6 +1,6 @@
 import type { PluginWithOptions } from 'markdown-it';
 
-import type { MarkdownHeader } from '../../Markdown.js';
+import type { MarkdownHeader } from '../../types.js';
 import {
   resolveHeadersFromTokens,
   slugify as slugifyDefault

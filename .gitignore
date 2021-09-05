@@ -23,7 +23,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-tsconfig.tsbuildinfo
+*.tsbuildinfo
 /libpeerconnection.log
 chrome-profiler-events*.json
 speed-measure-plugin*.json

@@ -3,5 +3,5 @@ import type { BuildCommandArgs } from '../args.js';
 
 export async function buildCommand(args: BuildCommandArgs): Promise<void> {
   const app = await resolveApp(args);
-  app.build();
+  await app.build();
 }

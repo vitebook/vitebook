@@ -11,3 +11,36 @@ export const isTypeScriptFile = (filePath: string): boolean =>
 
 export const isCommonJsFile = (filePath: string): boolean =>
   /\.cjs$/.test(filePath);
+
+/**
+ * vitejs/vite#610 when hot-reloading files, if we read immediately on the file change event
+ * it can be too early and we sometimes get an empty buffer. Poll until the file's modified time
+ * has changed before reading again.
+ */
+export async function readRecentlyChangedFile(file: string): Promise<string> {
+  const content = fs.readFileSync(file, 'utf-8');
+
+  if (!content) {
+    const mtime = fs.statSync(file).mtimeMs;
+
+    await new Promise((r) => {
+      let n = 0;
+
+      const poll = async () => {
+        n++;
+        const newMtime = fs.statSync(file).mtimeMs;
+        if (newMtime !== mtime || n > 10) {
+          r(0);
+        } else {
+          setTimeout(poll, 10);
+        }
+      };
+
+      setTimeout(poll, 10);
+    });
+
+    return fs.readFileSync(file, 'utf-8');
+  } else {
+    return content;
+  }
+}

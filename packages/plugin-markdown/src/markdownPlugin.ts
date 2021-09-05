@@ -1,48 +1,51 @@
-import { Plugin, VM_PREFIX } from '@vitebook/core';
+import type { Plugin } from '@vitebook/core';
 
-import { createMarkdownParser } from './createMarkdownParser.js';
-import type { MarkdownParser, MarkdownParserOptions } from './Markdown.js';
 import type { ResolvedMarkdownPage } from './MarkdownPage.js';
+import {
+  createMarkdownParser,
+  loadParsedMarkdown,
+  MarkdownParser,
+  MarkdownParserOptions,
+  parseMarkdown
+} from './parser/index.js';
 
 export const PLUGIN_NAME = 'vitebook/plugin-markdown' as const;
-export const VM_DATA_PREFIX = `/${VM_PREFIX}/${PLUGIN_NAME}/data/` as const;
 
-export type MarkdownPluginOptions = MarkdownParserOptions;
-
-let parser: MarkdownParser;
+export type MarkdownPluginOptions = MarkdownParserOptions & {
+  load?(): string;
+  transform?(): string;
+};
 
 export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
-  // TODO: use LRU cache
-  const cache = new Map();
+  let parser: MarkdownParser;
+
+  /** Page system file paths. */
+  const files = new Set<string>();
 
   return {
     name: PLUGIN_NAME,
+    enforce: 'post',
     async configureApp() {
       parser = await createMarkdownParser(options);
     },
-    async resolvePage(id): Promise<ResolvedMarkdownPage> {
-      if (!id.endsWith('.md')) return null;
-
-      // parse and store meta
-      // cache id => meta
-
-      return {
-        type: 'md',
-        data: `${VM_DATA_PREFIX}${id}`
-      };
+    async resolvePage({ filePath }): Promise<ResolvedMarkdownPage> {
+      if (filePath.endsWith('.md')) {
+        files.add(filePath);
+        return {
+          type: 'md'
+        };
+      }
     },
-    async transform(code, id) {
-      if (id.startsWith(VM_DATA_PREFIX)) {
-        const filePath = id.replace(VM_DATA_PREFIX, '');
-        // return cached data
+    pagesRemoved(pages) {
+      pages.forEach((page) => {
+        files.delete(page.filePath);
+      });
+    },
+    transform(source, id) {
+      if (files.has(id)) {
+        const result = parseMarkdown(parser, source, id);
+        return loadParsedMarkdown(result);
       }
-
-      if (id.endsWith('.md')) {
-        // transform it.
-        // component => { default: '<html></html>' }
-      }
-
-      return null;
     }
   };
 }

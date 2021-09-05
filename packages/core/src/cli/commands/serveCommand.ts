@@ -9,5 +9,5 @@ export async function serveCommand(args: ServeCommandArgs): Promise<void> {
     ? resolveRelativePath(app.dirs.cwd.path, args.root)
     : app.dirs.out.path;
 
-  app.serve(root);
+  await app.serve(root);
 }

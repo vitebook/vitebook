@@ -1,7 +1,7 @@
 import { fs } from '@vitebook/core/utils/fs.js';
 import { path } from '@vitebook/core/utils/path.js';
 
-import type { MarkdownParserEnv } from '../../Markdown.js';
+import type { MarkdownParserEnv } from '../../types.js';
 import type { ImportCodeTokenMeta } from './ImportCodeTokenMeta.js';
 
 export const resolveImportCode = (

@@ -2,7 +2,7 @@ import { htmlEscape } from '@vitebook/core/utils/html.js';
 import { isFunction } from '@vitebook/core/utils/unit.js';
 import type Token from 'markdown-it/lib/token';
 
-import { MarkdownHeader } from './Markdown.js';
+import type { MarkdownHeader } from './types.js';
 
 /**
  * Resolve headers from `markdown-it` tokens.
@@ -161,3 +161,32 @@ export const slugify = (str: string): string =>
     .replace(/^(\d)/, '_$1')
     // lowercase
     .toLowerCase();
+
+/**
+ * Global constants and env variables will be statically replaced by Vite in build mode. This
+ * util helps avoid that by inserting escape sequences.
+ *
+ * @see https://vitejs.dev/guide/env-and-mode.html#production-replacement
+ */
+export function preventViteConstantsReplacement(
+  source: string,
+  define?: Record<string, unknown>
+): string {
+  source = source
+    .replace(/\bimport\.meta/g, 'import.<wbr/>meta')
+    .replace(/\bprocess\.env/g, 'process.<wbr/>env');
+
+  // Also avoid replacing defines.
+  if (define) {
+    const regex = new RegExp(
+      `\\b(${Object.keys(define)
+        .map((key) => key.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&'))
+        .join('|')})`,
+      'g'
+    );
+
+    source = source.replace(regex, (_) => `${_[0]}<wbr/>${_.slice(1)}`);
+  }
+
+  return source;
+}

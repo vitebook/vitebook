@@ -3,7 +3,7 @@
 import { isLinkExternal } from '@vitebook/core/utils/url.js';
 import type { PluginWithOptions } from 'markdown-it';
 
-import type { MarkdownParserEnv } from '../Markdown.js';
+import type { MarkdownParserEnv } from '../types.js';
 
 export type LinksPluginOptions = {
   /**

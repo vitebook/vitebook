@@ -1,6 +1,6 @@
 import { htmlEscape } from '@vitebook/core/utils/html.js';
 
-import type { MarkdownHeader } from '../../Markdown.js';
+import type { MarkdownHeader } from '../../types.js';
 import type { TocPluginOptions } from './tocPlugin.js';
 
 type RenderHeadersFn = (headers: MarkdownHeader[]) => string;
@@ -21,8 +21,7 @@ export const createRenderHeaders = ({
   const itemClassString = itemClass ? ` class="${htmlEscape(itemClass)}"` : '';
   const linkTagString = htmlEscape(linkTag);
   const linkClassString = linkClass ? ` class="${htmlEscape(linkClass)}` : '';
-  const linkTo = (slug: string): string =>
-    linkTag === 'RouterLink' ? ` to="#${slug}"` : ` href="#${slug}"`;
+  const linkTo = (slug: string): string => ` href="#${slug}"`;
 
   const renderHeaders: RenderHeadersFn = (headers) => `\
 <${listTagString}${listClassString}>\

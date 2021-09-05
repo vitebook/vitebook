@@ -11,16 +11,16 @@ import { logger } from '../../../utils/logger.js';
 import type { App } from '../../App.js';
 import { loadPages, resolvePages } from '../../create/resolvePages.js';
 import { resolveApp } from '../../resolveApp.js';
-import { virtualFileAliases, virtualFileRequestPaths } from './alias.js';
+import { virtualModuleId } from './alias.js';
 import {
   indexHtmlMiddleware,
   resolveIndexHtmlFilePath
 } from './middlewares/indexHtml.js';
 
-const virtualRequestPaths = new Set(Object.values(virtualFileRequestPaths));
-
 export async function corePlugin(app: App): Promise<VitePlugin> {
   let server: ViteDevServer;
+
+  const virtualModules = new Set<string>(Object.values(virtualModuleId));
 
   return {
     name: 'vitebook/core',
@@ -29,7 +29,6 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
       const config: ViteConfig = {
         resolve: {
           alias: {
-            ...virtualFileAliases,
             '@src': app.dirs.src.path,
             '@config': app.dirs.config.path,
             '@theme': app.dirs.theme.path
@@ -47,7 +46,7 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
     async configResolved(config) {
       (app.options.vite.resolve ??= {}).alias = config.resolve.alias;
       // Resolve pages after aliases have been resolved.
-      await resolvePages(app);
+      await resolvePages(app, 'add');
     },
     configureServer(devServer) {
       server = devServer;
@@ -68,26 +67,26 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
       };
     },
     resolveId(id) {
-      if (id === virtualFileRequestPaths.clientEntry) {
+      if (id === virtualModuleId.clientEntry) {
         return { id: app.client.entry.client };
       }
 
-      if (virtualRequestPaths.has(id)) {
+      if (virtualModules.has(id)) {
         return id;
       }
 
       return null;
     },
     load(id) {
-      if (id === virtualFileRequestPaths.noop) {
+      if (id === virtualModuleId.noop) {
         return `export default function() {};`;
       }
 
-      if (id === virtualFileRequestPaths.siteData) {
+      if (id === virtualModuleId.siteData) {
         return `export default ${prettyJsonStr(app.site.options)};`;
       }
 
-      if (id === virtualFileRequestPaths.pages) {
+      if (id === virtualModuleId.pages) {
         return loadPages(app);
       }
 
@@ -110,7 +109,7 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
         await resolveNewSiteData(app);
         return [
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          server.moduleGraph.getModuleById(virtualFileRequestPaths.siteData)!
+          server.moduleGraph.getModuleById(virtualModuleId.siteData)!
         ];
       }
 
@@ -125,10 +124,21 @@ function startWatchingPages(app: App, server: ViteDevServer) {
     ignoreInitial: true
   });
 
-  watcher.on('all', async () => {
-    await resolvePages(app);
-    server.watcher.emit('change', virtualFileRequestPaths.pages);
-  });
+  async function handleChange(
+    filePath: string,
+    action: 'add' | 'change' | 'unlink'
+  ): Promise<void> {
+    await resolvePages(app, action, [filePath]);
+    server.moduleGraph.invalidateModule(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      server.moduleGraph.getModuleById(virtualModuleId.pages)!
+    );
+  }
+
+  watcher
+    .on('add', (p) => handleChange(p, 'add'))
+    .on('change', (p) => handleChange(p, 'change'))
+    .on('unlink', (p) => handleChange(p, 'unlink'));
 
   app.disposal.add(() => {
     watcher.close();

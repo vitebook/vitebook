@@ -1,7 +1,7 @@
 import type { Plugin as VitePlugin } from 'vite';
 
 import type { App, AppEnv } from '../App.js';
-import type { ResolvedPluginPage } from '../site/Page.js';
+import type { ResolvedPage, ServerPage } from '../site/Page.js';
 import type { SiteOptions } from '../site/SiteOptions.js';
 
 export type Plugin = VitePlugin & {
@@ -32,29 +32,59 @@ export type Plugin = VitePlugin & {
    *
    * This hook may be called more than once if the user changes the config file.
    */
-  siteDataResolved?: <T extends SiteOptions>(options: T) => Promise<void>;
+  siteDataResolved?: <T extends SiteOptions>(
+    options: T
+  ) => void | Promise<void>;
 
   /**
    * Server-side Vitebook will resolve the `pages` glob array the user has provided which will
-   * return a list of file paths that are possible pages. The file paths will be resolved to a page
+   * return a list of file paths that are possible pages. The file paths will be resolved to pages
    * via this hook.
    *
-   * Similar to the Rollup `resolve` hook, this hook will be run sequentially on each plugin until
-   * one successfully resolves a page. If no plugin resolves the path to a page, a warning will be
-   * logged to the user, and the file will not be included in the final resolved pages set.
+   * Similarly to the Rollup `resolve` hook, `resolvePage` will be run sequentially on each
+   * plugin until a page is successfully resolved. If no plugin resolves a path to a page,
+   * a warning will be logged to the user that no plugin can resolve this file path.
+   *
+   * Try to keep this hook light and leave file processing and transforms on a per-request
+   * basis. Preferably defer work to the Vite `load` and `transform` hooks.
+   *
+   * Note: this hook will be called more than once as the user makes changes to files.
    */
   resolvePage?(
-    id: string,
-    env: AppEnv
+    ctx: ResolvePageContext
   ):
-    | ResolvedPluginPage
+    | ResolvedPage
     | null
+    | undefined
     | void
-    | Promise<ResolvedPluginPage | null | void>;
+    | Promise<ResolvedPage | null | undefined | void>;
+
+  /**
+   * Called when pages have been removed by the user.
+   */
+  pagesRemoved?(pages: ServerPage[]): void | Promise<void>;
+
+  /**
+   * Use this hook to read and store resolved pages. This hook will be called more than once
+   * as the user makes changes and new pages are resolved or removed.
+   */
+  pagesResolved?(pages: ServerPage[]): void | Promise<void>;
+};
+
+export type ResolvePageContext = {
+  /** Default page module id. Can be overwritten by plugin. */
+  id: string;
+  /** Absolute system file path of page file. */
+  filePath: string;
+  /**
+   * Page client-side route inferred from file path such as `/pages/page.html`. Can be overwritten
+   * by plugin.
+   */
+  route: string;
+  /** Application environment information. */
+  env: AppEnv;
 };
 
 export type PluginOption = Plugin | false | null | undefined;
-
 export type Plugins = (PluginOption | PluginOption[])[];
-
 export type FilteredPlugins = Plugin[];

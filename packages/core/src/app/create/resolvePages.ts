@@ -4,9 +4,13 @@ import { globby } from '../../utils/fs.js';
 import { prettyJsonStr } from '../../utils/json.js';
 import { logger } from '../../utils/logger.js';
 import { ensureLeadingSlash, path } from '../../utils/path.js';
-import { isArray } from '../../utils/unit.js';
 import type { App } from '../App.js';
+import type { Plugin } from '../plugin/Plugin.js';
 import type { ServerPage } from '../site/Page.js';
+
+const resolvedPages = new Map<string, ServerPage>();
+const unresolvedPages = new Set<string>();
+const pageResolvedBy = new Map<string, Plugin>();
 
 export function resolvePageFilePaths(app: App): string[] {
   return globby.sync(app.options.pages, {
@@ -15,99 +19,148 @@ export function resolvePageFilePaths(app: App): string[] {
   });
 }
 
-const alreadyWarned = new Set();
+export async function resolvePages(
+  app: App,
+  action: 'add' | 'change' | 'unlink',
+  changed?: string[]
+): Promise<void> {
+  const filePaths = changed ?? resolvePageFilePaths(app);
 
-export async function resolvePages(app: App): Promise<void> {
-  app.pages = [];
+  if (action === 'unlink') {
+    const removedPages: ServerPage[] = [];
 
-  const pageFilePaths = resolvePageFilePaths(app);
-
-  for (let i = 0; i < pageFilePaths.length; i += 1) {
-    const id = pageFilePaths[i];
-
-    let j = 0;
-    let resolved = false;
-
-    while (!resolved && j < app.plugins.length) {
-      const plugin = app.plugins[j];
-
-      const page = await plugin.resolvePage?.(id, app.env);
-
-      if (page) {
-        const relativeFilePath = path.relative(app.dirs.src.path, id);
-
-        app.pages.push({
-          ...page,
-          component:
-            page.component ??
-            ensureLeadingSlash(relativeFilePath).toLowerCase(),
-          filePath: id,
-          relativeFilePath
-        });
-
-        resolved = true;
-      }
-
-      j += 1;
+    // Remove pages.
+    for (let i = 0; i < filePaths.length; i += 1) {
+      const filePath = filePaths[i];
+      const page = resolvedPages.get(filePath);
+      if (page) removedPages.push(page);
+      resolvedPages.delete(filePath);
+      unresolvedPages.delete(filePath);
+      pageResolvedBy.delete(filePath);
     }
 
-    if (!alreadyWarned.has(id) && !resolved) {
-      logger.warn(
-        logger.formatWarnMsg(
-          `No plugin could resolve page for: ${kleur.bold(
-            path.basename(app.dirs.src.path) +
-              '/' +
-              path.relative(app.dirs.src.path, id)
-          )}`
-        )
-      );
-
-      alreadyWarned.add(id);
+    // `pagesRemoved` hook
+    for (let i = 0; i < app.plugins.length; i += 1) {
+      await app.plugins[i].pagesRemoved?.(removedPages);
     }
+  } else {
+    // Attempt to resolve pages.
+    for (let i = 0; i < filePaths.length; i += 1) {
+      const filePath = filePaths[i];
+      await resolvePage(app, filePath);
+    }
+  }
+
+  app.pages = Array.from(resolvedPages.values());
+
+  // `pagesResolved` hook
+  for (let i = 0; i < app.plugins.length; i += 1) {
+    // Pass fresh array to each plugin to avoid any funky mutations.
+    await app.plugins[i].pagesResolved?.(Array.from(resolvedPages.values()));
   }
 }
 
-export function inferPagePath(app: App, { filePath }: ServerPage): string {
-  const relativePath = path.relative(app.dirs.src.path, filePath);
-  return ensureLeadingSlash(relativePath)
-    .replace(new RegExp(`(${path.extname(filePath)})$`), '.html')
-    .replace(/\/(README|index).html$/i, '/')
-    .toLowerCase();
+async function resolvePage(app: App, filePath: string): Promise<void> {
+  for (let i = 0; i < app.plugins.length; i += 1) {
+    const plugin = app.plugins[i];
+
+    const id = ensureLeadingSlash(path.relative(app.dirs.src.path, filePath));
+    const route = filePathToRoute(app, filePath);
+
+    const page = await plugin.resolvePage?.({
+      id,
+      filePath,
+      route,
+      env: app.env
+    });
+
+    if (page) {
+      const wasResolvedBy = pageResolvedBy.get(filePath);
+
+      // If the page resolver changes we'll notify previous plugin to remove pages.
+      if (wasResolvedBy && plugin !== wasResolvedBy) {
+        const existingPage = resolvedPages.get(filePath);
+        if (existingPage) {
+          await wasResolvedBy.pagesRemoved?.([existingPage]);
+        }
+      }
+
+      resolvedPages.set(filePath, {
+        ...page,
+        filePath,
+        id: page.id ?? id,
+        route: page.route ?? route
+      });
+
+      pageResolvedBy.set(filePath, plugin);
+      unresolvedPages.delete(filePath);
+
+      return;
+    }
+  }
+
+  pageCouldNotBeResolved(app, filePath);
 }
 
+function pageCouldNotBeResolved(app: App, filePath: string) {
+  if (unresolvedPages.has(filePath)) return;
+
+  logger.warn(
+    logger.formatWarnMsg(
+      `No plugin could resolve page: ${kleur.bold(
+        path.basename(app.dirs.src.path) +
+          '/' +
+          path.relative(app.dirs.src.path, filePath)
+      )}`
+    )
+  );
+
+  unresolvedPages.add(filePath);
+}
+
+// eslint-disable-next-line no-control-regex
+const rControl = /[\u0000-\u001f]/g;
+const rSpecial = /[\s~`!@#$%^&*()\-_+=[\]{}|\\;:"'“”‘’<>,.?/]+/g;
+const rCombining = /[\u0300-\u036F]/g;
+export function filePathToRoute(app: App, filePath: string): string {
+  const relativePath = path.relative(app.dirs.src.path, filePath);
+  return (
+    ensureLeadingSlash(relativePath)
+      .normalize('NFKD')
+      // Remove accents
+      .replace(rCombining, '')
+      // Remove control characters
+      .replace(rControl, '')
+      // Replace special characters
+      .replace(rSpecial, '-')
+      // Remove continuos separators
+      .replace(/-{2,}/g, '-')
+      // Remove prefixing and trailing separators
+      .replace(/^-+|-+$/g, '')
+      // ensure it doesn't start with a number (#121)
+      .replace(/^(\d)/, '_$1')
+      // Replace file extension with `.html`
+      .replace(new RegExp(`(${path.extname(filePath)})$`), '.html')
+      // Replace index path
+      .replace(/\/(README|index).html$/i, '/')
+      .toLowerCase()
+  );
+}
+
+/**
+ * `JSON.stringify()` will add quotes `""` around dynamic imports which means they'll be a
+ * string, not a dynamic import anymore. This regex is used to strip it.
+ */
 const stripImportQuotesRE = /"\(\) => import\((.+)\)"/g;
 
 export function loadPages(app: App): string {
   return `export default ${prettyJsonStr(
     app.pages.map((page) => ({
       ...page,
-      path: page.path ?? inferPagePath(app, page),
-      component: `() => import('${page.component}')`,
-      data: page.data
-        ? `() => import('${replacePathAliases(app, page.data)}')`
-        : undefined,
+      loader: `() => import('${page.id}')`,
       // Not included client-side.
-      filePath: undefined,
-      relativeFilePath: undefined,
-      meta: undefined
+      id: undefined,
+      filePath: undefined
     }))
   )}`.replace(stripImportQuotesRE, '() => import($1)');
-}
-
-export function replacePathAliases(app: App, filePath: string): string {
-  const aliases = app.options.vite.resolve?.alias ?? {};
-
-  let resolvedPath = filePath;
-
-  if (isArray(aliases)) {
-    aliases.forEach(({ find, replacement }) => {
-      resolvedPath = resolvedPath.replace(find, replacement);
-    });
-  } else {
-    Object.keys(aliases).forEach((find) => {
-      resolvedPath = resolvedPath.replace(find, aliases[find]);
-    });
-  }
-
-  return resolvedPath;
 }
