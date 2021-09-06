@@ -27,12 +27,18 @@ export type MarkdownParserOptions = MarkdownIt.Options & {
   configureParser?(parser: MarkdownParser): void | Promise<void>;
 };
 
+export type ParseMarkdownOptions = {
+  escapeConstants?: boolean;
+  define?: Record<string, unknown>;
+};
+
 export type ParsedMarkdownResult<Data extends MarkdownData = MarkdownData> = {
   content: string;
   data: Data;
   html: string;
   links: MarkdownLinks;
   importedFiles: string[];
+  env: MarkdownParserEnv;
   // TODO: add support for these later.
   // date: string;
   // permalink: string;

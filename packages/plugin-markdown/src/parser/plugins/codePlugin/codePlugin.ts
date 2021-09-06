@@ -1,5 +1,7 @@
 import type { PluginWithOptions } from 'markdown-it';
+import type Token from 'markdown-it/lib/token';
 
+import type { MarkdownParser } from '../../types.js';
 import {
   isHighlightLine,
   resolveHighlightLines
@@ -42,21 +44,25 @@ export type CodePluginOptions = {
    *
    * @default undefined
    */
-  transformBeforeWrapper?(html: string): string;
+  transformBeforeWrapper?(
+    parser: MarkdownParser,
+    token: Token,
+    html: string
+  ): string;
 
   /**
    * Transform the final HTML block before it's returned.
    *
    * @default undefined
    */
-  transformFinal?(html: string): string;
+  transformFinal?(parser: MarkdownParser, token: Token, html: string): string;
 };
 
 /**
  * Plugin to enable styled code fences with line numbers, syntax highlighting, etc.
  */
 export const codePlugin: PluginWithOptions<CodePluginOptions> = (
-  md,
+  parser,
   {
     highlightLines = true,
     lineNumbers = true,
@@ -66,11 +72,11 @@ export const codePlugin: PluginWithOptions<CodePluginOptions> = (
   }: CodePluginOptions = {}
 ): void => {
   // Override default fence renderer.
-  md.renderer.rules.fence = (tokens, idx, options) => {
+  parser.renderer.rules.fence = (tokens, idx, options) => {
     const token = tokens[idx];
 
     // Get token info.
-    const info = token.info ? md.utils.unescapeAll(token.info).trim() : '';
+    const info = token.info ? parser.utils.unescapeAll(token.info).trim() : '';
 
     // Resolve language from token info.
     const language = resolveLanguage(info);
@@ -79,18 +85,18 @@ export const codePlugin: PluginWithOptions<CodePluginOptions> = (
     // Try to get highlighted code.
     const code =
       options.highlight?.(token.content, language.name, '') ||
-      md.utils.escapeHtml(token.content);
+      parser.utils.escapeHtml(token.content);
 
     // Wrap highlighted code with `<pre>` and `<code>`.
-    let result = code.startsWith('<pre')
+    let html = code.startsWith('<pre')
       ? code
       : `<pre class="${languageClass}"><code>${code}</code></pre>`;
 
-    result = transformBeforeWrapper?.(result) ?? result;
+    html = transformBeforeWrapper?.(parser, token, html) ?? html;
 
     // If `preWrapper` is disabled, return directly.
     if (!preWrapper) {
-      return result;
+      return html;
     }
 
     // Code fences always have an ending `\n`, so we should trim the last line.
@@ -111,7 +117,7 @@ export const codePlugin: PluginWithOptions<CodePluginOptions> = (
         })
         .join('');
 
-      result = `${result}<div class="highlight-lines">${highlightLinesCode}</div>`;
+      html = `${html}<div class="highlight-lines">${highlightLinesCode}</div>`;
     }
 
     // Resolve line-numbers mark from token info.
@@ -127,15 +133,15 @@ export const codePlugin: PluginWithOptions<CodePluginOptions> = (
         .map((_, index) => `<span class="line-number">${index + 1}</span><br>`)
         .join('');
 
-      result = `${result}<div class="line-numbers">${lineNumbersCode}</div>`;
+      html = `${html}<div class="line-numbers">${lineNumbersCode}</div>`;
     }
 
-    result = `<div class="${languageClass} ext-${language.ext}${
+    html = `<div class="${languageClass} ext-${language.ext}${
       useLineNumbers ? ' line-numbers-mode' : ''
-    }">${result}</div>`;
+    }">${html}</div>`;
 
-    result = transformFinal?.(result) ?? result;
+    html = transformFinal?.(parser, token, html) ?? html;
 
-    return result;
+    return html;
   };
 };

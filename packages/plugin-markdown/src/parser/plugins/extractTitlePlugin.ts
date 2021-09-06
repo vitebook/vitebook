@@ -6,11 +6,11 @@ import { resolveTitleFromToken } from '../utils.js';
 /**
  * Extracting markdown title to parser env.
  */
-export const extractTitlePlugin: PluginSimple = (md): void => {
+export const extractTitlePlugin: PluginSimple = (parser): void => {
   let title: string;
 
   // Push the rule to the end of the chain, and resolve title from the parsed tokens.
-  md.core.ruler.push('resolveExtractTitle', (state) => {
+  parser.core.ruler.push('resolveExtractTitle', (state) => {
     const tokenIdx = state.tokens.findIndex((token) => token.tag === 'h1');
     if (tokenIdx > -1) {
       title = resolveTitleFromToken(state.tokens[tokenIdx + 1], {
@@ -24,8 +24,8 @@ export const extractTitlePlugin: PluginSimple = (md): void => {
   });
 
   // Extract title to env.
-  const render = md.render.bind(md);
-  md.render = (src, env: MarkdownParserEnv = {}) => {
+  const render = parser.render.bind(parser);
+  parser.render = (src, env: MarkdownParserEnv = {}) => {
     const result = render(src, env);
     env.title = env.frontmatter?.title ?? title;
     return result;

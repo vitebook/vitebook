@@ -17,12 +17,12 @@ export type CustomComponentPluginOptions = {
  * Replacing the default `htmlBlock` rule to allow using custom components in markdown.
  */
 export const customComponentPlugin: PluginWithOptions<CustomComponentPluginOptions> =
-  (md, { customSequences }: CustomComponentPluginOptions = {}): void => {
+  (parser, { customSequences }: CustomComponentPluginOptions = {}): void => {
     // Override default html block ruler.
-    md.block.ruler.at('html_block', htmlBlockRule(customSequences), {
+    parser.block.ruler.at('html_block', htmlBlockRule(customSequences), {
       alt: ['paragraph', 'reference', 'blockquote']
     });
 
     // Override default html inline ruler.
-    md.inline.ruler.at('html_inline', htmlInlineRule);
+    parser.inline.ruler.at('html_inline', htmlInlineRule);
   };

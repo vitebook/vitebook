@@ -6,7 +6,8 @@ import toml from 'toml';
 import type {
   MarkdownParser,
   MarkdownParserEnv,
-  ParsedMarkdownResult
+  ParsedMarkdownResult,
+  ParseMarkdownOptions
 } from './types.js';
 import { preventViteConstantsReplacement } from './utils.js';
 
@@ -16,10 +17,7 @@ export function parseMarkdown(
   parser: MarkdownParser,
   source: string,
   filePath: string,
-  options: {
-    escapeConstants?: boolean;
-    define?: Record<string, unknown>;
-  } = {}
+  options: ParseMarkdownOptions = {}
 ): ParsedMarkdownResult {
   const cachedResult = cache.get(source);
   if (cachedResult) return cachedResult;
@@ -41,7 +39,7 @@ export function parseMarkdown(
   };
 
   let html = parser.render(content, parserEnv);
-  const excerptHtml = parser.render(excerpt);
+  const excerptHtml = parser.render(excerpt ?? '');
 
   if (options.escapeConstants) {
     html = preventViteConstantsReplacement(html, options.define);
@@ -59,6 +57,7 @@ export function parseMarkdown(
     html,
     links,
     importedFiles,
+    env: parserEnv,
     data: {
       excerpt: excerptHtml,
       frontmatter,

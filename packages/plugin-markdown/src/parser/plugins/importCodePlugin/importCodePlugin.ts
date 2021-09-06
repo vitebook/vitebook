@@ -14,11 +14,11 @@ export type ImportCodePluginOptions = {
 };
 
 export const importCodePlugin: PluginWithOptions<ImportCodePluginOptions> = (
-  md,
+  parser,
   options = {}
 ): void => {
   // Add `import_code` block rule.
-  md.block.ruler.before(
+  parser.block.ruler.before(
     'fence',
     'import_code',
     createImportCodeBlockRule(options),
@@ -28,7 +28,7 @@ export const importCodePlugin: PluginWithOptions<ImportCodePluginOptions> = (
   );
 
   // Add `import_code` renderer rule.
-  md.renderer.rules.import_code = (
+  parser.renderer.rules.import_code = (
     tokens,
     idx,
     options,
@@ -49,6 +49,6 @@ export const importCodePlugin: PluginWithOptions<ImportCodePluginOptions> = (
 
     // Render the `import_code` token as a fence token.
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return md.renderer.rules.fence!(tokens, idx, options, env, slf);
+    return parser.renderer.rules.fence!(tokens, idx, options, env, slf);
   };
 };

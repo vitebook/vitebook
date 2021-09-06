@@ -1,6 +1,6 @@
 import type { Plugin } from '@vitebook/core';
 
-import type { ResolvedMarkdownPage } from './MarkdownPage.js';
+import type { ResolvedMarkdownPage } from './page.js';
 import {
   createMarkdownParser,
   loadParsedMarkdown,
@@ -11,10 +11,7 @@ import {
 
 export const PLUGIN_NAME = 'vitebook/plugin-markdown' as const;
 
-export type MarkdownPluginOptions = MarkdownParserOptions & {
-  load?(): string;
-  transform?(): string;
-};
+export type MarkdownPluginOptions = MarkdownParserOptions;
 
 export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
   let parser: MarkdownParser;
@@ -24,11 +21,11 @@ export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
 
   return {
     name: PLUGIN_NAME,
-    enforce: 'post',
+    enforce: 'pre',
     async configureApp() {
       parser = await createMarkdownParser(options);
     },
-    async resolvePage({ filePath }): Promise<ResolvedMarkdownPage> {
+    async resolvePage({ filePath }): Promise<ResolvedMarkdownPage | void> {
       if (filePath.endsWith('.md')) {
         files.add(filePath);
         return {
@@ -46,6 +43,8 @@ export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
         const result = parseMarkdown(parser, source, id);
         return loadParsedMarkdown(result);
       }
+
+      return null;
     }
   };
 }

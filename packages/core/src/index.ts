@@ -1,7 +1,7 @@
-import type { AppConfig } from './app/AppOptions';
+import type { AppConfig } from './app/AppOptions.js';
 
 export * from './app/App.js';
-export * from './app/AppOptions';
+export * from './app/AppOptions.js';
 export * from './app/plugin/ClientPlugin.js';
 export * from './app/plugin/Plugin.js';
 export * from './app/site/HeadConfig.js';

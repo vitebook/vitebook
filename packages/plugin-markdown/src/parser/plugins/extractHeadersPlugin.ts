@@ -34,7 +34,7 @@ export type ExtractHeadersPluginOptions = {
  */
 export const extractHeadersPlugin: PluginWithOptions<ExtractHeadersPluginOptions> =
   (
-    md,
+    parser,
     {
       level = [2, 3],
       slugify = slugifyDefault,
@@ -44,7 +44,7 @@ export const extractHeadersPlugin: PluginWithOptions<ExtractHeadersPluginOptions
     let headers: MarkdownHeader[];
 
     // Push the rule to the end of the chain, and resolve headers from the parsed tokens.
-    md.core.ruler.push('resolveExtractHeaders', (state) => {
+    parser.core.ruler.push('resolveExtractHeaders', (state) => {
       headers = resolveHeadersFromTokens(state.tokens, {
         level,
         allowHtml: false,
@@ -56,8 +56,8 @@ export const extractHeadersPlugin: PluginWithOptions<ExtractHeadersPluginOptions
     });
 
     // Extract headers to `env`.
-    const render = md.render.bind(md);
-    md.render = (src, env: MarkdownParserEnv = {}) => {
+    const render = parser.render.bind(parser);
+    parser.render = (src, env: MarkdownParserEnv = {}) => {
       const result = render(src, env);
       env.headers = headers;
       return result;

@@ -21,7 +21,7 @@ import {
 import type { MarkdownParser, MarkdownParserOptions } from './types.js';
 import { slugify } from './utils.js';
 
-export const createMarkdownParser = async ({
+export async function createMarkdownParser({
   anchor,
   code,
   customComponent,
@@ -33,26 +33,24 @@ export const createMarkdownParser = async ({
   toc,
   configureParser,
   ...markdownItOptions
-}: MarkdownParserOptions = {}): Promise<MarkdownParser> => {
-  // create raw markdown-it instance
-  const md = MarkdownIt({
+}: MarkdownParserOptions = {}): Promise<MarkdownParser> {
+  const parser = MarkdownIt({
     ...markdownItOptions,
     // should always enable html option
     html: true
   });
 
   // =====================================================
-  // following plugins push rules to the end of chain, so
-  // the order to use them is important
+  // Following plugins push rules to the end of chain, so the usage order is important.
 
-  // parse emoji
+  // Parse emojis.
   if (emoji !== false) {
-    md.use<EmojiPluginOptions>(emojiPlugin, emoji);
+    parser.use<EmojiPluginOptions>(emojiPlugin, emoji);
   }
 
-  // add anchor to headers
+  // Add anchor to headers.
   if (anchor !== false) {
-    md.use<AnchorPluginOptions>(anchorPlugin, {
+    parser.use<AnchorPluginOptions>(anchorPlugin, {
       level: [1, 2, 3, 4, 5, 6],
       slugify,
       permalink: anchorPlugin.permalink.ariaHidden({
@@ -65,46 +63,49 @@ export const createMarkdownParser = async ({
     });
   }
 
-  // allow toc syntax
+  // Allow `toc` syntax.
   if (toc !== false) {
-    md.use<TocPluginOptions>(tocPlugin, toc);
+    parser.use<TocPluginOptions>(tocPlugin, toc);
   }
 
-  // extract headers into env
+  // Extract `headers` into `env`.
   if (extractHeaders !== false) {
-    md.use<ExtractHeadersPluginOptions>(extractHeadersPlugin, extractHeaders);
+    parser.use<ExtractHeadersPluginOptions>(
+      extractHeadersPlugin,
+      extractHeaders
+    );
   }
 
-  // extract title into env
+  // Extract `title` into `env`.
   if (extractTitle !== false) {
-    md.use(extractTitlePlugin);
+    parser.use(extractTitlePlugin);
   }
 
   // =====================================================
-  // following plugins modify or replace the rule in place
-  // and have no conflicts, so the order is not important
+  // Following plugins modify or replace the rule in place and have no conflicts, so the usage
+  // order is not important.
 
-  // treat unknown html tags as custom components
+  // Treat unknown html tags as custom components.
   if (customComponent !== false) {
-    md.use(customComponentPlugin, customComponent);
+    parser.use(customComponentPlugin, customComponent);
   }
 
-  // process external and internal links
+  // Process external and internal links.
   if (links !== false) {
-    md.use<LinksPluginOptions>(linksPlugin, links);
+    parser.use<LinksPluginOptions>(linksPlugin, links);
   }
 
-  // process code fence
+  // Process code fences.
   if (code !== false) {
-    md.use<CodePluginOptions>(codePlugin, code);
+    parser.use<CodePluginOptions>(codePlugin, code);
   }
 
-  // handle import_code syntax
+  // Handle `import_code` syntax.
   if (importCode !== false) {
-    md.use<ImportCodePluginOptions>(importCodePlugin, importCode);
+    parser.use<ImportCodePluginOptions>(importCodePlugin, importCode);
   }
 
-  await configureParser?.(md);
+  await configureParser?.(parser);
 
-  return md;
-};
+  return parser;
+}

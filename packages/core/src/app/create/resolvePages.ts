@@ -120,31 +120,16 @@ function pageCouldNotBeResolved(app: App, filePath: string) {
 
 // eslint-disable-next-line no-control-regex
 const rControl = /[\u0000-\u001f]/g;
-const rSpecial = /[\s~`!@#$%^&*()\-_+=[\]{}|\\;:"'“”‘’<>,.?/]+/g;
 const rCombining = /[\u0300-\u036F]/g;
 export function filePathToRoute(app: App, filePath: string): string {
   const relativePath = path.relative(app.dirs.src.path, filePath);
-  return (
-    ensureLeadingSlash(relativePath)
-      .normalize('NFKD')
-      // Remove accents
-      .replace(rCombining, '')
-      // Remove control characters
-      .replace(rControl, '')
-      // Replace special characters
-      .replace(rSpecial, '-')
-      // Remove continuos separators
-      .replace(/-{2,}/g, '-')
-      // Remove prefixing and trailing separators
-      .replace(/^-+|-+$/g, '')
-      // ensure it doesn't start with a number (#121)
-      .replace(/^(\d)/, '_$1')
-      // Replace file extension with `.html`
-      .replace(new RegExp(`(${path.extname(filePath)})$`), '.html')
-      // Replace index path
-      .replace(/\/(README|index).html$/i, '/')
-      .toLowerCase()
-  );
+  return ensureLeadingSlash(relativePath)
+    .normalize('NFKD')
+    .replace(rCombining, '')
+    .replace(rControl, '')
+    .replace(new RegExp(`(${path.extname(filePath)})$`), '.html')
+    .replace(/\/(README|index).html$/i, '/')
+    .toLowerCase();
 }
 
 /**

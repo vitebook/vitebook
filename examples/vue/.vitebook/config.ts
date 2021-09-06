@@ -1,7 +1,7 @@
 import { defineConfig } from '@vitebook/core';
-import { markdownPlugin } from '@vitebook/plugin-markdown';
+import { markdownVuePlugin } from '@vitebook/plugin-markdown-vue';
 
 export default defineConfig({
   pages: ['**/*.md'],
-  plugins: [markdownPlugin()]
+  plugins: [markdownVuePlugin()]
 });

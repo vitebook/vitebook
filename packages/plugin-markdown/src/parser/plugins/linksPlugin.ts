@@ -26,10 +26,10 @@ const indexRE = /(^|.*\/)index.md(#?.*)$/i;
  * Resolves link URLs.
  */
 export const linksPlugin: PluginWithOptions<LinksPluginOptions> = (
-  md,
+  parser,
   linkOptions: LinksPluginOptions = {}
 ): void => {
-  md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
+  parser.renderer.rules.link_open = (tokens, idx, options, env, self) => {
     const token = tokens[idx];
     const hrefIndex = token.attrIndex('href');
     if (hrefIndex >= 0) {

@@ -56,7 +56,7 @@
   "dependencies": {
     "@types/debug": "^4.1.7",
     "@types/fs-extra": "^9.0.12",
-    "@types/temp": "^0.9.1",
+    "@types/lru-cache": "^5.1.1",
     "cac": "^6.7.3",
     "chokidar": "^3.5.2",
     "debug": "^4.3.2",
@@ -64,8 +64,8 @@
     "fast-glob": "^3.2.7",
     "fs-extra": "^10.0.0",
     "kleur": "^4.1.4",
+    "lru-cache": "^6.0.0",
     "ora": "^6.0.0",
-    "temp": "^0.9.4",
     "upath": "^2.0.1",
     "vite": "^2.5.3"
   },

@@ -102,7 +102,7 @@ export type TocPluginOptions = {
  * @see https://github.com/nagaozen/markdown-it-toc-done-right
  */
 export const tocPlugin: PluginWithOptions<TocPluginOptions> = (
-  md,
+  parser,
   {
     pattern = /^\[\[toc\]\]$/i,
     slugify = slugifyDefault,
@@ -120,7 +120,7 @@ export const tocPlugin: PluginWithOptions<TocPluginOptions> = (
   let headers: MarkdownHeader[];
 
   // Push the rule to the end of the chain, and resolve headers from the parsed tokens.
-  md.core.ruler.push('resolveTocHeaders', (state) => {
+  parser.core.ruler.push('resolveTocHeaders', (state) => {
     headers = resolveHeadersFromTokens(state.tokens, {
       level,
       allowHtml: true,
@@ -132,7 +132,7 @@ export const tocPlugin: PluginWithOptions<TocPluginOptions> = (
   });
 
   // Add toc syntax as a block rule.
-  md.block.ruler.before(
+  parser.block.ruler.before(
     'heading',
     'toc',
     createTocBlockRule({
@@ -154,7 +154,7 @@ export const tocPlugin: PluginWithOptions<TocPluginOptions> = (
   });
 
   // Custom toc_body render rule.
-  md.renderer.rules.toc_body = () => {
+  parser.renderer.rules.toc_body = () => {
     /* istanbul ignore if */
     if (!headers) {
       return '';

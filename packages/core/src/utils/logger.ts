@@ -49,10 +49,16 @@ export const withSpinner =
     try {
       spinner.start(message);
       const result = await target();
-      spinner.succeed(formatSuccessMsg(message));
+      spinner.stopAndPersist({
+        symbol: '',
+        text: formatSuccessMsg(message)
+      });
       return result;
     } catch (e) {
-      spinner.fail(formatErrorMsg(message));
+      spinner.stopAndPersist({
+        symbol: '',
+        text: formatErrorMsg(message)
+      });
       throw e;
     }
   };

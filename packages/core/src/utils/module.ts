@@ -1,6 +1,6 @@
 import { build as esbuild, BuildOptions } from 'esbuild';
+import LRUCache from 'lru-cache';
 import { createRequire } from 'module';
-import { mkdirSync as mkTmpDirSync, track as trackTmpDir } from 'temp';
 import { fileURLToPath } from 'url';
 
 import { fs } from './fs.js';
@@ -42,7 +42,8 @@ export const requireResolve = (request: string): string | null => {
 };
 
 let tmpDir: string;
-const loadModuleCache = new Map<string, unknown>();
+
+const loadModuleCache = new LRUCache({ max: 1024 });
 
 export type LoadModuleOptions = BuildOptions & {
   cache?: boolean;
@@ -50,32 +51,56 @@ export type LoadModuleOptions = BuildOptions & {
 
 const esmRequireCode = [
   "import { createRequire } from 'module';",
-  'const require = createRequire(import.meta.url)',
-  ''
+  'const require = createRequire(import.meta.url);',
+  'var __require = function(x) { return require(x); };',
+  '__require.__proto__.resolve = require.resolve;',
+  '\n'
 ].join('\n');
 
-/** Transpile with ESBuild and import as an ESM module. */
+/** Bundle with ESBuild and import as an ESM module. */
 export const loadModule = async <T>(
   filePath: string,
   options: LoadModuleOptions = {}
 ): Promise<T> => {
   const { cache, ...buildOptions } = options;
 
+  // Super basic in-memory LRU cache. Good enough for our needs atm.
   if (cache && loadModuleCache.has(filePath)) {
     return loadModuleCache.get(filePath) as T;
   }
 
-  // Keep for occasional testing
-  // tmpDir = path.resolve(process.cwd(), '.vitebook/.temp');
-  // await fs.ensureDir(tmpDir);
-
   if (!tmpDir) {
-    trackTmpDir();
-    tmpDir = mkTmpDirSync();
+    tmpDir = path.join(
+      path.dirname(esmRequire.resolve('@vitebook/core')),
+      '.temp'
+    );
+
+    await fs.ensureDir(tmpDir);
+    await fs.emptyDir(tmpDir);
   }
 
+  const code = await bundle(filePath, buildOptions);
+  const fileExt = path.extname(filePath);
+
+  const tmpModulePath =
+    path
+      .resolve(tmpDir, filePath.replace(/(\\|\/)/g, '_'))
+      .slice(0, -fileExt.length) + '.mjs';
+
+  await fs.writeFile(tmpModulePath, esmRequireCode + code);
+
+  const mod = import(tmpModulePath + `?t=${Date.now()}`) as unknown as T;
+  loadModuleCache.set(filePath, mod);
+
+  return mod;
+};
+
+export async function bundle(
+  filePath: string,
+  options: BuildOptions
+): Promise<string | undefined> {
   const { outputFiles } = await esbuild({
-    ...buildOptions,
+    ...options,
     entryPoints: [filePath],
     platform: options.platform ?? 'node',
     format: options.format ?? 'esm',
@@ -85,21 +110,26 @@ export const loadModule = async <T>(
     preserveSymlinks: options.preserveSymlinks ?? true,
     splitting: options.splitting ?? false,
     treeShaking: options.treeShaking ?? true,
-    write: false
+    write: false,
+    plugins: [
+      {
+        name: 'mark-unresolvable-as-external',
+        setup(build) {
+          // Must not start with "/" or "./" or "../"
+          // eslint-disable-next-line no-useless-escape
+          const filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/;
+          build.onResolve({ filter }, (args) => {
+            try {
+              esmRequire.resolve(args.path);
+              return;
+            } catch (e) {
+              return { external: true };
+            }
+          });
+        }
+      }
+    ]
   });
 
-  const fileExt = path.extname(filePath);
-  const code = outputFiles[0]?.text;
-
-  const tmpModulePath =
-    path
-      .resolve(tmpDir, filePath.replace(/(\\|\/)/g, '_'))
-      .slice(0, -fileExt.length) + '.mjs';
-
-  await fs.writeFile(tmpModulePath, esmRequireCode + code);
-  const mod = import(tmpModulePath + `?t=${Date.now()}`) as unknown as T;
-
-  loadModuleCache.set(filePath, mod);
-
-  return mod;
-};
+  return outputFiles[0]?.text;
+}
