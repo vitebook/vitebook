@@ -1,0 +1,47 @@
+{
+  "name": "@vitebook/theme-vuebook-default",
+  "version": "0.0.0",
+  "keywords": [
+    "esm",
+    "plugin",
+    "storybook",
+    "theme-default",
+    "vitebook",
+    "vuebook"
+  ],
+  "bugs": {
+    "url": "https://github.com/vitebook/vitebook/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitebook/vitebook.git",
+    "directory": "packages/theme-vuebook-default"
+  },
+  "license": "MIT",
+  "contributors": [
+    "Rahim Alwer <rahim.alwer@gmail.com>"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "index.d.ts": [
+        "src/index.ts"
+      ],
+      "*": [
+        "src/*"
+      ]
+    }
+  },
+  "files": [
+    "src/"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
