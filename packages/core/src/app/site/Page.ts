@@ -14,6 +14,10 @@ export type Page<PageModule = DefaultPageModule> = {
 export type Pages<PageModule = DefaultPageModule> = Page<PageModule>[];
 export type DefaultPageModule = { default?: unknown };
 
+export type VirtualPagesModule = {
+  default: Page[];
+};
+
 // Server
 
 export type ServerPage = Omit<Page, 'loader'> & {

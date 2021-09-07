@@ -1,7 +1,7 @@
 import kleur from 'kleur';
 
 import { globby } from '../../utils/fs.js';
-import { prettyJsonStr } from '../../utils/json.js';
+import { prettyJsonStr, stripImportQuotesFromJson } from '../../utils/json.js';
 import { logger } from '../../utils/logger.js';
 import { ensureLeadingSlash, path } from '../../utils/path.js';
 import type { App } from '../App.js';
@@ -132,20 +132,16 @@ export function filePathToRoute(app: App, filePath: string): string {
     .toLowerCase();
 }
 
-/**
- * `JSON.stringify()` will add quotes `""` around dynamic imports which means they'll be a
- * string, not a dynamic import anymore. This regex is used to strip it.
- */
-const stripImportQuotesRE = /"\(\) => import\((.+)\)"/g;
-
-export function loadPages(app: App): string {
-  return `export default ${prettyJsonStr(
-    app.pages.map((page) => ({
-      ...page,
-      loader: `() => import('${page.id}')`,
-      // Not included client-side.
-      id: undefined,
-      filePath: undefined
-    }))
-  )}`.replace(stripImportQuotesRE, '() => import($1)');
+export function loadPagesVirtualModule(app: App): string {
+  return `export default ${stripImportQuotesFromJson(
+    prettyJsonStr(
+      app.pages.map((page) => ({
+        ...page,
+        loader: `() => import('${page.id}')`,
+        // Not included client-side.
+        id: undefined,
+        filePath: undefined
+      }))
+    )
+  )}`;
 }

@@ -7,7 +7,7 @@ export type MarkdownVuePage = Page<MarkdownVuePageModule> & {
 };
 
 export type MarkdownVuePageModule<Data extends MarkdownData = MarkdownData> = {
-  vue: Component;
+  default: Component;
   data: Data;
 };
 

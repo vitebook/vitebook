@@ -9,7 +9,10 @@ import {
 import { prettyJsonStr } from '../../../utils/json.js';
 import { logger } from '../../../utils/logger.js';
 import type { App } from '../../App.js';
-import { loadPages, resolvePages } from '../../create/resolvePages.js';
+import {
+  loadPagesVirtualModule,
+  resolvePages
+} from '../../create/resolvePages.js';
 import { resolveApp } from '../../resolveApp.js';
 import { virtualModuleId } from './alias.js';
 import {
@@ -87,7 +90,7 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
       }
 
       if (id === virtualModuleId.pages) {
-        return loadPages(app);
+        return loadPagesVirtualModule(app);
       }
 
       return null;

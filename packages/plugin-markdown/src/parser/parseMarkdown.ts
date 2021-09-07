@@ -3,6 +3,7 @@ import matter from 'gray-matter';
 import LRUCache from 'lru-cache';
 import toml from 'toml';
 
+import type { MarkdownPageModule } from '../page.js';
 import type {
   MarkdownParser,
   MarkdownParserEnv,
@@ -72,8 +73,14 @@ export function parseMarkdown(
 }
 
 export function loadParsedMarkdown(result: ParsedMarkdownResult): string {
-  return prettyJsonStr({
-    template: result.html,
+  const mod: MarkdownPageModule = {
+    default: result.html,
     data: result.data
-  });
+  };
+
+  return `
+export const data = ${prettyJsonStr(mod.data)};
+
+export default ${mod.default};
+  `;
 }

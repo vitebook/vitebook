@@ -8,7 +8,7 @@ export type MarkdownPage = Page<MarkdownPageModule> & {
 
 export type MarkdownPageModule<Data extends MarkdownData = MarkdownData> = {
   /** Parsed HTML template from markdown file. */
-  template: string;
+  default: string;
   data: Data;
 };
 

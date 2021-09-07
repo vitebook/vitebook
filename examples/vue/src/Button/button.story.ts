@@ -1,14 +1,14 @@
-import { UserStory } from '@vitebook/vue';
+// import { UserStory } from '@vitebook/vue';
 
-import Button from './Button.vue';
+// import Button from './Button.vue';
 
-const story: UserStory<typeof Button> = {
-  name: 'Button',
-  component: './Button.vue',
-  variants: [
-    { name: 'disabled', props: { disabled: false } },
-    { name: 'loading' }
-  ]
-};
+// const story: UserStory<typeof Button> = {
+//   name: 'Button',
+//   component: './Button.vue',
+//   variants: [
+//     { name: 'disabled', props: { disabled: false } },
+//     { name: 'loading' }
+//   ]
+// };
 
-export default story;
+// export default story;

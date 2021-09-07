@@ -12,7 +12,7 @@ import type { MarkdownVueParserEnv } from './types.js';
 export type ParseMarkdownToVueOptions = ParseMarkdownOptions;
 
 export type ParsedMarkdownToVueResult = {
-  vue: string;
+  component: string;
   data: MarkdownData;
 };
 
@@ -37,12 +37,12 @@ export function parseMarkdownToVue(
 
   const { hoistedTags } = parserEnv as MarkdownVueParserEnv;
 
-  const vue =
+  const component =
     buildDataExport(hoistedTags ?? [], data).join('\n') +
     `\n\n<template><div>${html}</div></template>`;
 
   const result: ParsedMarkdownToVueResult = {
-    vue,
+    component,
     data
   };
 

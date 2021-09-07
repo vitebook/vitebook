@@ -81,3 +81,7 @@ export type SiteLocaleData = {
  * }
  */
 export type SiteLocaleConfig = LocaleConfig<SiteLocaleData>;
+
+export type VirtualSiteDataModule<Theme extends ThemeConfig = ThemeConfig> = {
+  default: SiteOptions<Theme>;
+};

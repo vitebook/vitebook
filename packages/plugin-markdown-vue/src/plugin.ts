@@ -3,9 +3,7 @@ import type { MarkdownParser } from '@vitebook/plugin-markdown';
 import createVuePlugin, {
   Options as VuePluginOptions
 } from '@vitejs/plugin-vue';
-import type { ViteDevServer } from 'vite';
 
-import { MarkdownVueHmrEvent, MarkdownVueHmrPayload } from './hmr.js';
 import type { ResolvedMarkdownVuePage } from './page.js';
 import {
   createMarkdownParser,
@@ -23,7 +21,6 @@ export type MarkdownVuePluginOptions = MarkdownParserOptions & {
 export function markdownVuePlugin(
   options: MarkdownVuePluginOptions = {}
 ): Plugins {
-  let server: ViteDevServer;
   let parser: MarkdownParser;
   let isBuild: boolean;
   let define: Record<string, unknown> | undefined;
@@ -34,8 +31,6 @@ export function markdownVuePlugin(
   const routes = new Map<string, string>();
 
   const { vue, vuePlugin: userVuePlugin, ...markdownParserOptions } = options;
-
-  // SET PROCESS ENV
 
   const vuePlugin =
     userVuePlugin ??
@@ -54,9 +49,6 @@ export function markdownVuePlugin(
       },
       async configureApp() {
         parser = await createMarkdownParser(markdownParserOptions);
-      },
-      configureServer(devServer) {
-        server = devServer;
       },
       async resolvePage({
         filePath,
@@ -78,12 +70,12 @@ export function markdownVuePlugin(
       },
       transform(source, id) {
         if (files.has(id)) {
-          const { vue } = parseMarkdownToVue(parser, source, id, {
+          const { component } = parseMarkdownToVue(parser, source, id, {
             escapeConstants: isBuild,
             define
           });
 
-          return vue;
+          return component;
         }
 
         return null;
@@ -95,28 +87,15 @@ export function markdownVuePlugin(
         if (files.has(file)) {
           const content = await read();
 
-          const { vue, data } = parseMarkdownToVue(parser, content, file, {
+          const { component } = parseMarkdownToVue(parser, content, file, {
             escapeConstants: isBuild,
             define
-          });
-
-          const payload: MarkdownVueHmrPayload[MarkdownVueHmrEvent.DataUpdate] =
-            {
-              data,
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              route: routes.get(file)!
-            };
-
-          server.ws.send({
-            type: 'custom',
-            event: MarkdownVueHmrEvent.DataUpdate,
-            data: JSON.stringify(payload)
           });
 
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           return vuePlugin.handleHotUpdate!({
             ...ctx,
-            read: () => vue
+            read: () => component
           });
         }
       }
