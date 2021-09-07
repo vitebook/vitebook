@@ -1,9 +1,8 @@
 import type { UserConfig as ViteConfig } from 'vite';
 
 import { CLIArgs } from '../cli/args.js';
+import type { SiteConfig, ThemeConfig } from '../shared/index.js';
 import type { Plugins } from './plugin/Plugin.js';
-import type { SiteConfig } from './site/SiteOptions.js';
-import type { ThemeConfig } from './site/Theme.js';
 
 export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
   /**

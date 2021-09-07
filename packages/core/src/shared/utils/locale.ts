@@ -1,6 +1,6 @@
-import type { LocaleConfig } from '../app/site/LocaleConfig.js';
-import { removeEndingSlash } from './path.js';
+import type { LocaleConfig } from '../types/LocaleConfig.js';
 import { inBrowser } from './support.js';
+import { removeEndingSlash } from './url.js';
 
 export const resolveLocalePath = (
   locales: LocaleConfig,
@@ -26,7 +26,7 @@ export const resolveLocalePath = (
 /**
  * Clean up the route by removing the `base` path if it's set in config.
  */
-function cleanRoute(baseUrl: string, route: string): string {
+export function cleanRoute(baseUrl: string, route: string): string {
   if (!inBrowser) {
     return route;
   }

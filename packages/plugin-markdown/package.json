@@ -28,9 +28,6 @@
   },
   "typesVersions": {
     "*": {
-      "index.d.ts": [
-        "src/index.ts"
-      ],
       "*": [
         "src/*"
       ]

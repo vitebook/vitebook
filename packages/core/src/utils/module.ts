@@ -3,9 +3,9 @@ import LRUCache from 'lru-cache';
 import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 
+import { isObject } from '../shared/index.js';
 import { fs } from './fs.js';
 import { path } from './path.js';
-import { isObject } from './unit.js';
 
 /**
  * Check if a given module is an esm module with a default export.

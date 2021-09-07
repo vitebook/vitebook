@@ -1,12 +1,11 @@
 import { mergeConfig } from 'vite';
 
+import { isObject, SiteOptions } from '../../shared/index.js';
 import { logger } from '../../utils/logger.js';
-import { isObject } from '../../utils/unit.js';
 import type { App, AppEnv } from '../App.js';
 import type { AppConfig } from '../AppOptions.js';
 import type { ClientPlugin } from '../plugin/ClientPlugin.js';
 import type { FilteredPlugins } from '../plugin/Plugin.js';
-import type { SiteOptions } from '../site/SiteOptions.js';
 import { build } from '../vite/build.js';
 import { createServer } from '../vite/dev/createServer.js';
 import { serve } from '../vite/serve.js';

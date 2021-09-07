@@ -1,8 +1,7 @@
-import type { SiteOptions } from '@vitebook/core';
+import { resolveLocalePath, SiteOptions } from '@vitebook/core/shared';
 import { computed, ComputedRef, watch } from 'vue';
 import { Router } from 'vue-router';
 
-import { resolveLocalePath } from '../helpers/resolveLocalePath';
 import { useSiteOptions } from './useSiteOptions';
 
 export type RouteLocaleRef = ComputedRef<string>;

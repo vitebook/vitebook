@@ -33,9 +33,6 @@
   },
   "typesVersions": {
     "*": {
-      "index.d.ts": [
-        "src/index.ts"
-      ],
       "client": [
         "src/client/index.ts"
       ],

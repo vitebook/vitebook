@@ -1,15 +1,11 @@
 import type { AppConfig } from './app/AppOptions.js';
-import type { ThemeConfig } from './app/site/Theme.js';
+import type { ThemeConfig } from './shared/index.js';
 
 export * from './app/App.js';
 export * from './app/AppOptions.js';
 export * from './app/plugin/ClientPlugin.js';
 export * from './app/plugin/Plugin.js';
-export * from './app/site/HeadConfig.js';
-export * from './app/site/LocaleConfig.js';
-export * from './app/site/Page.js';
-export * from './app/site/SiteOptions.js';
-export * from './app/site/Theme.js';
+export * from './shared/index.js';
 
 export function defineConfig<Theme extends ThemeConfig = ThemeConfig>(
   config: AppConfig<Theme>

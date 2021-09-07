@@ -3,7 +3,7 @@ import { VM_PREFIX } from '@vitebook/core';
 import {
   prettyJsonStr,
   stripImportQuotesFromJson
-} from '@vitebook/core/utils/json.js';
+} from '@vitebook/core/shared/index.js';
 
 import type { ServerStoryPage } from './page.js';
 

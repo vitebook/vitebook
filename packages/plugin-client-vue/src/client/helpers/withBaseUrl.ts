@@ -1,4 +1,4 @@
-import { EXTERNAL_URL_REGEX } from '@vitebook/core/utils/url';
+import { EXTERNAL_URL_RE } from '@vitebook/core';
 
 import { useSiteOptions } from '../composables/useSiteOptions';
 
@@ -10,7 +10,7 @@ export function joinPath(base: string, path: string): string {
 export function withBaseUrl(path: string): string {
   const siteConfig = useSiteOptions();
 
-  return EXTERNAL_URL_REGEX.test(path)
+  return EXTERNAL_URL_RE.test(path)
     ? path
     : joinPath(siteConfig.value.baseUrl, path);
 }

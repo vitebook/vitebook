@@ -1,4 +1,4 @@
-import { prettyJsonStr } from '@vitebook/core/utils/json.js';
+import { prettyJsonStr } from '@vitebook/core/shared/index.js';
 import matter from 'gray-matter';
 import LRUCache from 'lru-cache';
 import toml from 'toml';

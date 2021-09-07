@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { isLinkExternal } from '@vitebook/core/utils/url.js';
+import { isLinkExternal } from '@vitebook/core/shared/index.js';
 import type { PluginWithOptions } from 'markdown-it';
 
 import type { MarkdownParserEnv } from '../types.js';

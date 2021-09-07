@@ -32,8 +32,11 @@
   },
   "typesVersions": {
     "*": {
-      "index.d.ts": [
-        "dist/index.d.ts"
+      "shared": [
+        "dist/shared/index.d.ts"
+      ],
+      "utils/*": [
+        "dist/utils/*"
       ],
       "*": [
         "dist/*"

@@ -1,12 +1,16 @@
 import kleur from 'kleur';
 
+import type { ServerPage } from '../../shared/index.js';
+import {
+  ensureLeadingSlash,
+  prettyJsonStr,
+  stripImportQuotesFromJson
+} from '../../shared/index.js';
 import { globby, readRecentlyChangedFile } from '../../utils/fs.js';
-import { prettyJsonStr, stripImportQuotesFromJson } from '../../utils/json.js';
 import { logger } from '../../utils/logger.js';
-import { ensureLeadingSlash, path } from '../../utils/path.js';
+import { path } from '../../utils/path.js';
 import type { App } from '../App.js';
 import type { Plugin } from '../plugin/Plugin.js';
-import type { ServerPage } from '../site/Page.js';
 
 const resolvedPages = new Map<string, ServerPage>();
 const unresolvedPages = new Set<string>();

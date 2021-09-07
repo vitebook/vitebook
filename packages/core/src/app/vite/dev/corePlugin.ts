@@ -6,7 +6,7 @@ import {
   ViteDevServer
 } from 'vite';
 
-import { prettyJsonStr } from '../../../utils/json.js';
+import { prettyJsonStr } from '../../../shared/index.js';
 import { logger } from '../../../utils/logger.js';
 import { resolveRelativePath } from '../../../utils/path.js';
 import type { App } from '../../App.js';
