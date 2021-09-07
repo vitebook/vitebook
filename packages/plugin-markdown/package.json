@@ -40,6 +40,7 @@
     "src/"
   ],
   "dependencies": {
+    "@rollup/pluginutils": "^4.1.1",
     "@types/lru-cache": "^5.1.1",
     "@types/markdown-it": "^12.2.1",
     "gray-matter": "^4.0.3",

@@ -3,30 +3,28 @@ import type { AppConfig, AppOptions } from '../AppOptions.js';
 
 export const createAppOptions = ({
   cliArgs = { command: 'serve', '--': [] },
-  cwd = process.cwd(),
-  configDir = path.resolve(cwd, '.vitebook'),
-  srcDir = path.resolve(cwd, 'src'),
+  root = process.cwd(),
+  configDir = path.resolve(root, '.vitebook'),
   outDir = path.resolve(configDir, 'dist'),
   tmpDir = path.resolve(configDir, '.temp'),
   cacheDir = path.resolve(configDir, '.cache'),
   publicDir = path.resolve(configDir, 'public'),
   vite = {},
   debug = false,
-  pages = ['!.vitebook', '!node_modules'],
+  include = ['!.vitebook', '!node_modules'],
   plugins = []
 }: AppConfig): AppOptions => {
-  const _cwd = resolveRelativePath(process.cwd(), cwd);
-  const _configDir = resolveRelativePath(_cwd, configDir);
+  const _root = resolveRelativePath(process.cwd(), root);
+  const _configDir = resolveRelativePath(_root, configDir);
   const _cacheDir = resolveRelativePath(_configDir, cacheDir);
   const _publicDir = resolveRelativePath(_configDir, publicDir);
 
   return {
     cliArgs,
-    cwd: _cwd,
     site: {},
     debug,
     configDir: _configDir,
-    srcDir: resolveRelativePath(_cwd, srcDir),
+    root: _root,
     outDir: resolveRelativePath(_configDir, outDir),
     tmpDir: resolveRelativePath(_configDir, tmpDir),
     cacheDir: _cacheDir,
@@ -36,7 +34,7 @@ export const createAppOptions = ({
       cacheDir: vite.cacheDir ?? _cacheDir,
       publicDir: vite.publicDir ?? _publicDir
     },
-    pages,
+    include,
     plugins
   };
 };

@@ -17,11 +17,7 @@ program.help();
 
 // Dev
 program
-  .command('dev [srcDir]', 'Start development server')
-  .option(
-    '--cwd <cwd>',
-    '[string] Set path to current working directory (default: .)'
-  )
+  .command('dev [root]', 'Start development server')
   .option('--base <baseUrl>', '[string] Set public base path (default: /)')
   .option(
     '--publicDir <publicDir>',
@@ -36,8 +32,8 @@ program
     '[string] Set path to config directory (default: .vitebook)'
   )
   .option(
-    '--pages <globs>',
-    '[string] Specify globs to filter pages included relative to <srcDir> (example: "**/*.md,**/*.stories.ts")'
+    '--include <globs>',
+    '[string] Specify globs to filter files to be included (example: "**/*.md,**/*.vue")'
   )
   .option('--https', '[boolean] Use TLS + HTTP/2')
   .option('--host <host>', '[string] Use specified host (default: 0.0.0.0)')
@@ -48,10 +44,10 @@ program
   .option('-d, --debug', '[boolean] Enable debug mode')
   .option('--clearScreen', '[boolean] Allow/disable clear screen when logging')
   .option('-m, --mode', '[string] Set env mode')
-  .action(function runDevCommand(srcDir, options) {
-    options.srcDir = srcDir;
+  .action(function runDevCommand(root, options) {
+    options.root = root;
     options.baseUrl = options.base;
-    options.pages = options.page?.split(',');
+    options.include = options.include?.split(',');
     options.configDir = options.configDir ?? options.c;
     options.port = options.port ?? options.p;
     options.debug = options.debug ?? options.d;
@@ -67,12 +63,8 @@ program
 
 // Build
 program
-  .command('build [srcDir]', 'Build to static site')
+  .command('build [root]', 'Build to static site')
   .option('--target <target>', '[string] Transpile target (default: "modules")')
-  .option(
-    '--cwd <cwd>',
-    '[string] Set path to current working directory (default: .)'
-  )
   .option('--base <baseUrl>', '[string] Set public base path (default: /)')
   .option(
     '--publicDir <publicDir>',
@@ -100,8 +92,8 @@ program
     '[number] Static asset `base64` inline threshold in bytes (default: 4096)'
   )
   .option(
-    '--pages <globs>',
-    '[string] Specify globs to filter pages included relative to <srcDir> (example: "**/*.md,**/*.stories.ts")'
+    '--include <globs>',
+    '[string] Specify globs to filter files to be included (example: "**/*.md,**/*.vue")'
   )
   .option(
     '--sourcemap',
@@ -114,10 +106,10 @@ program
   .option('-m, --mode', '[string] Set env mode')
   .option('-w, --watch', '[boolean] Rebuilds when modules have changed on disk')
   .option('-d, --debug', '[boolean] Enable debug mode')
-  .action(function runBuildCommand(srcDir, options) {
-    options.srcDir = srcDir;
+  .action(function runBuildCommand(root, options) {
+    options.root = root;
     options.baseUrl = options.base;
-    options.pages = options.page?.split(',');
+    options.include = options.include?.split(',');
     options.configDir = options.configDir ?? options.c;
     options.watch = options.watch ?? options.w;
     options.mode = options.mode ?? options.m;
@@ -136,10 +128,6 @@ program
   .command('serve [root]', 'Serve production build')
   .option('--base <baseUrl>', '[string] Set public base path (default: /)')
   .option(
-    '--cwd <cwd>',
-    '[string] Set path to current working directory (default: .)'
-  )
-  .option(
     '-c, --configDir <configDir>',
     '[string] Set path to config directory (default: .vitebook)'
   )
@@ -152,8 +140,8 @@ program
   .option('-m, --mode', '[string] Set env mode')
   .option('-d, --debug', '[boolean] Enable debug mode')
   .action(function runServeCommand(root, options) {
+    options.root = root;
     options.baseUrl = options.base;
-    options.pages = options.page?.split(',');
     options.configDir = options.configDir ?? options.c;
     options.port = options.port ?? options.p;
     options.mode = options.mode ?? options.m;

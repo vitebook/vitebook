@@ -7,7 +7,7 @@ import {
 } from '@vitebook/plugin-markdown';
 import LRUCache from 'lru-cache';
 
-import type { MarkdownVueParserEnv } from './types.js';
+import type { VueMarkdownParserEnv } from './types.js';
 
 export type ParseMarkdownToVueOptions = ParseMarkdownOptions;
 
@@ -35,7 +35,7 @@ export function parseMarkdownToVue(
     ...options
   });
 
-  const { hoistedTags } = parserEnv as MarkdownVueParserEnv;
+  const { hoistedTags } = parserEnv as VueMarkdownParserEnv;
 
   const component =
     buildDataExport(hoistedTags ?? [], data).join('\n') +

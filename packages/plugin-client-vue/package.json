@@ -1,5 +1,5 @@
 {
-  "name": "@vitebook/client-vue",
+  "name": "@vitebook/plugin-client-vue",
   "version": "0.0.0",
   "keywords": [
     "client",
@@ -16,7 +16,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/vitebook/vitebook.git",
-    "directory": "packages/client-vue"
+    "directory": "packages/plugin-client-vue"
   },
   "license": "MIT",
   "contributors": [
@@ -27,12 +27,20 @@
   "exports": {
     ".": "./src/index.ts",
     "./*": "./src/*",
+    "./client": "./src/client/index.ts",
+    "./client/*": "./src/client/*",
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
       "index.d.ts": [
         "src/index.ts"
+      ],
+      "client": [
+        "src/client/index.ts"
+      ],
+      "client/*": [
+        "src/client/*"
       ],
       "*": [
         "src/*"
@@ -42,6 +50,13 @@
   "files": [
     "src/"
   ],
+  "dependencies": {
+    "@rollup/pluginutils": "^4.1.1",
+    "@vitejs/plugin-vue": "^1.6.1",
+    "quicklink": "^2.2.0",
+    "vue": "^3.2.6",
+    "vue-router": "^4.0.11"
+  },
   "publishConfig": {
     "access": "public"
   }

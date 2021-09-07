@@ -32,7 +32,6 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
       const config: ViteConfig = {
         resolve: {
           alias: {
-            '@src': app.dirs.src.path,
             '@config': app.dirs.config.path,
             '@theme': app.dirs.theme.path
           }
@@ -74,6 +73,10 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
         return { id: app.client.entry.client };
       }
 
+      if (id === virtualModuleId.themeEntry) {
+        return { id: app.themePath };
+      }
+
       if (virtualModules.has(id)) {
         return id;
       }
@@ -85,7 +88,7 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
         return `export default function() {};`;
       }
 
-      if (id === virtualModuleId.siteData) {
+      if (id === virtualModuleId.siteOptions) {
         return `export default ${prettyJsonStr(app.site.options)};`;
       }
 
@@ -112,7 +115,7 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
         await resolveNewSiteData(app);
         return [
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          server.moduleGraph.getModuleById(virtualModuleId.siteData)!
+          server.moduleGraph.getModuleById(virtualModuleId.siteOptions)!
         ];
       }
 
@@ -122,8 +125,8 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
 }
 
 function startWatchingPages(app: App, server: ViteDevServer) {
-  const watcher = watch(app.options.pages, {
-    cwd: app.dirs.src.path,
+  const watcher = watch(app.options.include, {
+    cwd: app.dirs.root.path,
     ignoreInitial: true
   });
 

@@ -39,6 +39,9 @@
   "files": [
     "src/"
   ],
+  "dependencies": {
+    "@rollup/pluginutils": "^4.1.1"
+  },
   "publishConfig": {
     "access": "public"
   }

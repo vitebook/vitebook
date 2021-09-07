@@ -12,18 +12,18 @@ export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
   cliArgs: CLIArgs;
 
   /**
-   * The current working directory. The value can be either an absolute file system path
-   * or a path relative to `process.cwd()`.
+   * Path to project root directory. The path can be absolute or relative to the current working
+   * directory `process.cwd()`.
    *
    * @default process.cwd()
    */
-  cwd: string;
+  root: string;
 
   /**
    * The Vitebook config directory. The value can be either an absolute file system path
-   * or a path relative to `<cwd>`.
+   * or a path relative to `<root>`.
    *
-   * @default '<cwd>/.vitebook'
+   * @default '<root>/.vitebook'
    */
   configDir: string;
 
@@ -37,14 +37,6 @@ export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
   publicDir: string;
 
   /**
-   * Path to directory where source code lives. The path can be absolute or relative to the
-   * current working directory current working directory (`cwd`).
-   *
-   * @default '<cwd>/src'
-   */
-  srcDir: string;
-
-  /**
    * The build output directory. The value can be either an absolute file system path or a path
    * relative to `<configDir>`.
    *
@@ -53,11 +45,11 @@ export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
   outDir: string;
 
   /**
-   * Globs pointing to page files to be included in Vitebook. These are relative to the `<srcDir>`.
+   * Globs pointing to files to be included in Vitebook (relative to `<root>`).
    *
-   * @default ['!.vitebook', '!node_modules']
+   * @default []
    */
-  pages: string[];
+  include: string[];
 
   /**
    * Site-wide options for setting the base language, document title, description, locales, etc.

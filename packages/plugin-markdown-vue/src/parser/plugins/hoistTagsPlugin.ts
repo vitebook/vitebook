@@ -1,6 +1,6 @@
 import type { PluginWithOptions } from 'markdown-it';
 
-import type { MarkdownVueParserEnv } from '../types.js';
+import type { VueMarkdownParserEnv } from '../types.js';
 
 export type HoistTagsPluginOptions = {
   /** Custom blocks to be hoisted. */
@@ -29,7 +29,7 @@ export const hoistTagsPlugin: PluginWithOptions<HoistTagsPluginOptions> = (
     tokens,
     idx,
     options,
-    env: MarkdownVueParserEnv,
+    env: VueMarkdownParserEnv,
     self
   ) => {
     const content = tokens[idx].content;

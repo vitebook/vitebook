@@ -37,7 +37,7 @@ export type Plugin = VitePlugin & {
   ) => void | Promise<void>;
 
   /**
-   * Server-side Vitebook will resolve the `pages` glob array the user has provided which will
+   * Server-side Vitebook will resolve the `include` glob array the user has provided which will
    * return a list of file paths that are possible pages. The file paths will be resolved to pages
    * via this hook.
    *
@@ -76,6 +76,8 @@ export type ResolvePageContext = {
   id: string;
   /** Absolute system file path of page file. */
   filePath: string;
+  /** Safely read file content (avoid empty buffer issues). */
+  read: () => Promise<string>;
   /**
    * Page client-side route inferred from file path such as `/pages/page.html`. Can be overwritten
    * by plugin.

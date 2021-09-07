@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "module": "es2020",
+    "paths": {
+      "@virtual/vitebook/core/site": ["./src/virtual/site.d.ts"],
+      "@virtual/vitebook/core/theme": ["./src/virtual/theme.d.ts"],
+      "@virtual/vitebook/core/pages": ["./src/virtual/pages.d.ts"],
+      "@virtual/vitebook/plugin-story/addons": [
+        "./src/virtual/story-addons.d.ts"
+      ]
+    }
+  },
+  "include": ["src"]
+}

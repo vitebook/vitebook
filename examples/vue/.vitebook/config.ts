@@ -1,7 +1,22 @@
 import { defineConfig } from '@vitebook/core';
-import { markdownVuePlugin } from '@vitebook/plugin-markdown-vue';
+import { vueClientPlugin } from '@vitebook/plugin-client-vue';
+import { vueMarkdownPlugin } from '@vitebook/plugin-markdown-vue';
+import { storyPlugin } from '@vitebook/plugin-story';
 
 export default defineConfig({
-  pages: ['**/*.md'],
-  plugins: [markdownVuePlugin()]
+  include: ['src/**/*.{md,vue}'],
+  plugins: [
+    vueMarkdownPlugin({
+      pages: /.md$/
+    }),
+    storyPlugin({
+      pages: /\.(story\.)?vue$/
+    }),
+    vueClientPlugin({
+      // pages: /\.vue$/,
+      vue: {
+        include: [/\.vue$/, /\.md$/]
+      }
+    })
+  ]
 });

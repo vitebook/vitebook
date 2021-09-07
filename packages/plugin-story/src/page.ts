@@ -11,7 +11,7 @@ export type StoryPage<Component = unknown> = Page<
 export type StoryPageModule<Component = unknown> = {
   default: Component | StoryConfig<Component>;
   story?: StoryConfig<Component>;
-} & Record<string, StoryConfig<Component> | undefined>;
+};
 
 export type ServerStoryPage = ServerPage & {
   type: 'story';

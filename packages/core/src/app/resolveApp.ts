@@ -15,12 +15,11 @@ export async function resolveApp(
     {
       ...config,
       cliArgs: args,
-      cwd: args.cwd ?? config.cwd,
-      srcDir: args.srcDir ?? config.srcDir,
+      root: args.root ?? config.root,
       publicDir: args.publicDir ?? config.publicDir,
       cacheDir: args.cacheDir ?? config.cacheDir,
       configDir: args.configDir ?? config.configDir,
-      pages: args.pages ?? config.pages,
+      include: args.include ?? config.include,
       debug: args.debug ?? config.debug,
       ...{
         site: {
@@ -70,8 +69,8 @@ export async function resolveApp(
 }
 
 export async function resolveUserAppConfig(args: CLIArgs): Promise<AppConfig> {
-  const cwd = resolveRelativePath(process.cwd(), args.cwd ?? '');
-  const configDir = resolveRelativePath(cwd, args.configDir ?? '.vitebook');
+  const root = resolveRelativePath(process.cwd(), args.root ?? '');
+  const configDir = resolveRelativePath(root, args.configDir ?? '.vitebook');
   const configPath = resolveConfigPath(configDir);
   return configPath
     ? (await loadModule<{ default: AppConfig }>(configPath)).default ?? {}

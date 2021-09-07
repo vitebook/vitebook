@@ -1,6 +1,6 @@
 import type { HeadConfig } from '../site/HeadConfig.js';
 
-export type VitebookSSRContext = {
+export type VitebookSsrContext = {
   lang: string;
   head: HeadConfig[];
 };

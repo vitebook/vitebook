@@ -33,8 +33,7 @@ export const formatErrorMsg = (message: string): string =>
   LoggerColor.Error(`${LoggerIcon.Error} ${message}`);
 
 export const createError = (message?: string | undefined): Error => {
-  console.error(message ? formatErrorMsg(message) : '');
-  return new Error(message);
+  return new Error(formatErrorMsg(message ?? ''));
 };
 
 export const withSpinner =

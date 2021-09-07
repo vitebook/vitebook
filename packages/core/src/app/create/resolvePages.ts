@@ -1,6 +1,6 @@
 import kleur from 'kleur';
 
-import { globby } from '../../utils/fs.js';
+import { globby, readRecentlyChangedFile } from '../../utils/fs.js';
 import { prettyJsonStr, stripImportQuotesFromJson } from '../../utils/json.js';
 import { logger } from '../../utils/logger.js';
 import { ensureLeadingSlash, path } from '../../utils/path.js';
@@ -13,9 +13,9 @@ const unresolvedPages = new Set<string>();
 const pageResolvedBy = new Map<string, Plugin>();
 
 export function resolvePageFilePaths(app: App): string[] {
-  return globby.sync(app.options.pages, {
+  return globby.sync(app.options.include, {
     absolute: true,
-    cwd: app.dirs.src.path
+    cwd: app.dirs.root.path
   });
 }
 
@@ -64,13 +64,14 @@ async function resolvePage(app: App, filePath: string): Promise<void> {
   for (let i = 0; i < app.plugins.length; i += 1) {
     const plugin = app.plugins[i];
 
-    const id = ensureLeadingSlash(path.relative(app.dirs.src.path, filePath));
+    const id = ensureLeadingSlash(path.relative(app.dirs.root.path, filePath));
     const route = filePathToRoute(app, filePath);
 
     const page = await plugin.resolvePage?.({
       id,
       filePath,
       route,
+      read: () => readRecentlyChangedFile(filePath),
       env: app.env
     });
 
@@ -108,9 +109,9 @@ function pageCouldNotBeResolved(app: App, filePath: string) {
   logger.warn(
     logger.formatWarnMsg(
       `No plugin could resolve page: ${kleur.bold(
-        path.basename(app.dirs.src.path) +
+        path.basename(app.dirs.root.path) +
           '/' +
-          path.relative(app.dirs.src.path, filePath)
+          path.relative(app.dirs.root.path, filePath)
       )}`
     )
   );
@@ -122,7 +123,7 @@ function pageCouldNotBeResolved(app: App, filePath: string) {
 const rControl = /[\u0000-\u001f]/g;
 const rCombining = /[\u0300-\u036F]/g;
 export function filePathToRoute(app: App, filePath: string): string {
-  const relativePath = path.relative(app.dirs.src.path, filePath);
+  const relativePath = path.relative(app.dirs.root.path, filePath);
   return ensureLeadingSlash(relativePath)
     .normalize('NFKD')
     .replace(rCombining, '')

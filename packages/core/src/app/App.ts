@@ -13,6 +13,7 @@ export type App = {
   [x: string]: unknown;
   version: string;
   configPath?: string;
+  themePath: string;
   dirs: AppDirs;
   env: AppEnv;
   client: ClientPlugin;
@@ -24,16 +25,15 @@ export type App = {
   disposal: DisposalBin;
   dev: () => Promise<ViteDevServer>;
   build: () => Promise<void>;
-  serve: (root: string) => Promise<void>;
+  serve: () => Promise<void>;
   close: () => Promise<void>;
 };
 
 export type AppDirs = {
+  root: AppDirUtils;
   cache: AppDirUtils;
   config: AppDirUtils;
-  cwd: AppDirUtils;
   tmp: AppDirUtils;
-  src: AppDirUtils;
   out: AppDirUtils;
   public: AppDirUtils;
   theme: AppDirUtils;

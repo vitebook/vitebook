@@ -1,5 +1,6 @@
 import { mergeConfig } from 'vite';
 
+import { logger } from '../../utils/logger.js';
 import { isObject } from '../../utils/unit.js';
 import type { App, AppEnv } from '../App.js';
 import type { AppConfig } from '../AppOptions.js';
@@ -16,6 +17,7 @@ import { createSiteOptions } from './createSiteOptions.js';
 import { DisposalBin } from './DisposalBin.js';
 import { getAppVersion } from './getAppVersion.js';
 import { resolveConfigPath } from './resolveConfigPath.js';
+import { resolveThemePath } from './resolveThemePath.js';
 
 export const createApp = async (
   config: AppConfig,
@@ -37,15 +39,15 @@ export const createApp = async (
 
   const client = options.plugins
     .flat()
-    .find((plugin) => plugin && 'entry' in plugin);
+    .find((plugin) => plugin && 'entry' in plugin) as ClientPlugin;
 
-  // TODO: re-enable && add docs link in msg later when available.
-  // if (!client) {
-  //   throw logger.createError('No client plugin was found.');
-  // }
+  if (!client) {
+    throw logger.createError('No client plugin was found.');
+  }
+
+  const themePath = resolveThemePath(dirs.theme.path) ?? client.entry.theme;
 
   const plugins = [
-    client,
     ...options.plugins.flat(),
     ...(options.vite.plugins ?? []).flat()
   ].filter((plugin) => !!plugin) as FilteredPlugins;
@@ -54,17 +56,18 @@ export const createApp = async (
     version,
     options,
     configPath,
+    themePath,
     env,
     dirs,
     site,
     plugins,
     pages: [],
     context: {},
-    client: client as ClientPlugin,
+    client,
     disposal: new DisposalBin(),
     dev: () => createServer(app),
     build: () => build(app),
-    serve: (root) => serve(app, root),
+    serve: () => serve(app),
     close: () => app.disposal.empty()
   };
 

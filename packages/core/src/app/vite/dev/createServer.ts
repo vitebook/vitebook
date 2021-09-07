@@ -12,7 +12,7 @@ export async function createServer(
   config?: ViteConfig
 ): Promise<ViteDevServer> {
   return createDevServer({
-    root: app.dirs.src.path,
+    root: app.dirs.root.path,
     base: app.site.options.baseUrl,
     clearScreen: false,
     ...app.options.vite,

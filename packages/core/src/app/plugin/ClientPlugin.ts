@@ -11,5 +11,7 @@ export type ClientPlugin = Plugin & {
   entry: {
     client: string;
     server: string;
+    /** Default theme entry. */
+    theme: string;
   };
 };

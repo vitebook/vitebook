@@ -1,4 +1,5 @@
-import type { Plugins } from '@vitebook/core';
+import { createFilter, FilterPattern } from '@rollup/pluginutils';
+import type { Plugin } from '@vitebook/core';
 
 import {
   loadAddonsVirtualModule,
@@ -12,18 +13,18 @@ export const PLUGIN_NAME = 'vitebook/plugin-story' as const;
 
 export type StoryPluginOptions = {
   /**
-   * Filter out which pages to be included as story pages.
+   * Filter out which files to be included as story pages.
    *
    * @default /\.story\.(mjs|js|ts|tsx|vue|svelte)$/
    */
-  include?: RegExp;
+  pages?: FilterPattern;
 
   /**
-   * Filter out which pages should _not_ be included as story pages.
+   * Filter out which files to _not_ be included as story pages.
    *
-   * @default /$^/ - matches nothing.
+   * @default undefined
    */
-  exclude?: RegExp;
+  pagesExclude?: FilterPattern;
 
   /**
    * Story addon plugins.
@@ -31,12 +32,11 @@ export type StoryPluginOptions = {
   addons?: StoryAddons;
 };
 
-const defaultIncludeRE = /\.story\.(mjs|js|ts|tsx|vue|svelte)$/;
-const defaultExcludeRE = /$^/;
+const defaultPagesRE = /\.story\.(mjs|js|ts|tsx|vue|svelte)$/;
 
-export function storyPlugin(options: StoryPluginOptions = {}): Plugins {
-  const includeRE = options.include ?? defaultIncludeRE;
-  const excludeRE = options.exclude ?? defaultExcludeRE;
+export function storyPlugin(options: StoryPluginOptions = {}): Plugin[] {
+  const pagesRE = options.pages ?? defaultPagesRE;
+  const pagesFilter = createFilter(pagesRE, options.pagesExclude);
 
   const filteredAddons = (options.addons ?? [])
     .flat()
@@ -47,7 +47,7 @@ export function storyPlugin(options: StoryPluginOptions = {}): Plugins {
       name: PLUGIN_NAME,
       enforce: 'pre',
       async resolvePage(page): Promise<ResolvedStoryPage | void> {
-        if (includeRE.test(page.filePath) && !excludeRE.test(page.filePath)) {
+        if (pagesFilter(page.filePath)) {
           return {
             type: 'story'
           };
@@ -75,11 +75,15 @@ export function storyPlugin(options: StoryPluginOptions = {}): Plugins {
         if (id === VIRTUAL_ADDONS_MODULE_ID) {
           return id;
         }
+
+        return null;
       },
       load(id) {
         if (id === VIRTUAL_ADDONS_MODULE_ID) {
           return loadAddonsVirtualModule(filteredAddons);
         }
+
+        return null;
       }
     },
     ...filteredAddons

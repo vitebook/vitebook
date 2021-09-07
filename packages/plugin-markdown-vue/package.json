@@ -41,11 +41,10 @@
     "src/"
   ],
   "dependencies": {
+    "@rollup/pluginutils": "^4.1.1",
     "@vitebook/plugin-markdown": "*"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^1.6.0",
-    "@vue/compiler-sfc": "^3.2.9",
     "vue": "^3.2.1"
   },
   "peerDependencies": {

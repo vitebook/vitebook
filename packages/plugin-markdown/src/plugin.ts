@@ -1,3 +1,4 @@
+import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import type { Plugin } from '@vitebook/core';
 
 import type { ResolvedMarkdownPage } from './page.js';
@@ -11,10 +12,31 @@ import {
 
 export const PLUGIN_NAME = 'vitebook/plugin-markdown' as const;
 
-export type MarkdownPluginOptions = MarkdownParserOptions;
+export type MarkdownPluginOptions = MarkdownParserOptions & {
+  /**
+   * Filter out which files to be included as markdown pages.
+   *
+   * @default /\.md$/
+   */
+  pages?: FilterPattern;
+
+  /**
+   * Filter out which files to _not_ be included as markdown pages.
+   *
+   * @default undefined
+   */
+  pagesExclude?: FilterPattern;
+};
+
+const defaultPagesRE = /\.md$/;
 
 export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
   let parser: MarkdownParser;
+
+  const { pages: userPagesRE, pagesExclude, ...parserOptions } = options;
+
+  const pages = userPagesRE ?? defaultPagesRE;
+  const pagesFilter = createFilter(pages, pagesExclude);
 
   /** Page system file paths. */
   const files = new Set<string>();
@@ -23,10 +45,10 @@ export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
     name: PLUGIN_NAME,
     enforce: 'pre',
     async configureApp() {
-      parser = await createMarkdownParser(options);
+      parser = await createMarkdownParser(parserOptions);
     },
     async resolvePage({ filePath }): Promise<ResolvedMarkdownPage | void> {
-      if (filePath.endsWith('.md')) {
+      if (pagesFilter(filePath)) {
         files.add(filePath);
         return {
           type: 'md'

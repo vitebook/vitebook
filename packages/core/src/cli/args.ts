@@ -1,13 +1,13 @@
 export type DevCommandArgs = {
   '--': string[];
   command: string;
-  cwd?: string;
-  srcDir?: string;
+  root?: string;
   baseUrl?: string;
   publicDir?: string;
   cacheDir?: string;
   configDir?: string;
-  pages?: string[];
+  include?: string[];
+  exclude?: string[];
   https?: boolean;
   host?: string;
   port?: number;
@@ -24,8 +24,7 @@ export type BuildCommandArgs = {
   command: string;
   target?: string;
   ssr?: boolean;
-  cwd?: string;
-  srcDir?: string;
+  root?: string;
   baseUrl?: string;
   publicDir?: string;
   cacheDir?: string;
@@ -34,7 +33,8 @@ export type BuildCommandArgs = {
   emptyOutDir?: boolean;
   assetsDir?: string;
   assetsInlineLimit?: number;
-  pages?: string[];
+  include?: string[];
+  exclude?: string[];
   sourcemap?: boolean;
   minify?: boolean | 'terser' | 'esbuild';
   mode?: string;
@@ -47,7 +47,6 @@ export type ServeCommandArgs = {
   command: string;
   root?: string;
   baseUrl?: string;
-  cwd?: string;
   configDir?: string;
   https?: boolean;
   host?: string;
