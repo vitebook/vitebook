@@ -1,4 +1,5 @@
 import type { AppConfig } from './app/AppOptions.js';
+import type { ThemeConfig } from './app/site/Theme.js';
 
 export * from './app/App.js';
 export * from './app/AppOptions.js';
@@ -10,7 +11,9 @@ export * from './app/site/Page.js';
 export * from './app/site/SiteOptions.js';
 export * from './app/site/Theme.js';
 
-export function defineConfig(config: AppConfig): AppConfig {
+export function defineConfig<Theme extends ThemeConfig = ThemeConfig>(
+  config: AppConfig<Theme>
+): AppConfig<Theme> {
   return config;
 }
 

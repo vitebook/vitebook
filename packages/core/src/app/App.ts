@@ -31,6 +31,7 @@ export type App = {
 
 export type AppDirs = {
   root: AppDirUtils;
+  src: AppDirUtils;
   cache: AppDirUtils;
   config: AppDirUtils;
   tmp: AppDirUtils;

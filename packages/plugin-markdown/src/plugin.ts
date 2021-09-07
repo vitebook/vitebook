@@ -65,8 +65,6 @@ export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
         const result = parseMarkdown(parser, source, id);
         return loadParsedMarkdown(result);
       }
-
-      return null;
     }
   };
 }

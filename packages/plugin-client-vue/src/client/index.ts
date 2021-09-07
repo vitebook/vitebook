@@ -1,1 +1,12 @@
-// EXPORT COMPOSABLES + ROUTER + THEME
+export * from '../theme';
+export { default as ClientOnly } from './components/ClientOnly';
+export { default as Page } from './components/Page.vue';
+// export * from './composables/usePage';
+// export * from './composables/usePageHead';
+export * from './composables/usePages';
+export * from './composables/usePrefetch';
+// export * from './composables/useRouteLocale';
+export * from './composables/useSiteOptions';
+// export * from './composables/useStoryAddons';
+export * from './composables/useTheme';
+export * from './helpers/withBaseUrl';

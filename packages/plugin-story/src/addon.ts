@@ -71,6 +71,9 @@ export type StoryAddons = (StoryAddonOption | StoryAddonOption[])[];
 export const VIRTUAL_ADDONS_MODULE_ID =
   `${VM_PREFIX}/vitebook/plugin-story/addons` as const;
 
+export const VIRTUAL_ADDONS_MODULE_REQUEST_PATH =
+  `/${VIRTUAL_ADDONS_MODULE_ID}` as const;
+
 export type StoryAddonModule<Component = unknown> = {
   default: StoryAddon<Component>;
 };

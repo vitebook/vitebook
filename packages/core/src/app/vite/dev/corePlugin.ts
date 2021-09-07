@@ -8,13 +8,14 @@ import {
 
 import { prettyJsonStr } from '../../../utils/json.js';
 import { logger } from '../../../utils/logger.js';
+import { resolveRelativePath } from '../../../utils/path.js';
 import type { App } from '../../App.js';
 import {
   loadPagesVirtualModule,
   resolvePages
 } from '../../create/resolvePages.js';
 import { resolveApp } from '../../resolveApp.js';
-import { virtualModuleId } from './alias.js';
+import { virtualModuleId, virtualModuleRequestPath } from './alias.js';
 import {
   indexHtmlMiddleware,
   resolveIndexHtmlFilePath
@@ -23,7 +24,9 @@ import {
 export async function corePlugin(app: App): Promise<VitePlugin> {
   let server: ViteDevServer;
 
-  const virtualModules = new Set<string>(Object.values(virtualModuleId));
+  const virtualModuleRequestPaths = new Set<string>(
+    Object.values(virtualModuleRequestPath)
+  );
 
   return {
     name: 'vitebook/core',
@@ -33,7 +36,12 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
         resolve: {
           alias: {
             '@config': app.dirs.config.path,
-            '@theme': app.dirs.theme.path
+            '@theme': app.dirs.theme.path,
+            [virtualModuleId.noop]: virtualModuleRequestPath.noop,
+            [virtualModuleId.siteOptions]: virtualModuleRequestPath.siteOptions,
+            [virtualModuleId.themeEntry]: virtualModuleRequestPath.themeEntry,
+            [virtualModuleId.clientEntry]: virtualModuleRequestPath.clientEntry,
+            [virtualModuleId.pages]: virtualModuleRequestPath.pages
           }
         },
         build: {
@@ -69,30 +77,30 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
       };
     },
     resolveId(id) {
-      if (id === virtualModuleId.clientEntry) {
+      if (id === virtualModuleRequestPath.clientEntry) {
         return { id: app.client.entry.client };
       }
 
-      if (id === virtualModuleId.themeEntry) {
+      if (id === virtualModuleRequestPath.themeEntry) {
         return { id: app.themePath };
       }
 
-      if (virtualModules.has(id)) {
+      if (virtualModuleRequestPaths.has(id)) {
         return id;
       }
 
       return null;
     },
     load(id) {
-      if (id === virtualModuleId.noop) {
+      if (id === virtualModuleRequestPath.noop) {
         return `export default function() {};`;
       }
 
-      if (id === virtualModuleId.siteOptions) {
+      if (id === virtualModuleRequestPath.siteOptions) {
         return `export default ${prettyJsonStr(app.site.options)};`;
       }
 
-      if (id === virtualModuleId.pages) {
+      if (id === virtualModuleRequestPath.pages) {
         return loadPagesVirtualModule(app);
       }
 
@@ -115,7 +123,9 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
         await resolveNewSiteData(app);
         return [
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          server.moduleGraph.getModuleById(virtualModuleId.siteOptions)!
+          server.moduleGraph.getModuleById(
+            virtualModuleRequestPath.siteOptions
+          )!
         ];
       }
 
@@ -134,11 +144,11 @@ function startWatchingPages(app: App, server: ViteDevServer) {
     filePath: string,
     action: 'add' | 'change' | 'unlink'
   ): Promise<void> {
-    await resolvePages(app, action, [filePath]);
-    server.moduleGraph.invalidateModule(
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      server.moduleGraph.getModuleById(virtualModuleId.pages)!
-    );
+    const absPath = resolveRelativePath(app.dirs.root.path, filePath);
+    await resolvePages(app, action, [absPath]);
+    if (action !== 'change') {
+      server.watcher.emit('change', virtualModuleRequestPath.pages);
+    }
   }
 
   watcher

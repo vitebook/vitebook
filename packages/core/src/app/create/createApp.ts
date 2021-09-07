@@ -26,7 +26,6 @@ export const createApp = async (
   const version = getAppVersion();
   const options = createAppOptions(config);
   const dirs = createAppDirs(options);
-  const configPath = resolveConfigPath(dirs.config.path);
 
   const env = createAppEnv({
     ...envConfig,
@@ -45,6 +44,7 @@ export const createApp = async (
     throw logger.createError('No client plugin was found.');
   }
 
+  const configPath = resolveConfigPath(dirs.config.path);
   const themePath = resolveThemePath(dirs.theme.path) ?? client.entry.theme;
 
   const plugins = [

@@ -4,6 +4,7 @@ import type { AppConfig, AppOptions } from '../AppOptions.js';
 export const createAppOptions = ({
   cliArgs = { command: 'serve', '--': [] },
   root = process.cwd(),
+  srcDir = path.resolve(root, 'src'),
   configDir = path.resolve(root, '.vitebook'),
   outDir = path.resolve(configDir, 'dist'),
   tmpDir = path.resolve(configDir, '.temp'),
@@ -15,6 +16,7 @@ export const createAppOptions = ({
   plugins = []
 }: AppConfig): AppOptions => {
   const _root = resolveRelativePath(process.cwd(), root);
+  const _srcDir = resolveRelativePath(root, srcDir);
   const _configDir = resolveRelativePath(_root, configDir);
   const _cacheDir = resolveRelativePath(_configDir, cacheDir);
   const _publicDir = resolveRelativePath(_configDir, publicDir);
@@ -25,6 +27,7 @@ export const createAppOptions = ({
     debug,
     configDir: _configDir,
     root: _root,
+    srcDir: _srcDir,
     outDir: resolveRelativePath(_configDir, outDir),
     tmpDir: resolveRelativePath(_configDir, tmpDir),
     cacheDir: _cacheDir,

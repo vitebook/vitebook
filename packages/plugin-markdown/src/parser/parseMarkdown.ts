@@ -63,7 +63,6 @@ export function parseMarkdown(
       excerpt: excerptHtml,
       frontmatter,
       headers,
-      lang: '',
       title
     }
   };

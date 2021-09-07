@@ -1,4 +1,4 @@
-import { createApp } from './main.js';
+import { createApp } from './main';
 
 async function mount() {
   const { app, router } = await createApp();

@@ -1,9 +1,12 @@
 import { createApp as createClientApp, createSSRApp } from 'vue';
 
-import App from './App.js';
-import ClientOnly from './components/ClientOnly.js';
-import Page from './components/Page.js';
-import { createRouter } from './router.js';
+import App from './components/App';
+import ClientOnly from './components/ClientOnly';
+import Page from './components/Page.vue';
+import { initRouteLocaleRef } from './composables/useRouteLocale';
+import { useSiteOptions } from './composables/useSiteOptions';
+import { useTheme } from './composables/useTheme';
+import { createRouter } from './router';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function createApp() {
@@ -15,11 +18,17 @@ export async function createApp() {
   app.component('ClientOnly', ClientOnly);
   app.component('Page', Page);
 
-  // use site options
-  // use theme
+  const theme = useTheme();
+  const siteOptions = useSiteOptions();
 
-  // userClientHook({ app, router, env: import.meta.env });
-  // enhance app
+  initRouteLocaleRef(router);
+
+  await theme.value.configureApp?.({
+    app,
+    router,
+    siteOptions: siteOptions.value,
+    env: import.meta.env
+  });
 
   return { app, router };
 }

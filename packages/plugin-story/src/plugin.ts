@@ -5,7 +5,8 @@ import {
   loadAddonsVirtualModule,
   StoryAddonPlugin,
   StoryAddons,
-  VIRTUAL_ADDONS_MODULE_ID
+  VIRTUAL_ADDONS_MODULE_ID,
+  VIRTUAL_ADDONS_MODULE_REQUEST_PATH
 } from './addon.js';
 import type { ResolvedStoryPage, ServerStoryPage } from './page.js';
 
@@ -46,6 +47,15 @@ export function storyPlugin(options: StoryPluginOptions = {}): Plugin[] {
     {
       name: PLUGIN_NAME,
       enforce: 'pre',
+      config() {
+        return {
+          resolve: {
+            alias: {
+              [VIRTUAL_ADDONS_MODULE_ID]: VIRTUAL_ADDONS_MODULE_REQUEST_PATH
+            }
+          }
+        };
+      },
       async resolvePage(page): Promise<ResolvedStoryPage | void> {
         if (pagesFilter(page.filePath)) {
           return {
@@ -72,14 +82,14 @@ export function storyPlugin(options: StoryPluginOptions = {}): Plugin[] {
         }
       },
       resolveId(id) {
-        if (id === VIRTUAL_ADDONS_MODULE_ID) {
+        if (id === VIRTUAL_ADDONS_MODULE_REQUEST_PATH) {
           return id;
         }
 
         return null;
       },
       load(id) {
-        if (id === VIRTUAL_ADDONS_MODULE_ID) {
+        if (id === VIRTUAL_ADDONS_MODULE_REQUEST_PATH) {
           return loadAddonsVirtualModule(filteredAddons);
         }
 

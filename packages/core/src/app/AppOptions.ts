@@ -20,6 +20,14 @@ export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
   root: string;
 
   /**
+   * Path to source code directory. The value can be either an absolute file system path
+   * or a path relative to `<root>`.
+   *
+   * @default '<root>/src'
+   */
+  srcDir: string;
+
+  /**
    * The Vitebook config directory. The value can be either an absolute file system path
    * or a path relative to `<root>`.
    *
@@ -90,4 +98,6 @@ export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
   tmpDir: string;
 };
 
-export type AppConfig = Partial<AppOptions>;
+export type AppConfig<Theme extends ThemeConfig = ThemeConfig> = Partial<
+  AppOptions<Theme>
+>;

@@ -49,15 +49,13 @@ export type MarkdownData = {
   excerpt: string;
   frontmatter: MarkdownFrontmatter;
   headers: MarkdownHeader[];
-  lang: string;
   title: string;
 };
 
-export type MarkdownFrontmatter = {
+export type MarkdownFrontmatter = Record<string, unknown> & {
   date?: string | Date;
   description?: string;
   head?: HeadConfig[];
-  lang?: string;
   title?: string;
   // TODO: add support for these later.
   // layout?: string;

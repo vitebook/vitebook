@@ -123,7 +123,7 @@ function pageCouldNotBeResolved(app: App, filePath: string) {
 const rControl = /[\u0000-\u001f]/g;
 const rCombining = /[\u0300-\u036F]/g;
 export function filePathToRoute(app: App, filePath: string): string {
-  const relativePath = path.relative(app.dirs.root.path, filePath);
+  const relativePath = path.relative(app.dirs.src.path, filePath);
   return ensureLeadingSlash(relativePath)
     .normalize('NFKD')
     .replace(rCombining, '')

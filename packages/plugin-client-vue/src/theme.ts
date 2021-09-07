@@ -10,7 +10,7 @@ import type { Router } from 'vue-router';
 export type VueTheme = Theme<Component, ConfigureVueAppContext>;
 
 export type ConfigureVueAppContext<Theme extends ThemeConfig = ThemeConfig> = {
-  app: App<HTMLDivElement>;
+  app: App;
   router: Router;
   siteOptions: SiteOptions<Theme>;
   env: ImportMetaEnv;

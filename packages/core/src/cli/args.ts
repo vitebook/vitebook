@@ -2,6 +2,7 @@ export type DevCommandArgs = {
   '--': string[];
   command: string;
   root?: string;
+  srcDir?: string;
   baseUrl?: string;
   publicDir?: string;
   cacheDir?: string;
@@ -25,6 +26,7 @@ export type BuildCommandArgs = {
   target?: string;
   ssr?: boolean;
   root?: string;
+  srcDir?: string;
   baseUrl?: string;
   publicDir?: string;
   cacheDir?: string;

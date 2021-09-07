@@ -60,7 +60,9 @@ export function vueMarkdownPlugin(
     async configureApp(app) {
       parser = await createMarkdownParser(parserOptions);
 
-      vuePlugin = app.plugins.find((plugin) => plugin.name === 'vite:vue');
+      vuePlugin = app.plugins.find(
+        (plugin) => plugin.name === 'vite:vue'
+      ) as Plugin;
 
       if (!vuePlugin) {
         throw logger.createError(

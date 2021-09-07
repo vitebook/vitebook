@@ -16,6 +16,7 @@ export async function resolveApp(
       ...config,
       cliArgs: args,
       root: args.root ?? config.root,
+      srcDir: args.srcDir ?? config.srcDir,
       publicDir: args.publicDir ?? config.publicDir,
       cacheDir: args.cacheDir ?? config.cacheDir,
       configDir: args.configDir ?? config.configDir,

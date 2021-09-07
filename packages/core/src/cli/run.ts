@@ -20,6 +20,10 @@ program
   .command('dev [root]', 'Start development server')
   .option('--base <baseUrl>', '[string] Set public base path (default: /)')
   .option(
+    '--srcDir <srcDir>',
+    '[string] Set path to source code directory (default: src)'
+  )
+  .option(
     '--publicDir <publicDir>',
     '[string] Set path to public directory (default: .vitebook/public)'
   )
@@ -66,6 +70,10 @@ program
   .command('build [root]', 'Build to static site')
   .option('--target <target>', '[string] Transpile target (default: "modules")')
   .option('--base <baseUrl>', '[string] Set public base path (default: /)')
+  .option(
+    '--srcDir <srcDir>',
+    '[string] Set path to source code directory (default: src)'
+  )
   .option(
     '--publicDir <publicDir>',
     '[string] Set path to public directory (default: .vitebook/public)'
