@@ -1,96 +1,122 @@
-// import type { HeadConfig } from '@vitebook/core/shared';
+import {
+  HeadConfig,
+  isObject,
+  isString,
+  VitebookSSRContext
+} from '@vitebook/core/shared';
+import { onMounted, ref, useSSRContext, watch } from 'vue';
 
-// export function useUpdateHead(route: Route, siteDataByRouteRef: Ref<SiteData>) {
-//   let managedHeadTags: HTMLElement[] = [];
-//   let isFirstUpdate = true;
+import { usePageHead } from './usePageHead';
+import { useSiteLang } from './useSiteLang';
 
-//   const updateHeadTags = (newTags: HeadConfig[]) => {
-//     if (import.meta.env.PROD && isFirstUpdate) {
-//       // in production, the initial meta tags are already pre-rendered so we
-//       // skip the first update.
-//       isFirstUpdate = false;
-//       return;
-//     }
+/**
+ * Returns function that can be called to force update head tags.
+ */
+export function useUpdateHead(): () => void {
+  const head = usePageHead();
+  const lang = useSiteLang();
 
-//     const newEls: HTMLElement[] = [];
-//     const commonLength = Math.min(managedHeadTags.length, newTags.length);
-//     for (let i = 0; i < commonLength; i++) {
-//       let el = managedHeadTags[i];
-//       const [tag, attrs, innerHTML = ''] = newTags[i];
-//       if (el.tagName.toLocaleLowerCase() === tag) {
-//         for (const key in attrs) {
-//           if (el.getAttribute(key) !== attrs[key]) {
-//             el.setAttribute(key, attrs[key]);
-//           }
-//         }
-//         for (let i = 0; i < el.attributes.length; i++) {
-//           const name = el.attributes[i].name;
-//           if (!(name in attrs)) {
-//             el.removeAttribute(name);
-//           }
-//         }
-//         if (el.innerHTML !== innerHTML) {
-//           el.innerHTML = innerHTML;
-//         }
-//       } else {
-//         document.head.removeChild(el);
-//         el = createHeadElement(newTags[i]);
-//         document.head.append(el);
-//       }
-//       newEls.push(el);
-//     }
+  if (import.meta.env.SSR) {
+    const ssrContext: VitebookSSRContext | undefined = useSSRContext();
 
-//     managedHeadTags
-//       .slice(commonLength)
-//       .forEach((el) => document.head.removeChild(el));
-//     newTags.slice(commonLength).forEach((headConfig) => {
-//       const el = createHeadElement(headConfig);
-//       document.head.appendChild(el);
-//       newEls.push(el);
-//     });
-//     managedHeadTags = newEls;
-//   };
+    if (ssrContext) {
+      ssrContext.head = head.value;
+      ssrContext.lang = lang.value;
+    }
 
-//   watchEffect(() => {
-//     const pageData = route.data;
-//     const siteData = siteDataByRouteRef.value;
-//     const pageTitle = pageData && pageData.title;
-//     const pageDescription = pageData && pageData.description;
-//     const frontmatterHead = pageData && pageData.frontmatter.head;
+    return () => {
+      /** noop */
+    };
+  }
 
-//     // update title and description
-//     document.title = (pageTitle ? pageTitle + ` | ` : ``) + siteData.title;
-//     document
-//       .querySelector(`meta[name=description]`)!
-//       .setAttribute('content', pageDescription || siteData.description);
+  const headTags = ref<HTMLElement[]>([]);
 
-//     updateHeadTags([
-//       // site head can only change during dev
-//       ...(import.meta.env.DEV ? siteData.head : []),
-//       ...(frontmatterHead ? filterOutHeadDescription(frontmatterHead) : [])
-//     ]);
-//   });
-// }
+  const loadHeadTags = (): void => {
+    head.value.forEach((item) => {
+      const tag = queryHeadTag(item);
+      if (tag) {
+        headTags.value.push(tag);
+      }
+    });
+  };
 
-// function createHeadElement([tag, attrs, innerHTML]: HeadConfig) {
-//   const el = document.createElement(tag);
-//   for (const key in attrs) {
-//     el.setAttribute(key, attrs[key]);
-//   }
-//   if (innerHTML) {
-//     el.innerHTML = innerHTML;
-//   }
-//   return el;
-// }
+  const updateHead = () => {
+    headTags.value.forEach((item) => {
+      if (item.parentNode === document.head) {
+        document.head.removeChild(item);
+      }
+    });
 
-// function isMetaDescription(headConfig: HeadConfig) {
-//   return (
-//     headConfig[0] === 'meta' &&
-//     headConfig[1] &&
-//     headConfig[1].name === 'description'
-//   );
-// }
+    headTags.value.splice(0, headTags.value.length);
 
-// function filterOutHeadDescription(head: HeadConfig[]) {
-//   return head.filter((h) => !isMetaDescription(h));
-// }
+    head.value.forEach((item) => {
+      const tag = createHeadTag(item);
+      if (tag !== null) {
+        document.head.appendChild(tag);
+        headTags.value.push(tag);
+      }
+    });
+  };
+
+  onMounted(() => {
+    loadHeadTags();
+    updateHead();
+    watch(
+      () => [head.value],
+      () => updateHead()
+    );
+  });
+
+  return updateHead;
+}
+
+const queryHeadTag = ([
+  tagName,
+  attrs,
+  content = ''
+]: HeadConfig): HTMLElement | null => {
+  const attrsSelector = Object.entries(attrs).map(([key, value]) => {
+    if (isString(value)) {
+      return `[${key}="${value}"]`;
+    }
+
+    if (value === true) {
+      return `[${key}]`;
+    }
+
+    return '';
+  });
+
+  const selector = `head > ${tagName}${attrsSelector}`;
+  const tags = Array.from(document.querySelectorAll<HTMLElement>(selector));
+  const matchedTag = tags.find((item) => item.innerText === content);
+  return matchedTag || null;
+};
+
+const createHeadTag = ([
+  tagName,
+  attrs,
+  content
+]: HeadConfig): HTMLElement | null => {
+  if (!isString(tagName)) {
+    return null;
+  }
+
+  const tag = document.createElement(tagName);
+
+  if (isObject(attrs)) {
+    Object.entries(attrs).forEach(([key, value]) => {
+      if (isString(value)) {
+        tag.setAttribute(key, value);
+      } else if (value === true) {
+        tag.setAttribute(key, '');
+      }
+    });
+  }
+
+  if (isString(content)) {
+    tag.appendChild(document.createTextNode(content));
+  }
+
+  return tag;
+};

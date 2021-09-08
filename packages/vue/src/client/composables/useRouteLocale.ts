@@ -28,7 +28,7 @@ export function useRouteLocale(): Readonly<RouteLocaleRef> {
   return shallowReadonly(routeLocaleRef);
 }
 
-export const resolveRouteLocale = (
+const resolveRouteLocale = (
   baseUrl: string,
   locales: SiteOptions['locales'],
   routePath: string

@@ -6,9 +6,12 @@ import { storyPlugin } from '@vitebook/plugin-story';
 export default defineConfig({
   include: ['src/**/*.{md,vue}'],
   site: {
+    title: 'Vitebook',
+    description: 'Yessir',
     locales: {
       '/zh': {
-        lang: 'Chinese'
+        lang: 'Chinese',
+        description: 'My Site'
       }
     }
   },

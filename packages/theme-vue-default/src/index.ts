@@ -1,4 +1,4 @@
-import type { VueTheme } from '@vitebook/vue';
+import type { VueTheme } from '@vitebook/vue/client';
 
 const theme: VueTheme = {
   Layout: () => 'Default theme.',

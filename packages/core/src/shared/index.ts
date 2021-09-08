@@ -1,3 +1,5 @@
+// ssr
+export * from './ssr.js';
 // types
 export * from './types/HeadConfig.js';
 export * from './types/LocaleConfig.js';

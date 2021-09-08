@@ -146,9 +146,7 @@ function startWatchingPages(app: App, server: ViteDevServer) {
   ): Promise<void> {
     const absPath = resolveRelativePath(app.dirs.root.path, filePath);
     await resolvePages(app, action, [absPath]);
-    if (action !== 'change') {
-      server.watcher.emit('change', virtualModuleRequestPath.pages);
-    }
+    server.watcher.emit('change', virtualModuleRequestPath.pages);
   }
 
   watcher
