@@ -1,3 +1,3 @@
-export * from './createRenderHeader.js';
-export * from './createTocBlockRule.js';
-export * from './tocPlugin.js';
+export * from './createRenderHeader';
+export * from './createTocBlockRule';
+export * from './tocPlugin';

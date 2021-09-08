@@ -1,5 +1,5 @@
 import type { HighlightLanguage } from './languages';
-import * as languages from './languages.js';
+import * as languages from './languages';
 
 type LanguagesMap = Record<string, HighlightLanguage>;
 

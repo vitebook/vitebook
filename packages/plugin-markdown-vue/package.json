@@ -25,10 +25,14 @@
   "exports": {
     ".": "./src/index.ts",
     "./*": "./src/*",
+    "./shared": "./src/shared/index.ts",
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
+      "shared": [
+        "src/shared/index.ts"
+      ],
       "*": [
         "src/*"
       ]

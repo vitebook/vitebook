@@ -3,6 +3,7 @@ import { inBrowser } from './support.js';
 import { removeEndingSlash } from './url.js';
 
 export const resolveLocalePath = (
+  baseUrl: string,
   locales: LocaleConfig,
   routePath: string
 ): string => {
@@ -14,8 +15,10 @@ export const resolveLocalePath = (
     return b.length - a.length;
   });
 
+  const strippedRoutePath = stripBaseUrlFromRoute(baseUrl, routePath);
+
   for (const localePath of localePaths) {
-    if (routePath.startsWith(localePath)) {
+    if (strippedRoutePath.startsWith(localePath)) {
       return localePath;
     }
   }
@@ -23,15 +26,15 @@ export const resolveLocalePath = (
   return '/';
 };
 
-/**
- * Clean up the route by removing the `base` path if it's set in config.
- */
-export function cleanRoute(baseUrl: string, route: string): string {
+export function stripBaseUrlFromRoute(
+  baseUrl: string,
+  routePath: string
+): string {
   if (!inBrowser) {
-    return route;
+    return routePath;
   }
 
   const baseWithoutSuffix = removeEndingSlash(baseUrl);
 
-  return route.slice(baseWithoutSuffix.length);
+  return routePath.slice(baseWithoutSuffix.length);
 }

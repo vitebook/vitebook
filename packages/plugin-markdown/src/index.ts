@@ -1,3 +1,2 @@
-export * from './page.js';
-export * from './parser/index.js';
-export * from './plugin.js';
+export * from './parser/index';
+export * from './plugin';

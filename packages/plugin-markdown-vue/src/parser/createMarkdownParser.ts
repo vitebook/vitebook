@@ -11,7 +11,7 @@ import {
   CustomComponentPluginOptions,
   hoistTagsPlugin,
   HoistTagsPluginOptions
-} from './plugins/index.js';
+} from './plugins/index';
 
 export type MarkdownParserOptions = DefaultMarkdownParserOptions & {
   code?: false | CodePluginOptions;

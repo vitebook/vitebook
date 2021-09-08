@@ -1,13 +1,13 @@
-import { prettyJsonStr } from '@vitebook/core/shared/index.js';
+import { prettyJsonStr } from '@vitebook/core/shared';
 import {
-  MarkdownData,
   MarkdownParser,
   parseMarkdown as parseMarkdownDefault,
   ParseMarkdownOptions
 } from '@vitebook/plugin-markdown';
+import type { MarkdownData } from '@vitebook/plugin-markdown/shared';
 import LRUCache from 'lru-cache';
 
-import type { VueMarkdownParserEnv } from './types.js';
+import type { VueMarkdownParserEnv } from './types';
 
 export type ParseMarkdownToVueOptions = ParseMarkdownOptions;
 

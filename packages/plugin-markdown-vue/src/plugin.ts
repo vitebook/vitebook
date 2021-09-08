@@ -1,15 +1,15 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import type { Plugin } from '@vitebook/core';
-import { logger } from '@vitebook/core/utils/logger.js';
+import { logger } from '@vitebook/core/utils';
 import type { MarkdownParser } from '@vitebook/plugin-markdown';
 import kleur from 'kleur';
 
-import type { ResolvedVueMarkdownPage } from './page.js';
 import {
   createMarkdownParser,
   MarkdownParserOptions,
   parseMarkdownToVue
-} from './parser/index.js';
+} from './parser/index';
+import type { ResolvedVueMarkdownPage } from './shared/index';
 
 export const PLUGIN_NAME = 'vitebook/plugin-markdown-vue' as const;
 

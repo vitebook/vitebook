@@ -1,13 +1,13 @@
 import type { PluginWithOptions } from 'markdown-it';
 import type Token from 'markdown-it/lib/token';
 
-import type { MarkdownParser } from '../../types.js';
+import type { MarkdownParser } from '../../types';
 import {
   isHighlightLine,
   resolveHighlightLines
-} from './resolveHighlightLines.js';
-import { resolveLanguage } from './resolveLanguage.js';
-import { resolveLineNumbers } from './resolveLineNumbers.js';
+} from './resolveHighlightLines';
+import { resolveLanguage } from './resolveLanguage';
+import { resolveLineNumbers } from './resolveLineNumbers';
 
 export type CodePluginOptions = {
   /**

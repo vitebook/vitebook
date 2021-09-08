@@ -1,6 +1,11 @@
-import type { HeadConfig } from '@vitebook/core';
 import type MarkdownIt from 'markdown-it';
 
+import {
+  MarkdownData,
+  MarkdownFrontmatter,
+  MarkdownHeader,
+  MarkdownLinks
+} from '../shared/index';
 import type {
   AnchorPluginOptions,
   CodePluginOptions,
@@ -10,7 +15,7 @@ import type {
   ImportCodePluginOptions,
   LinksPluginOptions,
   TocPluginOptions
-} from './plugins/index.js';
+} from './plugins/index';
 
 export type MarkdownParser = MarkdownIt;
 
@@ -44,33 +49,6 @@ export type ParsedMarkdownResult<Data extends MarkdownData = MarkdownData> = {
   // permalink: string;
   // slug: string;
 };
-
-export type MarkdownData = {
-  excerpt: string;
-  frontmatter: MarkdownFrontmatter;
-  headers: MarkdownHeader[];
-  title: string;
-};
-
-export type MarkdownFrontmatter = Record<string, unknown> & {
-  date?: string | Date;
-  description?: string;
-  head?: HeadConfig[];
-  title?: string;
-  // TODO: add support for these later.
-  // layout?: string;
-  // permalink?: string;
-  // permalinkPattern?: string;
-};
-
-export type MarkdownHeader = {
-  level: number;
-  title: string;
-  slug: string;
-  children: MarkdownHeader[];
-};
-
-export type MarkdownLinks = string[];
 
 /**
  * Metadata provided to markdown parser.

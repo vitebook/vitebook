@@ -27,6 +27,8 @@
   "exports": {
     ".": "./dist/index.js",
     "./*": "./dist/*",
+    "./shared": "./dist/shared/index.js",
+    "./utils": "./dist/utils/index.js",
     "./index.html": "./index.html",
     "./package.json": "./package.json"
   },
@@ -35,8 +37,8 @@
       "shared": [
         "dist/shared/index.d.ts"
       ],
-      "utils/*": [
-        "dist/utils/*"
+      "utils": [
+        "dist/utils/index.d.ts"
       ],
       "*": [
         "dist/*"

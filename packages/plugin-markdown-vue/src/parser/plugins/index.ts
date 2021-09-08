@@ -1,3 +1,3 @@
-export * from './codePlugin.js';
-export * from './customComponentPlugin.js';
-export * from './hoistTagsPlugin.js';
+export * from './codePlugin';
+export * from './customComponentPlugin';
+export * from './hoistTagsPlugin';

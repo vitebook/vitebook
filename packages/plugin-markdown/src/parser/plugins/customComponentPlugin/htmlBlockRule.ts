@@ -1,8 +1,8 @@
 import * as blockNames from 'markdown-it/lib/common/html_blocks';
 import type { RuleBlock } from 'markdown-it/lib/parser_block';
 
-import { HTML_OPEN_CLOSE_TAG_RE } from './htmlRe.js';
-import { inlineTags } from './inlineTags.js';
+import { HTML_OPEN_CLOSE_TAG_RE } from './htmlRe';
+import { inlineTags } from './inlineTags';
 
 // Forked and modified from 'markdown-it/lib/rules_block/html_block.js'
 

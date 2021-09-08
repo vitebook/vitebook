@@ -1,7 +1,7 @@
 import type { PluginSimple } from 'markdown-it';
 
-import type { MarkdownParserEnv } from '../types.js';
-import { resolveTitleFromToken } from '../utils.js';
+import type { MarkdownParserEnv } from '../types';
+import { resolveTitleFromToken } from '../utils';
 
 /**
  * Extracting markdown title to parser env.

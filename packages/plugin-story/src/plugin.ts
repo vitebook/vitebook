@@ -7,8 +7,8 @@ import {
   StoryAddons,
   VIRTUAL_ADDONS_MODULE_ID,
   VIRTUAL_ADDONS_MODULE_REQUEST_PATH
-} from './addon.js';
-import type { ResolvedStoryPage, ServerStoryPage } from './page.js';
+} from './addon';
+import type { ResolvedStoryPage, ServerStoryPage } from './shared/index';
 
 export const PLUGIN_NAME = 'vitebook/plugin-story' as const;
 

@@ -1,12 +1,12 @@
 import type { PluginWithOptions } from 'markdown-it';
 
-import type { MarkdownHeader } from '../../types.js';
+import type { MarkdownHeader } from '../../../shared/index';
 import {
   resolveHeadersFromTokens,
   slugify as slugifyDefault
-} from '../../utils.js';
-import { createRenderHeaders } from './createRenderHeader.js';
-import { createTocBlockRule } from './createTocBlockRule.js';
+} from '../../utils';
+import { createRenderHeaders } from './createRenderHeader';
+import { createTocBlockRule } from './createTocBlockRule';
 
 export type TocPluginOptions = {
   /**

@@ -17,9 +17,9 @@ import {
   LinksPluginOptions,
   tocPlugin,
   TocPluginOptions
-} from './plugins/index.js';
-import type { MarkdownParser, MarkdownParserOptions } from './types.js';
-import { slugify } from './utils.js';
+} from './plugins/index';
+import type { MarkdownParser, MarkdownParserOptions } from './types';
+import { slugify } from './utils';
 
 export async function createMarkdownParser({
   anchor,

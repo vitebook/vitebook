@@ -1,14 +1,14 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import type { Plugin } from '@vitebook/core';
 
-import type { ResolvedMarkdownPage } from './page.js';
 import {
   createMarkdownParser,
   loadParsedMarkdown,
   MarkdownParser,
   MarkdownParserOptions,
   parseMarkdown
-} from './parser/index.js';
+} from './parser/index';
+import type { ResolvedMarkdownPage } from './shared/index';
 
 export const PLUGIN_NAME = 'vitebook/plugin-markdown' as const;
 
@@ -65,6 +65,8 @@ export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
         const result = parseMarkdown(parser, source, id);
         return loadParsedMarkdown(result);
       }
+
+      return null;
     }
   };
 }

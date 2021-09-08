@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
-import { isLinkExternal } from '@vitebook/core/shared/index.js';
+import { isLinkExternal } from '@vitebook/core/shared';
 import type { PluginWithOptions } from 'markdown-it';
 
-import type { MarkdownParserEnv } from '../types.js';
+import type { MarkdownParserEnv } from '../types';
 
 export type LinksPluginOptions = {
   /**
@@ -33,6 +31,7 @@ export const linksPlugin: PluginWithOptions<LinksPluginOptions> = (
     const token = tokens[idx];
     const hrefIndex = token.attrIndex('href');
     if (hrefIndex >= 0) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const hrefAttr = token.attrs![hrefIndex];
       const url = hrefAttr[1];
       const isExternal = isLinkExternal(url);

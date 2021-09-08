@@ -1,16 +1,16 @@
-import { prettyJsonStr } from '@vitebook/core/shared/index.js';
+import { prettyJsonStr } from '@vitebook/core/shared';
 import matter from 'gray-matter';
 import LRUCache from 'lru-cache';
 import toml from 'toml';
 
-import type { MarkdownPageModule } from '../page.js';
+import type { MarkdownPageModule } from '../shared/index';
 import type {
   MarkdownParser,
   MarkdownParserEnv,
   ParsedMarkdownResult,
   ParseMarkdownOptions
-} from './types.js';
-import { preventViteConstantsReplacement } from './utils.js';
+} from './types';
+import { preventViteConstantsReplacement } from './utils';
 
 const cache = new LRUCache<string, ParsedMarkdownResult>({ max: 1024 });
 

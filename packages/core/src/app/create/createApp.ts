@@ -1,3 +1,4 @@
+import kleur from 'kleur';
 import { mergeConfig } from 'vite';
 
 import { isObject, SiteOptions } from '../../shared/index.js';
@@ -44,7 +45,15 @@ export const createApp = async (
   }
 
   const configPath = resolveConfigPath(dirs.config.path);
-  const themePath = resolveThemePath(dirs.theme.path) ?? client.entry.theme;
+  const themePath = resolveThemePath(dirs.theme.path) ?? client.theme.path;
+
+  if (!themePath || themePath.length === 0) {
+    throw logger.createError(
+      `No theme was provided or installed.\n\nRun ${kleur.bold(
+        `npm install ${client.theme.pkg}`
+      )} to use default theme.\n`
+    );
+  }
 
   const plugins = [
     ...options.plugins.flat(),

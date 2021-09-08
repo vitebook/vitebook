@@ -1,47 +1,11 @@
-import type { LocaleConfig, Plugin } from '@vitebook/core';
+import type { Plugin } from '@vitebook/core';
 import { VM_PREFIX } from '@vitebook/core';
 import {
   prettyJsonStr,
   stripImportQuotesFromJson
-} from '@vitebook/core/shared/index.js';
+} from '@vitebook/core/shared';
 
-import type { ServerStoryPage } from './page.js';
-
-export type StoryAddon<Component = unknown> = StoryAddonLocaleData & {
-  /**
-   * Returns icon file (it can be dynamically imported).
-   */
-  icon: () => string | (() => Promise<string>);
-
-  /**
-   * Returns icon file when dark theme is enabled (it can be dynamically imported).
-   */
-  iconDark?: string | (() => Promise<string>);
-
-  /**
-   * Returns client-side addon component (it can be dynamically imported).
-   */
-  component: Component | (() => Promise<Component>);
-
-  /**
-   * Localization config.
-   */
-  locales?: StoryAddonLocaleConfig;
-};
-
-export type StoryAddonLocaleData = {
-  /**
-   * Title of the story addon.
-   */
-  title: string;
-
-  /**
-   * Description of the story addon.
-   */
-  description: string;
-};
-
-export type StoryAddonLocaleConfig = LocaleConfig<StoryAddonLocaleData>;
+import { ServerStoryPage } from './shared/index';
 
 export type StoryAddonPlugin = Plugin & {
   /**
@@ -73,14 +37,6 @@ export const VIRTUAL_ADDONS_MODULE_ID =
 
 export const VIRTUAL_ADDONS_MODULE_REQUEST_PATH =
   `/${VIRTUAL_ADDONS_MODULE_ID}` as const;
-
-export type StoryAddonModule<Component = unknown> = {
-  default: StoryAddon<Component>;
-};
-
-export type VirtualStoryAddonsModule<Component = unknown> = {
-  default: { loader: () => Promise<StoryAddonModule<Component>> }[];
-};
 
 export function loadAddonsVirtualModule(addons: StoryAddonPlugin[]): string {
   return `export default ${stripImportQuotesFromJson(

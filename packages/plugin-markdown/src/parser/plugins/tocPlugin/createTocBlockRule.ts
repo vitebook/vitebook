@@ -1,6 +1,6 @@
 import type { RuleBlock } from 'markdown-it/lib/parser_block';
 
-import type { TocPluginOptions } from './tocPlugin.js';
+import type { TocPluginOptions } from './tocPlugin';
 
 /**
  * Forked and modified from `markdown-it-toc-done-right`.

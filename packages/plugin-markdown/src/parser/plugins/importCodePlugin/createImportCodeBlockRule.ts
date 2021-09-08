@@ -1,8 +1,8 @@
-import { path } from '@vitebook/core/utils/path.js';
-import type { RuleBlock } from 'markdown-it/lib/parser_block.js';
+import { path } from '@vitebook/core/utils';
+import type { RuleBlock } from 'markdown-it/lib/parser_block';
 
-import type { ImportCodePluginOptions } from './importCodePlugin.js';
-import type { ImportCodeTokenMeta } from './ImportCodeTokenMeta.js';
+import type { ImportCodePluginOptions } from './importCodePlugin';
+import type { ImportCodeTokenMeta } from './ImportCodeTokenMeta';
 
 // Min length of the import code syntax, i.e. '@[code]()'
 const MIN_LENGTH = 9;

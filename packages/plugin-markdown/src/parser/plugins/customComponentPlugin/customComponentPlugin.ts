@@ -1,7 +1,7 @@
 import type { PluginWithOptions } from 'markdown-it';
 
-import { htmlBlockRule, HTMLBlockSequence } from './htmlBlockRule.js';
-import { htmlInlineRule } from './htmlInlineRule.js';
+import { htmlBlockRule, HTMLBlockSequence } from './htmlBlockRule';
+import { htmlInlineRule } from './htmlInlineRule';
 
 export type CustomComponentPluginOptions = {
   /**
