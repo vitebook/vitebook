@@ -1,11 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ThemeConfig = Record<string, any>;
+export type ThemeConfig = Record<string, unknown>;
 
 // `Component` and `EnhanceAppCtx` are defined by client plugin.
-export type Theme<Component = unknown, ConfigureAppContext = unknown> = {
+export type Theme<Component = unknown, ConfigureClientAppContext = unknown> = {
   Layout: Component;
   NotFound?: Component;
-  configureApp?: (ctx: ConfigureAppContext) => void | Promise<void>;
+  configureClientApp?: (ctx: ConfigureClientAppContext) => void | Promise<void>;
 };
 
 export type VirtualThemeModule<

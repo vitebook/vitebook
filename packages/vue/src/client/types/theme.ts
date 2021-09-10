@@ -1,4 +1,5 @@
 import type {
+  DefaultThemeConfig,
   SiteOptions,
   Theme,
   ThemeConfig,
@@ -9,12 +10,15 @@ import type { Router } from 'vue-router';
 
 export type VueTheme = Theme<Component, ConfigureVueAppContext>;
 
-export type ConfigureVueAppContext<Theme extends ThemeConfig = ThemeConfig> = {
+export type ConfigureVueAppContext<
+  Theme extends ThemeConfig = DefaultThemeConfig
+> = {
   app: App;
   router: Router;
   siteOptions: Readonly<SiteOptions<Theme>>;
   env: ImportMetaEnv;
 };
 
-export type VirtualVueThemeModule<Theme extends ThemeConfig = ThemeConfig> =
-  VirtualThemeModule<Component, ConfigureVueAppContext<Theme>>;
+export type VirtualVueThemeModule<
+  Theme extends ThemeConfig = DefaultThemeConfig
+> = VirtualThemeModule<Component, ConfigureVueAppContext<Theme>>;

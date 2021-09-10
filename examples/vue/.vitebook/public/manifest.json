@@ -1,6 +1,6 @@
 {
-  "short_name": "Vitebook React",
-  "name": "Vitebook React Example",
+  "short_name": "Vitebook",
+  "name": "Vitebook Site",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#ffca28",
   "background_color": "#ffffff"
 }

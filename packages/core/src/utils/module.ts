@@ -102,6 +102,9 @@ export async function bundle(
   const { outputFiles } = await esbuild({
     ...options,
     entryPoints: [filePath],
+    loader: options.loader ?? {
+      '.svg': 'base64'
+    },
     platform: options.platform ?? 'node',
     format: options.format ?? 'esm',
     target: options.target ?? 'es2020',

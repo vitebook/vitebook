@@ -26,10 +26,17 @@
   "exports": {
     ".": "./src/index.ts",
     "./*": "./src/*",
+    "./client": "./src/client/index.ts",
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
+      "client": [
+        "./src/client/index.ts"
+      ],
+      "client/*": [
+        "./src/client/*"
+      ],
       "*": [
         "src/*"
       ]
@@ -38,6 +45,17 @@
   "files": [
     "src/"
   ],
+  "dependencies": {
+    "@vueuse/core": "^6.3.2"
+  },
+  "devDependencies": {
+    "@vitebook/vue": "*",
+    "vue": "^3.2.6"
+  },
+  "peerDependencies": {
+    "@vitebook/vue": "*",
+    "vue": "^3.2.6"
+  },
   "publishConfig": {
     "access": "public"
   }

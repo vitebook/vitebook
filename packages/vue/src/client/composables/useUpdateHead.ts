@@ -62,7 +62,7 @@ export function useUpdateHead(): () => void {
     loadHeadTags();
     updateHead();
     watch(
-      () => [head.value],
+      () => head.value,
       () => updateHead()
     );
   });
@@ -75,17 +75,19 @@ const queryHeadTag = ([
   attrs,
   content = ''
 ]: HeadConfig): HTMLElement | null => {
-  const attrsSelector = Object.entries(attrs).map(([key, value]) => {
-    if (isString(value)) {
-      return `[${key}="${value}"]`;
-    }
+  const attrsSelector = Object.entries(attrs)
+    .map(([key, value]) => {
+      if (isString(value)) {
+        return `[${key}="${value}"]`;
+      }
 
-    if (value === true) {
-      return `[${key}]`;
-    }
+      if (value === true) {
+        return `[${key}]`;
+      }
 
-    return '';
-  });
+      return '';
+    })
+    .join('');
 
   const selector = `head > ${tagName}${attrsSelector}`;
   const tags = Array.from(document.querySelectorAll<HTMLElement>(selector));

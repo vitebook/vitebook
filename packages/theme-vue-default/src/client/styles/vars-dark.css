@@ -1,0 +1,15 @@
+html.dark {
+  color-scheme: dark;
+
+  /**-------------------------------------------------------------------------------------------
+   * Colors
+   *-------------------------------------------------------------------------------------------*/
+
+  --color-text: var(--color-white);
+  --color-text-secondary: var(--color-gray-200);
+
+  --color-divider: var(--color-gray-300);
+
+  --color-bg-100: var(--color-gray-400);
+  --color-bg-200: var(--color-gray-500);
+}

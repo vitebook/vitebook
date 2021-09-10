@@ -1,6 +1,6 @@
 import './style.css';
 
-import { defineComponent, h } from 'vue';
+import { Component, defineComponent, h } from 'vue';
 
 export default defineComponent({
   name: 'OutboundLink',
@@ -10,7 +10,7 @@ export default defineComponent({
       {
         class: 'icon outbound',
         xmlns: 'http://www.w3.org/2000/svg',
-        ariaHidden: 'true',
+        'aria-hidden': 'true',
         focusable: 'false',
         x: '0px',
         y: '0px',
@@ -31,6 +31,6 @@ export default defineComponent({
       ]
     );
 
-    return h('span', null, h(svg, null, this.$slots));
+    return h('span', null, [h(svg), h(this.$slots.default as Component)]);
   }
 });

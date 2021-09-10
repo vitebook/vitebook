@@ -1,11 +1,16 @@
-import type { SiteOptions, ThemeConfig } from '@vitebook/core/shared';
+import type {
+  DefaultThemeConfig,
+  SiteOptions,
+  ThemeConfig
+} from '@vitebook/core/shared';
 import { computed, ComputedRef, shallowReadonly } from 'vue';
 
 import { useRouteLocale } from './useRouteLocale';
 import { useSiteOptions } from './useSiteOptions';
 
-export type LocalizedSiteOptionsRef<Theme extends ThemeConfig = ThemeConfig> =
-  ComputedRef<Readonly<SiteOptions<Theme>>>;
+export type LocalizedSiteOptionsRef<
+  Theme extends ThemeConfig = DefaultThemeConfig
+> = ComputedRef<Readonly<SiteOptions<Theme>>>;
 
 const siteOptions = useSiteOptions();
 const routeLocale = useRouteLocale();
@@ -22,7 +27,7 @@ const localizedSiteOptionsRef = computed(() =>
 );
 
 export function useLocalizedSiteOptions<
-  Theme extends ThemeConfig = ThemeConfig
+  Theme extends ThemeConfig = DefaultThemeConfig
 >(): Readonly<LocalizedSiteOptionsRef<Theme>> {
   return shallowReadonly(localizedSiteOptionsRef) as Readonly<
     LocalizedSiteOptionsRef<Theme>

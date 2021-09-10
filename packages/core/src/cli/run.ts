@@ -40,8 +40,8 @@ program
     '[string] Specify globs to filter files to be included (example: "**/*.md,**/*.vue")'
   )
   .option('--https', '[boolean] Use TLS + HTTP/2')
-  .option('--host <host>', '[string] Use specified host (default: 0.0.0.0)')
-  .option('-p, --port <port>', '[number] Use specified port (default: 8080)')
+  .option('--host [host]', '[string] Use specified host (default: 0.0.0.0)')
+  .option('-p, --port [port]', '[number] Use specified port (default: 8080)')
   .option('--cors', '[boolean] Enable CORS')
   .option('--strictPort', '[boolean] Exit if specified port is already in use')
   .option('--open [path]', '[boolean | string] Open browser on startup')
@@ -140,8 +140,8 @@ program
     '[string] Set path to config directory (default: .vitebook)'
   )
   .option('--https', '[boolean] Use TLS + HTTP/2')
-  .option('--host <host>', '[string] Use specified host (default: 0.0.0.0)')
-  .option('-p, --port <port>', '[number] Use specified port (default: 8080)')
+  .option('--host [host]', '[string] Use specified host (default: 0.0.0.0)')
+  .option('-p, --port [port]', '[number] Use specified port (default: 8080)')
   .option('--cors', '[boolean] Enable CORS')
   .option('--strictPort', '[boolean] Exit if specified port is already in use')
   .option('--open [path]', '[boolean | string] Open browser on startup')

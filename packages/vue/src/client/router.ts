@@ -25,20 +25,16 @@ export function createRouter(): Router {
     }
   });
 
-  // Should be overriden by theme.
-  router.addRoute({
-    path: '/',
-    component: async () => 'Home'
-  });
-
-  router.addRoute({
-    name: 'NotFound',
-    path: '/:pathMatch(.*)*',
-    component: async () => theme.value.NotFound ?? '404 Not Found'
-  });
-
   addRoutes(router, pages.value);
   handleHMR(router);
+
+  if (!router.hasRoute('404')) {
+    router.addRoute({
+      name: '404',
+      path: '/:pathMatch(.*)*',
+      component: async () => theme.value.NotFound ?? '404 Not Found'
+    });
+  }
 
   return router;
 }
@@ -50,8 +46,12 @@ const pageRouteDisposal: (() => void)[] | undefined = import.meta.hot
 function addRoutes(router: Router, pages: Readonly<VuePage[]>): void {
   pages.forEach((page) => {
     const dispose = router.addRoute({
-      name: page.name,
-      path: page.route,
+      name:
+        page.name ??
+        (page.route === '/'
+          ? 'home'
+          : page.route.replace('.html', '').slice(1)),
+      path: page.route === '/404.html' ? '/:pathMatch(.*)*' : page.route,
       component: () => loadPage(page)
     });
 
@@ -67,18 +67,6 @@ function handleHMR(router: Router): void {
       (pages) => {
         pageRouteDisposal?.forEach((dispose) => dispose());
         addRoutes(router, pages);
-      }
-    );
-
-    const theme = useTheme();
-    watch(
-      () => theme.value,
-      (theme) => {
-        router.addRoute({
-          name: 'NotFound',
-          path: '/:pathMatch(.*)*',
-          component: async () => theme.NotFound ?? '404 Not Found'
-        });
       }
     );
   }

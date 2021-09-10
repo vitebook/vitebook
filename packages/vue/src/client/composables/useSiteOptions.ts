@@ -1,19 +1,19 @@
 import siteOptions from '@virtual/vitebook/core/site';
 import type {
+  DefaultThemeConfig,
   SiteOptions,
   ThemeConfig,
   VirtualSiteDataModule
 } from '@vitebook/core/shared';
 import { Ref, ref, shallowReadonly } from 'vue';
 
-export type SiteOptionsRef<Theme extends ThemeConfig = ThemeConfig> = Ref<
-  Readonly<SiteOptions<Theme>>
->;
+export type SiteOptionsRef<Theme extends ThemeConfig = DefaultThemeConfig> =
+  Ref<Readonly<SiteOptions<Theme>>>;
 
 const siteOptionsRef: SiteOptionsRef = ref(shallowReadonly(siteOptions));
 
 export function useSiteOptions<
-  Theme extends ThemeConfig = ThemeConfig
+  Theme extends ThemeConfig = DefaultThemeConfig
 >(): Readonly<SiteOptionsRef<Theme>> {
   return shallowReadonly(siteOptionsRef) as Readonly<SiteOptionsRef<Theme>>;
 }

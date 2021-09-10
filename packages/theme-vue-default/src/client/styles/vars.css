@@ -1,0 +1,53 @@
+:root {
+  /**-------------------------------------------------------------------------------------------
+   * Typography
+   *-------------------------------------------------------------------------------------------*/
+
+  --font-family-base: 'Noto Sans TC', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', sans-serif;
+
+  --font-family-mono: 'Source Code Pro', source-code-pro, Menlo, Monaco,
+    Consolas, 'Courier New', monospace;
+
+  /**-------------------------------------------------------------------------------------------
+   * Colors
+   *-------------------------------------------------------------------------------------------*/
+
+  --color-primary: #ffca28;
+  --color-secondary: #3d00e8;
+
+  --color-black: #000000;
+  --color-white: #ffffff;
+
+  --color-gray-100: #f5f5f5;
+  --color-gray-200: #eaeaea;
+  --color-gray-300: #3d3d3d;
+  --color-gray-400: #282828;
+  --color-gray-500: #1c1c1c;
+
+  --color-text: var(--color-black);
+  --color-text-secondary: var(--color-gray-300);
+
+  --color-divider: var(--color-gray-200);
+
+  --color-bg-100: var(--color-gray-100);
+  --color-bg-200: var(--color-white);
+
+  /**-------------------------------------------------------------------------------------------
+   * Code
+   *-------------------------------------------------------------------------------------------*/
+
+  --code-line-height: 24px;
+  --code-font-family: var(--font-family-mono);
+  --code-font-size: 14px;
+  --code-inline-bg-color: rgba(27, 31, 35, 0.05);
+  --code-bg-color: #282c34;
+
+  /**-------------------------------------------------------------------------------------------
+   * Navbar
+   *-------------------------------------------------------------------------------------------*/
+
+  --navbar-height: 5rem;
+  --navbar-z-index: 100;
+}

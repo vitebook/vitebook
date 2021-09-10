@@ -38,7 +38,7 @@ export function vueClientPlugin(
   };
 
   try {
-    theme.path = require.resolve(theme.pkg);
+    theme.path = require.resolve(theme.pkg + '/client');
   } catch (e) {
     /** no-op */
   }
@@ -55,7 +55,7 @@ export function vueClientPlugin(
         return {
           optimizeDeps: {
             // Force include `vue` to avoid duplicated copies when linked + optimized.
-            include: ['vue']
+            include: ['vue', 'vue-router', 'quicklink']
           }
         };
       },

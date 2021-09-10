@@ -14,7 +14,6 @@ export async function createApp(): Promise<{ app: VueApp; router: Router }> {
   const app = import.meta.env.PROD ? createSSRApp(App) : createClientApp(App);
 
   const router = createRouter();
-  app.use(router);
 
   app.component('ClientOnly', ClientOnly);
   app.component('PageView', PageView);
@@ -25,12 +24,14 @@ export async function createApp(): Promise<{ app: VueApp; router: Router }> {
 
   initRouteLocaleRef(router);
 
-  await theme.value.configureApp?.({
+  await theme.value.configureClientApp?.({
     app,
     router,
     siteOptions: siteOptions.value,
     env: import.meta.env
   });
+
+  app.use(router);
 
   return { app, router };
 }

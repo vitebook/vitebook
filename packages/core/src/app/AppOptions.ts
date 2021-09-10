@@ -1,10 +1,14 @@
 import type { UserConfig as ViteConfig } from 'vite';
 
 import { CLIArgs } from '../cli/args.js';
-import type { SiteConfig, ThemeConfig } from '../shared/index.js';
+import type {
+  DefaultThemeConfig,
+  SiteConfig,
+  ThemeConfig
+} from '../shared/index.js';
 import type { Plugins } from './plugin/Plugin.js';
 
-export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
+export type AppOptions<Theme extends ThemeConfig = DefaultThemeConfig> = {
   /**
    * Parsed CLI arguments.
    */
@@ -97,6 +101,6 @@ export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
   tmpDir: string;
 };
 
-export type AppConfig<Theme extends ThemeConfig = ThemeConfig> = Partial<
+export type AppConfig<Theme extends ThemeConfig = DefaultThemeConfig> = Partial<
   AppOptions<Theme>
 >;
