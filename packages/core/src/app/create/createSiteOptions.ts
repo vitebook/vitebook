@@ -3,6 +3,7 @@ import type { SiteConfig, SiteOptions } from '../../shared/index.js';
 export const createSiteOptions = ({
   baseUrl = '/',
   lang = 'en-US',
+  langLabel = 'English',
   title = '',
   description = '',
   head = [],
@@ -11,6 +12,7 @@ export const createSiteOptions = ({
 }: SiteConfig): SiteOptions => ({
   baseUrl,
   lang,
+  langLabel,
   title,
   description,
   head,

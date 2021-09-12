@@ -62,12 +62,18 @@ function resolveFeatureIcon(feature: DefaultThemeHomePageFeature) {
   margin: 0 auto;
   max-width: 960px;
   margin-top: 3.75rem;
-  padding: 0 1.5rem;
+  padding: 0 1rem;
 }
 
 @media (min-width: 576px) {
   .home-features {
-    padding-left: 2.75rem;
+    padding-left: 2rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .home-features {
+    padding-left: 3.1rem;
   }
 }
 

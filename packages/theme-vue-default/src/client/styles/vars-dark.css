@@ -6,6 +6,7 @@ html.dark {
    *-------------------------------------------------------------------------------------------*/
 
   --color-text: var(--color-white);
+  --color-text-rgb: 255, 255, 255;
   --color-text-secondary: var(--color-gray-200);
 
   --color-divider: var(--color-gray-300);

@@ -1,8 +1,4 @@
-import {
-  useMutationObserver,
-  usePreferredDark,
-  useStorage
-} from '@vueuse/core';
+import { usePreferredDark, useStorage } from '@vueuse/core';
 import {
   computed,
   onBeforeMount,
@@ -58,34 +54,11 @@ function updateHtmlDarkClass(isDarkMode: DarkModeRef): void {
     htmlEl?.classList.toggle('dark', value);
   };
 
-  let stopObserver: () => void;
-  const observe = (): void => {
-    if (import.meta.env.DEV) {
-      stopObserver?.();
-      const htmlEl = window?.document.querySelector('html');
-      if (htmlEl) {
-        stopObserver = useMutationObserver(
-          htmlEl,
-          (records) => {
-            const record = records[0];
-            if (record.type === 'attributes') {
-              const isDarkMode = htmlEl.classList.contains('dark');
-              darkModeRef.value = isDarkMode;
-            }
-          },
-          { attributeFilter: ['class'] }
-        ).stop;
-      }
-    }
-  };
-
   onBeforeMount(() => {
     watch(isDarkMode, update, { immediate: true });
-    observe();
   });
 
   onUnmounted(() => {
     update();
-    stopObserver?.();
   });
 }

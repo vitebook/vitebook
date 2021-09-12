@@ -53,11 +53,21 @@ const hasSecondaryButton = computed(() => {
 .home-hero {
   padding: 0 1.5rem;
   text-align: center;
-  padding-top: 3.75rem;
+  padding-top: 5rem;
 }
 
 .title {
-  margin-top: 2.25rem;
+  margin-top: 0;
+}
+
+@media (min-width: 992px) {
+  .title {
+    margin-top: 2rem;
+  }
+
+  .home-hero {
+    margin-bottom: 5rem;
+  }
 }
 
 .actions {

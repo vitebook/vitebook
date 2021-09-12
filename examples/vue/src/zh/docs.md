@@ -2,4 +2,4 @@
 title: Documentation
 ---
 
-Apples :tada: and chicken soup
+Chinese page.

@@ -46,6 +46,13 @@ export type SiteLocaleData = {
   lang: string;
 
   /**
+   * Label for the language as it should be displayed to the user.
+   *
+   * @default ''
+   */
+  langLabel: string;
+
+  /**
    * Title for the site. This will be the suffix for all page titles, and displayed in the navbar.
    *
    * @default ''
@@ -61,6 +68,8 @@ export type SiteLocaleData = {
 
   /**
    * Extra tags to inject into the `<head>` tag in the rendered HTML.
+   *
+   * @default []
    */
   head: HeadConfig[];
 };

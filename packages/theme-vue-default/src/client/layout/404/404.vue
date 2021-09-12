@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { useRouteLocale, withBaseUrl } from '@vitebook/vue/client';
+
 import ButtonLink from '../../components/ButtonLink.vue';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 import NotFoundImage from './NotFoundImage.vue';
 
+const homeLink = useRouteLocale();
 const themeConfig = useLocalizedThemeConfig();
 </script>
 
@@ -17,7 +20,7 @@ const themeConfig = useLocalizedThemeConfig();
         {{ themeConfig.notFoundPage.message }}
       </h1>
 
-      <ButtonLink class="home-link" href="/">{{
+      <ButtonLink class="home-link" :href="withBaseUrl(homeLink)">{{
         themeConfig.notFoundPage.backToHomeText
       }}</ButtonLink>
     </div>
@@ -33,13 +36,19 @@ main {
 
 .container {
   width: 100%;
+  padding-top: var(--navbar-height);
   min-height: calc(100vh - var(--navbar-height));
   margin: 0 auto;
   max-width: 960px;
   display: flex;
   align-items: center;
-  justify-content: center;
   flex-direction: column;
+}
+
+@media (min-width: 576px) {
+  .container {
+    padding-top: calc(var(--navbar-height) + 2rem);
+  }
 }
 
 h1 {
@@ -57,8 +66,13 @@ h1 {
 
 .img-container {
   width: 100%;
-  margin-top: -6rem;
-  max-width: 500px;
+  max-width: 400px;
+}
+
+@media (min-width: 576px) {
+  .img-container {
+    max-width: 500px;
+  }
 }
 
 .home-link {

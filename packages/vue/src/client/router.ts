@@ -48,9 +48,7 @@ function addRoutes(router: Router, pages: Readonly<VuePage[]>): void {
     const dispose = router.addRoute({
       name:
         page.name ??
-        (page.route === '/'
-          ? 'home'
-          : page.route.replace('.html', '').slice(1)),
+        page.route.replace('.html', '').slice(page.route === '/' ? 0 : 1),
       path: page.route === '/404.html' ? '/:pathMatch(.*)*' : page.route,
       component: () => loadPage(page)
     });

@@ -3,19 +3,62 @@ import { vueClientPlugin } from '@vitebook/vue';
 import { vueMarkdownPlugin } from '@vitebook/plugin-markdown-vue';
 import { storyPlugin } from '@vitebook/plugin-story';
 import { defaultVueThemePlugin } from '@vitebook/theme-vue-default';
+import type { DefaultThemeConfig } from '@vitebook/core/shared';
 
-export default defineConfig({
+export default defineConfig<DefaultThemeConfig>({
   include: ['src/**/*.{md,vue}'],
   site: {
     title: 'Vitebook',
     description: 'Yessir',
     locales: {
+      '/': {
+        lang: 'en-US',
+        langLabel: 'English',
+        description: 'My site'
+      },
       '/zh': {
-        lang: 'Chinese',
-        description: 'My Site'
+        lang: 'zh-CN',
+        langLabel: 'Chinese',
+        description: 'My Chinese Site'
       }
     },
     theme: {
+      remoteGitRepo: {
+        url: 'vitebook/vitebook'
+      },
+      navbar: {
+        items: [
+          {
+            text: 'Components',
+            link: '/components.html'
+          },
+          {
+            text: 'Docs',
+            link: '/docs.html'
+          },
+          {
+            text: 'Community',
+            menu: [
+              {
+                text: 'Learn More',
+                link: '/learn-more.html'
+              },
+              {
+                text: 'Discord',
+                link: 'https://discord.com'
+              },
+              {
+                text: 'Twitter',
+                link: 'https://twitter.com'
+              }
+            ]
+          },
+          {
+            text: 'Twitch',
+            link: 'https://twitch.com'
+          }
+        ]
+      },
       homePage: {
         heroText: 'Document, test, and play with your components.',
         primaryActionText: 'Get Started',

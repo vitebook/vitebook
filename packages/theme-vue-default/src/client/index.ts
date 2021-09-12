@@ -16,9 +16,9 @@ const theme: VueTheme = {
   Layout: Layout,
   NotFound: NotFound,
   configureClientApp({ app, router }) {
-    if (!router.hasRoute('home')) {
+    if (!router.hasRoute('/')) {
       router.addRoute({
-        name: 'home',
+        name: '/',
         path: '/',
         component: () => import('./components/Home/Home.vue')
       });

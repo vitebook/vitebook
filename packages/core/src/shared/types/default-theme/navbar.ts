@@ -1,4 +1,4 @@
-export type NavbarItemsConfig = (NavItemLink | NavItemGroup)[];
+export type NavbarItemsConfig = (NavItemLink | NavItemWithMenu)[];
 
 export type NavItem = {
   text: string;
@@ -12,6 +12,6 @@ export type NavItemLink = NavItem & {
   link: string;
 };
 
-export type NavItemGroup = NavItem & {
-  children: NavItemLink[];
+export type NavItemWithMenu = NavItem & {
+  menu: NavItemLink[];
 };

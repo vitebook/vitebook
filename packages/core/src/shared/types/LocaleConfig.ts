@@ -5,7 +5,7 @@
  * - Value is the locales data.
  */
 export type LocaleConfig<T extends LocaleData = LocaleData> = Record<
-  `/${string}`,
+  string,
   Partial<T>
 >;
 

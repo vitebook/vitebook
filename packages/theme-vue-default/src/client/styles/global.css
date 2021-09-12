@@ -26,6 +26,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+*:focus {
+  outline: 0;
+  box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.6);
+}
+
+*:focus:not(:focus-visible) {
+  box-shadow: none;
+}
+
 main {
   display: block;
 }

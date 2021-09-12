@@ -15,7 +15,10 @@
    *-------------------------------------------------------------------------------------------*/
 
   --color-primary: #ffca28;
+  --color-primary-rgb: 255, 202, 40;
+
   --color-secondary: #3d00e8;
+  --color-secondary-rgb: 61, 0, 232;
 
   --color-black: #000000;
   --color-white: #ffffff;
@@ -27,6 +30,7 @@
   --color-gray-500: #1c1c1c;
 
   --color-text: var(--color-black);
+  --color-text-rgb: 0, 0, 0;
   --color-text-secondary: var(--color-gray-300);
 
   --color-divider: var(--color-gray-200);

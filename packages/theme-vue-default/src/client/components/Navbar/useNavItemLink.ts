@@ -7,18 +7,17 @@ import { useRoute } from 'vue-router';
 export function useNavItemLink(item: Ref<NavItemLink>) {
   const route = useRoute();
   const siteConfig = useLocalizedSiteOptions();
-
   const isExternal = isLinkExternal(item.value.link, siteConfig.value.baseUrl);
 
   const props = computed(() => {
-    const routePath = `/${decodeURI(route.path.replace('.html', ''))}`;
+    const routePath = decodeURI(route.path);
 
-    let active = false;
+    let active = item.value.link === routePath;
 
     if (item.value.activeMatch) {
       active = new RegExp(item.value.activeMatch).test(routePath);
     } else {
-      const itemPath = withBaseUrl(item.value.link.replace('.html', ''));
+      const itemPath = withBaseUrl(item.value.link);
       active =
         itemPath === '/'
           ? itemPath === routePath
@@ -26,13 +25,10 @@ export function useNavItemLink(item: Ref<NavItemLink>) {
     }
 
     return {
-      class: {
-        active,
-        isExternal
-      },
-      href: isExternal ? item.value.link : withBaseUrl(item.value.link),
-      target: item.value.target || (isExternal ? `_blank` : null),
-      rel: item.value.rel || (isExternal ? `noopener noreferrer` : null),
+      class: { active, isExternal },
+      to: !isExternal ? withBaseUrl(item.value.link) : item.value.link,
+      target: item.value.target ?? (isExternal ? `_blank` : undefined),
+      rel: item.value.rel ?? (isExternal ? `noopener noreferrer` : undefined),
       'aria-label': item.value.ariaLabel
     };
   });

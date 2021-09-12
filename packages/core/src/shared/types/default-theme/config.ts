@@ -97,7 +97,7 @@ export type DefaultThemeNavbarLocaleConfig = {
    *
    * @default []
    */
-  items?: NavbarItemsConfig[];
+  items?: NavbarItemsConfig;
   /**
    * Language dropdown menu configuration.
    */
@@ -130,15 +130,10 @@ export type DarkModeLocaleConfig = {
   enabled?: boolean;
   /**
    * A11y text for dark mode toggle button.
+   *
+   * @default 'Toggle dark mode'
    */
   buttonAriaLabel?: string;
-  /**
-   * A relative URL from the project root to a logo to be used in dark mode. You can also place
-   * this inside the `<public>` directory.
-   *
-   * @default undefined
-   */
-  logo?: string;
 };
 
 export type DefaultThemeSidebarLocaleConfig = {
@@ -315,7 +310,6 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
   darkMode: {
     enabled: true,
     buttonAriaLabel: 'Toggle dark mode'
-    // logo: undefined,
   },
 
   navbar: {

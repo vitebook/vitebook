@@ -6,7 +6,6 @@ interface Props {
   type?: 'primary' | 'secondary';
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = withDefaults(defineProps<Props>(), {
   type: 'primary'
 });
@@ -30,7 +29,7 @@ const withBase = withBaseUrl;
   padding: 1rem 1.5rem;
   font-size: 0.875rem;
   font-weight: 500;
-  border-radius: 0.5rem;
+  border-radius: 0.125rem;
   color: var(--color-black);
   background-color: var(--color-primary);
   text-decoration: none;
@@ -51,16 +50,19 @@ const withBase = withBaseUrl;
   }
 }
 
-.link:hover {
+.link:hover,
+.link:focus {
   background-color: #fbbd00;
   transform: scale(1.02);
 }
 
-.link.secondary:hover {
+.link.secondary:hover,
+.link.secondary:focus {
   background-color: var(--color-gray-100);
 }
 
-html.dark .link.secondary:hover {
+html.dark .link.secondary:hover,
+html.dark .link.secondary:focus {
   background-color: var(--color-gray-400);
 }
 
