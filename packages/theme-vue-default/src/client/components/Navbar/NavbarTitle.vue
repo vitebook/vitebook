@@ -16,7 +16,7 @@ const localePath = useRouteLocale();
   <router-link
     class="title"
     :to="localePath"
-    :aria-label="`${siteConfig.title}, ${themeConfig.notFoundPage.backToHomeText}`"
+    :aria-label="`${siteConfig.title}, ${themeConfig.notFoundPage.goHomeText}`"
   >
     <img
       v-if="themeConfig.logo"
@@ -33,15 +33,17 @@ const localePath = useRouteLocale();
   font-size: 1.3rem;
   font-weight: 500;
   color: var(--color-text);
-  transition: transform 150ms ease-out;
+  transition: transform 150ms ease;
   padding-top: 0.2rem;
   padding-right: 0.2rem;
+  text-decoration: none;
 }
 
-.title:hover,
-.title:focus {
-  text-decoration: none;
-  transform: scale(1.02);
+@media (hover: hover) and (pointer: fine) {
+  .title:hover {
+    text-decoration: none;
+    transform: scale(1.02);
+  }
 }
 
 .logo {

@@ -24,18 +24,18 @@ const isShowing = computed(() => hasNavItems.value);
       <div
         v-for="item in themeConfig.navbar.items"
         :key="item.text"
-        class="item"
+        class="nav-item"
       >
         <NavItemWithMenu v-if="'menu' in item" :item="item" />
         <NavItemLink v-else :item="item" />
       </div>
     </template>
 
-    <div v-if="languageLinks" class="item">
+    <div v-if="languageLinks" class="nav-item">
       <NavItemWithMenu :item="languageLinks" />
     </div>
 
-    <div v-if="repoLink" class="item">
+    <div v-if="repoLink" class="nav-item">
       <NavItemLink :item="repoLink" />
     </div>
   </nav>
@@ -44,6 +44,13 @@ const isShowing = computed(() => hasNavItems.value);
 <style scoped>
 nav {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+}
+
+@media (min-width: 992px) {
+  nav {
+    flex-direction: row;
+    align-items: center;
+  }
 }
 </style>

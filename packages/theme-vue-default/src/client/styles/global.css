@@ -6,6 +6,7 @@ html {
   line-height: 1.4;
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -18,7 +19,7 @@ body {
   font-size: 100%;
   font-weight: 400;
   color: var(--color-text);
-  background-color: var(--color-bg-100);
+  background-color: var(--color-bg-200);
   direction: ltr;
   font-synthesis: none;
   text-rendering: optimizeLegibility;

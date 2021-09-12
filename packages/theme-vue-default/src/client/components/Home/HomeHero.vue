@@ -60,16 +60,6 @@ const hasSecondaryButton = computed(() => {
   margin-top: 0;
 }
 
-@media (min-width: 992px) {
-  .title {
-    margin-top: 2rem;
-  }
-
-  .home-hero {
-    margin-bottom: 5rem;
-  }
-}
-
 .actions {
   margin-top: 3.75rem;
 }
@@ -81,6 +71,16 @@ const hasSecondaryButton = computed(() => {
 @media (min-width: 576px) {
   .actions > a + a {
     margin-left: 2rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .title {
+    margin-top: 2rem;
+  }
+
+  .home-hero {
+    margin-bottom: 5rem;
   }
 }
 </style>

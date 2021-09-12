@@ -24,13 +24,15 @@ function handleLinkClick(event: Event, navigate: () => void): void {
   <div class="nav-link">
     <router-link v-slot="{ navigate, href }" :to="linkProps.to" custom>
       <a
-        class="item"
+        class="link"
         v-bind="linkProps"
         :to="undefined"
         :href="isExternal ? linkProps.to : href"
-        @click="(e) => handleLinkClick(e, navigate)"
+        @click.prevent
+        @pointerdown="(e) => handleLinkClick(e, navigate)"
+        @keydown.enter="(e) => handleLinkClick(e, navigate)"
       >
-        <span class="item-text">
+        <span class="link-text">
           {{ item.text }} <OutboundLink v-if="isExternal" />
         </span>
       </a>
@@ -39,30 +41,51 @@ function handleLinkClick(event: Event, navigate: () => void): void {
 </template>
 
 <style scoped>
-.item {
+.link {
   display: block;
-  padding: 0.5rem 1rem;
+  padding: 0.68rem 0.5rem;
   font-size: 1rem;
   font-weight: 500;
+  border-radius: 0.12rem;
   color: var(--color-text);
   white-space: nowrap;
-  transition: transform 150ms ease-out;
 }
 
-.item:hover,
-.item:focus {
-  transform: scale(1.02);
+.link.active > .link-text {
+  color: var(--color-primary);
 }
 
-.item:hover,
-.item:focus,
-.item.active {
+.link.active {
   text-decoration: none;
 }
 
-.item:hover > .item-text,
-.item:focus > .item-text,
-.item.active > .item-text {
-  border-bottom: 0.12rem solid var(--color-primary);
+.link:hover {
+  text-decoration: none;
+}
+
+@media (hover: hover) and (pointer: fine) and (max-width: 991px) {
+  .link:hover {
+    background-color: var(--color-bg-100);
+  }
+}
+
+@media (hover: hover) and (min-width: 992px) {
+  .link:hover > .link-text {
+    color: var(--color-text);
+    border-bottom: 0.12rem solid var(--color-primary);
+  }
+}
+
+@media (min-width: 992px) {
+  .link {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0;
+  }
+
+  .link.active > .link-text {
+    color: var(--color-text);
+    border-bottom: 0.12rem solid var(--color-primary);
+  }
 }
 </style>

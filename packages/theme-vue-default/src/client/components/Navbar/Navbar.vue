@@ -3,15 +3,23 @@ import HamburgerIcon from './HamburgerIcon.vue';
 import NavbarTitle from './NavbarTitle.vue';
 import NavLinks from './NavLinks.vue';
 
-defineEmits(['toggle']);
+defineEmits(['hamburger-click']);
 </script>
 
 <template>
   <header class="navbar">
     <div class="container">
+      <slot name="start" />
+
       <div class="navbar-left">
-        <button class="hamburger-button" @click="$emit('toggle')">
-          <HamburgerIcon class="hamburger-icon" />
+        <button
+          class="hamburger-button"
+          @pointerdown="$emit('hamburger-click')"
+          @keydown.enter="$emit('hamburger-click')"
+        >
+          <div>
+            <HamburgerIcon class="hamburger-icon" />
+          </div>
         </button>
 
         <NavbarTitle />
@@ -23,7 +31,7 @@ defineEmits(['toggle']);
         <NavLinks />
       </div>
 
-      <slot />
+      <slot name="end" />
     </div>
   </header>
 </template>
@@ -46,7 +54,7 @@ defineEmits(['toggle']);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 1.25rem;
+  padding-right: 1.25rem;
 }
 
 .flex-grow {
@@ -55,12 +63,6 @@ defineEmits(['toggle']);
 
 .nav {
   display: none;
-}
-
-@media (min-width: 992px) {
-  .nav {
-    display: block;
-  }
 }
 
 .navbar-left {
@@ -74,23 +76,37 @@ defineEmits(['toggle']);
   align-items: center;
   justify-content: center;
   margin: 0;
-  margin-right: 0.5rem;
-  padding: 0.5rem;
+  padding: 0;
+  margin-right: 0.25rem;
+  padding-left: 1rem;
   border: 0;
   border-radius: 0.125rem;
   cursor: pointer;
   background-color: transparent;
 }
 
-.hamburger-button:hover,
-.hamburger-button:focus-visible {
-  outline: 0;
-  background-color: var(--color-bg-100);
+.hamburger-button > div {
+  padding: 0.5rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hamburger-button:hover > div {
+    background-color: var(--color-bg-100);
+  }
 }
 
 @media (min-width: 992px) {
+  .nav {
+    display: block;
+  }
+
+  .container {
+    padding-left: 1.25rem;
+  }
+
   .hamburger-button {
     display: none;
+    padding-left: 1.25rem;
   }
 }
 </style>

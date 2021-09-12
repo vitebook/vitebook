@@ -21,6 +21,6 @@ svg {
 
 path {
   stroke: currentColor;
-  color: var(--text-color);
+  color: var(--color-text);
 }
 </style>

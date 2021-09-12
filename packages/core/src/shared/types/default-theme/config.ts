@@ -283,12 +283,22 @@ export type DefaultThemeHomePageFeature = {
 export type DefaultThemeNotFoundPageLocaleConfig = {
   /**
    * Displayed message.
+   *
+   * @default 'Oops, something went wrong.'
    */
   message?: string;
   /**
-   * Displayed text for back to home button.
+   * Displayed text inside back to home button.
+   *
+   * @default 'Take me home'
    */
-  backToHomeText?: string;
+  goHomeText?: string;
+  /**
+   * Displayed text inside go to previous page button.
+   *
+   * @default 'Go back'
+   */
+  goBackText?: string;
 };
 
 export type DefaultThemeLocaleConfig = Record<string, DefaultThemeLocaleData>;
@@ -352,6 +362,7 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
 
   notFoundPage: {
     message: 'Oops, something went wrong.',
-    backToHomeText: 'Take me home'
+    goHomeText: 'Take me home',
+    goBackText: 'Go back'
   }
 };

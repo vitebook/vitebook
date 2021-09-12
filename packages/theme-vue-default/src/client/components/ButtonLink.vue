@@ -1,5 +1,6 @@
 <script setup="props" lang="ts">
 import { withBaseUrl } from '@vitebook/vue/client';
+import { useRouter } from 'vue-router';
 
 interface Props {
   href: string;
@@ -11,13 +12,25 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const withBase = withBaseUrl;
+
+const router = useRouter();
+
+function onClick(event: Event) {
+  if (props.href === '_back') {
+    event.preventDefault();
+    router.back();
+  }
+}
 </script>
 
 <template>
   <router-link
     class="link"
     :class="{ secondary: type === 'secondary' }"
-    :to="withBase(href)"
+    :to="href === '_back' ? '' : withBase(href)"
+    @click.prevent
+    @pointerdown="onClick"
+    @keydown.enter="onClick"
   >
     <slot />
   </router-link>
@@ -34,7 +47,32 @@ const withBase = withBaseUrl;
   background-color: var(--color-primary);
   text-decoration: none;
   border: 0.12rem solid var(--color-black);
-  transition: transform 150ms ease-out;
+  transition: transform 150ms ease;
+}
+
+html.dark .link:not(.secondary) {
+  border: 0.12rem solid var(--color-primary);
+}
+
+.link.secondary {
+  background-color: transparent;
+  color: var(--color-text);
+  border: 0.12rem solid var(--color-text);
+}
+
+@media (hover: hover) {
+  .link:hover {
+    background-color: #fbbd00;
+    transform: scale(1.02);
+  }
+
+  .link.secondary:hover {
+    background-color: var(--color-gray-100);
+  }
+
+  html.dark .link.secondary:hover {
+    background-color: var(--color-gray-400);
+  }
 }
 
 @media (min-width: 420px) {
@@ -48,31 +86,5 @@ const withBase = withBaseUrl;
     font-size: 1.1rem;
     padding: 1rem 2.2rem;
   }
-}
-
-.link:hover,
-.link:focus {
-  background-color: #fbbd00;
-  transform: scale(1.02);
-}
-
-.link.secondary:hover,
-.link.secondary:focus {
-  background-color: var(--color-gray-100);
-}
-
-html.dark .link.secondary:hover,
-html.dark .link.secondary:focus {
-  background-color: var(--color-gray-400);
-}
-
-html.dark .link:not(.secondary) {
-  border: 0.12rem solid var(--color-primary);
-}
-
-.link.secondary {
-  background-color: transparent;
-  color: var(--color-text);
-  border: 0.12rem solid var(--color-text);
 }
 </style>

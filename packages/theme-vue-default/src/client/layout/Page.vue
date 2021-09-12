@@ -4,7 +4,9 @@ import { PageView } from '@vitebook/vue/client';
 
 <template>
   <div class="container">
+    <slot name="start" />
     <PageView />
+    <slot name="end" />
   </div>
 </template>
 

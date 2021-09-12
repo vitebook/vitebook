@@ -30,17 +30,17 @@ const footerText = computed(
   padding: 4rem 1.5rem 5rem;
 }
 
-@media (min-width: 768px) {
-  .container {
-    padding: 6rem 1.5rem 4rem;
-  }
-}
-
 .text {
   margin: 0;
   text-align: center;
   line-height: 1.4;
   font-size: 0.9rem;
   color: var(--color-text-secondary);
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 6rem 1.5rem 4rem;
+  }
 }
 </style>

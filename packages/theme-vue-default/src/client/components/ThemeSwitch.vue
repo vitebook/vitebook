@@ -5,7 +5,7 @@ import { useLocalizedThemeConfig } from '../composables/useLocalizedThemeConfig'
 const isDarkMode = useDarkMode();
 const themeConfig = useLocalizedThemeConfig();
 
-function toggle() {
+function onToggle() {
   isDarkMode.value = !isDarkMode.value;
 }
 </script>
@@ -16,7 +16,8 @@ function toggle() {
     role="switch"
     :aria-label="themeConfig.darkMode.buttonAriaLabel"
     :aria-checked="isDarkMode"
-    @click="toggle"
+    @pointerdown="onToggle"
+    @keydown.enter="onToggle"
   >
     <svg
       class="sun"
@@ -67,10 +68,11 @@ button {
   background-color: transparent;
 }
 
-button:hover,
-button:focus-visible {
-  outline: 0;
-  background-color: var(--color-bg-100);
+@media (hover: hover) and (pointer: fine) {
+  button:hover {
+    outline: 0;
+    background-color: var(--color-bg-100);
+  }
 }
 
 svg {

@@ -20,9 +20,15 @@ const themeConfig = useLocalizedThemeConfig();
         {{ themeConfig.notFoundPage.message }}
       </h1>
 
-      <ButtonLink class="home-link" :href="withBaseUrl(homeLink)">{{
-        themeConfig.notFoundPage.backToHomeText
-      }}</ButtonLink>
+      <div class="actions">
+        <ButtonLink class="home-link" :href="withBaseUrl(homeLink)">{{
+          themeConfig.notFoundPage.goHomeText
+        }}</ButtonLink>
+
+        <ButtonLink class="back-link" href="_back" type="secondary">{{
+          themeConfig.notFoundPage.goBackText
+        }}</ButtonLink>
+      </div>
     </div>
   </main>
 </template>
@@ -45,23 +51,10 @@ main {
   flex-direction: column;
 }
 
-@media (min-width: 576px) {
-  .container {
-    padding-top: calc(var(--navbar-height) + 2rem);
-  }
-}
-
 h1 {
   font-size: 1.5rem;
   margin-top: 3rem;
   text-align: center;
-}
-
-@media (min-width: 576px) {
-  h1 {
-    font-size: 1.75rem;
-    margin-top: 3.5rem;
-  }
 }
 
 .img-container {
@@ -69,18 +62,29 @@ h1 {
   max-width: 400px;
 }
 
-@media (min-width: 576px) {
-  .img-container {
-    max-width: 500px;
-  }
-}
-
 .home-link {
   margin-top: 3rem;
 }
 
+.actions > a + a {
+  margin-left: 1rem;
+}
+
 @media (min-width: 576px) {
+  .container {
+    padding-top: calc(var(--navbar-height) + 2rem);
+  }
+
   .home-link {
+    margin-top: 3.5rem;
+  }
+
+  .img-container {
+    max-width: 500px;
+  }
+
+  h1 {
+    font-size: 1.75rem;
     margin-top: 3.5rem;
   }
 }
