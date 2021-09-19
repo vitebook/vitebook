@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useScrim } from './useScrim';
+import { useIsScrimActive } from './useScrim';
 
-const { isScrimActive } = useScrim();
+const isScrimActive = useIsScrimActive();
 </script>
 
 <template>

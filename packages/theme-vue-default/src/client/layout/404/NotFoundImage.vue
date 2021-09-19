@@ -7,10 +7,13 @@ const isDarkMode = useDarkMode();
 <template>
   <svg
     v-if="!isDarkMode"
+    aria-labelledby="not-found-svg-title"
+    role="img"
     viewBox="0 0 400 164"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
+    <title id="not-found-svg-title">Big letters writing out 404</title>
     <path
       d="M200 163.379C310.457 163.379 400 157.451 400 150.138C400 142.825 310.457 136.896 200 136.896C89.5431 136.896 0 142.825 0 150.138C0 157.451 89.5431 163.379 200 163.379Z"
       fill="#F5F5F5"

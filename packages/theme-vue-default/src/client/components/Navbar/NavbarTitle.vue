@@ -7,9 +7,9 @@ import {
 
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 
+const localePath = useRouteLocale();
 const siteConfig = useLocalizedSiteOptions();
 const themeConfig = useLocalizedThemeConfig();
-const localePath = useRouteLocale();
 </script>
 
 <template>

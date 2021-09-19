@@ -1,54 +1,58 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 import NavItemLink from './NavItemLink.vue';
 import NavItemWithMenu from './NavItemWithMenu.vue';
 import { useLanguageLinks } from './useLanguageLinks';
+import { useHasNavbarItems } from './useNavbar';
 import { useRepoLink } from './useRepoLink';
 
 const themeConfig = useLocalizedThemeConfig();
 const repoLink = useRepoLink();
 const languageLinks = useLanguageLinks();
-
-const hasNavItems = computed(
-  () => (themeConfig.value.navbar.items?.length ?? 0) > 0
-);
-
-const isShowing = computed(() => hasNavItems.value);
+const hasNavItems = useHasNavbarItems();
 </script>
 
 <template>
-  <nav v-if="isShowing">
-    <template v-if="hasNavItems">
-      <div
-        v-for="item in themeConfig.navbar.items"
-        :key="item.text"
-        class="nav-item"
-      >
-        <NavItemWithMenu v-if="'menu' in item" :item="item" />
-        <NavItemLink v-else :item="item" />
-      </div>
-    </template>
+  <nav v-if="hasNavItems">
+    <ul>
+      <template v-if="hasNavItems">
+        <li
+          v-for="item in themeConfig.navbar.items"
+          :key="item.text"
+          class="nav-item"
+        >
+          <NavItemWithMenu v-if="'menu' in item" :item="item" />
+          <NavItemLink v-else :item="item" />
+        </li>
+      </template>
 
-    <div v-if="languageLinks" class="nav-item">
-      <NavItemWithMenu :item="languageLinks" />
-    </div>
+      <li v-if="languageLinks" class="nav-item">
+        <NavItemWithMenu :item="languageLinks" />
+      </li>
 
-    <div v-if="repoLink" class="nav-item">
-      <NavItemLink :item="repoLink" />
-    </div>
+      <li v-if="repoLink" class="nav-item">
+        <NavItemLink :item="repoLink" />
+      </li>
+    </ul>
   </nav>
 </template>
 
 <style scoped>
-nav {
+nav > ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
 }
 
+ul > li {
+  margin: 0;
+  padding: 0;
+}
+
 @media (min-width: 992px) {
-  nav {
+  nav > ul {
     flex-direction: row;
     align-items: center;
   }

@@ -10,16 +10,27 @@ export type PageRef = Ref<Readonly<LoadedVuePage> | undefined>;
 
 const pageRef: PageRef = ref(undefined);
 
+const loadedPageCache = new WeakMap<VuePage, LoadedVuePage>();
+
 export function usePage(): Readonly<PageRef> {
   return shallowReadonly(pageRef);
 }
 
-export function setPageRef(page?: LoadedVuePage): void {
-  pageRef.value = page ? shallowReadonly(page) : undefined;
+export function getCachedLoadedPage(page: VuePage): LoadedVuePage | undefined {
+  return loadedPageCache.get(page);
+}
+
+export function deleteCachedLoadedPage(page: VuePage): void {
+  loadedPageCache.delete(page);
+}
+
+export function setPageRef(loadedPage?: LoadedVuePage): void {
+  pageRef.value = loadedPage ? shallowReadonly(loadedPage) : undefined;
 }
 
 export async function loadPage(page: VuePage): Promise<Component> {
   let component: Component;
+  let loadedPage: LoadedVuePage | undefined;
 
   if (isStoryPage(page)) {
     // Story
@@ -28,10 +39,7 @@ export async function loadPage(page: VuePage): Promise<Component> {
     if ('component' in data.default) {
       component = data.default.component;
       data.default.component = markRaw(data.default.component);
-      setPageRef({
-        ...page,
-        story: data.default as VueStoryConfig
-      });
+      loadedPage = { ...page, story: data.default as VueStoryConfig };
     } else {
       component = data.default;
 
@@ -39,22 +47,20 @@ export async function loadPage(page: VuePage): Promise<Component> {
         data.story.component = markRaw(data.story.component ?? {});
       }
 
-      setPageRef({
-        ...page,
-        story: data.story
-      });
+      loadedPage = { ...page, story: data.story };
     }
   } else if (isVueMarkdownPage(page)) {
     // Markdown
     const data = await page.loader();
     component = data.default;
-    setPageRef({
-      ...page,
-      data: data.data
-    });
+    loadedPage = { ...page, data: data.data };
   } else {
     component = await page.loader();
+    loadedPage = undefined;
   }
+
+  if (loadedPage) loadedPageCache.set(page, loadedPage);
+  setPageRef(loadedPage);
 
   return component;
 }

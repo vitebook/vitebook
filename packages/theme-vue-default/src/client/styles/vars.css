@@ -69,5 +69,7 @@
    *-------------------------------------------------------------------------------------------*/
 
   --scrim-z-index: calc(var(--navbar-z-index) + 100);
+
+  --sidebar-width: 18.75rem;
   --sidebar-z-index: calc(var(--scrim-z-index) + 100);
 }

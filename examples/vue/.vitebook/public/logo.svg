@@ -1,4 +1,5 @@
-<svg width="30" height="34" viewBox="0 0 30 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg aria-labelledby="logo-svg-title" role="img" width="30" height="34" viewBox="0 0 30 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+<title id="logo-svg-title">Vitebook logo</title>
 <path d="M28.6147 1L28.6147 23.8458H6.91016L19.9594 1H28.6147Z" fill="white" stroke="black" stroke-width="1.5" stroke-linejoin="bevel"/>
 <path d="M1.61523 15.4194L10.6498 1H22.6761L17.1418 9.41987L27.9298 9.41987L1.61523 33L9.32748 15.4191L1.61523 15.4194Z" fill="#FFCA28" stroke="black" stroke-width="1.5" stroke-linejoin="bevel"/>
 </svg>

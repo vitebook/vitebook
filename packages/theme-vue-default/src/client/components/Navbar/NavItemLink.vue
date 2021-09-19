@@ -12,6 +12,12 @@ const propsRef = toRefs(props);
 
 const { props: linkProps, isExternal } = useNavItemLink(propsRef.item);
 
+function preventClick(event: Event) {
+  if (!isExternal) {
+    event.preventDefault();
+  }
+}
+
 function handleLinkClick(event: Event, navigate: () => void): void {
   if (!isExternal) {
     event.preventDefault();
@@ -24,11 +30,10 @@ function handleLinkClick(event: Event, navigate: () => void): void {
   <div class="nav-link">
     <router-link v-slot="{ navigate, href }" :to="linkProps.to" custom>
       <a
-        class="link"
         v-bind="linkProps"
         :to="undefined"
         :href="isExternal ? linkProps.to : href"
-        @click.prevent
+        @click="preventClick"
         @pointerdown="(e) => handleLinkClick(e, navigate)"
         @keydown.enter="(e) => handleLinkClick(e, navigate)"
       >

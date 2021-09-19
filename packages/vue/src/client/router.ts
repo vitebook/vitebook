@@ -6,9 +6,15 @@ import {
   Router
 } from 'vue-router';
 
-import { loadPage } from './composables/usePage';
+import {
+  deleteCachedLoadedPage,
+  getCachedLoadedPage,
+  loadPage,
+  setPageRef
+} from './composables/usePage';
 import { usePages } from './composables/usePages';
 import { useTheme } from './composables/useTheme';
+import { withBaseUrl } from './helpers/withBaseUrl';
 import { VuePage } from './types/page';
 
 export function createRouter(): Router {
@@ -23,6 +29,12 @@ export function createRouter(): Router {
       if (to.hash) return { el: to.hash };
       return { top: 0 };
     }
+  });
+
+  router.beforeEach(({ path }) => {
+    const page = pages.value.find((page) => withBaseUrl(page.route) === path);
+    const loadedPage = page ? getCachedLoadedPage(page) : undefined;
+    setPageRef(loadedPage);
   });
 
   addRoutes(router, pages.value);
@@ -45,15 +57,26 @@ const pageRouteDisposal: (() => void)[] | undefined = import.meta.hot
 
 function addRoutes(router: Router, pages: Readonly<VuePage[]>): void {
   pages.forEach((page) => {
+    const path = withBaseUrl(
+      page.route === '/404.html' ? '/:pathMatch(.*)*' : page.route
+    );
+
     const dispose = router.addRoute({
       name:
         page.name ??
         page.route.replace('.html', '').slice(page.route === '/' ? 0 : 1),
-      path: page.route === '/404.html' ? '/:pathMatch(.*)*' : page.route,
+      path,
       component: () => loadPage(page)
     });
 
-    pageRouteDisposal?.push(dispose);
+    if (router.currentRoute.value.path === path) {
+      router.replace(path);
+    }
+
+    pageRouteDisposal?.push(() => {
+      dispose();
+      deleteCachedLoadedPage(page);
+    });
   });
 }
 

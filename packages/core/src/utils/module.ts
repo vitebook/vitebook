@@ -116,17 +116,17 @@ export async function bundle(
     write: false,
     plugins: [
       {
-        name: 'mark-unresolvable-as-external',
+        name: 'mark-externals',
         setup(build) {
           // Must not start with "/" or "./" or "../"
           // eslint-disable-next-line no-useless-escape
           const filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/;
-          build.onResolve({ filter }, (args) => {
+          build.onResolve({ filter }, async (args) => {
             try {
-              esmRequire.resolve(args.path);
-              return;
-            } catch (e) {
+              await import(args.path); // ESM friendly?
               return { external: true };
+            } catch (e) {
+              return;
             }
           });
         }

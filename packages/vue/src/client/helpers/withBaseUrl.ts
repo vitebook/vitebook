@@ -1,6 +1,6 @@
 import { EXTERNAL_URL_RE } from '@vitebook/core/shared';
 
-import { useLocalizedSiteOptions } from '../composables/useLocalizedSiteOptions';
+import { useSiteOptions } from '../composables/useSiteOptions';
 
 /** Join two paths by resolving the slash collision. */
 export function joinPath(base: string, path: string): string {
@@ -8,7 +8,7 @@ export function joinPath(base: string, path: string): string {
 }
 
 export function withBaseUrl(path: string): string {
-  const siteConfig = useLocalizedSiteOptions();
+  const siteConfig = useSiteOptions();
   const baseUrl = siteConfig.value.baseUrl;
 
   return EXTERNAL_URL_RE.test(path) || path.startsWith(baseUrl)

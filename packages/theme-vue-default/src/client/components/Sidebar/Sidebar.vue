@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { watch } from 'vue';
+import { useWindowSize } from '@vueuse/core';
+import { computed, ref, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 
+import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 import NavbarTitle from '../Navbar/NavbarTitle.vue';
 import NavLinks from '../Navbar/NavLinks.vue';
+import { useHasNavbarItems } from '../Navbar/useNavbar';
 import ThemeSwitch from '../ThemeSwitch.vue';
-import { useSidebar } from './useSidebar';
-
-const { isSidebarOpen } = useSidebar();
+import SidebarLinks from './SidebarLinks.vue';
+import { useHasSidebarItems, useIsSidebarOpen } from './useSidebar';
 
 const route = useRoute();
+const isSidebarOpen = useIsSidebarOpen();
 
 watch(
   () => route.path,
@@ -17,10 +20,47 @@ watch(
     isSidebarOpen.value = false;
   }
 );
+
+const themeConfig = useLocalizedThemeConfig();
+
+const hasNavItems = useHasNavbarItems();
+const hasSidebarItems = useHasSidebarItems();
+
+const isMainMenuShowing = ref(false);
+
+const windowSize = useWindowSize();
+
+const hasMainMenuItems = computed(() =>
+  windowSize.width.value < 992 ? hasNavItems.value : false
+);
+
+const forceSidebarOpen = computed(
+  () => windowSize.width.value >= 992 && hasSidebarItems.value
+);
+
+watchEffect(() => {
+  if (!isSidebarOpen.value && forceSidebarOpen.value) {
+    isSidebarOpen.value = true;
+  }
+});
+
+watchEffect(() => {
+  isMainMenuShowing.value =
+    (!isSidebarOpen.value && !hasSidebarItems.value) ||
+    (!hasSidebarItems.value && hasMainMenuItems.value);
+});
+
+function handleToggleMenus() {
+  isMainMenuShowing.value = !isMainMenuShowing.value;
+}
 </script>
 
 <template>
-  <aside class="sidebar" :class="{ open: isSidebarOpen }">
+  <aside
+    class="sidebar"
+    :class="{ open: isSidebarOpen || forceSidebarOpen }"
+    :aria-hidden="isSidebarOpen && !forceSidebarOpen"
+  >
     <slot name="start" />
 
     <div class="header">
@@ -31,11 +71,31 @@ watch(
       </div>
     </div>
 
-    <div class="sidebar-links">
-      <NavLinks />
-    </div>
+    <div class="links">
+      <button
+        v-if="hasMainMenuItems"
+        class="back-button"
+        :aria-hidden="isMainMenuShowing"
+        @pointerdown="handleToggleMenus"
+        @keydown.enter="handleToggleMenus"
+      >
+        {{ themeConfig.sidebar.backToMainMenuText }}
+      </button>
 
-    <!-- ... -->
+      <NavLinks
+        v-if="hasMainMenuItems"
+        class="main-menu"
+        :class="{ open: isMainMenuShowing }"
+        :aria-hidden="!isMainMenuShowing"
+      />
+
+      <SidebarLinks
+        v-if="hasSidebarItems"
+        class="current-menu"
+        :class="{ open: !isMainMenuShowing }"
+        :aria-hidden="isMainMenuShowing"
+      />
+    </div>
 
     <slot name="end" />
   </aside>
@@ -61,7 +121,6 @@ watch(
 
 .header {
   padding-top: 0.25rem;
-  border-bottom: 0.12rem solid var(--color-divider);
 }
 
 .header-wrapper {
@@ -73,12 +132,48 @@ watch(
   flex: 1;
 }
 
-.sidebar-links {
+.back-button[aria-hidden='true'] {
+  display: none;
+}
+
+.links {
   padding: 0 1rem;
-  margin-top: 0.5rem;
+  margin-top: 0.375rem;
 }
 
 :deep(.nav-item) {
   margin-top: 0.25rem;
+}
+
+.main-menu {
+  display: none;
+}
+
+.main-menu.open {
+  display: block;
+}
+
+.current-menu[aria-hidden='true'] {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .header {
+    display: none;
+  }
+
+  .back-button {
+    display: none;
+  }
+
+  .sidebar {
+    width: var(--sidebar-width);
+    margin-top: var(--navbar-height);
+    transition: unset;
+  }
+
+  .sidebar.open {
+    transition: transform 0.135s ease;
+  }
 }
 </style>

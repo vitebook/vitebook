@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 import HamburgerIcon from './HamburgerIcon.vue';
 import NavbarTitle from './NavbarTitle.vue';
 import NavLinks from './NavLinks.vue';
 
 defineEmits(['hamburger-click']);
+
+const themeConfig = useLocalizedThemeConfig();
 </script>
 
 <template>
@@ -11,9 +14,10 @@ defineEmits(['hamburger-click']);
     <div class="container">
       <slot name="start" />
 
-      <div class="navbar-left">
+      <div class="navbar-left-group">
         <button
           class="hamburger-button"
+          :aria-label="themeConfig.sidebar?.toggleAriaLabel"
           @pointerdown="$emit('hamburger-click')"
           @keydown.enter="$emit('hamburger-click')"
         >
@@ -65,7 +69,7 @@ defineEmits(['hamburger-click']);
   display: none;
 }
 
-.navbar-left {
+.navbar-left-group {
   display: flex;
   justify-content: flex-start;
   align-items: center;

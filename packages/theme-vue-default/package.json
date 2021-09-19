@@ -50,11 +50,13 @@
   },
   "devDependencies": {
     "@vitebook/vue": "*",
-    "vue": "^3.2.6"
+    "vue": "^3.2.6",
+    "vue-router": "^4.0.11"
   },
   "peerDependencies": {
     "@vitebook/vue": "*",
-    "vue": "^3.2.6"
+    "vue": "^3.2.6",
+    "vue-router": "^4.0.11"
   },
   "publishConfig": {
     "access": "public"

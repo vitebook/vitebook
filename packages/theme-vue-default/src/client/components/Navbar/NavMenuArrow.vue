@@ -6,11 +6,14 @@ const props = defineProps<{
 
 <template>
   <svg
+    aria-labelledby="nav-menu-arrow-svg-title"
+    role="img"
     width="16"
     height="16"
     viewBox="0 0 16 16"
     xmlns="http://www.w3.org/2000/svg"
   >
+    <title id="nav-menu-arrow-svg-title">A small arrow</title>
     <path
       :class="{ open: isOpen }"
       d="M8 12.6667L3 6H13L8 12.6667Z"

@@ -55,7 +55,7 @@ export async function resolvePages(
     }
   }
 
-  app.pages = Array.from(resolvedPages.values());
+  app.pages = sortPages(Array.from(resolvedPages.values()));
 
   // `pagesResolved` hook
   for (let i = 0; i < app.plugins.length; i += 1) {
@@ -149,4 +149,44 @@ export function loadPagesVirtualModule(app: App): string {
       }))
     )
   )}`;
+}
+
+// Splits route by `/` and retain splitter.
+const splitRouteRE = /(.*?\/)/g;
+const splitRoute = (route: string) => route.split(splitRouteRE).slice(3);
+
+export function sortPages(pages: ServerPage[]): ServerPage[] {
+  return Object.values(pages).sort((pageA, pageB) => {
+    const tokensA = splitRoute(pageA.route);
+    const tokensB = splitRoute(pageB.route);
+    const len = Math.max(tokensA.length, tokensB.length);
+
+    for (let i = 0; i < len; i++) {
+      if (!(i in tokensA)) {
+        return -1;
+      }
+
+      if (!(i in tokensB)) {
+        return 1;
+      }
+
+      const tokenA = tokensA[i].toLowerCase();
+      const tokenB = tokensB[i].toLowerCase();
+
+      if (tokenA === tokenB) {
+        continue;
+      }
+
+      const isTokenADir = tokenA[tokenA.length - 1] === '/';
+      const isTokenBDir = tokenB[tokenB.length - 1] === '/';
+
+      if (isTokenADir === isTokenBDir) {
+        return tokenA < tokenB ? -1 : 1;
+      } else {
+        return isTokenADir ? 1 : -1;
+      }
+    }
+
+    return 0;
+  });
 }

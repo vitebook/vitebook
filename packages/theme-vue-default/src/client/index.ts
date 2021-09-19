@@ -5,23 +5,50 @@ import './styles/vars-dark.css';
 import './styles/global.css';
 import './styles/code.css';
 
-import type { VueTheme } from '@vitebook/vue/client';
+import { loadPage, useFirstPage, VueTheme } from '@vitebook/vue/client';
+import { h, watch } from 'vue';
 
 import OutboundLink from './components/global/OutboundLink.vue';
+import { useLocalizedThemeConfig } from './composables/useLocalizedThemeConfig';
 import { useScrollPromise } from './composables/useScrollPromise';
 import NotFound from './layout/404/404.vue';
 import Layout from './layout/Layout.vue';
+
+const BlankPage = Promise.resolve({
+  name: 'Blank',
+  render() {
+    return h('div');
+  }
+});
 
 const theme: VueTheme = {
   Layout: Layout,
   NotFound: NotFound,
   configureClientApp({ app, router }) {
     if (!router.hasRoute('/')) {
-      router.addRoute({
-        name: '/',
-        path: '/',
-        component: () => import('./components/Home/Home.vue')
-      });
+      const theme = useLocalizedThemeConfig();
+      const firstPage = useFirstPage();
+
+      watch(
+        () => [theme.value, firstPage.value],
+        () => {
+          router.addRoute({
+            name: '/',
+            path: '/',
+            component: () =>
+              theme.value.homePage === false
+                ? firstPage.value
+                  ? loadPage(firstPage.value)
+                  : BlankPage
+                : import('./components/Home/Home.vue')
+          });
+
+          if (router.currentRoute.value.name === '/') {
+            router.replace('/');
+          }
+        },
+        { immediate: true }
+      );
     }
 
     // Unregister the built-in `<OutboundLink>` to avoid warning.

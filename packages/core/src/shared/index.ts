@@ -17,6 +17,8 @@ export * from './utils/head.js';
 export * from './utils/html.js';
 export * from './utils/json.js';
 export * from './utils/locale.js';
+export * from './utils/sidebar.js';
+export * from './utils/string.js';
 export * from './utils/support.js';
 export * from './utils/unit.js';
 export * from './utils/url.js';

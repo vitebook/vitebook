@@ -1,5 +1,5 @@
 import type { NavbarItemsConfig } from './navbar.js';
-import type { SidebarItemsConfig } from './sidebar.js';
+import type { MultiSidebarItemsConfig, SidebarItemsConfig } from './sidebar.js';
 
 export type DefaultThemeConfig = DefaultThemeLocaleData & {
   /**
@@ -21,17 +21,6 @@ export type DefaultThemeConfig = DefaultThemeLocaleData & {
 };
 
 export type DefaultThemeLocaleData = {
-  /**
-   * Specify the path of the homepage.
-   *
-   * This will be used for:
-   *
-   * - The logo link of the navbar.
-   * - The back to home link of the 404 page
-   *
-   * @default '/'
-   */
-  homePath?: string;
   /**
    * A relative URL from the project root to a logo. You can also place this inside the `<public>`
    * directory.
@@ -70,8 +59,10 @@ export type DefaultThemeLocaleData = {
   markdown?: DefaultThemeMarkdownLocaleConfig;
   /**
    * Home page configuration.
+   *
+   * @default false
    */
-  homePage?: DefaultThemeHomePageLocaleConfig;
+  homePage?: DefaultThemeHomePageLocaleConfig | false;
   /**
    * Not found page (404) configuration.
    */
@@ -142,27 +133,17 @@ export type DefaultThemeSidebarLocaleConfig = {
    *
    * @default {}
    */
-  items?: SidebarItemsConfig;
-  /**
-   * **Only applicable to markdown pages.**
-   *
-   * Sidebar depth.
-   *
-   * - Set to `0` to disable all levels
-   * - Set to `1` to include `<h2>`
-   * - Set to `2` to include `<h2>` and `<h3>`
-   * - ...
-   *
-   * The max value depends on which headers you have extracted via `markdown.extractHeaders.level`.
-   *
-   * The default value of `markdown.extractHeaders.level` is `[2, 3]`, so the default max value
-   * of `sidebarDepth` is `2`
-   */
-  depth?: number;
+  items?: SidebarItemsConfig | MultiSidebarItemsConfig;
   /**
    * A11y text for sidebar toggle button.
    */
   toggleAriaLabel?: string;
+  /**
+   * Specify the text to be displayed inside the back to main menu button in the sidebar.
+   *
+   * @default 'Back to main menu'
+   */
+  backToMainMenuText?: string;
 };
 
 export type DefaultThemeMarkdownLocaleConfig = {
@@ -230,44 +211,30 @@ export type DefaultThemeMarkdownLocaleConfig = {
 export type DefaultThemeHomePageLocaleConfig = {
   /**
    * Large text displayed at the top of the page in the hero.
-   *
-   * @default 'Vitebook'
    */
   heroText?: string;
   /**
    * Text to be displayed inside the primary button link in the hero.
-   *
-   * @default undefined
    */
   primaryActionText?: string;
   /**
    * URL of the primary button link.
-   *
-   * @default undefined
    */
   primaryActionLink?: string;
   /**
    * Text to be displayed inside the secondary button link in the hero.
-   *
-   * @default undefined
    */
   secondaryActionText?: string;
   /**
    * URL of the secondary button link.
-   *
-   * @default undefined
    */
   secondaryActionLink?: string;
   /**
    * Feature items to be displayed below the hero.
-   *
-   * @default []
    */
   features?: DefaultThemeHomePageFeature[];
   /**
    * Text to be displayed in the footer.
-   *
-   * @default 'MIT Licensed | Copyright © 2021 - Vitebook'
    */
   footer?: string;
 };
@@ -304,8 +271,6 @@ export type DefaultThemeNotFoundPageLocaleConfig = {
 export type DefaultThemeLocaleConfig = Record<string, DefaultThemeLocaleData>;
 
 export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
-  homePath: '/',
-
   logo: '/logo.svg',
 
   a11y: {
@@ -333,8 +298,8 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
 
   sidebar: {
     items: 'auto',
-    depth: 2,
-    toggleAriaLabel: 'Toggle sidebar'
+    toggleAriaLabel: 'Toggle sidebar',
+    backToMainMenuText: 'Back to main menu'
   },
 
   markdown: {
@@ -350,15 +315,7 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
     }
   },
 
-  homePage: {
-    heroText: 'Vitebook',
-    // primaryActionText: undefined,
-    // primaryActionLink: undefined,
-    // secondaryActionText: undefined,
-    // secondaryActionLink: undefined,
-    features: [],
-    footer: 'MIT Licensed | Copyright © 2021 - Vitebook'
-  },
+  homePage: false,
 
   notFoundPage: {
     message: 'Oops, something went wrong.',

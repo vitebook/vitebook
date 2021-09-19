@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NavItemWithMenu } from '@vitebook/core/shared';
+import { inBrowser, NavItemWithMenu } from '@vitebook/core/shared';
 import { computed, ref, toRefs, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -20,6 +20,8 @@ const menuButton = ref<HTMLButtonElement | null>(null);
 watch(
   () => route.path,
   () => {
+    if (!inBrowser) return;
+
     if (window.innerWidth >= 992) {
       isMenuOpen.value = false;
     } else {
@@ -62,6 +64,12 @@ function onKeyDown(e: KeyboardEvent) {
     });
   }
 }
+
+function onMenuPointerLeave() {
+  if (window.innerWidth >= 992) {
+    isMenuOpen.value = false;
+  }
+}
 </script>
 
 <template>
@@ -90,6 +98,7 @@ function onKeyDown(e: KeyboardEvent) {
       class="menu"
       :aria-labelledby="menuButtonId"
       :aria-expanded="isMenuOpen"
+      @pointerleave="onMenuPointerLeave"
     >
       <li v-for="menuItem in item.menu" :key="menuItem.text" class="menu-item">
         <NavItemLink :item="menuItem" />
@@ -221,6 +230,10 @@ function onKeyDown(e: KeyboardEvent) {
 
   .menu-item :deep(.nav-link) {
     margin-left: 0;
+  }
+
+  .nav-menu.menu-open .menu {
+    display: block;
   }
 }
 </style>

@@ -4,6 +4,7 @@ export { default as OutboundLink } from './components/OutboundLink/OutboundLink'
 export { default as PageView } from './components/PageView';
 // composables
 export * from './composables/useLocalizedSiteOptions';
+export * from './composables/useLocalizedStoryConfig';
 export * from './composables/useLocalizedThemeConfig';
 export * from './composables/useMarkdownData';
 export * from './composables/useMarkdownFrontmatter';

@@ -3,17 +3,17 @@ import { watch } from 'vue';
 
 import Navbar from '../components/Navbar/Navbar.vue';
 import Scrim from '../components/Scrim/Scrim.vue';
-import { useScrim } from '../components/Scrim/useScrim';
+import { useIsScrimActive } from '../components/Scrim/useScrim';
 import Sidebar from '../components/Sidebar/Sidebar.vue';
-import { useSidebar } from '../components/Sidebar/useSidebar';
+import { useIsSidebarOpen } from '../components/Sidebar/useSidebar';
 import ThemeSwitch from '../components/ThemeSwitch.vue';
 import { initDarkMode } from '../composables/useDarkMode';
 import Page from './Page.vue';
 
 initDarkMode();
 
-const { isSidebarOpen } = useSidebar();
-const { isScrimActive } = useScrim();
+const isSidebarOpen = useIsSidebarOpen();
+const isScrimActive = useIsScrimActive();
 
 watch(
   () => isSidebarOpen.value,
@@ -82,6 +82,10 @@ watch(
   .theme-switch {
     display: block;
     margin-left: 0.2rem;
+  }
+
+  .scrim {
+    display: none;
   }
 }
 </style>
