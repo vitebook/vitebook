@@ -1,5 +1,8 @@
-import type { SidebarGroup, SidebarItem } from '../types/default-theme/sidebar';
+import type {
+  SidebarItem,
+  SidebarItemGroup
+} from '../types/default-theme/sidebar';
 
-export function isSidebarGroup(item: SidebarItem): item is SidebarGroup {
+export function isSidebarGroup(item: SidebarItem): item is SidebarItemGroup {
   return Object.hasOwnProperty.call(item, 'children');
 }

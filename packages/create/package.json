@@ -2,8 +2,10 @@
   "name": "create-vitebook",
   "version": "0.0.0",
   "keywords": [
+    "alternative",
     "create",
     "esm",
+    "fast",
     "lightweight",
     "modern",
     "storybook",

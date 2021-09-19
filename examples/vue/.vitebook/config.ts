@@ -1,12 +1,24 @@
-import { defineConfig } from '@vitebook/core';
-import { vueClientPlugin } from '@vitebook/vue';
-import { vueMarkdownPlugin } from '@vitebook/plugin-markdown-vue';
-import { storyPlugin } from '@vitebook/plugin-story';
-import { defaultVueThemePlugin } from '@vitebook/theme-vue-default';
-import type { DefaultThemeConfig } from '@vitebook/core/shared';
+import { defineConfig, DefaultThemeConfig } from '@vitebook/core/node';
+import { clientPlugin } from '@vitebook/client/node';
+import { vueMarkdownPlugin } from '@vitebook/plugin-markdown-vue/node';
+import { storyPlugin } from '@vitebook/plugin-story/node';
 
 export default defineConfig<DefaultThemeConfig>({
   include: ['src/**/*.{md,vue}'],
+  plugins: [
+    vueMarkdownPlugin({
+      include: /.md$/
+    }),
+    storyPlugin({
+      include: /\.(story\.)?vue$/
+    }),
+    clientPlugin({
+      // include: /\.vue$/,
+      vue: {
+        include: [/\.vue$/, /\.md$/]
+      }
+    })
+  ],
   site: {
     title: 'Vitebook',
     description: 'Yessir',
@@ -112,20 +124,5 @@ export default defineConfig<DefaultThemeConfig>({
         footer: 'MIT Licensed | Copyright © 2021 - Vitebook'
       }
     }
-  },
-  plugins: [
-    vueMarkdownPlugin({
-      pages: /.md$/
-    }),
-    storyPlugin({
-      pages: /\.(story\.)?vue$/
-    }),
-    vueClientPlugin({
-      // pages: /\.vue$/,
-      vue: {
-        include: [/\.vue$/, /\.md$/]
-      }
-    }),
-    defaultVueThemePlugin()
-  ]
+  }
 });

@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { StoryConfig } from '@vitebook/vue/client';
+import type { StoryConfig } from '@vitebook/client';
 
 export const story: StoryConfig = {
   title: 'Button',

@@ -2,8 +2,10 @@
   "name": "@vitebook/core",
   "version": "0.0.0",
   "keywords": [
+    "alternative",
     "core",
     "esm",
+    "fast",
     "lightweight",
     "modern",
     "storybook",
@@ -25,23 +27,23 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    ".": "./dist/index.js",
-    "./*": "./dist/*",
+    ".": "./dist/node/index.js",
+    "./node": "./dist/node/index.js",
+    "./node/*": "./dist/node/*",
+    "./node/utils": "./dist/node/utils/index.js",
     "./shared": "./dist/shared/index.js",
-    "./utils": "./dist/utils/index.js",
-    "./index.html": "./index.html",
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
+      "node": [
+        "dist/node/index.d.ts"
+      ],
+      "node/*": [
+        "dist/node/*"
+      ],
       "shared": [
         "dist/shared/index.d.ts"
-      ],
-      "utils": [
-        "dist/utils/index.d.ts"
-      ],
-      "*": [
-        "dist/*"
       ]
     }
   },
@@ -50,8 +52,7 @@
   },
   "files": [
     "bin/",
-    "dist/",
-    "index.html"
+    "dist/"
   ],
   "scripts": {
     "build": "npm run clean && tsc",

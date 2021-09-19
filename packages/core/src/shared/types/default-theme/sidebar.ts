@@ -4,14 +4,18 @@ export type MultiSidebarItemsConfig = {
   [path: string]: SidebarItemsConfig;
 };
 
-export type SidebarItem = SidebarLink | SidebarGroup;
+export type SidebarItem = SidebarItemLink | SidebarItemGroup;
 
-export type SidebarLink = {
+export type SidebarItemLink = {
   text: string;
   link: string;
+  target?: string;
+  rel?: string;
+  ariaLabel?: string;
+  activeMatch?: string;
 };
 
-export type SidebarGroup = {
+export type SidebarItemGroup = {
   text: string;
   collapsible?: boolean;
   children: SidebarItem[];

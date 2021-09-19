@@ -22,18 +22,21 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./*": "./src/*",
+    "./node": "./src/node/index.ts",
+    "./node/*": "./src/node/*",
     "./shared": "./src/shared/index.ts",
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
-      "shared": [
-        "src/shared/index.ts"
+      "node": [
+        "./src/node/index.ts"
       ],
-      "*": [
-        "src/*"
+      "node/*": [
+        "./src/node/*"
+      ],
+      "shared": [
+        "./src/shared/index.ts"
       ]
     }
   },

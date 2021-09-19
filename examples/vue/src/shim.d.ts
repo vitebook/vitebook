@@ -1,1 +1,1 @@
-/// <reference types="@vitebook/vue/client/shim" />
+/// <reference types="@vitebook/client/shim" />
