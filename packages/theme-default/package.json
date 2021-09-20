@@ -23,23 +23,27 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
+    ".": "./src/client/index.ts",
+    "./*": "./src/client/*",
     "./node": "./src/node/index.ts",
-    "./client": "./src/client/index.ts",
-    "./client/*": "./src/client/*",
+    "./node/*": "./src/node/*",
     "./shim": "./src/shim.d.ts",
     "./shim.d.ts": "./src/shim.d.ts",
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
-      "client": [
-        "./src/client/index.ts"
-      ],
-      "client/*": [
-        "./src/client/*"
-      ],
       "node": [
-        "./src/node/index.ts"
+        "src/node/index.ts"
+      ],
+      "node/*": [
+        "src/node/*"
+      ],
+      "shim": [
+        "src/shim.d.ts"
+      ],
+      "*": [
+        "src/client/*"
       ]
     }
   },
