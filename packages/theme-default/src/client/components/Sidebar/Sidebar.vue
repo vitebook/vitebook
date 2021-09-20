@@ -3,7 +3,7 @@ import { useMediaQuery } from '@vueuse/core';
 import { computed, ref, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 
-import { defaultThemeLocaleOptions } from '../..';
+import { defaultThemeLocaleOptions } from '../../../shared';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 import NavbarTitle from '../Navbar/NavbarTitle.vue';
 import NavLinks from '../Navbar/NavLinks.vue';

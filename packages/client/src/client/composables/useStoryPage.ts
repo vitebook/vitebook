@@ -8,12 +8,9 @@ export type StoryPageRef = ComputedRef<
   Readonly<LoadedVueStoryPage> | undefined
 >;
 
-const page = usePage();
-
-const storyPageRef: StoryPageRef = computed(() =>
-  isStoryPage(page.value) ? shallowReadonly(page.value) : undefined
-);
-
-export function useStoryPage(): Readonly<StoryPageRef> {
-  return shallowReadonly(storyPageRef);
+export function useStoryPage(): StoryPageRef {
+  const page = usePage();
+  return computed(() =>
+    isStoryPage(page.value) ? shallowReadonly(page.value) : undefined
+  );
 }

@@ -6,12 +6,9 @@ import { usePage } from './usePage';
 
 export type MarkdownDataRef = ComputedRef<Readonly<MarkdownData> | undefined>;
 
-const page = usePage();
-
-const markdownDataRef: MarkdownDataRef = computed(() =>
-  isVueMarkdownPage(page.value) ? shallowReadonly(page.value.data) : undefined
-);
-
 export function useMarkdownData(): Readonly<MarkdownDataRef> {
-  return shallowReadonly(markdownDataRef);
+  const page = usePage();
+  return computed(() =>
+    isVueMarkdownPage(page.value) ? shallowReadonly(page.value.data) : undefined
+  );
 }

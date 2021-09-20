@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { defaultThemeLocaleOptions } from '../..';
+import { defaultThemeLocaleOptions } from '../../../shared';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 import HamburgerIcon from './HamburgerIcon.vue';
 import NavbarTitle from './NavbarTitle.vue';

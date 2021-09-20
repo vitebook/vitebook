@@ -7,6 +7,7 @@ import type { Page } from '../types/page';
 
 export type PagesRef = Ref<Readonly<Page[]>>;
 
+// Singleton.
 const pagesRef: PagesRef = ref(shallowReadonly(pages));
 
 export function usePages(): Readonly<PagesRef> {

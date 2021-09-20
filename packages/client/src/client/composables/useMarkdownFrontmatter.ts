@@ -8,14 +8,11 @@ export type MarkdownFrontmatterRef = ComputedRef<
   Readonly<MarkdownFrontmatter> | undefined
 >;
 
-const page = usePage();
-
-const markdownFrontmatterRef: MarkdownFrontmatterRef = computed(() =>
-  isVueMarkdownPage(page.value)
-    ? shallowReadonly(page.value.data.frontmatter)
-    : undefined
-);
-
-export function useMarkdownFrontmatter(): Readonly<MarkdownFrontmatterRef> {
-  return shallowReadonly(markdownFrontmatterRef);
+export function useMarkdownFrontmatter(): MarkdownFrontmatterRef {
+  const page = usePage();
+  return computed(() =>
+    isVueMarkdownPage(page.value)
+      ? shallowReadonly(page.value.data.frontmatter)
+      : undefined
+  );
 }

@@ -6,10 +6,10 @@ import { useSiteOptions } from './useSiteOptions';
 export type ThemeConfigRef<Theme extends ThemeConfig = ThemeConfig> =
   ComputedRef<Readonly<Theme>>;
 
-const siteOptions = useSiteOptions();
+const site = useSiteOptions();
 
 const themeConfigRef: ThemeConfigRef = computed(() =>
-  shallowReadonly(siteOptions.value.theme)
+  shallowReadonly(site.value.theme)
 );
 
 export function useThemeConfig<

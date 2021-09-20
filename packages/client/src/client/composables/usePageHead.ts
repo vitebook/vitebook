@@ -1,7 +1,7 @@
 import { dedupeHead, HeadConfig, SiteLocaleData } from '@vitebook/core/shared';
 import { isVueMarkdownPage } from '@vitebook/plugin-markdown-vue/shared';
 import { isStoryPage } from '@vitebook/plugin-story/shared';
-import { computed, ComputedRef, shallowReadonly } from 'vue';
+import { computed, ComputedRef } from 'vue';
 
 import type { LoadedPage } from '../types/page';
 import { useLocalizedSiteOptions } from './useLocalizedSiteOptions';
@@ -11,17 +11,14 @@ import { usePageTitle } from './usePageTitle';
 
 export type PageHeadRef = ComputedRef<HeadConfig[]>;
 
-const title = usePageTitle();
-const description = usePageDescription();
-const siteOptions = useLocalizedSiteOptions();
-const page = usePage();
-
-const pageHeadRef: PageHeadRef = computed(() =>
-  resolvePageHead(title.value, description.value, siteOptions.value, page.value)
-);
-
-export function usePageHead(): Readonly<PageHeadRef> {
-  return shallowReadonly(pageHeadRef);
+export function usePageHead(): PageHeadRef {
+  const title = usePageTitle();
+  const description = usePageDescription();
+  const site = useLocalizedSiteOptions();
+  const page = usePage();
+  return computed(() =>
+    resolvePageHead(title.value, description.value, site.value, page.value)
+  );
 }
 
 const resolvePageHead = (

@@ -54,9 +54,7 @@
     "@vueuse/core": "^6.3.2"
   },
   "devDependencies": {
-    "@vitebook/client": "*",
-    "vue": "^3.2.6",
-    "vue-router": "^4.0.11"
+    "@vitebook/client": "*"
   },
   "peerDependencies": {
     "@vitebook/client": "*",

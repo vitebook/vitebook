@@ -6,12 +6,11 @@ import { usePage } from './usePage';
 
 export type StoryConfigRef = ComputedRef<Readonly<VueStoryConfig> | undefined>;
 
-const page = usePage();
-
-const storyConfigRef: StoryConfigRef = computed(() =>
-  isStoryPage(page.value) ? shallowReadonly(page.value.story ?? {}) : undefined
-);
-
-export function useStoryConfig(): Readonly<StoryConfigRef> {
-  return shallowReadonly(storyConfigRef);
+export function useStoryConfig(): StoryConfigRef {
+  const page = usePage();
+  return computed(() =>
+    isStoryPage(page.value)
+      ? shallowReadonly(page.value.story ?? {})
+      : undefined
+  );
 }

@@ -8,6 +8,7 @@ import { usePages } from './usePages';
 
 export type PageRef = Ref<Readonly<LoadedPage> | undefined>;
 
+// Singleton.
 const pageRef: PageRef = ref(undefined);
 
 const loadedPageCache = new WeakMap<Page, LoadedPage>();

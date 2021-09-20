@@ -1,7 +1,3 @@
-import Theme from '@vitebook/theme-default/client';
+import Theme from '@vitebook/theme-default';
 
-export default {
-  Layout: Theme.Layout,
-  NotFound: Theme.NotFound,
-  configureClientApp: Theme.configureClientApp
-};
+export default Theme;

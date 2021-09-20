@@ -5,6 +5,7 @@ import type { VirtualStoryAddonsModule } from '../types/addon';
 
 export type StoryAddonsRef = Ref<Readonly<VirtualStoryAddonsModule['default']>>;
 
+// Singleton.
 const storyAddonsRef: StoryAddonsRef = ref(shallowReadonly(addons));
 
 export function useStoryAddons(): Readonly<StoryAddonsRef> {

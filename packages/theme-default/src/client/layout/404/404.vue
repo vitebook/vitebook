@@ -2,7 +2,7 @@
 import { useRouteLocale, withBaseUrl } from '@vitebook/client';
 import { computed } from 'vue';
 
-import { defaultThemeLocaleOptions } from '../..';
+import { defaultThemeLocaleOptions } from '../../../shared';
 import ButtonLink from '../../components/ButtonLink.vue';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 import NotFoundImage from './NotFoundImage.vue';

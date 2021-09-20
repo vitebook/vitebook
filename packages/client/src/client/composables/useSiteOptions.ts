@@ -10,6 +10,7 @@ export type SiteOptionsRef<Theme extends ThemeConfig = ThemeConfig> = Ref<
   Readonly<SiteOptions<Theme>>
 >;
 
+// Singleton.
 const siteOptionsRef: SiteOptionsRef = ref(shallowReadonly(siteOptions));
 
 export function useSiteOptions<

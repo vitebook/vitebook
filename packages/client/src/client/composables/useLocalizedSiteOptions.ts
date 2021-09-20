@@ -8,24 +8,20 @@ export type LocalizedSiteOptionsRef<Theme extends ThemeConfig> = ComputedRef<
   Readonly<SiteOptions<Theme>>
 >;
 
-const siteOptions = useSiteOptions();
-const routeLocale = useRouteLocale();
-
-const localizedSiteOptionsRef = computed(() =>
-  shallowReadonly({
-    ...siteOptions.value,
-    ...siteOptions.value.locales?.[routeLocale.value],
-    theme: {
-      ...siteOptions.value.theme,
-      ...siteOptions.value.theme.locales?.[routeLocale.value]
-    }
-  })
-);
-
 export function useLocalizedSiteOptions<
   Theme extends ThemeConfig = ThemeConfig
->(): Readonly<LocalizedSiteOptionsRef<Theme>> {
-  return shallowReadonly(localizedSiteOptionsRef) as Readonly<
-    LocalizedSiteOptionsRef<Theme>
-  >;
+>(): LocalizedSiteOptionsRef<Theme> {
+  const site = useSiteOptions();
+  const routeLocale = useRouteLocale();
+
+  return computed(() =>
+    shallowReadonly({
+      ...site.value,
+      ...site.value.locales?.[routeLocale.value],
+      theme: {
+        ...site.value.theme,
+        ...site.value.theme.locales?.[routeLocale.value]
+      }
+    })
+  ) as Readonly<LocalizedSiteOptionsRef<Theme>>;
 }

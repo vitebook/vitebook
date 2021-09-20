@@ -5,12 +5,13 @@ import {
   withBaseUrl
 } from '@vitebook/client';
 import { computed, ComputedRef } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 import type { NavItemWithMenu } from '../../../shared';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 
 export function useLanguageLinks(): ComputedRef<NavItemWithMenu | null> {
+  const router = useRouter();
   const site = useSiteOptions();
   const theme = useLocalizedThemeConfig();
   const localePath = useRouteLocale();
@@ -25,8 +26,10 @@ export function useLanguageLinks(): ComputedRef<NavItemWithMenu | null> {
 
     const languageMenu = theme.value.navbar?.languageMenu ?? {};
 
-    const route = useRoute();
-    const currentPath = route.path.replace(localePath.value, '/');
+    const currentPath = router.currentRoute.value.path.replace(
+      localePath.value,
+      '/'
+    );
 
     const menu = localePaths.map((localePath) => ({
       text:

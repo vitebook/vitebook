@@ -5,6 +5,7 @@ import type { VirtualVueThemeModule, VueTheme } from '../types/theme';
 
 export type ThemeRef = Ref<Readonly<VueTheme>>;
 
+// Singleton.
 const themeRef: ThemeRef = ref(shallowReadonly(Theme));
 
 export function useTheme(): Readonly<ThemeRef> {

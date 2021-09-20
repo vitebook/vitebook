@@ -6,15 +6,15 @@ import { useSiteOptions } from './useSiteOptions';
 
 export type RouteLocaleRef = Ref<string>;
 
+// Singleton.
 const routeLocaleRef: RouteLocaleRef = ref('/');
 
 export function initRouteLocaleRef(router: Router): void {
-  const siteOptions = useSiteOptions();
-
+  const site = useSiteOptions();
   watchEffect(() => {
     routeLocaleRef.value = resolveRouteLocale(
-      siteOptions.value.baseUrl,
-      siteOptions.value.locales,
+      site.value.baseUrl,
+      site.value.locales,
       router.currentRoute.value.path
     );
   });

@@ -8,12 +8,9 @@ export type MarkdownPageRef = ComputedRef<
   Readonly<LoadedVueMarkdownPage> | undefined
 >;
 
-const page = usePage();
-
-const markdownPageRef: MarkdownPageRef = computed(() =>
-  isVueMarkdownPage(page.value) ? shallowReadonly(page.value) : undefined
-);
-
-export function useMarkdownPage(): Readonly<MarkdownPageRef> {
-  return shallowReadonly(markdownPageRef);
+export function useMarkdownPage(): MarkdownPageRef {
+  const page = usePage();
+  return computed(() =>
+    isVueMarkdownPage(page.value) ? shallowReadonly(page.value) : undefined
+  );
 }

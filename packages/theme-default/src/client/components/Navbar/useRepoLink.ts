@@ -6,7 +6,6 @@ import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConf
 
 export function useRepoLink(): ComputedRef<NavItemLink | null> {
   const theme = useLocalizedThemeConfig();
-
   return computed(() => {
     const { label, url } = theme.value.remoteGitRepo ?? {};
 

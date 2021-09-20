@@ -6,7 +6,7 @@ import {
 } from '@vitebook/client';
 import { computed } from 'vue';
 
-import { defaultThemeLocaleOptions } from '../..';
+import { defaultThemeLocaleOptions } from '../../../shared';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 
 const localePath = useRouteLocale();
