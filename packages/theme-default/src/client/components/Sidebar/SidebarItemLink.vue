@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRefs } from 'vue';
+import { computed, defineAsyncComponent, toRefs } from 'vue';
 
 import type { SidebarItemLink } from '../../../shared';
 import { useNavItemLink } from '../Navbar/useNavItemLink';
@@ -12,6 +12,18 @@ const props = defineProps<{
 const propsRef = toRefs(props);
 
 const { props: linkProps, isExternal } = useNavItemLink(propsRef.item);
+
+const Icon = computed(() => {
+  const type = propsRef.item.value.type;
+  return type
+    ? defineAsyncComponent(
+        () =>
+          import(
+            /* @vite-ignore */ `/@virtual/vitebook/icons/sidebar-file-${type}`
+          )
+      )
+    : null;
+});
 
 function preventClick(event: Event) {
   if (!isExternal) {
@@ -39,7 +51,9 @@ function handleLinkClick(event: Event, navigate: () => void): void {
         @keydown.enter="(e) => handleLinkClick(e, navigate)"
       >
         <span class="link-text">
-          {{ item.text }} <OutboundLink v-if="isExternal" />
+          <component :is="Icon" />
+          {{ item.text }}
+          <OutboundLink v-if="isExternal" />
         </span>
       </a>
     </router-link>

@@ -6,7 +6,7 @@ const page = usePage();
 
 <template>
   <main :class="{ [`${page?.type}`]: page?.type }">
-    <div>
+    <div class="container" :class="{ [`${page?.type}`]: page?.type }">
       <slot name="start" />
       <PageView />
       <slot name="end" />
@@ -38,7 +38,21 @@ main[class~='story'] {
   justify-content: center;
 }
 
-main[class~='story'] > div {
+.container {
+  width: 100%;
+}
+
+.container[class~='md'],
+.container[class~='vue:md'] {
+  padding: 0 1.5rem 4rem;
+  margin: 0 auto;
+  max-width: 48rem;
+}
+
+.container[class~='story'] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transform: translateY(-2rem);
 }
 </style>

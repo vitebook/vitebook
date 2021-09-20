@@ -9,6 +9,7 @@ export type SidebarItem = SidebarItemLink | SidebarItemGroup;
 export type SidebarItemLink = {
   text: string;
   link: string;
+  type?: string;
   target?: string;
   rel?: string;
   ariaLabel?: string;

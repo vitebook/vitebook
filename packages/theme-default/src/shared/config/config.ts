@@ -240,9 +240,6 @@ export type DefaultThemeHomePageLocaleConfig = {
 };
 
 export type DefaultThemeHomePageFeature = {
-  icon?: string;
-  iconDark?: string;
-  iconAlt?: string;
   title?: string;
   body?: string;
 };

@@ -127,6 +127,7 @@ function useAutoSidebarItems(): ComputedRef<Readonly<SidebarItem[]>> {
         if (i === path.length - 1) {
           items.push({
             text: title,
+            type: page.type,
             link: withBaseUrl(page.route)
           });
 

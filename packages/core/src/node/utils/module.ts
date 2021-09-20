@@ -107,7 +107,7 @@ export async function bundle(
     },
     platform: options.platform ?? 'node',
     format: options.format ?? 'esm',
-    target: options.target ?? 'es2020',
+    target: options.target ?? 'es2017',
     allowOverwrite: options.allowOverwrite ?? true,
     bundle: options.bundle ?? true,
     preserveSymlinks: options.preserveSymlinks ?? true,

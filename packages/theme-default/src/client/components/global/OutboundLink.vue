@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { OutboundLink as RawOutboundLink } from '@vitebook/client';
+import ExternalLinkIcon from '@virtual/vitebook/icons/external-link';
 import { computed } from 'vue';
 
 import { defaultThemeLocaleOptions } from '../../../shared';
@@ -15,14 +15,16 @@ const openInNewWindowText = computed(
 </script>
 
 <template>
-  <RawOutboundLink>
+  <span>
+    <ExternalLinkIcon width="15" height="15" />
     <span class="sr-only">{{ openInNewWindowText }}</span>
-  </RawOutboundLink>
+  </span>
 </template>
 
-<style>
-.icon.outbound {
-  stroke: currentColor;
-  color: var(--color-text);
+<style scoped>
+span {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
 }
 </style>

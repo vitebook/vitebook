@@ -2,7 +2,10 @@ import { defineConfig } from '@vitebook/core/node';
 import { clientPlugin } from '@vitebook/client/node';
 import { vueMarkdownPlugin } from '@vitebook/plugin-markdown-vue/node';
 import { storyPlugin } from '@vitebook/plugin-story/node';
-import type { DefaultThemeConfig } from '@vitebook/theme-default';
+import {
+  DefaultThemeConfig,
+  defaultThemePlugin
+} from '@vitebook/theme-default/node';
 
 export default defineConfig<DefaultThemeConfig>({
   include: ['src/**/*.{md,vue}'],
@@ -18,7 +21,8 @@ export default defineConfig<DefaultThemeConfig>({
       vue: {
         include: [/\.vue$/, /\.md$/]
       }
-    })
+    }),
+    defaultThemePlugin()
   ],
   site: {
     title: 'Vitebook',
@@ -80,44 +84,26 @@ export default defineConfig<DefaultThemeConfig>({
         secondaryActionLink: '/learn.html',
         features: [
           {
-            icon: '/icons/box-icon.svg',
-            iconDark: '/icons/box-icon-dark.svg',
-            iconAlt: 'Box',
             title: 'Instant Server Start',
             body: 'On demand file serving over native ESM, no bundling required!'
           },
           {
-            icon: '/icons/box-icon.svg',
-            iconDark: '/icons/box-icon-dark.svg',
-            iconAlt: 'Box',
             title: 'Lightning Fast HMR',
             body: 'Hot Module Replacement (HMR) that stays fast regardless of app size.'
           },
           {
-            icon: '/icons/box-icon.svg',
-            iconDark: '/icons/box-icon-dark.svg',
-            iconAlt: 'Box',
             title: 'Rich Features',
             body: 'Out-of-the-box support for TypeScript, JSX, CSS and more.'
           },
           {
-            icon: '/icons/box-icon.svg',
-            iconDark: '/icons/box-icon-dark.svg',
-            iconAlt: 'Box',
             title: 'Optimized Build',
             body: 'Pre-configured rollup build with multi-page and library mode support.'
           },
           {
-            icon: '/icons/box-icon.svg',
-            iconDark: '/icons/box-icon-dark.svg',
-            iconAlt: 'Box',
             title: 'Universal Plugins',
             body: 'Rollup-superset plugin interface shared between dev and build.'
           },
           {
-            icon: '/icons/box-icon.svg',
-            iconDark: '/icons/box-icon-dark.svg',
-            iconAlt: 'Box',
             title: 'Fully Typed APIs',
             body: 'Flexible programmatic APIs with full TypeScript typing.'
           }

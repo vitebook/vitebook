@@ -1,9 +1,14 @@
 import './styles/normalize.css';
-import './styles/sr-only.css';
 import './styles/vars.css';
 import './styles/vars-dark.css';
+import './styles/sr-only.css';
 import './styles/global.css';
-import './styles/code.css';
+import './styles/components/button.css';
+import './styles/components/code.css';
+import './styles/components/scrim.css';
+import './styles/components/home.css';
+import './styles/components/navbar.css';
+import './styles/components/sidebar.css';
 
 import { loadPage, useFirstPage, VueTheme } from '@vitebook/client';
 import { h, watch } from 'vue';

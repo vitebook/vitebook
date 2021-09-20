@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BackArrowIcon from '@virtual/vitebook/icons/back-arrow';
 import { useMediaQuery } from '@vueuse/core';
 import { computed, ref, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
@@ -85,7 +86,7 @@ function handleToggleMenus() {
         @pointerdown="handleToggleMenus"
         @keydown.enter="handleToggleMenus"
       >
-        {{ backToMainMenuText }}
+        <BackArrowIcon /> {{ backToMainMenuText }}
       </button>
 
       <NavLinks
@@ -137,6 +138,29 @@ function handleToggleMenus() {
   flex: 1;
 }
 
+.back-button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem;
+  border: 0;
+  font-size: 1rem;
+  margin-top: 0.2rem;
+  font-weight: 500;
+  border-radius: 0.12rem;
+  color: var(--color-text);
+  white-space: nowrap;
+  text-decoration: none;
+  background-color: var(--color-bg-100);
+  text-align: left;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.back-button > svg {
+  margin-right: 0.25rem;
+}
+
 .back-button[aria-hidden='true'] {
   display: none;
 }
@@ -166,6 +190,12 @@ function handleToggleMenus() {
   display: none;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .back-button:hover {
+    background-color: var(--color-bg-100);
+  }
+}
+
 @media (min-width: 992px) {
   .header {
     display: none;
@@ -176,7 +206,7 @@ function handleToggleMenus() {
   }
 
   .sidebar {
-    position: relative;
+    position: sticky;
     width: auto;
     min-width: var(--sidebar-min-width);
     height: 100vh;

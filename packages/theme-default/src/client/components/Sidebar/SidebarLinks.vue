@@ -24,34 +24,44 @@ const items = useSidebarItems();
 
 :deep(li) {
   display: block;
-  font-size: 1rem;
-  font-weight: 500;
-  min-width: 10.5rem;
-  border-radius: 0.12rem;
-  color: var(--color-text);
+  min-width: var(--sidebar-item-min-width);
+  border-radius: var(--sidebar-item-border-radius);
   white-space: nowrap;
 }
 
 :deep(a),
 :deep(button) {
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 0.5rem 0;
+  padding: var(--sidebar-item-padding);
   border: 0;
-  font-size: 1rem;
-  font-weight: 500;
-  border-radius: 0.12rem;
-  color: var(--color-text);
+  font-size: var(--sidebar-item-font-size);
+  margin-top: var(--sidebar-item-spacing);
+  font-weight: var(--sidebar-item-font-weight);
+  border-radius: var(--sidebar-item-border-radius);
+  color: var(--sidebar-item-color);
   white-space: nowrap;
   text-decoration: none;
-  background-color: transparent;
+  background-color: var(--sidebar-item-bg-color);
   text-align: left;
   cursor: pointer;
-  line-height: 1.5;
+  line-height: var(--sidebar-item-line-height);
+}
+
+:deep(a > span > svg),
+:deep(button > svg) {
+  margin-right: 0.5rem;
+}
+
+:deep(a > span) {
+  display: flex;
+  align-items: center;
 }
 
 :deep(a.active) {
-  /*  */
+  color: var(--sidebar-item-active-color);
+  background-color: var(--sidebar-item-active-bg-color);
 }
 
 :deep(a),
@@ -62,7 +72,8 @@ const items = useSidebarItems();
 @media (hover: hover) and (pointer: fine) {
   :deep(a:hover),
   :deep(button:hover) {
-    background-color: var(--color-bg-100);
+    color: var(--sidebar-item-hover-color);
+    background-color: var(--sidebar-item-hover-bg-color);
   }
 }
 </style>

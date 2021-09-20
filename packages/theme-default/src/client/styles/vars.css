@@ -3,6 +3,7 @@
    * Breakpoints
    *-------------------------------------------------------------------------------------------*/
 
+  /* Only used for reference, changing values does nothing. */
   --bp-sm: 576px;
   --bp-md: 768px;
   --bp-lg: 992px;
@@ -25,9 +26,6 @@
 
   --color-primary: #ffca28;
   --color-primary-rgb: 255, 202, 40;
-
-  --color-secondary: #3d00e8;
-  --color-secondary-rgb: 61, 0, 232;
 
   --color-black: #000000;
   --color-white: #ffffff;

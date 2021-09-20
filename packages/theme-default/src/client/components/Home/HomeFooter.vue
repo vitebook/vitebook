@@ -13,34 +13,9 @@ const footerText = computed(
 </script>
 
 <template>
-  <footer v-if="footerText" class="footer">
-    <div class="container">
-      <p class="text">{{ footerText }}</p>
+  <footer v-if="footerText" class="home__footer">
+    <div class="home__footer__container">
+      <p class="home__footer__text">{{ footerText }}</p>
     </div>
   </footer>
 </template>
-
-<style scoped>
-.footer {
-  margin: 0 auto;
-  max-width: 960px;
-}
-
-.container {
-  padding: 4rem 1.5rem 5rem;
-}
-
-.text {
-  margin: 0;
-  text-align: center;
-  line-height: 1.4;
-  font-size: 0.9rem;
-  color: var(--color-text-secondary);
-}
-
-@media (min-width: 768px) {
-  .container {
-    padding: 6rem 1.5rem 4rem;
-  }
-}
-</style>

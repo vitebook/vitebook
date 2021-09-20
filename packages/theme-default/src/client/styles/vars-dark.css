@@ -5,6 +5,9 @@ html.dark {
    * Colors
    *-------------------------------------------------------------------------------------------*/
 
+  --color-primary: #ffca28;
+  --color-primary-rgb: 255, 202, 40;
+
   --color-text: var(--color-white);
   --color-text-rgb: 255, 255, 255;
   --color-text-secondary: var(--color-gray-200);
