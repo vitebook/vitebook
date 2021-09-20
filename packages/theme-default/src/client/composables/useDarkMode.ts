@@ -7,18 +7,23 @@ import {
   WritableComputedRef
 } from 'vue';
 
+import { defaultThemeLocaleOptions } from '../../shared';
 import { useLocalizedThemeConfig } from './useLocalizedThemeConfig';
 
 export type DarkModeRef = WritableComputedRef<boolean>;
 
-const themeLocale = useLocalizedThemeConfig();
+const theme = useLocalizedThemeConfig();
 const isDarkPreferred = usePreferredDark();
 const darkStorage = useStorage('vitebook-color-scheme', 'auto');
 
 const darkModeRef = computed<boolean>({
   get() {
+    const isEnabled =
+      theme.value.darkMode?.enabled ??
+      defaultThemeLocaleOptions.darkMode.enabled;
+
     // Disable dark mode
-    if (!themeLocale.value.darkMode.enabled) {
+    if (!isEnabled) {
       return false;
     }
 

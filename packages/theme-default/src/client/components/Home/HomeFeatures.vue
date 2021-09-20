@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { withBaseUrl } from '@vitebook/client';
-import type { DefaultThemeHomePageFeature } from '@vitebook/core/shared';
 import { computed } from 'vue';
 
+import type { DefaultThemeHomePageFeature } from '../../../shared';
 import { useDarkMode } from '../../composables/useDarkMode';
 import { useHomePageConfig } from './useHomePageConfig';
 

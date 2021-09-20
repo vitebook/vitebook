@@ -6,7 +6,7 @@ import { useLanguageLinks } from './useLanguageLinks';
 import { useHasNavbarItems } from './useNavbar';
 import { useRepoLink } from './useRepoLink';
 
-const themeConfig = useLocalizedThemeConfig();
+const theme = useLocalizedThemeConfig();
 const repoLink = useRepoLink();
 const languageLinks = useLanguageLinks();
 const hasNavItems = useHasNavbarItems();
@@ -17,7 +17,7 @@ const hasNavItems = useHasNavbarItems();
     <ul class="nav-links">
       <template v-if="hasNavItems">
         <li
-          v-for="item in themeConfig.navbar.items"
+          v-for="item in theme.navbar?.items ?? []"
           :key="item.text"
           class="nav-item"
         >

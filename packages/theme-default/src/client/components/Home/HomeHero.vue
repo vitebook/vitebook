@@ -5,13 +5,13 @@ import { computed } from 'vue';
 import ButtonLink from '../ButtonLink.vue';
 import { useHomePageConfig } from './useHomePageConfig';
 
-const siteConfig = useLocalizedSiteOptions();
+const site = useLocalizedSiteOptions();
 const homePageConfig = useHomePageConfig();
 
 const shouldShowHero = computed(() => homePageConfig.value?.heroText);
 
 const heroText = computed(
-  () => homePageConfig.value?.heroText ?? siteConfig.value.title
+  () => homePageConfig.value?.heroText ?? site.value.title
 );
 
 const hasPrimaryButton = computed(() => {

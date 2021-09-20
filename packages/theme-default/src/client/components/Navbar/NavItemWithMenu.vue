@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { inBrowser, NavItemWithMenu } from '@vitebook/core/shared';
+import { inBrowser } from '@vitebook/core/shared';
 import { computed, ref, toRefs, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
+import type { NavItemWithMenu } from '../../../shared';
 import NavItemLink from './NavItemLink.vue';
 import NavMenuArrow from './NavMenuArrow.vue';
 

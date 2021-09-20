@@ -1,7 +1,8 @@
-import { defineConfig, DefaultThemeConfig } from '@vitebook/core/node';
+import { defineConfig } from '@vitebook/core/node';
 import { clientPlugin } from '@vitebook/client/node';
 import { vueMarkdownPlugin } from '@vitebook/plugin-markdown-vue/node';
 import { storyPlugin } from '@vitebook/plugin-story/node';
+import type { DefaultThemeConfig } from '@vitebook/theme-default';
 
 export default defineConfig<DefaultThemeConfig>({
   include: ['src/**/*.{md,vue}'],

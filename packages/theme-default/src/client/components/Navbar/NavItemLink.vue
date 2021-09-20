@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { NavItemLink } from '@vitebook/core/shared';
 import { toRefs } from 'vue';
 
+import type { NavItemLink } from '../../../shared';
 import { useNavItemLink } from './useNavItemLink';
 
 const props = defineProps<{

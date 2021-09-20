@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
+import { defaultThemeLocaleOptions } from '../..';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 import HamburgerIcon from './HamburgerIcon.vue';
 import NavbarTitle from './NavbarTitle.vue';
@@ -6,7 +9,13 @@ import NavLinks from './NavLinks.vue';
 
 defineEmits(['hamburger-click']);
 
-const themeConfig = useLocalizedThemeConfig();
+const theme = useLocalizedThemeConfig();
+
+const toggleAriaLabel = computed(
+  () =>
+    theme.value.sidebar?.toggleAriaLabel ??
+    defaultThemeLocaleOptions.sidebar.toggleAriaLabel
+);
 </script>
 
 <template>
@@ -17,7 +26,7 @@ const themeConfig = useLocalizedThemeConfig();
       <div class="navbar-left-group">
         <button
           class="hamburger-button"
-          :aria-label="themeConfig.sidebar?.toggleAriaLabel"
+          :aria-label="toggleAriaLabel"
           @pointerdown="$emit('hamburger-click')"
           @keydown.enter="$emit('hamburger-click')"
         >

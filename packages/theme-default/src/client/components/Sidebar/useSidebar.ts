@@ -8,19 +8,21 @@ import {
 import {
   ensureLeadingSlash,
   isArray,
-  isSidebarGroup,
   isUndefined,
-  MultiSidebarItemsConfig,
   removeEndingSlash,
   resolveLocalePath,
-  SidebarItem,
-  SidebarItemGroup,
-  SidebarItemsConfig,
   toTitleCase
 } from '@vitebook/core/shared';
 import { computed, ComputedRef, Ref, ref, shallowReadonly } from 'vue';
 import { useRouter } from 'vue-router';
 
+import {
+  isSidebarGroup,
+  MultiSidebarItemsConfig,
+  SidebarItem,
+  SidebarItemGroup,
+  SidebarItemsConfig
+} from '../../../shared';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 
 const isSidebarOpen = ref(false);
@@ -39,10 +41,10 @@ export function useSidebarItemsConfig(): ComputedRef<
   Readonly<SidebarItemsConfig>
 > {
   const router = useRouter();
-  const themeConfig = useLocalizedThemeConfig();
+  const theme = useLocalizedThemeConfig();
 
   return computed(() => {
-    const config = themeConfig.value.sidebar.items ?? 'auto';
+    const config = theme.value.sidebar?.items ?? 'auto';
 
     if (isSidebarItemsConfig(config)) {
       return config;
@@ -88,8 +90,8 @@ export function useSidebarItems(): ComputedRef<Readonly<SidebarItem[]>> {
 function useAutoSidebarItems(): ComputedRef<Readonly<SidebarItem[]>> {
   const page = usePage();
   const pages = usePages();
+  const site = useSiteOptions();
   const routeLocale = useRouteLocale();
-  const siteConfig = useSiteOptions();
 
   return computed(() => {
     if (isUndefined(page.value)) {
@@ -110,8 +112,8 @@ function useAutoSidebarItems(): ComputedRef<Readonly<SidebarItem[]>> {
       }
 
       const pageLocale = resolveLocalePath(
-        siteConfig.value.baseUrl,
-        siteConfig.value.locales,
+        site.value.baseUrl,
+        site.value.locales,
         page.route
       );
 

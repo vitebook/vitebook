@@ -1,17 +1,15 @@
 import { useLocalizedSiteOptions, withBaseUrl } from '@vitebook/client';
-import {
-  isLinkExternal,
-  NavItemLink,
-  SidebarItemLink
-} from '@vitebook/core/shared';
+import { isLinkExternal } from '@vitebook/core/shared';
 import { computed, Ref } from 'vue';
 import { useRoute } from 'vue-router';
+
+import type { NavItemLink, SidebarItemLink } from '../../../shared';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function useNavItemLink(item: Ref<NavItemLink | SidebarItemLink>) {
   const route = useRoute();
-  const siteConfig = useLocalizedSiteOptions();
-  const isExternal = isLinkExternal(item.value.link, siteConfig.value.baseUrl);
+  const site = useLocalizedSiteOptions();
+  const isExternal = isLinkExternal(item.value.link, site.value.baseUrl);
 
   const props = computed(() => {
     const routePath = decodeURI(route.path);

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { SidebarItemLink } from '@vitebook/core/shared';
 import { toRefs } from 'vue';
 
+import type { SidebarItemLink } from '../../../shared';
 import { useNavItemLink } from '../Navbar/useNavItemLink';
 
 const props = defineProps<{

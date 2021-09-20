@@ -1,20 +1,34 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
+import { defaultThemeLocaleOptions } from '../../shared';
 import { useDarkMode } from '../composables/useDarkMode';
 import { useLocalizedThemeConfig } from '../composables/useLocalizedThemeConfig';
 
 const isDarkMode = useDarkMode();
-const themeConfig = useLocalizedThemeConfig();
+const theme = useLocalizedThemeConfig();
 
 function onToggle() {
   isDarkMode.value = !isDarkMode.value;
 }
+
+const isDarkModeEnabled = computed(
+  () =>
+    theme.value.darkMode?.enabled ?? defaultThemeLocaleOptions.darkMode.enabled
+);
+
+const buttonAriaLabel = computed(
+  () =>
+    theme.value.darkMode?.buttonAriaLabel ??
+    defaultThemeLocaleOptions.darkMode.buttonAriaLabel
+);
 </script>
 
 <template>
   <button
-    v-if="themeConfig.darkMode.enabled ?? true"
+    v-if="isDarkModeEnabled"
     role="switch"
-    :aria-label="themeConfig.darkMode.buttonAriaLabel"
+    :aria-label="buttonAriaLabel"
     :aria-checked="isDarkMode"
     @pointerdown="onToggle"
     @keydown.enter="onToggle"

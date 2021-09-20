@@ -4,27 +4,35 @@ import {
   useRouteLocale,
   withBaseUrl
 } from '@vitebook/client';
+import { computed } from 'vue';
 
+import { defaultThemeLocaleOptions } from '../..';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 
 const localePath = useRouteLocale();
-const siteConfig = useLocalizedSiteOptions();
-const themeConfig = useLocalizedThemeConfig();
+const site = useLocalizedSiteOptions();
+const theme = useLocalizedThemeConfig();
+
+const goHomeText = computed(
+  () =>
+    theme.value.notFoundPage?.goHomeText ??
+    defaultThemeLocaleOptions.notFoundPage.goHomeText
+);
 </script>
 
 <template>
   <router-link
     class="title"
     :to="localePath"
-    :aria-label="`${siteConfig.title}, ${themeConfig.notFoundPage.goHomeText}`"
+    :aria-label="`${site.title}, ${goHomeText}`"
   >
     <img
-      v-if="themeConfig.logo"
+      v-if="theme.logo"
       class="logo"
-      :src="withBaseUrl(themeConfig.logo)"
-      :alt="`${siteConfig.title} logo`"
+      :src="withBaseUrl(theme.logo)"
+      :alt="`${site.title} logo`"
     />
-    {{ siteConfig.title }}
+    {{ site.title }}
   </router-link>
 </template>
 

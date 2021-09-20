@@ -1,13 +1,14 @@
-import { isLinkExternal, NavItemLink } from '@vitebook/core/shared';
+import { isLinkExternal } from '@vitebook/core/shared';
 import { computed, ComputedRef } from 'vue';
 
+import type { NavItemLink } from '../../../shared';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 
 export function useRepoLink(): ComputedRef<NavItemLink | null> {
-  const themeConfig = useLocalizedThemeConfig();
+  const theme = useLocalizedThemeConfig();
 
   return computed(() => {
-    const { label, url } = themeConfig.value.remoteGitRepo;
+    const { label, url } = theme.value.remoteGitRepo ?? {};
 
     if (!url) {
       return null;

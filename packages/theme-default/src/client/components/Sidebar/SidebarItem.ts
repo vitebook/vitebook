@@ -1,6 +1,6 @@
-import { isSidebarGroup, SidebarItem } from '@vitebook/core/shared';
 import { FunctionalComponent, h, VNode } from 'vue';
 
+import { isSidebarGroup, SidebarItem } from '../../../shared';
 import SidebarItemGroup from './SidebarItemGroup.vue';
 import SidebarItemLink from './SidebarItemLink.vue';
 

@@ -1,12 +1,32 @@
 <script setup lang="ts">
 import { useRouteLocale, withBaseUrl } from '@vitebook/client';
+import { computed } from 'vue';
 
+import { defaultThemeLocaleOptions } from '../..';
 import ButtonLink from '../../components/ButtonLink.vue';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 import NotFoundImage from './NotFoundImage.vue';
 
 const homeLink = useRouteLocale();
-const themeConfig = useLocalizedThemeConfig();
+const theme = useLocalizedThemeConfig();
+
+const notFoundText = computed(
+  () =>
+    theme.value.notFoundPage?.message ??
+    defaultThemeLocaleOptions.notFoundPage.message
+);
+
+const goHomeText = computed(
+  () =>
+    theme.value.notFoundPage?.goHomeText ??
+    defaultThemeLocaleOptions.notFoundPage.goHomeText
+);
+
+const goBackText = computed(
+  () =>
+    theme.value.notFoundPage?.goBackText ??
+    defaultThemeLocaleOptions.notFoundPage.goBackText
+);
 </script>
 
 <template>
@@ -16,18 +36,16 @@ const themeConfig = useLocalizedThemeConfig();
         <NotFoundImage />
       </div>
 
-      <h1>
-        {{ themeConfig.notFoundPage.message }}
-      </h1>
+      <h1>{{ notFoundText }}</h1>
 
       <div class="actions">
-        <ButtonLink class="home-link" :href="withBaseUrl(homeLink)">{{
-          themeConfig.notFoundPage.goHomeText
-        }}</ButtonLink>
+        <ButtonLink class="home-link" :href="withBaseUrl(homeLink)">
+          {{ goHomeText }}
+        </ButtonLink>
 
-        <ButtonLink class="back-link" href="_back" type="secondary">{{
-          themeConfig.notFoundPage.goBackText
-        }}</ButtonLink>
+        <ButtonLink class="back-link" href="_back" type="secondary">
+          {{ goBackText }}
+        </ButtonLink>
       </div>
     </div>
   </div>

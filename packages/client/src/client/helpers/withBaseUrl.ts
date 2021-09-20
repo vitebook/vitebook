@@ -8,8 +8,8 @@ export function joinPath(base: string, path: string): string {
 }
 
 export function withBaseUrl(path: string): string {
-  const siteConfig = useSiteOptions();
-  const baseUrl = siteConfig.value.baseUrl;
+  const site = useSiteOptions();
+  const baseUrl = site.value.baseUrl;
 
   return EXTERNAL_URL_RE.test(path) || path.startsWith(baseUrl)
     ? path

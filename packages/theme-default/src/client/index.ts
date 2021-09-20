@@ -14,6 +14,8 @@ import { useScrollPromise } from './composables/useScrollPromise';
 import NotFound from './layout/404/404.vue';
 import Layout from './layout/Layout.vue';
 
+export * from '../shared/index';
+
 const BlankPage = Promise.resolve({
   name: 'Blank',
   render() {

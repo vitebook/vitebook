@@ -1,9 +1,8 @@
-import { DefaultThemeConfig } from './default-theme/config';
 import type { HeadConfig } from './HeadConfig';
 import type { LocaleConfig } from './LocaleConfig';
 import { ThemeConfig } from './Theme.js';
 
-export type SiteOptions<Theme extends ThemeConfig = DefaultThemeConfig> =
+export type SiteOptions<Theme extends ThemeConfig = ThemeConfig> =
   SiteLocaleData & {
     /** Plugin extensions. */
     [optionName: string]: unknown;
@@ -32,8 +31,9 @@ export type SiteOptions<Theme extends ThemeConfig = DefaultThemeConfig> =
     locales: SiteLocaleConfig;
   };
 
-export type SiteConfig<Theme extends ThemeConfig = DefaultThemeConfig> =
-  Partial<SiteOptions<Theme>>;
+export type SiteConfig<Theme extends ThemeConfig = ThemeConfig> = Partial<
+  SiteOptions<Theme>
+>;
 
 export type SiteLocaleData = {
   /**
@@ -91,8 +91,6 @@ export type SiteLocaleData = {
  */
 export type SiteLocaleConfig = LocaleConfig<SiteLocaleData>;
 
-export type VirtualSiteDataModule<
-  Theme extends ThemeConfig = DefaultThemeConfig
-> = {
+export type VirtualSiteDataModule<Theme extends ThemeConfig = ThemeConfig> = {
   default: SiteOptions<Theme>;
 };

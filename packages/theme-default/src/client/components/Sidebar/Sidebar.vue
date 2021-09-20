@@ -3,6 +3,7 @@ import { useMediaQuery } from '@vueuse/core';
 import { computed, ref, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 
+import { defaultThemeLocaleOptions } from '../..';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 import NavbarTitle from '../Navbar/NavbarTitle.vue';
 import NavLinks from '../Navbar/NavLinks.vue';
@@ -13,10 +14,16 @@ import { useHasSidebarItems, useIsSidebarOpen } from './useSidebar';
 
 const route = useRoute();
 const isSidebarOpen = useIsSidebarOpen();
-const themeConfig = useLocalizedThemeConfig();
+const theme = useLocalizedThemeConfig();
 const hasNavItems = useHasNavbarItems();
 const hasSidebarItems = useHasSidebarItems();
 const isLargeScreen = useMediaQuery('(min-width: 992px)');
+
+const backToMainMenuText = computed(
+  () =>
+    theme.value.sidebar?.backToMainMenuText ??
+    defaultThemeLocaleOptions.sidebar.backToMainMenuText
+);
 
 const isMainMenuShowing = ref(false);
 
@@ -78,7 +85,7 @@ function handleToggleMenus() {
         @pointerdown="handleToggleMenus"
         @keydown.enter="handleToggleMenus"
       >
-        {{ themeConfig.sidebar.backToMainMenuText }}
+        {{ backToMainMenuText }}
       </button>
 
       <NavLinks

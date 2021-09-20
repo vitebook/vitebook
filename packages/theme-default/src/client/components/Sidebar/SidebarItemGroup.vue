@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SidebarItemGroup } from '@vitebook/core/shared';
+import type { SidebarItemGroup } from '../../../shared';
 
 const props = defineProps<{
   item: SidebarItemGroup;
