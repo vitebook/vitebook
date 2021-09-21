@@ -1,4 +1,4 @@
-import type { Plugin } from '@vitebook/core/node';
+import { Plugin, VM_PREFIX } from '@vitebook/core/node';
 import { isFunction, removeLeadingSlash } from '@vitebook/core/shared';
 import type { Options as IconOptions } from 'unplugin-icons/dist/index.js';
 import Icons from 'unplugin-icons/dist/vite.js';
@@ -8,6 +8,8 @@ export type IconName = string;
 export type IconPath = `${IconCollection}/${IconName}`;
 
 export type VitebookIcon =
+  | 'menu'
+  | 'menu-caret'
   | 'back-arrow'
   | 'external-link'
   | 'theme-switch-light'
@@ -38,24 +40,27 @@ export type DefaultThemeIconsOptions = Omit<
 
 const vitebookIconPathRE = /@virtual\/vitebook\/icons\//;
 
-const VIRTUAL_ICONS_MODULE_ID = '@virtual/vitebook/icons';
-const EMPTY_ICON_MODULE_ID = '/@virtual/vitebook/icons/empty';
+const VIRTUAL_ICONS_MODULE_ID = `${VM_PREFIX}/vitebook/icons`;
+const VIRTUAL_EMPTY_ICON_MODULE_ID = `/${VM_PREFIX}/vitebook/icons/empty`;
 
 const defaultIconResolver: VitebookIconResolver = (icon) => {
-  if (icon === 'external-link') {
-    return 'heroicons-outline/external-link';
-  }
-
-  if (icon === 'back-arrow') {
-    return 'heroicons-outline/arrow-sm-left';
-  }
-
-  if (icon === 'theme-switch-light') {
-    return 'heroicons-outline/sun';
-  }
-
-  if (icon === 'theme-switch-dark') {
-    return 'heroicons-outline/moon';
+  switch (icon) {
+    case 'menu':
+      return 'heroicons-outline/menu';
+    case 'menu-caret':
+      return 'heroicons-outline/chevron-down';
+    case 'external-link':
+      return 'heroicons-outline/external-link';
+    case 'back-arrow':
+      return 'heroicons-outline/arrow-sm-left';
+    case 'theme-switch-light':
+      return 'heroicons-outline/sun';
+    case 'theme-switch-dark':
+      return 'heroicons-outline/moon';
+    case 'sidebar-folder-open':
+      return 'heroicons-outline/folder-open';
+    case 'sidebar-folder-closed':
+      return 'heroicons-outline/folder';
   }
 
   if (icon.startsWith('home-feature-')) {
@@ -85,14 +90,6 @@ const defaultIconResolver: VitebookIconResolver = (icon) => {
       default:
         return 'mdi/file';
     }
-  }
-
-  if (icon === 'sidebar-folder-open') {
-    return 'heroicons-outline/folder-open';
-  }
-
-  if (icon === 'sidebar-folder-closed') {
-    return 'heroicons-outline/folder';
   }
 
   return null;
@@ -125,7 +122,7 @@ export function iconsPlugin(options: DefaultThemeIconsOptions = {}): Plugin {
         const name = id.replace(vitebookIconPathRE, '') as VitebookIcon;
 
         if (userIconResolver === false) {
-          return EMPTY_ICON_MODULE_ID;
+          return VIRTUAL_EMPTY_ICON_MODULE_ID;
         }
 
         const icon = isFunction(userIconResolver)
@@ -133,7 +130,7 @@ export function iconsPlugin(options: DefaultThemeIconsOptions = {}): Plugin {
           : userIconResolver?.[name] ?? (await defaultIconResolver(name));
 
         if (icon === false) {
-          return EMPTY_ICON_MODULE_ID;
+          return VIRTUAL_EMPTY_ICON_MODULE_ID;
         }
 
         if (icon) {
@@ -148,7 +145,7 @@ export function iconsPlugin(options: DefaultThemeIconsOptions = {}): Plugin {
       return null;
     },
     load(id, ...context) {
-      if (id === EMPTY_ICON_MODULE_ID) {
+      if (id === VIRTUAL_EMPTY_ICON_MODULE_ID) {
         return "export default () => ''";
       }
 

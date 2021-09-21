@@ -1,0 +1,40 @@
+.page {
+  flex: 1 0 0;
+  position: relative;
+  margin: 0;
+  min-height: 100vh;
+  padding-top: var(--vbk--navbar-height);
+  background-color: var(--vbk--color-bg-200);
+}
+
+.page[class~='type-md'],
+.page[class~='type-vue:md'],
+.page[class~='type-story'] {
+  background-color: var(--vbk--color-bg-100);
+}
+
+.page[class~='type-story'] {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify: center;
+}
+
+.page__container {
+  width: 100%;
+}
+
+.page[class~='type-md'] > .page__container,
+.page[class~='type-vue:md'] > .page__container {
+  padding: 0 1.5rem 4rem;
+  margin: 0 auto;
+  max-width: 48rem;
+}
+
+.page[class~='type-story'] > .page__container {
+  display: flex;
+  align-items: center;
+  justify: center;
+  transform: translateY(-2rem);
+}

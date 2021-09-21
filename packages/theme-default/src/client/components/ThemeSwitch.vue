@@ -29,53 +29,14 @@ const buttonAriaLabel = computed(
 <template>
   <button
     v-if="isDarkModeEnabled"
+    class="theme-switch"
     role="switch"
     :aria-label="buttonAriaLabel"
     :aria-checked="isDarkMode"
     @pointerdown="onToggle"
     @keydown.enter="onToggle"
   >
-    <LightIcon class="icon sun" />
-    <DarkIcon class="icon moon" />
+    <LightIcon class="theme-switch__icon theme-switch__icon-light" />
+    <DarkIcon class="theme-switch__icon theme-switch__icon-dark" />
   </button>
 </template>
-
-<style scoped>
-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  margin: 0;
-  padding: 0.5rem;
-  font-size: 1.25rem;
-  border-radius: 0.125rem;
-  cursor: pointer;
-  background-color: transparent;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  button:hover {
-    outline: 0;
-    background-color: var(--color-bg-100);
-  }
-}
-
-.icon {
-  display: block;
-  color: var(--color-text);
-  fill: currentColor;
-}
-
-html.dark .sun {
-  display: none;
-}
-
-html.dark .moon {
-  display: block;
-}
-
-html:not(.dark) .moon {
-  display: none;
-}
-</style>

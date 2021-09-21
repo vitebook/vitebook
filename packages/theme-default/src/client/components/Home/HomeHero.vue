@@ -26,14 +26,17 @@ const hasSecondaryButton = computed(() => {
 </script>
 
 <template>
-  <header v-if="shouldShowHero" class="home-hero">
-    <h1 v-if="heroText" id="main-title" class="title">{{ heroText }}</h1>
+  <header v-if="shouldShowHero" class="home__hero">
+    <h1 v-if="heroText" id="main-title" class="home__hero__title">
+      {{ heroText }}
+    </h1>
 
-    <div class="actions">
+    <div class="home__hero__actions">
       <ButtonLink
         v-if="hasPrimaryButton"
         type="primary"
         :href="homePageConfig?.primaryActionLink ?? ''"
+        clas="home__hero__actions__primary"
       >
         {{ homePageConfig?.primaryActionText }}
       </ButtonLink>
@@ -42,45 +45,10 @@ const hasSecondaryButton = computed(() => {
         v-if="hasSecondaryButton"
         type="secondary"
         :href="homePageConfig?.secondaryActionLink ?? ''"
+        clas="home__hero__actions__secondary"
       >
         {{ homePageConfig?.secondaryActionText }}
       </ButtonLink>
     </div>
   </header>
 </template>
-
-<style scoped>
-.home-hero {
-  padding: 0 1.5rem;
-  text-align: center;
-  padding-top: 5rem;
-}
-
-.title {
-  margin-top: 0;
-}
-
-.actions {
-  margin-top: 3.75rem;
-}
-
-.actions > a + a {
-  margin-left: 1rem;
-}
-
-@media (min-width: 576px) {
-  .actions > a + a {
-    margin-left: 2rem;
-  }
-}
-
-@media (min-width: 992px) {
-  .title {
-    margin-top: 2rem;
-  }
-
-  .home-hero {
-    margin-bottom: 5rem;
-  }
-}
-</style>

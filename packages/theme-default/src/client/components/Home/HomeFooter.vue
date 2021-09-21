@@ -15,7 +15,7 @@ const footerText = computed(
 <template>
   <footer v-if="footerText" class="home__footer">
     <div class="home__footer__container">
-      <p class="home__footer__text">{{ footerText }}</p>
+      <p class="home__footer-text">{{ footerText }}</p>
     </div>
   </footer>
 </template>

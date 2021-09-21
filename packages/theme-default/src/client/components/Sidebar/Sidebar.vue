@@ -67,37 +67,42 @@ function handleToggleMenus() {
 </script>
 
 <template>
-  <aside class="sidebar" :aria-hidden="!isSidebarOpen">
+  <aside
+    class="sidebar"
+    :class="{ open: isSidebarOpen }"
+    :aria-hidden="!isSidebarOpen"
+  >
     <slot name="start" />
 
-    <div v-if="!isLargeScreen" class="header">
-      <div class="header-wrapper">
+    <div v-if="!isLargeScreen" class="sidebar__header">
+      <div class="sidebar__header-wrapper">
         <NavbarTitle />
         <div class="flex-grow"></div>
         <ThemeSwitch />
       </div>
     </div>
 
-    <div class="links">
+    <div class="sidebar__body">
       <button
         v-if="hasMainMenuItems"
-        class="back-button"
+        class="sidebar__back-button"
         :aria-hidden="isMainMenuShowing"
         @pointerdown="handleToggleMenus"
         @keydown.enter="handleToggleMenus"
       >
-        <BackArrowIcon /> {{ backToMainMenuText }}
+        <BackArrowIcon class="sidebar__back-button__arrow" />
+        {{ backToMainMenuText }}
       </button>
 
       <NavLinks
         v-if="hasMainMenuItems"
-        class="main-menu"
+        class="sidebar__main-menu"
         :aria-hidden="!isMainMenuShowing"
       />
 
       <SidebarLinks
         v-if="hasSidebarItems"
-        class="current-menu"
+        class="sidebar__current-menu"
         :aria-hidden="isMainMenuShowing"
       />
     </div>
@@ -105,122 +110,3 @@ function handleToggleMenus() {
     <slot name="end" />
   </aside>
 </template>
-
-<style scoped>
-.sidebar {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  flex: 0 0 auto;
-  z-index: var(--sidebar-z-index);
-  width: 80vw;
-  background-color: var(--color-bg-200);
-  overflow-y: auto;
-  transform: translateX(-100%);
-  transition: transform 0.35s ease;
-}
-
-.sidebar[aria-hidden='false'] {
-  transform: translateX(0);
-}
-
-.header {
-  padding-top: 0.25rem;
-}
-
-.header-wrapper {
-  display: flex;
-  padding: 1rem;
-}
-
-.flex-grow {
-  flex: 1;
-}
-
-.back-button {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 0.5rem;
-  border: 0;
-  font-size: 1rem;
-  margin-top: 0.2rem;
-  font-weight: 500;
-  border-radius: 0.12rem;
-  color: var(--color-text);
-  white-space: nowrap;
-  text-decoration: none;
-  background-color: var(--color-bg-100);
-  text-align: left;
-  cursor: pointer;
-  line-height: 1.5;
-}
-
-.back-button > svg {
-  margin-right: 0.25rem;
-}
-
-.back-button[aria-hidden='true'] {
-  display: none;
-}
-
-.links {
-  padding: 0 1rem;
-  margin-top: 0.375rem;
-}
-
-:deep(.nav-item) {
-  margin-top: 0.25rem;
-}
-
-.main-menu {
-  display: none;
-}
-
-.main-menu[aria-hidden='false'] {
-  display: block;
-}
-
-.current-menu {
-  margin-top: 1rem;
-}
-
-.current-menu[aria-hidden='true'] {
-  display: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .back-button:hover {
-    background-color: var(--color-bg-100);
-  }
-}
-
-@media (min-width: 992px) {
-  .header {
-    display: none;
-  }
-
-  .back-button {
-    display: none;
-  }
-
-  .sidebar {
-    position: sticky;
-    width: auto;
-    min-width: var(--sidebar-min-width);
-    height: 100vh;
-    opacity: 1;
-    z-index: 0;
-    transition: unset;
-    padding-top: var(--navbar-height);
-  }
-
-  .sidebar[aria-hidden='true'] {
-    width: 0;
-    min-width: 0;
-    opacity: 0;
-    visibility: hidden;
-  }
-}
-</style>

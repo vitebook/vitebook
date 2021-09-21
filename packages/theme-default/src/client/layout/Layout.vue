@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import MenuIcon from '@virtual/vitebook/icons/menu';
 import { useMediaQuery } from '@vueuse/core';
-import { watch } from 'vue';
+import { computed, watch } from 'vue';
 
+import { defaultThemeLocaleOptions } from '../../shared';
 import Navbar from '../components/Navbar/Navbar.vue';
 import Scrim from '../components/Scrim/Scrim.vue';
 import { useIsScrimActive } from '../components/Scrim/useScrim';
@@ -9,10 +11,12 @@ import Sidebar from '../components/Sidebar/Sidebar.vue';
 import { useIsSidebarOpen } from '../components/Sidebar/useSidebar';
 import ThemeSwitch from '../components/ThemeSwitch.vue';
 import { initDarkMode } from '../composables/useDarkMode';
+import { useLocalizedThemeConfig } from '../composables/useLocalizedThemeConfig';
 import Page from './Page.vue';
 
 initDarkMode();
 
+const theme = useLocalizedThemeConfig();
 const isSidebarOpen = useIsSidebarOpen();
 const isScrimActive = useIsScrimActive();
 
@@ -24,14 +28,30 @@ watch(
 );
 
 const isLargeScreen = useMediaQuery('(min-width: 992px)');
+
+const toggleAriaLabel = computed(
+  () =>
+    theme.value.navbar?.toggleAriaLabel ??
+    defaultThemeLocaleOptions.navbar.toggleAriaLabel
+);
 </script>
 
 <template>
   <div class="theme">
     <slot name="navbar">
-      <Navbar @hamburger-click="isSidebarOpen = !isSidebarOpen">
+      <Navbar>
         <template #start>
           <slot name="navbar-start" />
+          <button
+            class="navbar__menu-toggle"
+            :aria-label="toggleAriaLabel"
+            @pointerdown="isSidebarOpen = !isSidebarOpen"
+            @keydown.enter="isSidebarOpen = !isSidebarOpen"
+          >
+            <div>
+              <MenuIcon />
+            </div>
+          </button>
         </template>
 
         <template #end>
@@ -80,7 +100,7 @@ const isLargeScreen = useMediaQuery('(min-width: 992px)');
 <style scoped>
 .theme {
   display: flex;
-  background-color: var(--color-bg-200);
+  background-color: var(--vbk--color-bg-200);
 }
 
 .theme-switch {
@@ -89,7 +109,9 @@ const isLargeScreen = useMediaQuery('(min-width: 992px)');
 
 @media (min-width: 992px) {
   .theme-switch {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-left: 0.2rem;
   }
 

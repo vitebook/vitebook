@@ -27,7 +27,11 @@ export function useNavItemLink(item: Ref<NavItemLink | SidebarItemLink>) {
     }
 
     return {
-      class: { link: true, active, isExternal },
+      class: {
+        link: true,
+        active: active,
+        external: isExternal
+      },
       to: !isExternal ? withBaseUrl(item.value.link) : item.value.link,
       target: item.value.target ?? (isExternal ? `_blank` : undefined),
       rel: item.value.rel ?? (isExternal ? `noopener noreferrer` : undefined),

@@ -1,0 +1,198 @@
+/**-------------------------------------------------------------------------------------------
+* Sidebar
+*-------------------------------------------------------------------------------------------*/
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  flex: 0 0 auto;
+  z-index: var(--vbk--sidebar-z-index);
+  width: 80vw;
+  background-color: var(--vbk--color-bg-200);
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 0.35s ease;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar__header {
+  padding-top: 0.25rem;
+}
+
+.sidebar__header-wrapper {
+  display: flex;
+  padding: 1rem;
+}
+
+.sidebar__back-button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem;
+  border: 0;
+  font-size: 1rem;
+  margin-top: 0.2rem;
+  font-weight: 500;
+  border-radius: 0.12rem;
+  color: var(--vbk--color-text);
+  white-space: nowrap;
+  text-decoration: none;
+  background-color: var(--vbk--color-bg-100);
+  text-align: left;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.sidebar__back-button__arrow {
+  margin-right: 0.25rem;
+}
+
+.sidebar__back-button[aria-hidden='true'] {
+  display: none;
+}
+
+.sidebar__body {
+  padding: 0 1rem;
+  margin-top: 0.375rem;
+}
+
+.sidebar__main-menu {
+  display: none;
+}
+
+.sidebar__main-menu[aria-hidden='false'] {
+  display: block;
+}
+
+.sidebar__current-menu {
+  margin-top: 1rem;
+}
+
+.sidebar__current-menu[aria-hidden='true'] {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sidebar__back-button:hover {
+    background-color: var(--vbk--color-bg-100);
+  }
+}
+
+@media (min-width: 992px) {
+  .sidebar {
+    position: sticky;
+    width: auto;
+    min-width: var(--vbk--sidebar-min-width);
+    height: 100vh;
+    opacity: 1;
+    z-index: 0;
+    transition: unset;
+    padding-top: var(--vbk--navbar-height);
+  }
+
+  .sidebar:not(.sidebar.open) {
+    width: 0;
+    min-width: 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .sidebar__header {
+    display: none;
+  }
+
+  .sidebar__back-button {
+    display: none;
+  }
+}
+
+/**-------------------------------------------------------------------------------------------
+* Sidebar Links
+*-------------------------------------------------------------------------------------------*/
+
+.sidebar__body ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar__body li {
+  display: block;
+  min-width: var(--vbk--sidebar-item-min-width);
+  border-radius: var(--vbk--sidebar-item-border-radius);
+  white-space: nowrap;
+}
+
+.sidebar__body a,
+.sidebar__body button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--vbk--sidebar-item-padding);
+  border: 0;
+  font-size: var(--vbk--sidebar-item-font-size);
+  margin-top: var(--vbk--sidebar-item-spacing);
+  font-weight: var(--vbk--sidebar-item-font-weight);
+  border-radius: var(--vbk--sidebar-item-border-radius);
+  color: var(--vbk--sidebar-item-color);
+  white-space: nowrap;
+  text-decoration: none;
+  background-color: var(--vbk--sidebar-item-bg-color);
+  text-align: left;
+  cursor: pointer;
+  line-height: var(--vbk--sidebar-item-line-height);
+}
+
+.sidebar__body svg {
+  margin-right: 0.5rem;
+}
+
+.sidebar__body .nav-link__text,
+.sidebar__body .sidebar-link__text {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar__body .link.active {
+  color: var(--vbk--sidebar-item-active-color);
+  background-color: var(--vbk--sidebar-item-active-bg-color);
+}
+
+.sidebar__body a,
+.sidebar__body button {
+  padding-left: 0.5rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sidebar__body a:hover,
+  .sidebar__body button:hover {
+    color: var(--vbk--sidebar-item-hover-color);
+    background-color: var(--vbk--sidebar-item-hover-bg-color);
+  }
+}
+
+/**-------------------------------------------------------------------------------------------
+* Sidebar Item Menu
+*-------------------------------------------------------------------------------------------*/
+
+.sidebar__body .nav-item__menu,
+.sidebar-item__menu {
+  display: none !important;
+  margin-left: 1rem !important;
+}
+
+.sidebar__body .nav-item.with-menu-open > .nav-item__menu,
+.sidebar-item.with-menu-open > .sidebar-item__menu {
+  display: block !important;
+}
+
+.sidebar-item.with-menu-active > button {
+  color: var(--vbk--sidebar-item-active-color) !important;
+}

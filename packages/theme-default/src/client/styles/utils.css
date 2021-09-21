@@ -10,3 +10,7 @@
   border-width: 0;
   user-select: none;
 }
+
+.flex-grow {
+  flex-grow: 1;
+}

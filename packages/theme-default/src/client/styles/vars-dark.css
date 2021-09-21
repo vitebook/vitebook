@@ -5,15 +5,15 @@ html.dark {
    * Colors
    *-------------------------------------------------------------------------------------------*/
 
-  --color-primary: #ffca28;
-  --color-primary-rgb: 255, 202, 40;
+  --vbk--color-primary: #baa7f0;
+  --vbk--color-primary-rgb: 255, 202, 40;
 
-  --color-text: var(--color-white);
-  --color-text-rgb: 255, 255, 255;
-  --color-text-secondary: var(--color-gray-200);
+  --vbk--color-text: var(--vbk--color-white);
+  --vbk--color-text-rgb: 255, 255, 255;
+  --vbk--color-text-secondary: var(--vbk--color-gray-200);
 
-  --color-divider: var(--color-gray-300);
+  --vbk--color-divider: var(--vbk--color-gray-300);
 
-  --color-bg-100: var(--color-gray-400);
-  --color-bg-200: var(--color-gray-500);
+  --vbk--color-bg-100: var(--vbk--color-gray-400);
+  --vbk--color-bg-200: var(--vbk--color-gray-500);
 }

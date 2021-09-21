@@ -35,14 +35,17 @@ function onToggle() {
 <template>
   <li
     ref="rootRef"
-    class="sidebar-item-group"
-    :class="{ active: isActive, open: isFolderOpen }"
+    class="sidebar-item with-menu"
+    :class="{
+      'with-menu-active': isActive,
+      'with-menu-open': isFolderOpen
+    }"
   >
     <button
       :id="`sidebar-menu-button-${depth}`"
-      class="menu-button"
       :aria-controls="`sidebar-menu-${depth}`"
       aria-haspopup="true"
+      class="sidebar-item__menu-button"
       @pointerdown="onToggle"
       @keydown.enter="onToggle"
     >
@@ -53,29 +56,11 @@ function onToggle() {
 
     <ul
       :id="`sidebar-menu-${depth}`"
-      class="menu"
       :aria-labelledby="`sidebar-menu-button-${depth}`"
       :aria-expanded="isFolderOpen"
+      class="sidebar-item__menu"
     >
       <slot />
     </ul>
   </li>
 </template>
-
-<style scoped>
-.menu {
-  display: none;
-}
-
-.sidebar-item-group.active > button {
-  color: var(--sidebar-item-active-color);
-}
-
-.sidebar-item-group.open > .menu {
-  display: block;
-}
-
-.menu {
-  margin-left: 1rem;
-}
-</style>

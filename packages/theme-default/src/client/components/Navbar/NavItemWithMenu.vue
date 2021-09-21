@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import MenuCaretIcon from '@virtual/vitebook/icons/menu-caret';
 import { inBrowser } from '@vitebook/core/shared';
 import { computed, ref, toRefs, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 import type { NavItemWithMenu } from '../../../shared';
 import NavItemLink from './NavItemLink.vue';
-import NavMenuArrow from './NavMenuArrow.vue';
 
 const props = defineProps<{
   item: NavItemWithMenu;
@@ -76,114 +76,38 @@ function onMenuPointerLeave() {
 <template>
   <div
     ref="navItem"
-    class="nav-menu"
-    :class="{ 'menu-open': isMenuOpen }"
+    class="nav-item with-menu"
+    :class="{ 'with-menu-open': isMenuOpen }"
     @keydown="onKeyDown"
   >
     <button
       :id="menuButtonId"
       ref="menuButton"
-      class="menu-button"
+      class="nav-item__menu-button"
       :aria-label="item.ariaLabel"
       :aria-controls="menuId"
       aria-haspopup="true"
       @pointerdown="onToggle"
       @keydown.enter="onToggle"
     >
-      <span class="menu-button-text">{{ item.text }}</span>
-      <NavMenuArrow class="menu-button-arrow" :is-open="isMenuOpen" />
+      <span class="nav-item__menu-button__text">{{ item.text }}</span>
+      <MenuCaretIcon class="nav-item__menu-button__caret" />
     </button>
 
     <ul
       :id="menuId"
-      class="menu"
+      class="nav-item__menu"
       :aria-labelledby="menuButtonId"
       :aria-expanded="isMenuOpen"
       @pointerleave="onMenuPointerLeave"
     >
-      <li v-for="menuItem in item.menu" :key="menuItem.text" class="menu-item">
+      <li
+        v-for="menuItem in item.menu"
+        :key="menuItem.text"
+        class="nav-item__menu-item"
+      >
         <NavItemLink :item="menuItem" />
       </li>
     </ul>
   </div>
 </template>
-
-<style scoped>
-.nav-menu {
-  position: relative;
-  height: 2.72rem;
-  overflow: hidden;
-  cursor: pointer;
-  width: 100%;
-}
-
-.nav-menu.menu-open {
-  height: auto;
-}
-
-.menu-button-arrow {
-  padding-left: 0.12rem;
-  transform: rotate(270deg) translateX(-0.25rem);
-  transform-origin: center;
-}
-
-.menu-open .menu-button-arrow {
-  transform: translateY(0.1rem);
-}
-
-.menu {
-  margin-left: 1rem;
-}
-
-@media (hover: hover) {
-  .menu-item:hover {
-    background-color: var(--color-bg-100);
-  }
-
-  .menu-item :deep(.link:hover:not(.active) > span) {
-    border-bottom: 0;
-  }
-
-  .nav-menu:hover .menu {
-    display: block;
-  }
-}
-
-@media (min-width: 992px) {
-  .nav-menu {
-    height: auto;
-    overflow: visible;
-  }
-
-  .menu-button-arrow,
-  .menu-open .menu-button-arrow {
-    transform: translateY(0);
-  }
-
-  .menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    right: 1rem;
-    padding: 0.8rem;
-    margin: 0;
-    z-index: calc(var(--navbar-z-index) + 1);
-    border-radius: 0.125rem;
-    min-width: 10rem;
-    border: 0.12rem solid var(--color-divider);
-    background-color: var(--color-bg-200);
-  }
-
-  .nav-menu.menu-open .menu {
-    display: block;
-  }
-
-  .menu-item {
-    padding: 0.375rem 0;
-  }
-
-  :deep(.menu-item a) {
-    margin-top: 0;
-  }
-}
-</style>

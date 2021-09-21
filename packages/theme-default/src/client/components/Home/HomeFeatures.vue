@@ -27,17 +27,17 @@ const icons = computed(() =>
       <section
         v-for="(feature, index) in features"
         :key="index"
-        class="home__features__item home__features__item--with-icon"
+        class="home__feature with-icon"
       >
         <div>
-          <h2 v-if="feature.title" class="home__features__item__title">
+          <h2 v-if="feature.title" class="home__feature__title">
             <component
               :is="icons[index]"
-              class="home__features__item__icon"
+              class="home__feature__icon"
             ></component>
             {{ feature.title }}
           </h2>
-          <p v-if="feature.body" class="home__features__item__body">
+          <p v-if="feature.body" class="home__feature__body">
             {{ feature.body }}
           </p>
         </div>

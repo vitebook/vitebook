@@ -4,70 +4,86 @@
    *-------------------------------------------------------------------------------------------*/
 
   /* Only used for reference, changing values does nothing. */
-  --bp-sm: 576px;
-  --bp-md: 768px;
-  --bp-lg: 992px;
-  --bp-xl: 1200px;
+  --vbk--bp-sm: 576px;
+  --vbk--bp-md: 768px;
+  --vbk--bp-lg: 992px;
+  --vbk--bp-xl: 1200px;
 
   /**-------------------------------------------------------------------------------------------
    * Typography
    *-------------------------------------------------------------------------------------------*/
 
-  --font-family-base: 'Noto Sans TC', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans',
-    'Helvetica Neue', sans-serif;
+  --vbk--font-family-base: 'Noto Sans Display', -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 
-  --font-family-mono: 'Source Code Pro', source-code-pro, Menlo, Monaco,
+  --vbk--font-family-mono: 'Source Code Pro', source-code-pro, Menlo, Monaco,
     Consolas, 'Courier New', monospace;
 
   /**-------------------------------------------------------------------------------------------
    * Colors
    *-------------------------------------------------------------------------------------------*/
 
-  --color-primary: #ffca28;
-  --color-primary-rgb: 255, 202, 40;
+  --vbk--color-primary: #6b50bb;
+  --vbk--color-primary-rgb: 255, 202, 40;
 
-  --color-black: #000000;
-  --color-white: #ffffff;
+  --vbk--color-black: #000000;
+  --vbk--color-white: #ffffff;
 
-  --color-gray-100: #f5f5f5;
-  --color-gray-200: #eaeaea;
-  --color-gray-300: #3d3d3d;
-  --color-gray-400: #282828;
-  --color-gray-500: #1c1c1c;
+  --vbk--color-gray-100: #f5f5f5;
+  --vbk--color-gray-200: #eaeaea;
+  --vbk--color-gray-300: #3d3d3d;
+  --vbk--color-gray-400: #282828;
+  --vbk--color-gray-500: #1c1c1c;
 
-  --color-text: var(--color-black);
-  --color-text-rgb: 0, 0, 0;
-  --color-text-secondary: var(--color-gray-300);
+  --vbk--color-text: var(--vbk--color-black);
+  --vbk--color-text-rgb: 0, 0, 0;
+  --vbk--color-text-secondary: var(--vbk--color-gray-300);
 
-  --color-divider: var(--color-gray-200);
+  --vbk--color-divider: var(--vbk--color-gray-200);
 
-  --color-bg-100: var(--color-gray-100);
-  --color-bg-200: var(--color-white);
+  --vbk--color-bg-100: var(--vbk--color-gray-100);
+  --vbk--color-bg-200: var(--vbk--color-white);
 
   /**-------------------------------------------------------------------------------------------
    * Code
    *-------------------------------------------------------------------------------------------*/
 
-  --code-line-height: 24px;
-  --code-font-family: var(--font-family-mono);
-  --code-font-size: 14px;
-  --code-inline-bg-color: rgba(27, 31, 35, 0.05);
-  --code-bg-color: #282c34;
+  --vbk--code-line-height: 24px;
+  --vbk--code-font-family: var(--vbk--font-family-mono);
+  --vbk--code-font-size: 14px;
+  --vbk--code-inline-bg-color: rgba(27, 31, 35, 0.05);
+  --vbk--code-bg-color: #282c34;
 
   /**-------------------------------------------------------------------------------------------
    * Navbar
    *-------------------------------------------------------------------------------------------*/
 
-  --navbar-height: 5rem;
-  --navbar-z-index: 100;
+  --vbk--navbar-height: 5rem;
+  --vbk--navbar-z-index: 100;
 
   /**-------------------------------------------------------------------------------------------
    * Sidebar
    *-------------------------------------------------------------------------------------------*/
 
-  --scrim-z-index: calc(var(--navbar-z-index) + 100);
+  --vbk--scrim-z-index: calc(var(--vbk--navbar-z-index) + 100);
 
-  --sidebar-min-width: 18.75rem;
-  --sidebar-z-index: calc(var(--scrim-z-index) + 100);
+  --vbk--sidebar-min-width: 18.75rem;
+  --vbk--sidebar-z-index: calc(var(--vbk--scrim-z-index) + 100);
+
+  --vbk--sidebar-item-color: rgba(var(--vbk--color-text-rgb), 0.55);
+  --vbk--sidebar-item-bg-color: var(--vbk--color-bg-200);
+  --vbk--sidebar-item-padding: 0.5rem 0;
+  --vbk--sidebar-item-font-size: 1rem;
+  --vbk--sidebar-item-spacing: 0.2rem;
+  --vbk--sidebar-item-font-weight: 500;
+  --vbk--sidebar-item-border-radius: 0.12rem;
+  --vbk--sidebar-item-line-height: 1.5;
+  --vbk--sidebar-item-min-width: 10.5rem;
+
+  --vbk--sidebar-item-active-color: var(--vbk--color-text);
+  --vbk--sidebar-item-active-bg-color: var(--vbk--color-bg-100);
+
+  --vbk--sidebar-item-hover-color: var(--vbk--color-text);
+  --vbk--sidebar-item-hover-bg-color: var(--vbk--color-bg-100);
 }

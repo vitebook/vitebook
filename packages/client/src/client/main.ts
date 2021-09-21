@@ -1,5 +1,6 @@
 import { App as VueApp, createApp as createClientApp, createSSRApp } from 'vue';
 import type { Router } from 'vue-router';
+import Shadow from 'vue-shadow-dom';
 
 import App from './components/App';
 import ClientOnly from './components/ClientOnly';
@@ -12,6 +13,8 @@ import { createRouter } from './router';
 
 export async function createApp(): Promise<{ app: VueApp; router: Router }> {
   const app = import.meta.env.PROD ? createSSRApp(App) : createClientApp(App);
+
+  app.use(Shadow);
 
   const router = createRouter();
   initRouteLocaleRef(router);

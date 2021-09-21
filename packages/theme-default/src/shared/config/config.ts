@@ -90,6 +90,10 @@ export type DefaultThemeNavbarLocaleConfig = {
    */
   items?: NavbarItemsConfig;
   /**
+   * A11y text for menu toggle button.
+   */
+  toggleAriaLabel?: string;
+  /**
    * Language dropdown menu configuration.
    */
   languageMenu?: {
@@ -134,10 +138,6 @@ export type DefaultThemeSidebarLocaleConfig = {
    * @default {}
    */
   items?: SidebarItemsConfig | MultiSidebarItemsConfig;
-  /**
-   * A11y text for sidebar toggle button.
-   */
-  toggleAriaLabel?: string;
   /**
    * Specify the text to be displayed inside the back to main menu button in the sidebar.
    *
@@ -252,6 +252,20 @@ export type DefaultThemeNotFoundPageLocaleConfig = {
    */
   message?: string;
   /**
+   * A relative URL from the project root to a 404 illustration. You can also place this inside
+   * the `<public>` directory.
+   *
+   * @default '/404.svg'
+   */
+  illustration?: string;
+  /**
+   * A relative URL from the project root to a 404 illustration to show when dark mode is enabled.
+   * You can also place this inside the `<public>` directory.
+   *
+   * @default undefined
+   */
+  illustrationDark?: string;
+  /**
    * Displayed text inside back to home button.
    *
    * @default 'Take me home'
@@ -286,6 +300,7 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
 
   navbar: {
     items: [],
+    toggleAriaLabel: 'Toggle sidebar',
     languageMenu: {
       selectLanguageText: 'Languages',
       selectLanguageAriaLabel: 'Select language'
@@ -295,7 +310,6 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
 
   sidebar: {
     items: 'auto',
-    toggleAriaLabel: 'Toggle sidebar',
     backToMainMenuText: 'Back to main menu'
   },
 
@@ -317,6 +331,8 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
   notFoundPage: {
     message: 'Oops, something went wrong.',
     goHomeText: 'Take me home',
+    illustration: '/404.svg',
+    // illustrationDark: undefined,
     goBackText: 'Go back'
   }
 };

@@ -4,38 +4,40 @@
   font-size: 0.875rem;
   font-weight: 500;
   border-radius: 0.25rem;
-  color: var(--color-white);
-  background-color: var(--color-black);
+  color: var(--vbk--color-white);
+  background-color: var(--vbk--color-black);
   text-decoration: none;
-  border: 0.12rem solid var(--color-black);
   transition: transform 150ms ease;
 }
 
-html.dark .button:not(.button--secondary) {
-  color: var(--color-black);
-  background-color: var(--color-white);
-  border: 0.12rem solid var(--color-white);
+.button:not(.secondary) {
+  padding: 1.14rem 1.5rem;
 }
 
-.button--secondary {
+html.dark .button:not(.secondary) {
+  color: var(--vbk--color-black);
+  background-color: var(--vbk--color-white);
+}
+
+.button.secondary {
   background-color: transparent;
-  color: var(--color-text);
-  border: 0.1rem solid var(--color-text);
+  color: var(--vbk--color-text);
+  border: 0.12rem solid var(--vbk--color-text);
 }
 
 @media (hover: hover) {
   .button:hover {
     transform: scale(1.02);
     text-decoration: none;
-    background-color: var(--color-gray-300);
+    background-color: var(--vbk--color-gray-300);
   }
 
-  .button--secondary:hover {
-    background-color: var(--color-gray-100);
+  .button.secondary:hover {
+    background-color: var(--vbk--color-gray-100);
   }
 
-  html.dark .button--secondary:hover {
-    background-color: var(--color-gray-400);
+  html.dark .button.secondary:hover {
+    background-color: var(--vbk--color-gray-400);
   }
 }
 
@@ -43,11 +45,19 @@ html.dark .button:not(.button--secondary) {
   .button {
     padding: 1rem 2rem;
   }
+
+  .button:not(.secondary) {
+    padding: 1.14rem 2rem;
+  }
 }
 
 @media (min-width: 576px) {
   .button {
     font-size: 1.1rem;
     padding: 1rem 2.2rem;
+  }
+
+  .button:not(.secondary) {
+    padding: 1.14rem 2.2rem;
   }
 }

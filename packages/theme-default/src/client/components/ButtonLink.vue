@@ -26,7 +26,7 @@ function onClick(event: Event) {
 <template>
   <router-link
     class="button"
-    :class="{ 'button--secondary': type === 'secondary' }"
+    :class="{ secondary: type === 'secondary' }"
     :to="href === '_back' ? '' : withBase(href)"
     @click.prevent
     @pointerdown="onClick"

@@ -32,11 +32,14 @@ function handleLinkClick(event: Event, navigate: () => void): void {
       v-bind="linkProps"
       :to="undefined"
       :href="isExternal ? linkProps.to : href"
+      :class="{ 'nav-item': true, 'nav-link': true }"
       @click="preventClick"
       @pointerdown="(e) => handleLinkClick(e, navigate)"
       @keydown.enter="(e) => handleLinkClick(e, navigate)"
     >
-      <span>{{ item.text }} <OutboundLink v-if="isExternal" /></span>
+      <span class="nav-link__text">
+        {{ item.text }} <OutboundLink v-if="isExternal" />
+      </span>
     </a>
   </router-link>
 </template>

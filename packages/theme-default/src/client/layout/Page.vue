@@ -5,54 +5,11 @@ const page = usePage();
 </script>
 
 <template>
-  <main :class="{ [`${page?.type}`]: page?.type }">
-    <div class="container" :class="{ [`${page?.type}`]: page?.type }">
+  <main class="page" :class="{ [`type-${page?.type}`]: page?.type }">
+    <div class="page__container">
       <slot name="start" />
-      <PageView />
+      <PageView class="page__view" :shadow="page?.type === 'story'" />
       <slot name="end" />
     </div>
   </main>
 </template>
-
-<style scoped>
-main {
-  flex: 1 0 0;
-  position: relative;
-  margin: 0;
-  min-height: 100vh;
-  padding-top: var(--navbar-height);
-  background-color: var(--color-bg-200);
-}
-
-main[class~='md'],
-main[class~='vue:md'],
-main[class~='story'] {
-  background-color: var(--color-bg-100);
-}
-
-main[class~='story'] {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-}
-
-.container {
-  width: 100%;
-}
-
-.container[class~='md'],
-.container[class~='vue:md'] {
-  padding: 0 1.5rem 4rem;
-  margin: 0 auto;
-  max-width: 48rem;
-}
-
-.container[class~='story'] {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: translateY(-2rem);
-}
-</style>

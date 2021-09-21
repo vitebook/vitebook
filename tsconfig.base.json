@@ -13,7 +13,7 @@
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
     "jsx": "react",
-    "lib": ["dom", "es2017"],
+    "lib": ["dom", "dom.iterable", "es2017"],
     "module": "esnext",
     "moduleResolution": "node",
     "newLine": "lf",

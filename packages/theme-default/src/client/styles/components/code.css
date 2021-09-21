@@ -2,10 +2,10 @@ code {
   margin: 0;
   border-radius: 3px;
   padding: 0.25rem 0.5rem;
-  font-family: var(--code-font-family);
+  font-family: var(--vbk--code-font-family);
   font-size: 0.85em;
-  color: var(--color-white);
-  background-color: var(--code-inline-bg-color);
+  color: var(--vbk--color-white);
+  background-color: var(--vbk--code-inline-bg-color);
 }
 
 code .token.deleted {
@@ -13,13 +13,13 @@ code .token.deleted {
 }
 
 code .token.inserted {
-  color: var(--color-primary);
+  color: var(--vbk--color-primary);
 }
 
 div[class*='language-'] {
   position: relative;
   margin: 1rem -1.5rem;
-  background-color: var(--code-bg-color);
+  background-color: var(--vbk--code-bg-color);
   overflow-x: auto;
 }
 
@@ -68,8 +68,8 @@ li > div[class*='language-'] {
 
 [class*='language-'] code {
   padding: 0;
-  line-height: var(--code-line-height);
-  font-size: var(--code-font-size);
+  line-height: var(--vbk--code-line-height);
+  font-size: var(--vbk--code-font-size);
   color: #eee;
 }
 
@@ -82,9 +82,9 @@ li > div[class*='language-'] {
   left: 0;
   padding: 1.25rem 0;
   width: 100%;
-  line-height: var(--code-line-height);
-  font-family: var(--code-font-family);
-  font-size: var(--code-font-size);
+  line-height: var(--vbk--code-line-height);
+  font-family: var(--vbk--code-font-family);
+  font-size: var(--vbk--code-font-size);
   user-select: none;
   overflow: hidden;
 }
@@ -109,9 +109,9 @@ div[class*='language-'].line-numbers-mode {
   padding: 1.25rem 0;
   width: 3.5rem;
   text-align: center;
-  line-height: var(--code-line-height);
-  font-family: var(--code-font-family);
-  font-size: var(--code-font-size);
+  line-height: var(--vbk--code-line-height);
+  font-family: var(--vbk--code-font-family);
+  font-size: var(--vbk--code-font-size);
   color: #888;
 }
 

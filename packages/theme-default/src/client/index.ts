@@ -1,14 +1,17 @@
 import './styles/normalize.css';
 import './styles/vars.css';
 import './styles/vars-dark.css';
-import './styles/sr-only.css';
 import './styles/global.css';
+import './styles/utils.css';
 import './styles/components/button.css';
-import './styles/components/code.css';
 import './styles/components/scrim.css';
-import './styles/components/home.css';
-import './styles/components/navbar.css';
-import './styles/components/sidebar.css';
+import './styles/components/code.css';
+import './styles/components/theme-switch.css';
+import './styles/layout/navbar.css';
+import './styles/layout/sidebar.css';
+import './styles/layout/home.css';
+import './styles/layout/page.css';
+import './styles/layout/404.css';
 
 import { loadPage, useFirstPage, VueTheme } from '@vitebook/client';
 import { h, watch } from 'vue';
@@ -16,7 +19,7 @@ import { h, watch } from 'vue';
 import OutboundLink from './components/global/OutboundLink.vue';
 import { useLocalizedThemeConfig } from './composables/useLocalizedThemeConfig';
 import { useScrollPromise } from './composables/useScrollPromise';
-import NotFound from './layout/404/404.vue';
+import NotFound from './layout/404.vue';
 import Layout from './layout/Layout.vue';
 
 export * from '../shared/index';

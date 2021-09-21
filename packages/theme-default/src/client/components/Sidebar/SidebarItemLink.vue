@@ -40,17 +40,18 @@ function handleLinkClick(event: Event, navigate: () => void): void {
 </script>
 
 <template>
-  <li class="sidebar-item">
+  <li>
     <router-link v-slot="{ navigate, href }" :to="linkProps.to" custom>
       <a
         v-bind="linkProps"
         :to="undefined"
         :href="isExternal ? linkProps.to : href"
+        :class="{ 'sidebar-item': true, 'sidebar-link': true }"
         @click="preventClick"
         @pointerdown="(e) => handleLinkClick(e, navigate)"
         @keydown.enter="(e) => handleLinkClick(e, navigate)"
       >
-        <span class="link-text">
+        <span class="sidebar-link__text">
           <component :is="Icon" />
           {{ item.text }}
           <OutboundLink v-if="isExternal" />
