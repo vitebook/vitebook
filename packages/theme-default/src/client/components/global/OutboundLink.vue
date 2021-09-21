@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import ExternalLinkIcon from '@virtual/vitebook/icons/external-link';
 import { computed } from 'vue';
+
+import ExternalLinkIcon from ':virtual/vitebook/icons/external-link';
 
 import { defaultThemeLocaleOptions } from '../../../shared';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';

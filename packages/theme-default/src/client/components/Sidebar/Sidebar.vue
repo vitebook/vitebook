@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import BackArrowIcon from '@virtual/vitebook/icons/back-arrow';
 import { useMediaQuery } from '@vueuse/core';
 import { computed, ref, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
+
+import BackArrowIcon from ':virtual/vitebook/icons/back-arrow';
 
 import { defaultThemeLocaleOptions } from '../../../shared';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';

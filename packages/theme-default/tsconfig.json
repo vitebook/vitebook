@@ -5,7 +5,7 @@
     "outDir": "dist",
     "module": "es2020",
     "paths": {
-      "@virtual/vitebook/icons/*": ["./src/virtual/icons.d.ts"]
+      ":virtual/vitebook/icons/*": ["./src/virtual/icons.d.ts"]
     }
   },
   "include": ["src"]

@@ -1,9 +1,7 @@
 import { dedupeHead, HeadConfig, SiteLocaleData } from '@vitebook/core/shared';
-import { isVueMarkdownPage } from '@vitebook/plugin-markdown-vue/shared';
-import { isStoryPage } from '@vitebook/plugin-story/shared';
 import { computed, ComputedRef } from 'vue';
 
-import type { LoadedPage } from '../types/page';
+import type { LoadedPage } from '../../shared/types/Page';
 import { useLocalizedSiteOptions } from './useLocalizedSiteOptions';
 import { usePage } from './usePage';
 import { usePageDescription } from './usePageDescription';
@@ -28,16 +26,9 @@ const resolvePageHead = (
   page?: LoadedPage
 ): HeadConfig[] => {
   const head: HeadConfig[] = [];
-
-  if (isVueMarkdownPage(page)) {
-    head.push(...(page.data.frontmatter.head ?? []));
-  } else if (isStoryPage(page)) {
-    head.push(...(page.story?.head ?? []));
-  }
-
+  head.push(...(page?.meta.head ?? []));
   head.push(...siteLocale.head);
   head.push(['title', {}, title]);
   head.push(['meta', { name: 'description', content: description }]);
-
   return dedupeHead(head);
 };

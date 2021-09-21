@@ -1,9 +1,7 @@
 import type { SiteLocaleData } from '@vitebook/core/shared';
-import { isVueMarkdownPage } from '@vitebook/plugin-markdown-vue/shared';
-import { isStoryPage } from '@vitebook/plugin-story/shared';
 import { computed, ComputedRef } from 'vue';
 
-import type { LoadedPage } from '../types/page';
+import type { LoadedPage } from '../../shared/types/Page';
 import { useLocalizedSiteOptions } from './useLocalizedSiteOptions';
 import { usePage } from './usePage';
 
@@ -19,13 +17,6 @@ const resolvePageDescription = (
   siteLocale: SiteLocaleData,
   page?: LoadedPage
 ): string => {
-  let description = '';
-
-  if (isVueMarkdownPage(page)) {
-    description = page.data.frontmatter.description ?? '';
-  } else if (isStoryPage(page)) {
-    description = page.story?.description ?? '';
-  }
-
-  return page && description.length > 0 ? description : siteLocale.description;
+  const description = page?.meta.description;
+  return description ? description : siteLocale.description;
 };

@@ -24,8 +24,23 @@
    * Colors
    *-------------------------------------------------------------------------------------------*/
 
-  --vbk--color-primary: #6b50bb;
-  --vbk--color-primary-rgb: 255, 202, 40;
+  /** Thanks GitLab! **/
+  --vbk-color-blue: #007bff;
+  --vbk-color-indigo: #6610f2;
+  --vbk-color-purple: #6d49cb;
+  --vbk-color-pink: #e83e8c;
+  --vbk-color-red: #dc3545;
+  --vbk-color-orange: #fd7e14;
+  --vbk-color-yellow: #ffc107;
+  --vbk-color-green: #28a745;
+  --vbk-color-teal: #20c997;
+  --vbk-color-cyan: #17a2b8;
+  --vbk-color-success: #108548;
+  --vbk-color-info: #1f75cb;
+  --vbk-color-warning: #ab6100;
+  --vbk-color-danger: #dd2b0e;
+
+  --vbk--color-primary: #610fe6;
 
   --vbk--color-black: #000000;
   --vbk--color-white: #ffffff;

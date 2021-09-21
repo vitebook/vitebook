@@ -1,7 +1,5 @@
 <script lang="ts">
-import type { StoryConfig } from '@vitebook/client';
-
-export const story: StoryConfig = {
+export const __pageMeta = {
   title: 'Button',
   description: 'My awesome button.'
 };

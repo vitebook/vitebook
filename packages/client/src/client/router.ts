@@ -6,6 +6,7 @@ import {
   Router
 } from 'vue-router';
 
+import { Page } from '../shared/types/Page';
 import {
   deleteCachedLoadedPage,
   getCachedLoadedPage,
@@ -15,7 +16,6 @@ import {
 import { usePages } from './composables/usePages';
 import { useTheme } from './composables/useTheme';
 import { withBaseUrl } from './helpers/withBaseUrl';
-import { Page } from './types/page';
 
 export function createRouter(): Router {
   const theme = useTheme();

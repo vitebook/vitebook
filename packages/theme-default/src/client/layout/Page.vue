@@ -8,7 +8,7 @@ const page = usePage();
   <main class="page" :class="{ [`type-${page?.type}`]: page?.type }">
     <div class="page__container">
       <slot name="start" />
-      <PageView class="page__view" :shadow="page?.type === 'story'" />
+      <PageView :shadow="page?.type === 'vue'" />
       <slot name="end" />
     </div>
   </main>

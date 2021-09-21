@@ -5,8 +5,7 @@ html.dark {
    * Colors
    *-------------------------------------------------------------------------------------------*/
 
-  --vbk--color-primary: #baa7f0;
-  --vbk--color-primary-rgb: 255, 202, 40;
+  --vbk--color-primary: var(--vbk-color-yellow);
 
   --vbk--color-text: var(--vbk--color-white);
   --vbk--color-text-rgb: 255, 255, 255;

@@ -27,7 +27,7 @@ export const extractTitlePlugin: PluginSimple = (parser): void => {
   const render = parser.render.bind(parser);
   parser.render = (src, env: MarkdownParserEnv = {}) => {
     const result = render(src, env);
-    env.title = env.frontmatter?.title ?? title;
+    env.title = (env.frontmatter?.title as string) ?? title;
     return result;
   };
 };

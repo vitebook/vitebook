@@ -1,9 +1,9 @@
-import pages from '@virtual/vitebook/core/pages';
-import { VirtualPagesModule } from '@vitebook/core/shared';
 import { computed, ComputedRef, Ref, ref, shallowReadonly } from 'vue';
 import { useRouter } from 'vue-router';
 
-import type { Page } from '../types/page';
+import pages from ':virtual/vitebook/pages';
+
+import type { Page, VirtualPagesModule } from '../../shared/types/Page';
 
 export type PagesRef = Ref<Readonly<Page[]>>;
 
@@ -16,7 +16,7 @@ export function usePages(): Readonly<PagesRef> {
 
 if (import.meta.hot) {
   import.meta.hot.accept(
-    '/@virtual/vitebook/core/pages',
+    '/:virtual/vitebook/pages',
     (mod: VirtualPagesModule) => {
       pagesRef.value = shallowReadonly(mod.default);
     }

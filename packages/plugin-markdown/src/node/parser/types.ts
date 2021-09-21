@@ -1,10 +1,10 @@
 import type MarkdownIt from 'markdown-it';
 
 import {
-  MarkdownData,
   MarkdownFrontmatter,
   MarkdownHeader,
-  MarkdownLinks
+  MarkdownLinks,
+  MarkdownPageMeta
 } from '../../shared/index';
 import type {
   AnchorPluginOptions,
@@ -37,17 +37,15 @@ export type ParseMarkdownOptions = {
   define?: Record<string, unknown>;
 };
 
-export type ParsedMarkdownResult<Data extends MarkdownData = MarkdownData> = {
+export type ParsedMarkdownResult<
+  Meta extends MarkdownPageMeta = MarkdownPageMeta
+> = {
   content: string;
-  data: Data;
+  meta: Meta;
   html: string;
   links: MarkdownLinks;
   importedFiles: string[];
   env: MarkdownParserEnv;
-  // TODO: add support for these later.
-  // date: string;
-  // permalink: string;
-  // slug: string;
 };
 
 /**

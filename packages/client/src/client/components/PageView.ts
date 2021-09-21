@@ -24,7 +24,8 @@ export default defineComponent({
         });
 
         return this.$props.shadow
-          ? h(resolveComponent('shadow-root'), null, Page)
+          ? // @ts-expect-error - ?
+            h(resolveComponent('shadow-root'), null, { default: () => Page })
           : Page;
       }
     });

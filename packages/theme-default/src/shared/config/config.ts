@@ -161,7 +161,7 @@ export type DefaultThemeMarkdownLocaleConfig = {
    * **Patterns:**
    * - `:repo` - The stories repo URL.
    * - `:branch` - The stories repo branch.
-   * - `:path` - The path of the story source file.
+   * - `:path` - The path of the page source file.
    *
    * @default ':repo/edit/:branch/:path'
    */

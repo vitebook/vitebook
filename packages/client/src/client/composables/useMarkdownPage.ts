@@ -1,7 +1,7 @@
 import { isVueMarkdownPage } from '@vitebook/plugin-markdown-vue/shared';
 import { computed, ComputedRef, shallowReadonly } from 'vue';
 
-import type { LoadedVueMarkdownPage } from '../types/page';
+import type { LoadedVueMarkdownPage } from '../../shared/types/Page';
 import { usePage } from './usePage';
 
 export type MarkdownPageRef = ComputedRef<

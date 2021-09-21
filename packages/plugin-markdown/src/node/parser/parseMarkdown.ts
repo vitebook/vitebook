@@ -1,4 +1,9 @@
-import { prettyJsonStr } from '@vitebook/core/shared';
+import {
+  HeadConfig,
+  LocaleConfig,
+  omitPageMeta,
+  prettyJsonStr
+} from '@vitebook/core/shared';
 import matter from 'gray-matter';
 import LRUCache from 'lru-cache';
 import toml from 'toml';
@@ -59,11 +64,14 @@ export function parseMarkdown(
     links,
     importedFiles,
     env: parserEnv,
-    data: {
+    meta: {
       excerpt: excerptHtml,
-      frontmatter,
       headers,
-      title
+      title,
+      head: frontmatter.head as HeadConfig[],
+      description: frontmatter.description as string,
+      locales: frontmatter.locales as LocaleConfig,
+      frontmatter: omitPageMeta(frontmatter)
     }
   };
 
@@ -74,12 +82,11 @@ export function parseMarkdown(
 export function loadParsedMarkdown(result: ParsedMarkdownResult): string {
   const mod: MarkdownPageModule = {
     default: result.html,
-    data: result.data
+    __pageMeta: result.meta
   };
 
   return `
-export const data = ${prettyJsonStr(mod.data)};
-
+export const __pageMeta = ${prettyJsonStr(mod.__pageMeta)};
 export default ${mod.default};
   `;
 }

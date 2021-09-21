@@ -1,9 +1,10 @@
-import Theme from '@virtual/vitebook/core/theme';
 import { Ref, ref, shallowReadonly } from 'vue';
 
-import type { VirtualVueThemeModule, VueTheme } from '../types/theme';
+import Theme from ':virtual/vitebook/theme';
 
-export type ThemeRef = Ref<Readonly<VueTheme>>;
+import { VirtualThemeModule } from '../../shared';
+
+export type ThemeRef = Ref<Readonly<typeof Theme>>;
 
 // Singleton.
 const themeRef: ThemeRef = ref(shallowReadonly(Theme));
@@ -14,8 +15,8 @@ export function useTheme(): Readonly<ThemeRef> {
 
 if (import.meta.hot) {
   import.meta.hot.accept(
-    '/@virtual/vitebook/core/theme',
-    (mod: VirtualVueThemeModule) => {
+    '/:virtual/vitebook/theme',
+    (mod: VirtualThemeModule) => {
       themeRef.value = shallowReadonly(mod.default);
     }
   );

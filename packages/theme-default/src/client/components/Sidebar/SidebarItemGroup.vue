@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import FolderClosedIcon from '@virtual/vitebook/icons/sidebar-folder-closed';
-import FolderOpenIcon from '@virtual/vitebook/icons/sidebar-folder-open';
 import { onMounted, onUpdated, ref } from 'vue';
+
+import FolderClosedIcon from ':virtual/vitebook/icons/sidebar-folder-closed';
+import FolderOpenIcon from ':virtual/vitebook/icons/sidebar-folder-open';
 
 import type { SidebarItemGroup } from '../../../shared';
 
@@ -37,8 +38,8 @@ function onToggle() {
     ref="rootRef"
     class="sidebar-item with-menu"
     :class="{
-      'with-menu-active': isActive,
-      'with-menu-open': isFolderOpen
+      active: isActive,
+      open: isFolderOpen
     }"
   >
     <button

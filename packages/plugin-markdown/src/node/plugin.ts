@@ -1,7 +1,6 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import type { Plugin } from '@vitebook/core/node';
 
-import type { ResolvedMarkdownPage } from '../shared/index';
 import {
   createMarkdownParser,
   loadParsedMarkdown,
@@ -46,13 +45,15 @@ export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
     async configureApp() {
       parser = await createMarkdownParser(parserOptions);
     },
-    async resolvePage({ filePath }): Promise<ResolvedMarkdownPage | void> {
+    async resolvePage({ filePath }) {
       if (filter(filePath)) {
         files.add(filePath);
         return {
           type: 'md'
         };
       }
+
+      return null;
     },
     pagesRemoved(pages) {
       pages.forEach((page) => {

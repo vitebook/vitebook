@@ -1,6 +1,6 @@
-import type { VirtualStoryAddonsModule } from '../client/types/addon';
+import type { VirtualPageAddonsModule } from '../shared';
 
-declare module '@virtual/vitebook/plugin-story/addons' {
-  declare const addons: VirtualStoryAddonsModule['default'];
+declare module ':virtual/vitebook/addons' {
+  declare const addons: VirtualPageAddonsModule['default'];
   export default addons;
 }

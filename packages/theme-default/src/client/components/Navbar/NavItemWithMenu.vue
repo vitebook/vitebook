@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import MenuCaretIcon from '@virtual/vitebook/icons/menu-caret';
 import { inBrowser } from '@vitebook/core/shared';
-import { computed, ref, toRefs, watch } from 'vue';
+import { useMediaQuery } from '@vueuse/core';
+import { computed, onMounted, onUpdated, ref, toRefs, watch } from 'vue';
 import { useRoute } from 'vue-router';
+
+import MenuCaretIcon from ':virtual/vitebook/icons/menu-caret';
 
 import type { NavItemWithMenu } from '../../../shared';
 import NavItemLink from './NavItemLink.vue';
+import { useLanguageLinks } from './useLanguageLinks';
 
 const props = defineProps<{
   item: NavItemWithMenu;
@@ -13,8 +16,10 @@ const props = defineProps<{
 
 const propsRef = toRefs(props);
 const route = useRoute();
-const isMenuOpen = ref(false);
+const isLargeScreen = useMediaQuery('(min-width: 992px)');
 
+const isMenuOpen = ref(false);
+const isMenuActive = ref(false);
 const navItem = ref<HTMLElement | null>(null);
 const menuButton = ref<HTMLButtonElement | null>(null);
 
@@ -23,7 +28,7 @@ watch(
   () => {
     if (!inBrowser) return;
 
-    if (window.innerWidth >= 992) {
+    if (isLargeScreen.value) {
       isMenuOpen.value = false;
     } else {
       window.requestAnimationFrame(() => {
@@ -66,18 +71,40 @@ function onKeyDown(e: KeyboardEvent) {
   }
 }
 
+const langLinks = useLanguageLinks();
+const isLanguagesGroup = computed(
+  () => propsRef.item.value.text === langLinks.value?.text
+);
+
 function onMenuPointerLeave() {
-  if (window.innerWidth >= 992) {
+  if (isLargeScreen.value) {
     isMenuOpen.value = false;
   }
 }
+
+function checkHasActiveItem() {
+  if (!isLanguagesGroup.value) {
+    isMenuActive.value = !!navItem.value?.querySelector('a.active');
+  }
+}
+
+onMounted(() => {
+  checkHasActiveItem();
+  if (!isLargeScreen.value && !isLanguagesGroup.value) {
+    isMenuOpen.value = isMenuActive.value;
+  }
+});
+
+onUpdated(() => {
+  window.requestAnimationFrame(checkHasActiveItem);
+});
 </script>
 
 <template>
   <div
     ref="navItem"
     class="nav-item with-menu"
-    :class="{ 'with-menu-open': isMenuOpen }"
+    :class="{ open: isMenuOpen, active: isMenuActive }"
     @keydown="onKeyDown"
   >
     <button

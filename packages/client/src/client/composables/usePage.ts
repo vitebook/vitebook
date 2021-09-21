@@ -1,9 +1,6 @@
-import { isVueMarkdownPage } from '@vitebook/plugin-markdown-vue/shared';
-import { isStoryPage } from '@vitebook/plugin-story/shared';
-import { Component, markRaw, Ref, ref, shallowReadonly, watch } from 'vue';
+import { Component, Ref, ref, shallowReadonly, watch } from 'vue';
 
-import type { LoadedPage, Page } from '../types/page';
-import type { VueStoryConfig } from '../types/story';
+import { LoadedPage, Page } from '../../shared';
 import { usePages } from './usePages';
 
 export type PageRef = Ref<Readonly<LoadedPage> | undefined>;
@@ -30,39 +27,11 @@ export function setPageRef(loadedPage?: LoadedPage): void {
 }
 
 export async function loadPage(page: Page): Promise<Component> {
-  let component: Component;
-  let loadedPage: LoadedPage | undefined;
-
-  if (isStoryPage(page)) {
-    // Story
-    const data = await page.loader();
-
-    if ('component' in data.default) {
-      component = data.default.component;
-      data.default.component = markRaw(data.default.component);
-      loadedPage = { ...page, story: data.default as VueStoryConfig };
-    } else {
-      component = data.default;
-
-      if (data.story?.component) {
-        data.story.component = markRaw(data.story.component ?? {});
-      }
-
-      loadedPage = { ...page, story: data.story };
-    }
-  } else if (isVueMarkdownPage(page)) {
-    // Markdown
-    const data = await page.loader();
-    component = data.default;
-    loadedPage = { ...page, data: data.data };
-  } else {
-    component = await page.loader();
-    loadedPage = undefined;
-  }
-
+  const data = await page.loader();
+  const component = data.default;
+  const loadedPage = { ...page, meta: data.__pageMeta } as LoadedPage;
   if (loadedPage) loadedPageCache.set(page, loadedPage);
   setPageRef(loadedPage);
-
   return component;
 }
 

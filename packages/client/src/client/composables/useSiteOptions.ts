@@ -1,10 +1,11 @@
-import siteOptions from '@virtual/vitebook/core/site';
 import type {
   SiteOptions,
   ThemeConfig,
   VirtualSiteDataModule
 } from '@vitebook/core/shared';
 import { Ref, ref, shallowReadonly } from 'vue';
+
+import siteOptions from ':virtual/vitebook/site';
 
 export type SiteOptionsRef<Theme extends ThemeConfig = ThemeConfig> = Ref<
   Readonly<SiteOptions<Theme>>
@@ -21,7 +22,7 @@ export function useSiteOptions<
 
 if (import.meta.hot) {
   import.meta.hot.accept(
-    '/@virtual/vitebook/core/site',
+    '/:virtual/vitebook/site',
     (mod: VirtualSiteDataModule) => {
       siteOptionsRef.value = shallowReadonly(mod.default);
     }

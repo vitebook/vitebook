@@ -16,7 +16,7 @@ const features = computed<DefaultThemeHomePageFeature[]>(
 
 const icons = computed(() =>
   features.value
-    .map((_, i) => `/@virtual/vitebook/icons/home-feature-${i}`)
+    .map((_, i) => `/:virtual/vitebook/icons/home-feature-${i}`)
     .map((path) => defineAsyncComponent(() => import(/* @vite-ignore */ path)))
 );
 </script>

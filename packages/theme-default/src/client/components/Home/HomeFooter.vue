@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { useMarkdownFrontmatter } from '@vitebook/client';
+import { useMarkdownPageMeta } from '@vitebook/client';
 import { computed } from 'vue';
 
 import { useHomePageConfig } from './useHomePageConfig';
 
-const frontmatter = useMarkdownFrontmatter();
+const mdMeta = useMarkdownPageMeta();
 const homePageConfig = useHomePageConfig();
 
 const footerText = computed(
-  () => frontmatter.value?.footer ?? homePageConfig.value?.footer
+  () =>
+    (mdMeta.value?.frontmatter.footer as string) ?? homePageConfig.value?.footer
 );
 </script>
 

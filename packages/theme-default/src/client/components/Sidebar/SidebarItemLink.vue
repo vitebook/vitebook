@@ -19,7 +19,7 @@ const Icon = computed(() => {
     ? defineAsyncComponent(
         () =>
           import(
-            /* @vite-ignore */ `/@virtual/vitebook/icons/sidebar-file-${type}`
+            /* @vite-ignore */ `/:virtual/vitebook/icons/sidebar-file-${type}`
           )
       )
     : null;
@@ -46,7 +46,11 @@ function handleLinkClick(event: Event, navigate: () => void): void {
         v-bind="linkProps"
         :to="undefined"
         :href="isExternal ? linkProps.to : href"
-        :class="{ 'sidebar-item': true, 'sidebar-link': true }"
+        :class="{
+          'sidebar-item': true,
+          'sidebar-link': true,
+          [`type-${item.type}`]: item.type
+        }"
         @click="preventClick"
         @pointerdown="(e) => handleLinkClick(e, navigate)"
         @keydown.enter="(e) => handleLinkClick(e, navigate)"

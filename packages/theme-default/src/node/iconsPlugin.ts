@@ -38,7 +38,7 @@ export type DefaultThemeIconsOptions = Omit<
   vitebook?: false | VitebookIconRecord | VitebookIconResolver;
 };
 
-const vitebookIconPathRE = /@virtual\/vitebook\/icons\//;
+const vitebookIconPathRE = /:virtual\/vitebook\/icons\//;
 
 const VIRTUAL_ICONS_MODULE_ID = `${VM_PREFIX}/vitebook/icons`;
 const VIRTUAL_EMPTY_ICON_MODULE_ID = `/${VM_PREFIX}/vitebook/icons/empty`;
@@ -73,8 +73,6 @@ const defaultIconResolver: VitebookIconResolver = (icon) => {
       case 'md':
       case 'vue:md':
         return 'mdi/language-markdown';
-      case 'story':
-        return 'heroicons-outline/book-open';
       case 'vue':
         return 'mdi/vuejs';
       case 'svelte':
@@ -87,6 +85,13 @@ const defaultIconResolver: VitebookIconResolver = (icon) => {
         return 'mdi/language-typescript';
       case 'html':
         return 'mdi/language-html5';
+      case 'svg':
+        return 'mdi/svg';
+      case 'png':
+      case 'jpeg':
+        return 'mdi/file-image';
+      case 'mp4':
+        return 'mdi/file-video';
       default:
         return 'mdi/file';
     }

@@ -69,6 +69,7 @@
     "esbuild": "^0.12.24",
     "fast-glob": "^3.2.7",
     "fs-extra": "^10.0.0",
+    "just-omit": "^1.2.0",
     "kleur": "^4.1.4",
     "lru-cache": "^6.0.0",
     "ora": "^6.0.0",

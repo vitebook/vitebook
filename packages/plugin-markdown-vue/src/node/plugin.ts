@@ -4,7 +4,6 @@ import { logger } from '@vitebook/core/node/utils';
 import type { MarkdownParser } from '@vitebook/plugin-markdown/node';
 import kleur from 'kleur';
 
-import type { ResolvedVueMarkdownPage } from '../shared/index';
 import {
   createMarkdownParser,
   MarkdownParserOptions,
@@ -71,10 +70,7 @@ export function vueMarkdownPlugin(
         );
       }
     },
-    async resolvePage({
-      filePath,
-      route
-    }): Promise<ResolvedVueMarkdownPage | void> {
+    async resolvePage({ filePath, route }) {
       if (filter(filePath)) {
         files.add(filePath);
         routes.set(filePath, route);
@@ -82,6 +78,8 @@ export function vueMarkdownPlugin(
           type: 'vue:md'
         };
       }
+
+      return null;
     },
     pagesRemoved(pages) {
       pages.forEach(({ filePath }) => {

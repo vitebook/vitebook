@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import MenuIcon from '@virtual/vitebook/icons/menu';
 import { useMediaQuery } from '@vueuse/core';
 import { computed, watch } from 'vue';
+
+import MenuIcon from ':virtual/vitebook/icons/menu';
 
 import { defaultThemeLocaleOptions } from '../../shared';
 import Navbar from '../components/Navbar/Navbar.vue';

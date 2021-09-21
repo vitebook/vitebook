@@ -13,7 +13,7 @@ import './styles/layout/home.css';
 import './styles/layout/page.css';
 import './styles/layout/404.css';
 
-import { loadPage, useFirstPage, VueTheme } from '@vitebook/client';
+import { loadPage, Theme, useFirstPage } from '@vitebook/client';
 import { h, watch } from 'vue';
 
 import OutboundLink from './components/global/OutboundLink.vue';
@@ -31,7 +31,7 @@ const BlankPage = Promise.resolve({
   }
 });
 
-const theme: VueTheme = {
+const theme: Theme = {
   Layout: Layout,
   NotFound: NotFound,
   configureClientApp({ app, router }) {

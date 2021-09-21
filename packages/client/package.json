@@ -27,6 +27,7 @@
     "./*": "./src/client/*",
     "./node": "./src/node/index.ts",
     "./node/*": "./src/node/*",
+    "./shared": "./src/shared/index.ts",
     "./shim": "./src/shim.d.ts",
     "./shim.d.ts": "./src/shim.d.ts",
     "./package.json": "./package.json"
@@ -38,6 +39,9 @@
       ],
       "node/*": [
         "src/node/*"
+      ],
+      "shared": [
+        "src/shared/index.ts"
       ],
       "shim": [
         "src/shim.d.ts"

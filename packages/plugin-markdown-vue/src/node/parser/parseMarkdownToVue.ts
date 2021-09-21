@@ -4,7 +4,7 @@ import {
   parseMarkdown as parseMarkdownDefault,
   ParseMarkdownOptions
 } from '@vitebook/plugin-markdown/node';
-import type { MarkdownData } from '@vitebook/plugin-markdown/shared';
+import type { MarkdownPageMeta } from '@vitebook/plugin-markdown/shared';
 import LRUCache from 'lru-cache';
 
 import type { VueMarkdownParserEnv } from './types';
@@ -13,7 +13,7 @@ export type ParseMarkdownToVueOptions = ParseMarkdownOptions;
 
 export type ParsedMarkdownToVueResult = {
   component: string;
-  data: MarkdownData;
+  meta: MarkdownPageMeta;
 };
 
 const cache = new LRUCache<string, ParsedMarkdownToVueResult>({ max: 1024 });
@@ -29,7 +29,7 @@ export function parseMarkdownToVue(
 
   const {
     html,
-    data,
+    meta,
     env: parserEnv
   } = parseMarkdownDefault(parser, source, filePath, {
     ...options
@@ -38,12 +38,12 @@ export function parseMarkdownToVue(
   const { hoistedTags } = parserEnv as VueMarkdownParserEnv;
 
   const component =
-    buildDataExport(hoistedTags ?? [], data).join('\n') +
+    buildMetaExport(hoistedTags ?? [], meta).join('\n') +
     `\n\n<template><div>${html}</div></template>`;
 
   const result: ParsedMarkdownToVueResult = {
     component,
-    data
+    meta
   };
 
   cache.set(source, result);
@@ -55,8 +55,8 @@ const scriptSetupRE = /<\s*script[^>]*\bsetup\b[^>]*/;
 const defaultExportRE = /((?:^|\n|;)\s*)export(\s*)default/;
 const namedDefaultExportRE = /((?:^|\n|;)\s*)export(.+)as(\s*)default/;
 
-function buildDataExport(tags: string[], data: MarkdownData): string[] {
-  const code = `\nexport const data = ${prettyJsonStr(data)}`;
+function buildMetaExport(tags: string[], meta: MarkdownPageMeta): string[] {
+  const code = `\nexport const __pageMeta = ${prettyJsonStr(meta)}`;
 
   const existingScriptIndex = tags.findIndex((tag) => {
     return scriptRE.test(tag) && !scriptSetupRE.test(tag);
