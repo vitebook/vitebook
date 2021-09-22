@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { useRouteLocale, withBaseUrl } from '@vitebook/client';
-import { computed, ref, watchEffect } from 'vue';
+import { computed } from 'vue';
 
 import { defaultThemeLocaleOptions } from '../../shared';
 import ButtonLink from '../components/ButtonLink.vue';
-import { useDarkMode } from '../composables/useDarkMode';
+import { useDynamicAsyncComponent } from '../composables/useDynamicAsyncComponent';
 import { useLocalizedThemeConfig } from '../composables/useLocalizedThemeConfig';
 
 const homeLink = useRouteLocale();
 const theme = useLocalizedThemeConfig();
-const isDarkMode = useDarkMode();
 
 const notFoundText = computed(
   () =>
@@ -35,24 +34,18 @@ const illustration = computed(
     defaultThemeLocaleOptions.notFoundPage.illustration
 );
 
-const illustrationSrc = ref<string | undefined>(undefined);
-watchEffect(() => {
-  const illustrationDark = theme.value.notFoundPage?.illustrationDark;
-
-  if (isDarkMode.value && illustrationDark) {
-    illustrationSrc.value = illustrationDark;
-    return;
-  }
-
-  illustrationSrc.value = illustration.value;
-});
+const Illustration = useDynamicAsyncComponent(
+  computed(() => illustration.value + '?raw')
+);
 </script>
 
 <template>
   <div class="not-found">
     <div class="not-found__container">
       <div class="not-found__img-container">
-        <img :src="illustrationSrc" alt="404" />
+        <keep-alive>
+          <component :is="Illustration" />
+        </keep-alive>
       </div>
 
       <h1 class="not-found__title">{{ notFoundText }}</h1>

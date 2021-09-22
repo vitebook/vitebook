@@ -1,3 +1,4 @@
+import type { App } from '@vitebook/core/node';
 import {
   HeadConfig,
   LocaleConfig,
@@ -20,6 +21,7 @@ import { preventViteConstantsReplacement } from './utils';
 const cache = new LRUCache<string, ParsedMarkdownResult>({ max: 1024 });
 
 export function parseMarkdown(
+  app: App,
   parser: MarkdownParser,
   source: string,
   filePath: string,
@@ -40,6 +42,7 @@ export function parseMarkdown(
   });
 
   const parserEnv: MarkdownParserEnv = {
+    app,
     filePath,
     frontmatter
   };

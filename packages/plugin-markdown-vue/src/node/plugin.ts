@@ -1,5 +1,5 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
-import type { Plugin } from '@vitebook/core/node';
+import type { App, Plugin } from '@vitebook/core/node';
 import { logger } from '@vitebook/core/node/utils';
 import type { MarkdownParser } from '@vitebook/plugin-markdown/node';
 import kleur from 'kleur';
@@ -33,6 +33,7 @@ const DEFAULT_INCLUDE = /\.md$/;
 export function vueMarkdownPlugin(
   options: VueMarkdownPluginOptions = {}
 ): Plugin {
+  let app: App;
   let parser: MarkdownParser;
   let isBuild: boolean;
   let define: Record<string, unknown> | undefined;
@@ -55,10 +56,11 @@ export function vueMarkdownPlugin(
       isBuild = config.command === 'build';
       define = config.define;
     },
-    async configureApp(app) {
+    async configureApp(_app) {
+      app = _app;
       parser = await createMarkdownParser(parserOptions);
 
-      vuePlugin = app.plugins.find(
+      vuePlugin = _app.plugins.find(
         (plugin) => plugin.name === 'vite:vue'
       ) as Plugin;
 
@@ -89,7 +91,7 @@ export function vueMarkdownPlugin(
     },
     transform(source, id) {
       if (files.has(id)) {
-        const { component } = parseMarkdownToVue(parser, source, id, {
+        const { component } = parseMarkdownToVue(app, parser, source, id, {
           escapeConstants: isBuild,
           define
         });
@@ -106,7 +108,7 @@ export function vueMarkdownPlugin(
       if (files.has(file)) {
         const content = await read();
 
-        const { component } = parseMarkdownToVue(parser, content, file, {
+        const { component } = parseMarkdownToVue(app, parser, content, file, {
           escapeConstants: isBuild,
           define
         });

@@ -11,6 +11,8 @@ import {
   VIRTUAL_ADDONS_MODULE_ID,
   VIRTUAL_ADDONS_MODULE_REQUEST_PATH
 } from './addon';
+import { compileHTML } from './compilers/compileHTML';
+import { compileSVG } from './compilers/compileSVG';
 
 export type ClientPluginOptions = {
   /**
@@ -38,8 +40,9 @@ export type ClientPluginOptions = {
   vue?: VuePluginOptions;
 };
 
-// TODO: transform html
 const DEFAULT_INCLUDE_RE = /\.(html|v\.js|v\.ts|v\.tsx|vue)$/;
+const HTML_ID_RE = /^(?!\/?index).*\.html($|\?)/;
+const SVG_ID_RE = /\.svg($|\?)/;
 
 export const PLUGIN_NAME = 'vitebook/client' as const;
 
@@ -95,6 +98,17 @@ export function clientPlugin(
       load(id) {
         if (id === VIRTUAL_ADDONS_MODULE_REQUEST_PATH) {
           return loadAddonsVirtualModule(filteredAddons);
+        }
+
+        return null;
+      },
+      async transform(code, id) {
+        if (HTML_ID_RE.test(id)) {
+          return compileHTML(code, id);
+        }
+
+        if (SVG_ID_RE.test(id)) {
+          return compileSVG(code, id);
         }
 
         return null;

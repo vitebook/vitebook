@@ -45,8 +45,10 @@ export type AppDirUtils = {
   loadModule: typeof loadModule;
   /** Read contents of file relative to current directory. */
   read: (filePath: string) => string;
-  /** Resolve relative file path to current directory. */
+  /** Resolve file path relative to current directory. */
   resolve: (...path: string[]) => string;
+  /** Resolve relative file path to current directory. */
+  relative: (...path: string[]) => string;
   /** Write contents to file relative to current directory. */
   write: (filePath: string, data: string) => void;
 };

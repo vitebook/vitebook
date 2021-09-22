@@ -22,7 +22,7 @@
 
 @media (min-width: 576px) {
   .home__hero__actions > a + a {
-    margin-left: 2rem;
+    margin-left: 1.5rem;
   }
 }
 

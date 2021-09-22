@@ -58,9 +58,9 @@ const defaultIconResolver: VitebookIconResolver = (icon) => {
     case 'theme-switch-dark':
       return 'heroicons-outline/moon';
     case 'sidebar-folder-open':
-      return 'heroicons-outline/folder-open';
+      return 'mdi/folder-open';
     case 'sidebar-folder-closed':
-      return 'heroicons-outline/folder';
+      return 'mdi/folder';
   }
 
   if (icon.startsWith('home-feature-')) {

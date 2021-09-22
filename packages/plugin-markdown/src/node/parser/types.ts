@@ -1,3 +1,4 @@
+import type { App } from '@vitebook/core/node';
 import type MarkdownIt from 'markdown-it';
 
 import {
@@ -52,6 +53,8 @@ export type ParsedMarkdownResult<
  * Metadata provided to markdown parser.
  */
 export type MarkdownParserEnvInput = {
+  /** Server application context. */
+  app: App;
   /** Absolute system file path of the markdown file. */
   filePath?: string | null;
   /** Frontmatter of the markdown file. */

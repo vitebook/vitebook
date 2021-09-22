@@ -13,6 +13,9 @@ export const createAppDirUtil = (baseDir: string): AppDirUtils => {
       ? args[0]
       : path.resolve(baseDir, ...args);
 
+  const relative = (...args: string[]) =>
+    path.relative(baseDir, path.join(...args));
+
   const read = (filePath: string) =>
     fs.readFileSync(resolve(filePath)).toString();
 
@@ -30,6 +33,7 @@ export const createAppDirUtil = (baseDir: string): AppDirUtils => {
   return {
     path: baseDir,
     resolve,
+    relative,
     read,
     write,
     loadModule

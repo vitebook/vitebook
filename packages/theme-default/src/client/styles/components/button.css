@@ -5,7 +5,7 @@
   font-weight: 500;
   border-radius: 0.25rem;
   color: var(--vbk--color-white);
-  background-color: var(--vbk--color-black);
+  background-color: var(--vbk--color-primary);
   text-decoration: none;
   transition: transform 150ms ease;
 }
@@ -16,7 +16,7 @@
 
 html.dark .button:not(.secondary) {
   color: var(--vbk--color-black);
-  background-color: var(--vbk--color-white);
+  background-color: var(--vbk--color-primary);
 }
 
 .button.secondary {
@@ -29,15 +29,6 @@ html.dark .button:not(.secondary) {
   .button:hover {
     transform: scale(1.02);
     text-decoration: none;
-    background-color: var(--vbk--color-gray-300);
-  }
-
-  .button.secondary:hover {
-    background-color: var(--vbk--color-gray-100);
-  }
-
-  html.dark .button.secondary:hover {
-    background-color: var(--vbk--color-gray-400);
   }
 }
 

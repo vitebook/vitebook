@@ -14,3 +14,5 @@ Lots of content here.
 This is my button!
 
 <Button />
+
+See it in [action](./button.html)

@@ -81,6 +81,8 @@
 *-------------------------------------------------------------------------------------------*/
 
 .navbar__title {
+  display: flex;
+  align-items: center;
   font-size: 1.3rem;
   font-weight: 500;
   color: var(--vbk--color-text);
@@ -102,6 +104,12 @@
   height: 2rem;
   margin-right: 0.2rem;
   vertical-align: middle;
+  color: var(--vbk--color-primary);
+  filter: brightness(130%);
+}
+
+html.dark .navbar__logo {
+  filter: brightness(100%);
 }
 
 .navbar__links__list,

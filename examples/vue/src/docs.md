@@ -6,7 +6,7 @@ Lorem markdownum rapiunt adhuc arces adfectu virili adplicat quondam angustum
 aura graves inter cruentis apulus frequens agmina mentior. Gaudia distantibus
 tergo memoresque vanum sed figura invita caedis, crines. Forumque Est
 [hic](http://rorat.com/), manant spes vellera et fugit Iovi et nova taceo e
-Prima rupit.
+Prima rupit. Link to [hash](./badge/index.md#definition-lists);
 
 - Venturi cui praemia toto
 - Quid mole vulneribus deorum

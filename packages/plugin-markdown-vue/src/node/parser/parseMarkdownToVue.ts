@@ -1,3 +1,4 @@
+import type { App } from '@vitebook/core/node';
 import { prettyJsonStr } from '@vitebook/core/shared';
 import {
   MarkdownParser,
@@ -19,6 +20,7 @@ export type ParsedMarkdownToVueResult = {
 const cache = new LRUCache<string, ParsedMarkdownToVueResult>({ max: 1024 });
 
 export function parseMarkdownToVue(
+  app: App,
   parser: MarkdownParser,
   source: string,
   filePath: string,
@@ -31,7 +33,7 @@ export function parseMarkdownToVue(
     html,
     meta,
     env: parserEnv
-  } = parseMarkdownDefault(parser, source, filePath, {
+  } = parseMarkdownDefault(app, parser, source, filePath, {
     ...options
   });
 

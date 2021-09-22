@@ -45,6 +45,12 @@ watch(
 );
 
 watchEffect(() => {
+  if (isLargeScreen.value) {
+    isMainMenuShowing.value = false;
+  }
+});
+
+watchEffect(() => {
   if (isLargeScreen.value && !hasSidebarItems.value) {
     isSidebarOpen.value = false;
   }

@@ -1,5 +1,5 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
-import type { Plugin } from '@vitebook/core/node';
+import type { App, Plugin } from '@vitebook/core/node';
 
 import {
   createMarkdownParser,
@@ -30,6 +30,7 @@ export type MarkdownPluginOptions = MarkdownParserOptions & {
 const DEFAULT_INCLUDE = /\.md$/;
 
 export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
+  let app: App;
   let parser: MarkdownParser;
 
   const { include, exclude, ...parserOptions } = options;
@@ -42,7 +43,8 @@ export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
   return {
     name: PLUGIN_NAME,
     enforce: 'pre',
-    async configureApp() {
+    async configureApp(_app) {
+      app = _app;
       parser = await createMarkdownParser(parserOptions);
     },
     async resolvePage({ filePath }) {
@@ -62,7 +64,7 @@ export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
     },
     transform(source, id) {
       if (files.has(id)) {
-        const result = parseMarkdown(parser, source, id);
+        const result = parseMarkdown(app, parser, source, id);
         return loadParsedMarkdown(result);
       }
 

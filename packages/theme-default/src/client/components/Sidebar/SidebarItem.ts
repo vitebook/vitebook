@@ -10,12 +10,12 @@ const SidebarItem: FunctionalComponent<{
 
 function createSidebarTree(item: SidebarItem, depth: number): VNode {
   if (!isSidebarGroup(item)) {
-    return h(SidebarItemLink, { item, depth });
+    return h(SidebarItemLink, { item, depth, key: item.text + depth });
   }
 
   return h(
     SidebarItemGroup,
-    { item, depth },
+    { item, depth, key: item.text + depth },
     {
       default: () =>
         item.children.map((child) => createSidebarTree(child, depth + 1))

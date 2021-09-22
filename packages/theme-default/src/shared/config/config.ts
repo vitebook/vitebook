@@ -259,13 +259,6 @@ export type DefaultThemeNotFoundPageLocaleConfig = {
    */
   illustration?: string;
   /**
-   * A relative URL from the project root to a 404 illustration to show when dark mode is enabled.
-   * You can also place this inside the `<public>` directory.
-   *
-   * @default undefined
-   */
-  illustrationDark?: string;
-  /**
    * Displayed text inside back to home button.
    *
    * @default 'Take me home'
@@ -332,7 +325,6 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
     message: 'Oops, something went wrong.',
     goHomeText: 'Take me home',
     illustration: '/404.svg',
-    // illustrationDark: undefined,
     goBackText: 'Go back'
   }
 };

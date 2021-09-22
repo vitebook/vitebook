@@ -25,20 +25,20 @@
    *-------------------------------------------------------------------------------------------*/
 
   /** Thanks GitLab! **/
-  --vbk-color-blue: #007bff;
-  --vbk-color-indigo: #6610f2;
-  --vbk-color-purple: #6d49cb;
-  --vbk-color-pink: #e83e8c;
-  --vbk-color-red: #dc3545;
-  --vbk-color-orange: #fd7e14;
-  --vbk-color-yellow: #ffc107;
-  --vbk-color-green: #28a745;
-  --vbk-color-teal: #20c997;
-  --vbk-color-cyan: #17a2b8;
-  --vbk-color-success: #108548;
-  --vbk-color-info: #1f75cb;
-  --vbk-color-warning: #ab6100;
-  --vbk-color-danger: #dd2b0e;
+  --vbk--color-blue: #007bff;
+  --vbk--color-indigo: #6610f2;
+  --vbk--color-purple: #6d49cb;
+  --vbk--color-pink: #e83e8c;
+  --vbk--color-red: #dc3545;
+  --vbk--color-orange: #fd7e14;
+  --vbk--color-yellow: #ffc107;
+  --vbk--color-green: #28a745;
+  --vbk--color-teal: #20c997;
+  --vbk--color-cyan: #17a2b8;
+  --vbk--color-success: #108548;
+  --vbk--color-info: #1f75cb;
+  --vbk--color-warning: #ab6100;
+  --vbk--color-danger: #dd2b0e;
 
   --vbk--color-primary: #610fe6;
 
@@ -86,7 +86,7 @@
   --vbk--sidebar-min-width: 18.75rem;
   --vbk--sidebar-z-index: calc(var(--vbk--scrim-z-index) + 100);
 
-  --vbk--sidebar-item-color: rgba(var(--vbk--color-text-rgb), 0.55);
+  --vbk--sidebar-item-color: rgba(var(--vbk--color-text-rgb), 0.64);
   --vbk--sidebar-item-bg-color: var(--vbk--color-bg-200);
   --vbk--sidebar-item-padding: 0.5rem 0;
   --vbk--sidebar-item-font-size: 1rem;

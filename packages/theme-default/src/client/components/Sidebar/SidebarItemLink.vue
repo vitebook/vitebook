@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, toRefs } from 'vue';
+import { computed, toRefs } from 'vue';
 
 import type { SidebarItemLink } from '../../../shared';
+import { useDynamicAsyncComponent } from '../../composables/useDynamicAsyncComponent';
 import { useNavItemLink } from '../Navbar/useNavItemLink';
 
 const props = defineProps<{
@@ -10,20 +11,13 @@ const props = defineProps<{
 }>();
 
 const propsRef = toRefs(props);
+const type = computed(() => propsRef.item.value.type);
 
 const { props: linkProps, isExternal } = useNavItemLink(propsRef.item);
 
-const Icon = computed(() => {
-  const type = propsRef.item.value.type;
-  return type
-    ? defineAsyncComponent(
-        () =>
-          import(
-            /* @vite-ignore */ `/:virtual/vitebook/icons/sidebar-file-${type}`
-          )
-      )
-    : null;
-});
+const Icon = useDynamicAsyncComponent(
+  computed(() => `/:virtual/vitebook/icons/sidebar-file-${type.value}`)
+);
 
 function preventClick(event: Event) {
   if (!isExternal) {
@@ -56,7 +50,9 @@ function handleLinkClick(event: Event, navigate: () => void): void {
         @keydown.enter="(e) => handleLinkClick(e, navigate)"
       >
         <span class="sidebar-link__text">
-          <component :is="Icon" />
+          <keep-alive>
+            <component :is="Icon" />
+          </keep-alive>
           {{ item.text }}
           <OutboundLink v-if="isExternal" />
         </span>

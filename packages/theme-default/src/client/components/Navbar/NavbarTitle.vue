@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import {
-  useLocalizedSiteOptions,
-  useRouteLocale,
-  withBaseUrl
-} from '@vitebook/client';
+import { useLocalizedSiteOptions, useRouteLocale } from '@vitebook/client';
 import { computed } from 'vue';
 
 import { defaultThemeLocaleOptions } from '../../../shared';
+import { useDynamicAsyncComponent } from '../../composables/useDynamicAsyncComponent';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 
 const localePath = useRouteLocale();
@@ -18,6 +15,10 @@ const goHomeText = computed(
     theme.value.notFoundPage?.goHomeText ??
     defaultThemeLocaleOptions.notFoundPage.goHomeText
 );
+
+const Logo = useDynamicAsyncComponent(
+  computed(() => theme.value.logo + '?raw')
+);
 </script>
 
 <template>
@@ -26,12 +27,11 @@ const goHomeText = computed(
     :to="localePath"
     :aria-label="`${site.title}, ${goHomeText}`"
   >
-    <img
-      v-if="theme.logo"
-      class="navbar__logo"
-      :src="withBaseUrl(theme.logo)"
-      :alt="`${site.title} logo`"
-    />
+    <div class="navbar__logo">
+      <keep-alive>
+        <component :is="Logo" />
+      </keep-alive>
+    </div>
     {{ site.title }}
   </router-link>
 </template>
