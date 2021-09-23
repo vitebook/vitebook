@@ -1,7 +1,10 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import type { App, Plugin } from '@vitebook/core/node';
 import { logger } from '@vitebook/core/node/utils';
-import type { MarkdownParser } from '@vitebook/plugin-markdown/node';
+import type {
+  MarkdownParser,
+  MarkdownPlugin
+} from '@vitebook/plugin-markdown/node';
 import kleur from 'kleur';
 
 import {
@@ -70,6 +73,11 @@ export function vueMarkdownPlugin(
             '@vitebook/plugin-markdown-vue'
           )} requires the ${kleur.bold('@vitejs/plugin-vue')} plugin.`
         );
+      }
+
+      for (const plugin of app.plugins) {
+        const mdPlugin = plugin as MarkdownPlugin;
+        await mdPlugin.configureMarkdownParser?.(parser);
       }
     },
     async resolvePage({ filePath, route }) {

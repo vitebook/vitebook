@@ -6,7 +6,7 @@
 
 .not-found__container {
   width: 100%;
-  padding-top: 6rem;
+  padding-top: 1rem;
   min-height: calc(100vh - var(--vbk--navbar-height));
   margin: 0 auto;
   max-width: 960px;
@@ -17,12 +17,11 @@
 
 .not-found__title {
   font-size: 1.5rem;
-  margin-top: 3rem;
+  margin-top: -1rem;
   text-align: center;
 }
 
 .not-found__img-container {
-  width: 100%;
   max-width: 400px;
 }
 
@@ -36,6 +35,17 @@
 
 .not-found__actions > a + a {
   margin-left: 1rem;
+}
+
+@media (min-width: 420px) {
+  .not-found__title {
+    font-size: 1.75rem;
+    margin-top: 1rem;
+  }
+
+  .not-found__container {
+    padding-top: 2rem;
+  }
 }
 
 @media (min-width: 576px) {
@@ -52,7 +62,7 @@
   }
 
   .not-found__title {
-    font-size: 1.75rem;
+    font-size: 2rem;
     margin-top: 3.5rem;
   }
 }

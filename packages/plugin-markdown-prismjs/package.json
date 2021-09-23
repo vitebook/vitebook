@@ -1,0 +1,51 @@
+{
+  "name": "@vitebook/plugin-markdown-prismjs",
+  "version": "0.0.0",
+  "keywords": [
+    "esm",
+    "markdown",
+    "plugin",
+    "prism",
+    "primjs",
+    "storybook",
+    "vitebook"
+  ],
+  "bugs": {
+    "url": "https://github.com/vitebook/vitebook/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitebook/vitebook.git",
+    "directory": "packages/plugin-markdown-prismjs"
+  },
+  "license": "MIT",
+  "contributors": [
+    "Rahim Alwer <rahim.alwer@gmail.com>"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    "./node": "./src/node/index.ts",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "node": [
+        "src/node/index.ts"
+      ]
+    }
+  },
+  "files": [
+    "src/"
+  ],
+  "dependencies": {
+    "@vitebook/plugin-markdown": "*",
+    "prismjs": "^1.25.0"
+  },
+  "devDependencies": {
+    "@types/prismjs": "^1.16.6"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

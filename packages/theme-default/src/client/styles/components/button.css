@@ -3,9 +3,10 @@
   padding: 1rem 1.5rem;
   font-size: 0.875rem;
   font-weight: 500;
-  border-radius: 0.25rem;
+  border-radius: 0.15rem;
   color: var(--vbk--color-white);
   background-color: var(--vbk--color-primary);
+  box-shadow: var(--vbk--elevation-small);
   text-decoration: none;
   transition: transform 150ms ease;
 }
@@ -27,8 +28,10 @@ html.dark .button:not(.secondary) {
 
 @media (hover: hover) {
   .button:hover {
-    transform: scale(1.02);
+    backface-visibility: hidden;
+    transform: scale(1.05) translateZ(0);
     text-decoration: none;
+    box-shadow: var(--vbk--elevation-medium);
   }
 }
 

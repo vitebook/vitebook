@@ -9,6 +9,8 @@ i18n with plurals support and easy syntax.
 You will like those projects!
 ---
 
+[[toc]]
+
 # h1 Heading 8-)
 
 ## h2 Heading

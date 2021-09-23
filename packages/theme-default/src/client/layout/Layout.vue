@@ -101,7 +101,6 @@ const toggleAriaLabel = computed(
 <style scoped>
 .theme {
   display: flex;
-  background-color: var(--vbk--color-bg-200);
 }
 
 .theme-switch {

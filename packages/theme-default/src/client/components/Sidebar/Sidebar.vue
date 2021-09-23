@@ -47,6 +47,8 @@ watch(
 watchEffect(() => {
   if (isLargeScreen.value) {
     isMainMenuShowing.value = false;
+  } else {
+    isSidebarOpen.value = false;
   }
 });
 
@@ -66,6 +68,14 @@ watchEffect(() => {
   isMainMenuShowing.value =
     (!isSidebarOpen.value && !hasSidebarItems.value) ||
     (!hasSidebarItems.value && hasMainMenuItems.value);
+});
+
+watchEffect(() => {
+  if (isSidebarOpen.value) {
+    document.documentElement.classList.add('sidebar-open');
+  } else {
+    document.documentElement.classList.remove('sidebar-open');
+  }
 });
 
 function handleToggleMenus() {

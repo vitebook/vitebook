@@ -44,7 +44,7 @@ const Illustration = useDynamicAsyncComponent(
     <div class="not-found__container">
       <div class="not-found__img-container">
         <keep-alive>
-          <component :is="Illustration" />
+          <component :is="Illustration" :width="`100%`" />
         </keep-alive>
       </div>
 

@@ -24,9 +24,15 @@ export default defineComponent({
         });
 
         return this.$props.shadow
-          ? // @ts-expect-error - ?
-            h(resolveComponent('shadow-root'), null, { default: () => Page })
-          : Page;
+          ? h(
+              'div',
+              null,
+              // @ts-expect-error - ?
+              h(resolveComponent('shadow-root'), null, {
+                default: () => Page
+              })
+            )
+          : h('div', null, Page);
       }
     });
   }

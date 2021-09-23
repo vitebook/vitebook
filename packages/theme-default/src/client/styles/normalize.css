@@ -1,61 +1,4 @@
-/*! modern-normalize v1.1.0 | MIT License | https://github.com/sindresorhus/modern-normalize */
-
-/*
-Document
-========
-*/
-
-/**
-Use a better box model (opinionated).
-*/
-
-*,
-::before,
-::after {
-  box-sizing: border-box;
-}
-
-/**
-Use a more readable tab size (opinionated).
-*/
-
-html {
-  -moz-tab-size: 4;
-  tab-size: 4;
-}
-
-/**
-1. Correct the line height in all browsers.
-2. Prevent adjustments of font size after orientation changes in iOS.
-*/
-
-html {
-  line-height: 1.15; /* 1 */
-  -webkit-text-size-adjust: 100%; /* 2 */
-}
-
-/*
-Sections
-========
-*/
-
-/**
-Remove the margin in all browsers.
-*/
-
-body {
-  margin: 0;
-}
-
-/**
-Improve consistency of default fonts in all browsers. (https://github.com/sindresorhus/modern-normalize/issues/3)
-*/
-
-body {
-  font-family: system-ui, -apple-system,
-    /* Firefox supports this but not yet `system-ui` */ 'Segoe UI', Roboto,
-    Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
-}
+!modern-normalizev1.1.0|mitlicense|https://github.com/sindresorhus/modern-normalize
 
 /*
 Grouping content
@@ -65,9 +8,7 @@ Grouping content
 /**
 1. Add the correct height in Firefox.
 2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
-*/
-
-hr {
+*/ hr {
   height: 0; /* 1 */
   color: inherit; /* 2 */
 }
@@ -96,16 +37,13 @@ strong {
 
 /**
 1. Improve consistency of default fonts in all browsers. (https://github.com/sindresorhus/modern-normalize/issues/3)
-2. Correct the odd 'em' font sizing in all browsers.
 */
 
 code,
 kbd,
 samp,
 pre {
-  font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo,
-    monospace; /* 1 */
-  font-size: 1em; /* 2 */
+  font-family: var(--vbk--code-font-family); /* 1 */
 }
 
 /**

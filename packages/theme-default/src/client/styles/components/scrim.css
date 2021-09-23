@@ -8,13 +8,13 @@
   display: block;
   width: 100vw;
   height: 100vh;
-  background-color: var(--vbk--color-bg-100);
+  background-color: var(--vbk--scrim-bg-color);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.35s ease;
 }
 
 .scrim.active {
-  opacity: 0.9;
+  opacity: 0.8;
   visibility: visible;
 }

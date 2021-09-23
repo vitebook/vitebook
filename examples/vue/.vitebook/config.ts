@@ -1,6 +1,7 @@
 import { defineConfig } from '@vitebook/core/node';
 import { clientPlugin } from '@vitebook/client/node';
 import { vueMarkdownPlugin } from '@vitebook/plugin-markdown-vue/node';
+import { shikiMarkdownPlugin } from '@vitebook/plugin-markdown-shiki/node';
 import {
   DefaultThemeConfig,
   defaultThemePlugin
@@ -9,6 +10,7 @@ import {
 export default defineConfig<DefaultThemeConfig>({
   include: ['src/**/*.{md,vue}'],
   plugins: [
+    shikiMarkdownPlugin(),
     vueMarkdownPlugin({
       include: /.md$/
     }),
@@ -73,7 +75,7 @@ export default defineConfig<DefaultThemeConfig>({
         ]
       },
       homePage: {
-        heroText: 'Document, test, and play with your components.',
+        heroText: 'Document, design, and play with components.',
         primaryActionText: 'Get Started',
         primaryActionLink: '/something.html',
         secondaryActionText: 'Learn More',

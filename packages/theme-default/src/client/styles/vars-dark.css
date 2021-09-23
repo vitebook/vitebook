@@ -6,6 +6,7 @@ html.dark {
    *-------------------------------------------------------------------------------------------*/
 
   --vbk--color-primary: var(--vbk--color-yellow);
+  --vbk--color-primary-rgb: 255, 193, 7;
 
   --vbk--color-text: var(--vbk--color-white);
   --vbk--color-text-rgb: 255, 255, 255;
@@ -13,6 +14,31 @@ html.dark {
 
   --vbk--color-divider: var(--vbk--color-gray-300);
 
-  --vbk--color-bg-100: var(--vbk--color-gray-400);
-  --vbk--color-bg-200: var(--vbk--color-gray-500);
+  --vbk--color-bg-100: var(--vbk--color-gray-500);
+  --vbk--color-bg-200: var(--vbk--color-gray-600);
+  --vbk--color-bg-300: var(--vbk--color-gray-800);
+  --vbk--color-bg-400: var(--vbk--color-gray-900);
+
+  --vbk--shadow-color: 0deg 0% 1%;
+
+  /* Elements */
+  --vbk--body-bg-color: var(--vbk--color-bg-400);
+  --vbk--page-md-bg-color: var(--vbk--color-bg-400);
+
+  --vbk--navbar-bg-color: var(--vbk--color-bg-400);
+  --vbk--sidebar-bg-color: var(--vbk--color-bg-400);
+
+  --vbk--scrim-bg-color: var(--vbk--color-bg-100);
+
+  --vbk--toggle-hover-bg-color: var(--vbk--color-bg-100);
+
+  --vbk--menu-bg-color: var(--vbk--color-bg-200);
+  --vbk--menu-border: 0.12rem solid var(--vbk--color-bg-200);
+  --vbk--menu-item-hover-bg-color: var(--vbk--color-bg-100);
+
+  /**-------------------------------------------------------------------------------------------
+   * Code
+   *-------------------------------------------------------------------------------------------*/
+
+  --vbk--code-hl-bg-color: #363b46;
 }

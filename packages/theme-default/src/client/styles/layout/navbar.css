@@ -7,10 +7,11 @@
   top: 0;
   right: 0;
   left: 0;
+  width: 100vw;
   z-index: var(--vbk--navbar-z-index);
-  border-bottom: 0.12rem solid var(--vbk--color-divider);
   height: var(--vbk--navbar-height);
-  background-color: var(--vbk--color-bg-200);
+  background-color: var(--vbk--navbar-bg-color);
+  box-shadow: var(--vbk--elevation-small);
 }
 
 .navbar__container {
@@ -19,7 +20,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-right: 1.25rem;
+  /* @see https://css-tricks.com/elegant-fix-jumping-scrollbar-issue/ */
+  padding-right: calc(calc(100vw - 100%) + 1.35rem);
 }
 
 .navbar__links {
@@ -50,10 +52,10 @@
   padding-left: 1rem;
   font-size: 1.5rem;
   border: 0;
-  border-radius: 0.125rem;
+  border-radius: 0.15rem;
   cursor: pointer;
-  color: var(--vbk--color-text);
-  background-color: transparent;
+  color: var(--vbk--toggle-color);
+  background-color: var(--vbk--toggle-bg-color);
 }
 
 .navbar__menu-toggle > div {
@@ -65,7 +67,8 @@
 
 @media (hover: hover) and (pointer: fine) {
   .navbar__menu-toggle:hover > div {
-    background-color: var(--vbk--color-bg-100);
+    color: var(--vbk--toggle-hover-color);
+    background-color: var(--vbk--toggle-hover-bg-color);
   }
 }
 
@@ -85,7 +88,7 @@
   align-items: center;
   font-size: 1.3rem;
   font-weight: 500;
-  color: var(--vbk--color-text);
+  color: var(--vbk--navbar-title-color);
   transition: transform 150ms ease;
   padding-top: 0.2rem;
   padding-right: 0.2rem;
@@ -95,7 +98,8 @@
 @media (hover: hover) and (pointer: fine) {
   .navbar__title:hover {
     text-decoration: none;
-    transform: scale(1.02);
+    backface-visibility: hidden;
+    transform: scale(1.05) translateZ(0);
   }
 }
 
@@ -104,12 +108,7 @@
   height: 2rem;
   margin-right: 0.2rem;
   vertical-align: middle;
-  color: var(--vbk--color-primary);
-  filter: brightness(130%);
-}
-
-html.dark .navbar__logo {
-  filter: brightness(100%);
+  color: var(--vbk--navbar-logo-color);
 }
 
 .navbar__links__list,
@@ -132,13 +131,23 @@ html.dark .navbar__logo {
     text-decoration: none;
   }
 
+  .nav-item:hover {
+    color: var(--vbk--nav-item-hover-color);
+    background-color: var(--vbk--nav-item-hover-bg-color);
+  }
+
   .nav-link:hover > .nav-link__text {
-    color: var(--vbk--color-text);
-    border-bottom: 0.12rem solid var(--vbk--color-text);
+    color: var(--vbk--nav-item-hover-color);
+    border-bottom: var(--vbk--nav-link-hover-border);
   }
 }
 
 @media (min-width: 992px) {
+  .nav-item {
+    color: var(--vbk--nav-item-color);
+    background-color var(--vbk--nav-item-bg-color);
+  }
+
   .navbar__links__list {
     flex-direction: row;
     align-items: center;
@@ -155,7 +164,7 @@ html.dark .navbar__logo {
     margin-top: 0.5rem;
     padding: 0.5rem 1rem;
     border-radius: 0;
-    color: var(--vbk--color-text);
+    color: var(--vbk--nav-item-color);
     white-space: nowrap;
     text-decoration: none;
     width: 100%;
@@ -165,8 +174,9 @@ html.dark .navbar__logo {
   }
 
   .nav-link.active .nav-link__text {
-    color: var(--vbk--color-text);
-    border-bottom: 0.12rem solid var(--vbk--color-text);
+    color: var(--vbk--nav-link-active-color);
+    background-color: var(--vbk--nav-link-active-bg-color);
+    border-bottom: var(--vbk--nav-link-active-border);
   }
 }
 
@@ -178,17 +188,18 @@ html.dark .navbar__logo {
 
 .nav-item__menu-button__caret {
   padding-left: 0.12rem;
-  transform: rotate(270deg) translateX(-0.25rem);
+  transform: rotate(270deg) translateX(-0.25rem) translateZ(0);
   transform-origin: center;
 }
 
 .nav-item.open .nav-item__menu-button__caret {
-  transform: translateY(0.1rem);
+  transform: translateY(0.1rem) translateZ(0);
 }
 
 @media (hover: hover) {
   .nav-item__menu-item:hover {
-    background-color: var(--vbk--color-bg-100);
+    color: var(--vbk--menu-item-hover-color);
+    background-color: var(--vbk--menu-item-hover-bg-color);
   }
 
   .nav-item__menu-item .nav-link:not(.active) > .nav-link__text {
@@ -196,14 +207,15 @@ html.dark .navbar__logo {
   }
 
   .nav-item.with-menu:hover .nav-item__menu {
-    display: block;
+    opacity: 1;
+    visibility: visible;
   }
 }
 
 @media (min-width: 992px) {
   .nav-item__menu-button__caret,
   .nav-item.open .nav-item__menu-button__caret {
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
   }
 
   .nav-item.with-menu {
@@ -214,21 +226,26 @@ html.dark .navbar__logo {
   }
 
   .nav-item__menu {
-    display: none;
+    display: block;
     position: absolute;
     top: 100%;
     right: 1rem;
     padding: 0.8rem;
     padding-bottom: 1rem;
     margin: 0;
+    opacity: 0;
+    visibility: hidden;
     z-index: calc(var(--vbk--navbar-z-index) + 1);
-    border-radius: 0.125rem;
+    border-radius: 0.15rem;
+    box-shadow: var(--vbk--elevation-medium);
     min-width: 10rem;
-    border: 0.12rem solid var(--vbk--color-divider);
-    background-color: var(--vbk--color-bg-200);
+    border: var(--vbk--menu-border);
+    background-color: var(--vbk--menu-bg-color);
+    transition: var(--vbk--menu-transition);
   }
 
   .nav-item.open .nav-item__menu {
-    display: block;
+    opacity: 1;
+    visibility: visible;
   }
 }

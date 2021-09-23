@@ -1,39 +1,61 @@
-@media (min-width: 375px) {
-  /** Minimum supported width. Keep code so breakpoint shows in devtools. **/
+*,
+::before,
+::after {
+  box-sizing: border-box;
 }
 
 html {
   line-height: 1.4;
   font-size: 16px;
+  -moz-tab-size: 4;
+  tab-size: 4;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
+
+  /* prevent scrollbar jumping. */
+  /* @see https://css-tricks.com/elegant-fix-jumping-scrollbar-issue/ */
+  overflow-y: scroll;
+  margin-left: calc(100vw - 100%);
+}
+
+html.sidebar-open {
+  overflow: hidden;
+}
+
+@media (min-width: 992px) {
+  html.sidebar-open {
+    overflow-y: scroll;
+  }
 }
 
 body {
   margin: 0;
   width: 100%;
-  min-width: 320px;
   min-height: 100vh;
   line-height: 1.4;
   font-family: var(--vbk--font-family-base);
   font-size: 100%;
   font-weight: 400;
   color: var(--vbk--color-text);
-  background-color: var(--vbk--color-bg-200);
+  background-color: var(--vbk--body-bg-color);
   direction: ltr;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* re-adjust after page has been shifted to prevent scrollbar jumping. */
+  min-width: max(100vw, 375px);
+  margin-left: calc(-1 * calc(100vw - 100%));
 }
 
 *:focus {
   outline: 0;
-  box-shadow: 0 0 0 4px rgba(var(--vbk--color-text-rgb), 0.86);
+  border-radius: 0.15rem !important;
+  box-shadow: 0 0 0 4px rgba(var(--vbk--color-text-rgb)) !important;
 }
 
 *:focus:not(:focus-visible) {
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
 main {
