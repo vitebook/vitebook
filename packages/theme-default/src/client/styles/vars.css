@@ -18,12 +18,12 @@
    * Typography
    *-------------------------------------------------------------------------------------------*/
 
-  --vbk--font-family-base: 'Noto Sans Display', -apple-system,
-    BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
-    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --vbk--font-family-base: 'Noto Sans', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', sans-serif;
 
-  --vbk--font-family-mono: 'Source Code Pro', source-code-pro, Menlo, Monaco,
-    Consolas, 'Courier New', monospace;
+  --vbk--font-family-mono: source-code-pro, Menlo, Monaco, Consolas,
+    'Courier New', monospace;
 
   /**-------------------------------------------------------------------------------------------
    * Colors
@@ -45,7 +45,7 @@
   --vbk--color-cyan: #17a2b8;
   --vbk--color-success: #108548;
   --vbk--color-info: #1f75cb;
-  --vbk--color-warning: #ab6100;
+  --vbk--color-warning: #ffc107;
   --vbk--color-danger: #dd2b0e;
 
   --vbk--color-black: #000000;
@@ -60,11 +60,10 @@
   --vbk--color-gray-600: hsl(0, 0%, 12.3%);
   --vbk--color-gray-700: hsl(0, 0%, 11.5%);
   --vbk--color-gray-800: hsl(0, 0%, 10.8%);
-  --vbk--color-gray-900: hsl(0, 0%, 10%);
+  --vbk--color-gray-900: hsl(0, 0%, 10.2%);
 
-  --vbk--color-text: var(--vbk--color-gray-900);
+  --vbk--color-text: var(--vbk--color-gray-500);
   --vbk--color-text-rgb: 0, 0, 0;
-  --vbk--color-text-secondary: var(--vbk--color-gray-700);
 
   --vbk--color-bg-100: var(--vbk--color-gray-100);
   --vbk--color-bg-200: var(--vbk--color-gray-200);
@@ -72,6 +71,11 @@
   --vbk--color-bg-400: var(--vbk--color-gray-400);
 
   --vbk--color-divider: var(--vbk--color-gray-100);
+
+  --vbk--color-transition-duration: 150ms;
+  --vbk--color-transition-timing: ease-in;
+  --vbk--color-transition: color var(--vbk--color-transition-duration)
+    var(--vbk--color-transition-timing);
 
   /**-------------------------------------------------------------------------------------------
    * Elevation
@@ -137,6 +141,7 @@
 
   --vbk--navbar-title-color: var(--vbk--color-text);
   --vbk--navbar-logo-color: var(--vbk--color-primary);
+  --vbk--navbar-logo-transition: var(--vbk--color-transition);
 
   /* Nav Item */
   --vbk--nav-item-color: var(--vbk--color-text);
@@ -150,7 +155,7 @@
 
   --vbk--nav-link-active-color: var(--vbk--color-text);
   --vbk--nav-link-active-bg-color: transparent;
-  --vbk--nav-link-active-border: 0.12rem solid var(--vbk--color-text);
+  --vbk--nav-link-active-border: 0.12rem solid var(--vbk--color-primary);
 
   /**-------------------------------------------------------------------------------------------
    * Sidebar
@@ -161,7 +166,7 @@
   --vbk--sidebar-min-width: 18.75rem;
   --vbk--sidebar-z-index: calc(var(--vbk--scrim-z-index) + 100);
 
-  --vbk--sidebar-item-color: var(--vbk--color-text-secondary);
+  --vbk--sidebar-item-color: var(--vbk--color-text);
   --vbk--sidebar-item-bg-color: var(--vbk--sidebar-bg-color);
   --vbk--sidebar-item-padding: 0.5rem 0;
   --vbk--sidebar-item-font-size: 1rem;
@@ -186,7 +191,8 @@
   --vbk--code-font-family: var(--vbk--font-family-mono);
   --vbk--code-font-size: 0.875rem;
   --vbk--code-bg-color: #282c34;
-  --vbk--code-hl-bg-color: hsl(var(--vbk--shadow-color) / 0.66);
+  --vbk--code-hl-bg-color: hsl(0, 0%, 15%);
+  --vbk--code-hl-ln-height: 1.4;
   --vbk--code-ln-color: #9e9e9e;
   --vbk--code-ln-wrapper-width: 3.5rem;
 }

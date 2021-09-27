@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 import NavItemLink from './NavItemLink.vue';
 import NavItemWithMenu from './NavItemWithMenu.vue';
 import { useLanguageLinks } from './useLanguageLinks';
-import { useHasNavbarItems } from './useNavbar';
+import { useHasNavbarItems, useNavbarConfig } from './useNavbar';
 import { useRepoLink } from './useRepoLink';
 
-const theme = useLocalizedThemeConfig();
+const navbar = useNavbarConfig();
 const repoLink = useRepoLink();
 const languageLinks = useLanguageLinks();
 const hasNavItems = useHasNavbarItems();
@@ -17,7 +16,7 @@ const hasNavItems = useHasNavbarItems();
     <ul class="navbar__links__list">
       <template v-if="hasNavItems">
         <li
-          v-for="item in theme.navbar?.items ?? []"
+          v-for="item in navbar?.items ?? []"
           :key="item.text"
           class="navbar__links__list-item"
         >

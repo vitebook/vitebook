@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { useMediaQuery } from '@vueuse/core';
-import { computed, watch } from 'vue';
+import { onBeforeMount, watch, watchEffect } from 'vue';
 
-import MenuIcon from ':virtual/vitebook/icons/menu';
-
-import { defaultThemeLocaleOptions } from '../../shared';
 import Navbar from '../components/Navbar/Navbar.vue';
+import NavbarTitle from '../components/Navbar/NavbarTitle.vue';
 import Scrim from '../components/Scrim/Scrim.vue';
 import { useIsScrimActive } from '../components/Scrim/useScrim';
 import Sidebar from '../components/Sidebar/Sidebar.vue';
-import { useIsSidebarOpen } from '../components/Sidebar/useSidebar';
+import SidebarToggle from '../components/Sidebar/SidebarToggle.vue';
+import {
+  useHasSidebarItems,
+  useIsSidebarOpen
+} from '../components/Sidebar/useSidebar';
 import ThemeSwitch from '../components/ThemeSwitch.vue';
 import { initDarkMode } from '../composables/useDarkMode';
 import { useLocalizedThemeConfig } from '../composables/useLocalizedThemeConfig';
@@ -20,6 +22,7 @@ initDarkMode();
 const theme = useLocalizedThemeConfig();
 const isSidebarOpen = useIsSidebarOpen();
 const isScrimActive = useIsScrimActive();
+const hasSidebarItems = useHasSidebarItems();
 
 watch(
   () => isSidebarOpen.value,
@@ -30,37 +33,47 @@ watch(
 
 const isLargeScreen = useMediaQuery('(min-width: 992px)');
 
-const toggleAriaLabel = computed(
-  () =>
-    theme.value.navbar?.toggleAriaLabel ??
-    defaultThemeLocaleOptions.navbar.toggleAriaLabel
-);
+onBeforeMount(() => {
+  let scrollbarWidth = window.innerWidth - document.body.clientWidth + 'px';
+  document.documentElement.style.setProperty(
+    '--vbk--scrollbar-width',
+    scrollbarWidth
+  );
+});
+
+watchEffect(() => {
+  if (theme.value.navbar !== false) {
+    document.documentElement.classList.remove('no-navbar');
+  } else {
+    document.documentElement.classList.add('no-navbar');
+  }
+});
 </script>
 
 <template>
   <div class="theme">
     <slot name="navbar">
-      <Navbar>
+      <Navbar v-if="theme.navbar !== false">
         <template #start>
           <slot name="navbar-start" />
-          <button
-            class="navbar__menu-toggle"
-            :aria-label="toggleAriaLabel"
-            @pointerdown="isSidebarOpen = !isSidebarOpen"
-            @keydown.enter="isSidebarOpen = !isSidebarOpen"
-          >
-            <div>
-              <MenuIcon />
-            </div>
-          </button>
+          <SidebarToggle />
         </template>
 
         <template #end>
           <slot name="navbar-end">
-            <ThemeSwitch class="theme-switch" />
+            <ThemeSwitch class="navbar__theme-switch" />
           </slot>
         </template>
       </Navbar>
+
+      <div
+        v-else
+        class="navbar-fallback"
+        :class="{ 'no-sidebar-toggle': !hasSidebarItems }"
+      >
+        <SidebarToggle v-if="hasSidebarItems" />
+        <NavbarTitle />
+      </div>
     </slot>
 
     <slot name="sidebar">
@@ -97,26 +110,3 @@ const toggleAriaLabel = computed(
     </slot>
   </div>
 </template>
-
-<style scoped>
-.theme {
-  display: flex;
-}
-
-.theme-switch {
-  display: none;
-}
-
-@media (min-width: 992px) {
-  .theme-switch {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 0.2rem;
-  }
-
-  .scrim {
-    display: none;
-  }
-}
-</style>

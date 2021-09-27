@@ -29,7 +29,7 @@ export function readIndexHtmlFile(app: App): string {
 
   if (app.options.cliArgs.command === 'dev') {
     html = html.replace(
-      '<!--preload-links-->',
+      '<!--@vitebook/preload-links-->',
       // `@id` will be stripped out by Vite (identifies resolved ids that are invalid browser module ids).
       ' <script type="module" src="/:virtual/vitebook/client"></script>'
     );

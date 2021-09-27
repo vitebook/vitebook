@@ -7,7 +7,10 @@ import { path } from '../../utils/path.js';
 import type { AppDirs, AppDirUtils } from '../App.js';
 import type { AppOptions } from '../AppOptions.js';
 
-export const createAppDirUtil = (baseDir: string): AppDirUtils => {
+export const createAppDirUtil = (
+  baseDir: string,
+  tmpDir?: string
+): AppDirUtils => {
   const resolve = (...args: string[]) =>
     args.length === 1 && path.isAbsolute(args[0])
       ? args[0]
@@ -27,7 +30,7 @@ export const createAppDirUtil = (baseDir: string): AppDirUtils => {
     options?: LoadModuleOptions
   ): Promise<T> => {
     const path = resolve(filePath);
-    return loadModuleUtil<T>(path, options);
+    return loadModuleUtil<T>(path, { outdir: tmpDir, ...options });
   };
 
   return {
@@ -41,14 +44,14 @@ export const createAppDirUtil = (baseDir: string): AppDirUtils => {
 };
 
 export const createAppDirs = (options: AppOptions): AppDirs => {
-  const root = createAppDirUtil(options.root);
-  const src = createAppDirUtil(options.srcDir);
-  const cache = createAppDirUtil(options.cacheDir);
-  const config = createAppDirUtil(options.configDir);
-  const tmp = createAppDirUtil(options.tmpDir);
-  const out = createAppDirUtil(options.outDir);
-  const publicDir = createAppDirUtil(options.publicDir);
-  const theme = createAppDirUtil(config.resolve('theme'));
+  const tmp = createAppDirUtil(options.tmpDir, options.tmpDir);
+  const root = createAppDirUtil(options.root, tmp.path);
+  const src = createAppDirUtil(options.srcDir, tmp.path);
+  const cache = createAppDirUtil(options.cacheDir, tmp.path);
+  const config = createAppDirUtil(options.configDir, tmp.path);
+  const out = createAppDirUtil(options.outDir, tmp.path);
+  const publicDir = createAppDirUtil(options.publicDir, tmp.path);
+  const theme = createAppDirUtil(config.resolve('theme'), tmp.path);
 
   return {
     root,

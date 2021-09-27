@@ -1,6 +1,10 @@
-import * as Prism from 'prismjs';
+// eslint-disable-next-line import/default
+import prism from 'prismjs';
 
 import { loadLanguages } from './loadLanguages';
+
+// eslint-disable-next-line import/no-named-as-default-member
+const { languages, highlight } = prism;
 
 const languageNameMap = {
   html: 'markup',
@@ -36,9 +40,9 @@ export const resolveHighlighter = (language: string): Highlighter | null => {
 
   // Return `null` if current language could not be loaded the doc language is not required so
   // we don't check it here.
-  if (!Prism.languages[lang]) {
+  if (!languages[lang]) {
     return null;
   }
 
-  return (code) => Prism.highlight(code, Prism.languages[lang], lang);
+  return (code) => highlight(code, languages[lang], lang);
 };

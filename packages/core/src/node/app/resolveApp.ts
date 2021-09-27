@@ -73,7 +73,9 @@ export async function resolveUserAppConfig(args: CLIArgs): Promise<AppConfig> {
   const root = resolveRelativePath(process.cwd(), args.root ?? '');
   const configDir = resolveRelativePath(root, args.configDir ?? '.vitebook');
   const configPath = resolveConfigPath(configDir);
+  const tmpDir = resolveRelativePath(configDir, args.tmpDir ?? '.temp');
   return configPath
-    ? (await loadModule<{ default: AppConfig }>(configPath)).default ?? {}
+    ? (await loadModule<{ default: AppConfig }>(configPath, { outdir: tmpDir }))
+        .default ?? {}
     : {};
 }

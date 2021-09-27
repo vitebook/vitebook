@@ -1,3 +1,4 @@
+import { isFunction } from '@vitebook/core/shared';
 import { Component, Ref, ref, shallowReadonly, watch } from 'vue';
 
 import { LoadedPage, Page } from '../../shared';
@@ -29,8 +30,13 @@ export function setPageRef(loadedPage?: LoadedPage): void {
 export async function loadPage(page: Page): Promise<Component> {
   const data = await page.loader();
   const component = data.default;
-  const loadedPage = { ...page, meta: data.__pageMeta } as LoadedPage;
+  const meta = isFunction(data.__pageMeta)
+    ? await data.__pageMeta()
+    : data.__pageMeta;
+
+  const loadedPage = { ...page, meta } as LoadedPage;
   if (loadedPage) loadedPageCache.set(page, loadedPage);
+
   setPageRef(loadedPage);
   return component;
 }

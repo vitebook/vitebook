@@ -1,6 +1,6 @@
 // Client
 
-import { PageMeta } from './PageMeta';
+import type { PageMeta } from './PageMeta';
 
 export type Page<PageModule extends DefaultPageModule = DefaultPageModule> = {
   /** Optional page type declared by a plugin to help identify specific pages client-side. */
@@ -16,9 +16,12 @@ export type Page<PageModule extends DefaultPageModule = DefaultPageModule> = {
 export type Pages<PageModule extends DefaultPageModule = DefaultPageModule> =
   Page<PageModule>[];
 
-export type DefaultPageModule<DefaultExport = unknown> = {
+export type DefaultPageModule<
+  DefaultExport = unknown,
+  PageMetaExport = PageMeta
+> = {
   default: DefaultExport;
-  __pageMeta: PageMeta;
+  __pageMeta: PageMetaExport | (() => PageMetaExport | Promise<PageMetaExport>);
 };
 
 export type VirtualPagesModule = {

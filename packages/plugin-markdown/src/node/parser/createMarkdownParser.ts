@@ -5,6 +5,7 @@ import {
   AnchorPluginOptions,
   codePlugin,
   CodePluginOptions,
+  containerPlugin,
   customComponentPlugin,
   emojiPlugin,
   EmojiPluginOptions,
@@ -25,6 +26,7 @@ export async function createMarkdownParser({
   anchor,
   code,
   customComponent,
+  customContainers,
   emoji,
   extractHeaders,
   extractTitle,
@@ -84,6 +86,11 @@ export async function createMarkdownParser({
   // =====================================================
   // Following plugins modify or replace the rule in place and have no conflicts, so the usage
   // order is not important.
+
+  // Parse custom container blocks.
+  if (customContainers !== false) {
+    parser.use(containerPlugin);
+  }
 
   // Treat unknown html tags as custom components.
   if (customComponent !== false) {

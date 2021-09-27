@@ -69,12 +69,17 @@
     "esbuild": "^0.12.24",
     "fast-glob": "^3.2.7",
     "fs-extra": "^10.0.0",
+    "get-folder-size": "^3.1.0",
     "just-omit": "^1.2.0",
     "kleur": "^4.1.4",
     "lru-cache": "^6.0.0",
     "ora": "^6.0.0",
+    "pkg-up": "^2.0.0",
     "upath": "^2.0.1",
     "vite": "^2.5.3"
+  },
+  "devDependencies": {
+    "@types/pkg-up": "^3.1.0"
   },
   "engines": {
     "node": ">=14.6.0"

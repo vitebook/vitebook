@@ -2,6 +2,7 @@ import { defineConfig } from '@vitebook/core/node';
 import { clientPlugin } from '@vitebook/client/node';
 import { vueMarkdownPlugin } from '@vitebook/plugin-markdown-vue/node';
 import { shikiMarkdownPlugin } from '@vitebook/plugin-markdown-shiki/node';
+// import { prismjsMarkdownPlugin } from '@vitebook/plugin-markdown-prismjs/node';
 import {
   DefaultThemeConfig,
   defaultThemePlugin
@@ -11,6 +12,7 @@ export default defineConfig<DefaultThemeConfig>({
   include: ['src/**/*.{md,vue}'],
   plugins: [
     shikiMarkdownPlugin(),
+    // prismjsMarkdownPlugin(),
     vueMarkdownPlugin({
       include: /.md$/
     }),

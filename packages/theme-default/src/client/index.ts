@@ -7,11 +7,13 @@ import './styles/components/button.css';
 import './styles/components/scrim.css';
 import './styles/components/code.css';
 import './styles/components/theme-switch.css';
+import './styles/components/admonition.css';
 import './styles/layout/navbar.css';
 import './styles/layout/sidebar.css';
 import './styles/layout/home.css';
 import './styles/layout/page.css';
 import './styles/layout/404.css';
+import './styles/layout/layout.css';
 
 import { loadPage, Theme, useFirstPage } from '@vitebook/client';
 import { h, watch } from 'vue';

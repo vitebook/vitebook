@@ -17,6 +17,10 @@ export function useLanguageLinks(): ComputedRef<NavItemWithMenu | null> {
   const localePath = useRouteLocale();
 
   return computed(() => {
+    if (theme.value.navbar === false) {
+      return null;
+    }
+
     const locales = site.value.locales;
     const localePaths = Object.keys(locales);
 

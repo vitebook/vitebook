@@ -86,12 +86,15 @@ function handleToggleMenus() {
 <template>
   <aside
     class="sidebar"
-    :class="{ open: isSidebarOpen }"
+    :class="{ open: isSidebarOpen, 'icon-colors': theme.sidebar?.iconColors }"
     :aria-hidden="!isSidebarOpen"
   >
     <slot name="start" />
 
-    <div v-if="!isLargeScreen" class="sidebar__header">
+    <div
+      v-if="!isLargeScreen || theme.navbar === false"
+      class="sidebar__header"
+    >
       <div class="sidebar__header-wrapper">
         <NavbarTitle />
         <div class="flex-grow"></div>

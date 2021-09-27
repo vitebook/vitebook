@@ -2,23 +2,9 @@
   position: relative;
   margin: 0;
   min-height: 100vh;
-  padding-top: var(--vbk--navbar-height);
+  padding-top: calc(var(--vbk--navbar-height) + 1rem);
   flex: none;
   width: 100%;
-}
-
-.page-transition-enter-active {
-  transition: all 0.3s ease;
-}
-
-.page-transition-leave-active {
-  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
-}
-
-.page-transition-enter-from,
-.page-transition-leave-to {
-  transform: translateY(10px) translateZ(0);
-  opacity: 0;
 }
 
 .page[class~='type-md'],
@@ -41,9 +27,9 @@
 
 .page[class~='type-md'] > .page__container,
 .page[class~='type-vue:md'] > .page__container {
-  padding: 0 2rem 4rem;
   margin: 0 auto;
   max-width: 48rem;
+  padding: 0 2rem 4rem;
 }
 
 .page[class~='type-vue'] > .page__container {
@@ -57,5 +43,10 @@
   .page {
     flex: 1 0 0;
     width: auto;
+  }
+
+  html.no-navbar .page[class~='type-md'] > .page__container,
+  html.no-navbar .page[class~='type-vue:md'] > .page__container {
+    margin-top: 1.5rem;
   }
 }

@@ -37,7 +37,7 @@ const buttonAriaLabel = computed(
     @pointerdown="onToggle"
     @keydown.enter="onToggle"
   >
-    <LightIcon class="theme-switch__icon theme-switch__icon-light" />
-    <DarkIcon class="theme-switch__icon theme-switch__icon-dark" />
+    <LightIcon class="theme-switch__icon light" />
+    <DarkIcon class="theme-switch__icon dark" />
   </button>
 </template>

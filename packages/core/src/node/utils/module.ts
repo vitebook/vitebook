@@ -1,10 +1,10 @@
 import { build as esbuild, BuildOptions } from 'esbuild';
-import LRUCache from 'lru-cache';
+import getFolderSize from 'get-folder-size';
 import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 
 import { isObject } from '../../shared/index.js';
-import { fs } from './fs.js';
+import { checksumFile, fs } from './fs.js';
 import { path } from './path.js';
 
 /**
@@ -43,11 +43,7 @@ export const requireResolve = (request: string): string | null => {
 
 let tmpDir: string;
 
-const loadModuleCache = new LRUCache({ max: 1024 });
-
-export type LoadModuleOptions = BuildOptions & {
-  cache?: boolean;
-};
+export type LoadModuleOptions = BuildOptions;
 
 const esmRequireCode = [
   "import { createRequire } from 'module';",
@@ -62,35 +58,29 @@ export const loadModule = async <T>(
   filePath: string,
   options: LoadModuleOptions = {}
 ): Promise<T> => {
-  const { cache, ...buildOptions } = options;
-
-  // Super basic in-memory LRU cache. Good enough for our needs atm.
-  if (cache && loadModuleCache.has(filePath)) {
-    return loadModuleCache.get(filePath) as T;
-  }
+  const { ...buildOptions } = options;
 
   if (!tmpDir) {
-    tmpDir = path.join(
-      path.dirname(esmRequire.resolve('@vitebook/core')),
-      '.temp'
-    );
+    tmpDir =
+      options.outdir ??
+      path.join(path.dirname(esmRequire.resolve('@vitebook/core')), '.temp');
 
-    await fs.ensureDir(tmpDir);
-    await fs.emptyDir(tmpDir);
+    if (fs.existsSync(tmpDir)) {
+      // If greater than 5MB let's empty it.
+      const { size } = await getFolderSize(tmpDir);
+      if (size > 5000000) await fs.emptyDir(tmpDir);
+    } else {
+      await fs.ensureDir(tmpDir);
+    }
   }
 
+  const fileHash = await checksumFile('sha1', filePath);
+  const outputPath = path.resolve(tmpDir, `${fileHash}.mjs`);
+
+  const fileComment = `// FILE: ${filePath}\n\n`;
   const code = await bundle(filePath, buildOptions);
-  const fileExt = path.extname(filePath);
-
-  const tmpModulePath =
-    path
-      .resolve(tmpDir, filePath.replace(/(\\|\/)/g, '_'))
-      .slice(0, -fileExt.length) + '.mjs';
-
-  await fs.writeFile(tmpModulePath, esmRequireCode + code);
-
-  const mod = import(tmpModulePath + `?t=${Date.now()}`) as unknown as T;
-  loadModuleCache.set(filePath, mod);
+  await fs.writeFile(outputPath, fileComment + esmRequireCode + code);
+  const mod = import(outputPath + `?t=${Date.now()}`) as unknown as T;
 
   return mod;
 };

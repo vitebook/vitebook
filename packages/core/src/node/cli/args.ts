@@ -7,6 +7,7 @@ export type DevCommandArgs = {
   publicDir?: string;
   cacheDir?: string;
   configDir?: string;
+  tmpDir?: string;
   include?: string[];
   exclude?: string[];
   https?: boolean;
@@ -31,6 +32,7 @@ export type BuildCommandArgs = {
   publicDir?: string;
   cacheDir?: string;
   configDir?: string;
+  tmpDir?: string;
   outDir?: string;
   emptyOutDir?: boolean;
   assetsDir?: string;
@@ -50,6 +52,7 @@ export type ServeCommandArgs = {
   root?: string;
   baseUrl?: string;
   configDir?: string;
+  tmpDir?: string;
   https?: boolean;
   host?: string;
   port?: number;

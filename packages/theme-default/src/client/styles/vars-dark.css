@@ -8,11 +8,10 @@ html.dark {
   --vbk--color-primary: var(--vbk--color-yellow);
   --vbk--color-primary-rgb: 255, 193, 7;
 
-  --vbk--color-text: var(--vbk--color-white);
-  --vbk--color-text-rgb: 255, 255, 255;
-  --vbk--color-text-secondary: var(--vbk--color-gray-200);
+  --vbk--color-text: var(--vbk--color-gray-200);
+  --vbk--color-text-rgb: 242, 242, 242;
 
-  --vbk--color-divider: var(--vbk--color-gray-300);
+  --vbk--color-divider: var(--vbk--color-gray-500);
 
   --vbk--color-bg-100: var(--vbk--color-gray-500);
   --vbk--color-bg-200: var(--vbk--color-gray-600);
@@ -33,7 +32,7 @@ html.dark {
   --vbk--toggle-hover-bg-color: var(--vbk--color-bg-100);
 
   --vbk--menu-bg-color: var(--vbk--color-bg-200);
-  --vbk--menu-border: 0.12rem solid var(--vbk--color-bg-200);
+  --vbk--menu-border: 0.12rem solid var(--vbk--color-bg-100);
   --vbk--menu-item-hover-bg-color: var(--vbk--color-bg-100);
 
   /**-------------------------------------------------------------------------------------------

@@ -1,5 +1,9 @@
-code,
-pre {
+div[class*='language-'] {
+  margin: 2rem 0;
+}
+
+div[class*='language-'] > pre,
+div[class*='language-'] > pre code {
   color: #ccc;
   background: none;
   font-family: var(--vbk--code-font-family);
@@ -114,17 +118,16 @@ pre[class*='language-'] {
   color: #3eaf7c;
 }
 
-pre,
+div[class*='language-'] pre,
 pre[class*='language-'] {
   color-scheme: var(--vbk--code-color-scheme);
-  line-height: 1.4;
   padding: 1.25rem 1.5rem;
   margin: 0.85rem 0;
   border-radius: 6px;
   overflow: auto;
 }
 
-pre code,
+div[class*='language-'] pre code,
 pre[class*='language-'] code {
   color: #fff;
   padding: 0;
@@ -168,7 +171,7 @@ div[class*='language-'] .highlight-lines {
   top: 0;
   left: 0;
   width: 100%;
-  line-height: 1.4;
+  line-height: var(--vbk--code-hl-ln-height);
 }
 
 div[class*='language-'] .highlight-lines .highlight-line {

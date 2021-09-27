@@ -8,7 +8,9 @@
   background-color: var(--vbk--color-primary);
   box-shadow: var(--vbk--elevation-small);
   text-decoration: none;
-  transition: transform 150ms ease;
+  transition: transform 150ms ease, var(--vbk--color-transition),
+    background-color var(--vbk--color-transition-duration)
+      var(--vbk--color-transition-timing);
 }
 
 .button:not(.secondary) {

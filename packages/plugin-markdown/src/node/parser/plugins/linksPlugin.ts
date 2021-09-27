@@ -1,4 +1,5 @@
-import { resolvePaths } from '@vitebook/core/node/utils';
+import { filePathToRoute } from '@vitebook/core/node';
+import { resolveRelativePath } from '@vitebook/core/node/utils';
 import { isLinkExternal } from '@vitebook/core/shared';
 import type { PluginWithOptions } from 'markdown-it';
 
@@ -33,7 +34,6 @@ export type LinksPluginOptions = {
   externalIcon?: boolean;
 };
 
-const INDEX_RE = /(^|.*\/)index.md(#?.*)$/i;
 const HASH_RE = /^((?:.*)(?:\/|\.md|\.html))(#.*)?$/;
 
 /**
@@ -61,7 +61,6 @@ export const linksPlugin: PluginWithOptions<LinksPluginOptions> = (
     const hrefIndex = token.attrIndex('href');
 
     const { app, filePath, frontmatter } = env as MarkdownParserEnv;
-    const baseUrl = app.site.options.baseUrl;
 
     if (hrefIndex >= 0) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -92,26 +91,27 @@ export const linksPlugin: PluginWithOptions<LinksPluginOptions> = (
           const rawPath = pathMatch?.[1] ?? hrefAttr[1];
           const rawHash = pathMatch?.[2] ?? '';
 
+          const absolutePath = rawPath?.startsWith('/')
+            ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              app!.dirs.src.resolve('.' + rawPath)
+            : // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              resolveRelativePath(filePath!, rawPath);
+
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          const route = filePathToRoute(app!, absolutePath);
+
           // Convert starting tag of internal link to `<RouterLink>`.
           token.tag = internalTag;
           // Replace the original `href` attr with `to` attr.
           hrefAttr[0] = 'to';
-          // Resolve path relative to `<src>`
-          let { absolutePath } = filePath
-            ? resolvePaths(rawPath, baseUrl, app.dirs.src.relative(filePath))
-            : { absolutePath: null };
-          // Don't pass base to `<RouterLink />`
-          absolutePath = (absolutePath ?? hrefAttr[1]).replace(
-            new RegExp(`^${baseUrl}`),
-            '/'
-          );
           // Set new path.
-          hrefAttr[1] = absolutePath + rawHash;
+          hrefAttr[1] = route + rawHash;
           // Set `hasOpenInternalLink` to modify the ending tag.
           hasOpenInternalLink = true;
         }
 
-        normalizeHref(hrefAttr, env);
+        const links = env.links || (env.links = []);
+        links.push(hrefAttr[1].replace(/\.html$/, ''));
       }
     }
 
@@ -135,49 +135,4 @@ export const linksPlugin: PluginWithOptions<LinksPluginOptions> = (
 
     return self.renderToken(tokens, idx, options);
   };
-
-  function normalizeHref(
-    hrefAttr: [string, string],
-    env: MarkdownParserEnv
-  ): string {
-    let url = hrefAttr[1];
-
-    const indexMatch = url.match(INDEX_RE);
-
-    if (indexMatch) {
-      const [, path, hash] = indexMatch;
-      url = path + hash;
-    } else {
-      let cleanUrl = url.replace(/#.*$/, '').replace(/\?.*$/, '');
-
-      // .md -> .html
-      if (cleanUrl.endsWith('.md')) {
-        cleanUrl = cleanUrl.replace(/\.md$/, '.html');
-      }
-
-      // ./foo -> ./foo.html
-      if (!cleanUrl.endsWith('.html') && !cleanUrl.endsWith('/')) {
-        cleanUrl += '.html';
-      }
-
-      const parsed = new URL(url, 'http://a.com');
-      url = cleanUrl + parsed.search + parsed.hash;
-    }
-
-    // ensure leading . for relative paths
-    if (!url.startsWith('/') && !/^\.\//.test(url)) {
-      url = './' + url;
-    }
-
-    // export it for existence check
-    const links = env.links || (env.links = []);
-    links.push(url.replace(/\.html$/, ''));
-
-    // markdown-it encodes the uri
-    url = decodeURI(url);
-
-    hrefAttr[1] = url;
-
-    return url;
-  }
 };

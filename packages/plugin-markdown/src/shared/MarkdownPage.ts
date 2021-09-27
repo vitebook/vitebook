@@ -5,11 +5,11 @@ export type MarkdownPage = Page<MarkdownPageModule> & {
 };
 
 export type MarkdownPageModule<
-  Meta extends MarkdownPageMeta = MarkdownPageMeta
+  PageMetaExport extends MarkdownPageMeta = MarkdownPageMeta
 > = {
   /** Parsed HTML template from markdown file. */
   default: string;
-  __pageMeta: Meta;
+  __pageMeta: PageMetaExport;
 };
 
 export type MarkdownPageMeta = PageMeta & {

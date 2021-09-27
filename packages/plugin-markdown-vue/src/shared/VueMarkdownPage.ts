@@ -7,8 +7,8 @@ export type VueMarkdownPage = Page<VueMarkdownPageModule> & {
 };
 
 export type VueMarkdownPageModule<
-  Meta extends MarkdownPageMeta = MarkdownPageMeta
+  PageMetaExport extends MarkdownPageMeta = MarkdownPageMeta
 > = {
   default: Component;
-  __pageMeta: Meta;
+  __pageMeta: PageMetaExport;
 };

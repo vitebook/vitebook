@@ -14,4 +14,5 @@ export function defineConfig<Theme extends ThemeConfig = ThemeConfig>(
 
 export { ThemeConfig };
 
+export { filePathToRoute } from './app/create/resolvePages.js';
 export { VM_PREFIX } from './app/vite/dev/alias.js';

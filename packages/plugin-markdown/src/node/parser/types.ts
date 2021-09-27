@@ -23,6 +23,7 @@ export type MarkdownParser = MarkdownIt;
 export type MarkdownParserOptions = MarkdownIt.Options & {
   anchor?: false | AnchorPluginOptions;
   code?: false | CodePluginOptions;
+  customContainers?: false;
   customComponent?: false | CustomComponentPluginOptions;
   emoji?: false | EmojiPluginOptions;
   extractHeaders?: false | ExtractHeadersPluginOptions;
@@ -54,7 +55,7 @@ export type ParsedMarkdownResult<
  */
 export type MarkdownParserEnvInput = {
   /** Server application context. */
-  app: App;
+  app?: App;
   /** Absolute system file path of the markdown file. */
   filePath?: string | null;
   /** Frontmatter of the markdown file. */

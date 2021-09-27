@@ -47,8 +47,10 @@ export type DefaultThemeLocaleData = {
   remoteGitRepo?: DefaultThemeRemoteGitRepoLocaleConfig;
   /**
    * Navbar configuration.
+   *
+   * @default false
    */
-  navbar?: DefaultThemeNavbarLocaleConfig;
+  navbar?: false | DefaultThemeNavbarLocaleConfig;
   /**
    * Sidebar configuration.
    */
@@ -89,10 +91,6 @@ export type DefaultThemeNavbarLocaleConfig = {
    * @default []
    */
   items?: NavbarItemsConfig;
-  /**
-   * A11y text for menu toggle button.
-   */
-  toggleAriaLabel?: string;
   /**
    * Language dropdown menu configuration.
    */
@@ -144,6 +142,19 @@ export type DefaultThemeSidebarLocaleConfig = {
    * @default 'Back to main menu'
    */
   backToMainMenuText?: string;
+  /**
+   * Whether to enable sidebar icon colors. By default they're only set when the sidebar item is
+   * active.
+   *
+   * @default false
+   */
+  iconColors?: boolean;
+  /**
+   * A11y text for menu toggle button.
+   *
+   * @default 'Toggle sidebar menu'
+   */
+  toggleAriaLabel?: string;
 };
 
 export type DefaultThemeMarkdownLocaleConfig = {
@@ -291,19 +302,13 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
     buttonAriaLabel: 'Toggle dark mode'
   },
 
-  navbar: {
-    items: [],
-    toggleAriaLabel: 'Toggle sidebar',
-    languageMenu: {
-      selectLanguageText: 'Languages',
-      selectLanguageAriaLabel: 'Select language'
-      // selectLanguageName: undefined,
-    }
-  },
+  navbar: false,
 
   sidebar: {
     items: 'auto',
-    backToMainMenuText: 'Back to main menu'
+    iconColors: false,
+    backToMainMenuText: 'Back to main menu',
+    toggleAriaLabel: 'Toggle sidebar menu'
   },
 
   markdown: {

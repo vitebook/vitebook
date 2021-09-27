@@ -1,3 +1,7 @@
+/**-------------------------------------------------------------------------------------------
+ * HTML
+ *-------------------------------------------------------------------------------------------*/
+
 *,
 ::before,
 ::after {
@@ -13,13 +17,12 @@ html {
   -webkit-tap-highlight-color: transparent;
 
   /* prevent scrollbar jumping. */
-  /* @see https://css-tricks.com/elegant-fix-jumping-scrollbar-issue/ */
   overflow-y: scroll;
-  margin-left: calc(100vw - 100%);
 }
 
 html.sidebar-open {
   overflow: hidden;
+  margin-right: var(--vbk--scrollbar-width);
 }
 
 @media (min-width: 992px) {
@@ -43,10 +46,15 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* re-adjust after page has been shifted to prevent scrollbar jumping. */
-  min-width: max(100vw, 375px);
-  margin-left: calc(-1 * calc(100vw - 100%));
 }
+
+main {
+  display: block;
+}
+
+/**-------------------------------------------------------------------------------------------
+ * Focus
+ *-------------------------------------------------------------------------------------------*/
 
 *:focus {
   outline: 0;
@@ -58,86 +66,24 @@ body {
   box-shadow: none !important;
 }
 
-main {
-  display: block;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin: 0;
-  line-height: 1.25;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-strong,
-b {
-  font-weight: 500;
-}
-
-h1:hover .header-anchor,
-h1:focus .header-anchor,
-h2:hover .header-anchor,
-h2:focus .header-anchor,
-h3:hover .header-anchor,
-h3:focus .header-anchor,
-h4:hover .header-anchor,
-h4:focus .header-anchor,
-h5:hover .header-anchor,
-h5:focus .header-anchor,
-h6:hover .header-anchor,
-h6:focus .header-anchor {
-  opacity: 1;
-}
-
-h1 {
-  margin-top: 1.5rem;
-  font-size: 1.9rem;
-  line-height: 1.4;
-}
-
-@media screen and (min-width: 420px) {
-  h1 {
-    font-size: 2.2rem;
-  }
-}
-
-h2 {
-  margin-top: 2.25rem;
-  margin-bottom: 1.25rem;
-  border-bottom: 1px solid var(--c-divider);
-  padding-bottom: 0.3rem;
-  line-height: 1.25;
-  font-size: 1.65rem;
-  /* overflow-x: auto; */
-}
-
-h2 + h3 {
-  margin-top: 1.5rem;
-}
-
-h3 {
-  margin-top: 2rem;
-  font-size: 1.35rem;
-}
-
-h4 {
-  font-size: 1.15rem;
-}
+/**-------------------------------------------------------------------------------------------
+ * Misc
+ *-------------------------------------------------------------------------------------------*/
 
 p,
+a,
+ul,
 ol,
-ul {
-  margin: 1rem 0;
-  line-height: 1.7;
+blockquote {
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  letter-spacing: 0.004rem;
+  text-align: left;
+}
+
+p {
+  margin: 1.15rem 0;
 }
 
 a,
@@ -152,6 +98,97 @@ textarea {
   touch-action: manipulation;
 }
 
+code {
+  font-family: monospace;
+  font-weight: 400;
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  letter-spacing: 0.05rem;
+  text-align: left;
+  background-color: var(--vbk--color-gray-300);
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.375rem;
+}
+
+html.dark code {
+  background-color: var(--vbk--color-gray-500);
+}
+
+figure {
+  margin: 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+form {
+  margin: 0;
+}
+
+hr {
+  margin: 1.15rem 0;
+  height: 1px;
+}
+
+/**-------------------------------------------------------------------------------------------
+ * Headings
+ *-------------------------------------------------------------------------------------------*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  padding: 1rem 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+strong,
+b {
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 2.5rem;
+  line-height: 3.5rem;
+  letter-spacing: 0.01rem;
+}
+
+h2 {
+  font-size: 2.0625rem;
+  line-height: 3rem;
+}
+
+h3 {
+  font-size: 1.75rem;
+  line-height: 2.5rem;
+  letter-spacing: 0.001rem;
+}
+
+h4 {
+  font-size: 1.4375rem;
+  line-height: 2rem;
+  letter-spacing: 0.002rem;
+}
+
+h5 {
+  font-size: 1.1875rem;
+  line-height: 2rem;
+  letter-spacing: 0.003rem;
+}
+
+/**-------------------------------------------------------------------------------------------
+ * Anchor
+ *-------------------------------------------------------------------------------------------*/
+
 a {
   font-weight: 500;
   color: var(--vbk--color-primary);
@@ -164,13 +201,41 @@ a {
   }
 }
 
+.page a {
+  transition: var(--vbk--color-transition);
+}
+
+/**-------------------------------------------------------------------------------------------
+ * Header Anchor
+ *-------------------------------------------------------------------------------------------*/
+
 a.header-anchor {
   float: left;
-  margin-top: 0.125em;
   margin-left: -0.87em;
   padding-right: 0.23em;
   font-size: 0.85em;
   opacity: 0;
+}
+
+h1 a.header-anchor {
+  margin-top: 0.45em;
+}
+
+h2 a.header-anchor {
+  margin-top: 0.375em;
+}
+
+h3 a.header-anchor {
+  margin-top: 0.4em;
+}
+
+h4 a.header-anchor,
+h5 a.header-anchor {
+  margin-top: 0.25em;
+}
+
+h6 a.header-anchor {
+  margin-top: -0.5em;
 }
 
 a.header-anchor:hover,
@@ -178,17 +243,34 @@ a.header-anchor:focus {
   text-decoration: none;
 }
 
-figure {
-  margin: 0;
+@media (hover: hover) and (pointer: fine) {
+  h1:hover .header-anchor,
+  h2:hover .header-anchor,
+  h3:hover .header-anchor,
+  h4:hover .header-anchor,
+  h5:hover .header-anchor,
+  h6:hover .header-anchor {
+    opacity: 1;
+  }
 }
 
-img {
-  max-width: 100%;
+.header-anchor:focus-visible {
+  opacity: 1;
+}
+
+/**-------------------------------------------------------------------------------------------
+ * List
+ *-------------------------------------------------------------------------------------------*/
+
+ul,
+ol {
+  margin: 1.15rem 0;
+  line-height: 1.8;
 }
 
 ul,
 ol {
-  padding-left: 1.25em;
+  padding-left: 1.15rem;
 }
 
 li > ul,
@@ -196,39 +278,57 @@ li > ol {
   margin: 0;
 }
 
+ul p,
+ol p {
+  margin: 0;
+  padding: 0;
+}
+
+/**-------------------------------------------------------------------------------------------
+ * Table
+ *-------------------------------------------------------------------------------------------*/
+
 table {
   display: block;
   border-collapse: collapse;
-  margin: 1rem 0;
+  margin: 1.15rem 0;
   overflow-x: auto;
 }
 
 tr {
-  border-top: 1px solid var(--vbk--color-divider);
+  border-top: 1px solid var(--vbk--color-gray-400);
 }
 
 tr:nth-child(2n) {
-  background-color: var(--vbk--color-text-secondary);
+  background-color: var(--vbk--color-gray-200);
+}
+
+html.dark tr:nth-child(2n) {
+  background-color: var(--vbk--color-gray-600);
 }
 
 th,
 td {
-  border: 1px solid var(--vbk--color-divider);
-  padding: 0.6em 1em;
+  border: 1px solid var(--vbk--color-gray-400);
+  padding: 0.6rem 1.15rem;
 }
 
+html.dark th,
+html.dark td {
+  border: 1px solid var(--vbk--color-gray-500);
+}
+
+/**-------------------------------------------------------------------------------------------
+ * Blockquote
+ *-------------------------------------------------------------------------------------------*/
+
 blockquote {
-  margin: 1rem 0;
-  border-left: 0.2rem solid var(--vbk--color-divider);
+  margin: 1.5rem 0;
+  border-left: 0.2rem solid var(--vbk--color-gray-400);
   padding: 0.25rem 0 0.25rem 1rem;
-  font-size: 1rem;
-  color: var(--vbk--color-text-secondary);
+  color: #999;
 }
 
 blockquote > p {
-  margin: 0;
-}
-
-form {
   margin: 0;
 }

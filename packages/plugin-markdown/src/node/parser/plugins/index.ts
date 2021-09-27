@@ -1,5 +1,6 @@
 export * from './anchorPlugin';
 export * from './codePlugin/index';
+export * from './containersPlugin';
 export * from './customComponentPlugin/index';
 export * from './emojiPlugin';
 export * from './extractHeadersPlugin';

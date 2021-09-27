@@ -14,8 +14,9 @@
   overflow-y: auto;
   border: var(--vbk--sidebar-border);
   transform: translateX(-100%) translateZ(0);
-  transition: transform 0.35s ease;
+  transition: transform 250ms ease-in;
   will-change: transform;
+  box-shadow: var(--vbk--elevation-medium);
 }
 
 .sidebar.open {
@@ -95,6 +96,7 @@
     z-index: 1;
     transition: unset;
     padding-top: var(--vbk--navbar-height);
+    box-shadow: unset;
   }
 
   .sidebar.open {
@@ -118,6 +120,47 @@
 
   .sidebar__back-button {
     display: none;
+  }
+}
+
+/**-------------------------------------------------------------------------------------------
+* Sidebar Toggle
+*-------------------------------------------------------------------------------------------*/
+
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  margin-right: 0.375rem;
+  padding-left: 1rem;
+  font-size: 1.5rem;
+  border: 0;
+  border-radius: 0.15rem;
+  cursor: pointer;
+  color: var(--vbk--toggle-color);
+  background-color: var(--vbk--toggle-bg-color);
+}
+
+.sidebar-toggle > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sidebar-toggle:hover > div {
+    color: var(--vbk--toggle-hover-color);
+    background-color: var(--vbk--toggle-hover-bg-color);
+  }
+}
+
+@media (min-width: 992px) {
+  .sidebar-toggle {
+    display: none;
+    padding-left: 1.25rem;
   }
 }
 
@@ -180,6 +223,10 @@
   padding-left: 0.5rem;
 }
 
+.sidebar__body .nav-item__menu-button > svg {
+  margin-top: -0.2rem;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .sidebar__body a:hover,
   .sidebar__body button:hover {
@@ -207,46 +254,60 @@
 * Sidebar Item Icons
 *-------------------------------------------------------------------------------------------*/
 
+.sidebar.icon-colors .sidebar-item.type-md svg,
+.sidebar.icon-colors .sidebar-item.type-vue\:md svg,
 .sidebar-item.active.type-md svg,
 .sidebar-item.active.type-vue\:md svg {
   color: var(--vbk--color-blue);
 }
 
+.sidebar.icon-colors .sidebar-item.type-vue svg,
 .sidebar-item.active.type-vue svg {
   color: var(--vbk--color-green);
 }
 
+.sidebar.icon-colors .sidebar-item.type-svelte svg,
 .sidebar-item.active.type-svelte svg {
   color: var(--vbk--color-red);
 }
 
+.sidebar.icon-colors .sidebar-item.type-js svg,
+.sidebar.icon-colors .sidebar-item.type-jsx svg,
 .sidebar-item.active.type-js svg,
 .sidebar-item.active.type-jsx svg {
   color: var(--vbk--color-red);
 }
 
+.sidebar.icon-colors .sidebar-item.type-ts svg,
+.sidebar.icon-colors .sidebar-item.type-tsx svg,
 .sidebar-item.active.type-ts svg,
 .sidebar-item.active.type-tsx svg {
   color: var(--vbk--color-blue);
 }
 
+.sidebar.icon-colors .sidebar-item.type-html svg,
 .sidebar-item.active.type-html svg {
   color: var(--vbk--color-red);
 }
 
+.sidebar.icon-colors .sidebar-item.type-svg svg,
 .sidebar-item.active.type-svg svg {
   color: var(--vbk--color-orange);
 }
 
+.sidebar.icon-colors .sidebar-item.type-png svg,
+.sidebar.icon-colors .sidebar-item.type-jpeg svg,
 .sidebar-item.active.type-png svg,
 .sidebar-item.active.type-jpeg svg {
   color: var(--vbk--color-indigo);
 }
 
+.sidebar.icon-colors .sidebar-item.type-mp4 svg,
 .sidebar-item.active.type-mp4 svg {
   color: var(--vbk--color-red);
 }
 
-html.dark .sidebar-item.active[class*='type'] svg {
+html.dark .sidebar-item.active[class*='type'] svg,
+html.dark .sidebar.icon-colors .sidebar-item[class*='type'] svg {
   filter: brightness(140%);
 }

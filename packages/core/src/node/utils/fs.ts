@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 import globby from 'fast-glob';
 import * as fsExtra from 'fs-extra';
 
@@ -43,4 +44,14 @@ export async function readRecentlyChangedFile(file: string): Promise<string> {
   } else {
     return content;
   }
+}
+
+export function checksumFile(algorithm: string, path: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const hash = createHash(algorithm);
+    const stream = fs.createReadStream(path);
+    stream.on('error', (err) => reject(err));
+    stream.on('data', (chunk) => hash.update(chunk));
+    stream.on('end', () => resolve(hash.digest('hex')));
+  });
 }
