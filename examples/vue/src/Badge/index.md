@@ -31,7 +31,7 @@ You will like those projects!
 
 ---
 
-## Typographic replacements
+## Typographic Replacements
 
 Enable typographer option to see result.
 

@@ -26,7 +26,7 @@ export function createRouter(): Router {
     routes: [],
     scrollBehavior: (to, _, savedPosition) => {
       if (savedPosition) return savedPosition;
-      if (to.hash) return { el: to.hash, behavior: 'smooth' };
+      if (to.hash) return { el: to.hash, top: 100, behavior: 'smooth' };
       return { top: 0 };
     }
   });

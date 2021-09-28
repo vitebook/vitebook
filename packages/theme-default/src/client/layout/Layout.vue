@@ -2,6 +2,7 @@
 import { useMediaQuery } from '@vueuse/core';
 import { onBeforeMount, watch, watchEffect } from 'vue';
 
+import FloatingToc from '../components/FloatingToc.vue';
 import Navbar from '../components/Navbar/Navbar.vue';
 import NavbarTitle from '../components/Navbar/NavbarTitle.vue';
 import Scrim from '../components/Scrim/Scrim.vue';
@@ -98,6 +99,10 @@ watchEffect(() => {
           <slot name="page-end" />
         </template>
       </Page>
+    </slot>
+
+    <slot name="floating-toc">
+      <FloatingToc />
     </slot>
 
     <slot name="scrim">

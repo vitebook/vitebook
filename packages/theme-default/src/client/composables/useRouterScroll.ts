@@ -1,4 +1,6 @@
-export interface ScrollPromise {
+import { ref } from 'vue';
+
+export interface RouterScroll {
   wait(): Promise<void> | null;
   pending: () => void;
   resolve: () => void;
@@ -7,7 +9,7 @@ export interface ScrollPromise {
 let promise: Promise<void> | null = null;
 let promiseResolve: (() => void) | null = null;
 
-const scrollPromise: ScrollPromise = {
+const scrollPromise: RouterScroll = {
   wait: () => promise,
   pending: () => {
     promise = new Promise((resolve) => (promiseResolve = resolve));
@@ -19,4 +21,6 @@ const scrollPromise: ScrollPromise = {
   }
 };
 
-export const useScrollPromise = (): ScrollPromise => scrollPromise;
+export const routerScrollBehaviour = ref<'auto' | 'smooth'>('auto');
+
+export const useRouterScroll = (): RouterScroll => scrollPromise;

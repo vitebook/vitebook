@@ -28,6 +28,7 @@ html.sidebar-open {
 @media (min-width: 992px) {
   html.sidebar-open {
     overflow-y: scroll;
+    margin-right: 0;
   }
 }
 
@@ -212,7 +213,7 @@ a {
 a.header-anchor {
   float: left;
   margin-left: -0.87em;
-  padding-right: 0.23em;
+  padding: 0 0.23em;
   font-size: 0.85em;
   opacity: 0;
 }
@@ -251,6 +252,10 @@ a.header-anchor:focus {
   h5:hover .header-anchor,
   h6:hover .header-anchor {
     opacity: 1;
+  }
+
+  a.header-anchor:hover {
+    text-decoration: underline;
   }
 }
 

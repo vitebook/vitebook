@@ -91,7 +91,7 @@
     position: sticky;
     width: auto;
     min-width: var(--vbk--sidebar-min-width);
-    height: 100vh;
+    max-height: 100vh;
     opacity: 1;
     z-index: 1;
     transition: unset;

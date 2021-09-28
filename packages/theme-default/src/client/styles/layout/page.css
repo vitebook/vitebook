@@ -30,6 +30,7 @@
   margin: 0 auto;
   max-width: 48rem;
   padding: 0 2rem 4rem;
+  padding-bottom: calc(var(--vbk--navbar-height) * 3.5);
 }
 
 .page[class~='type-vue'] > .page__container {

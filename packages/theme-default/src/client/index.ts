@@ -8,6 +8,7 @@ import './styles/components/scrim.css';
 import './styles/components/code.css';
 import './styles/components/theme-switch.css';
 import './styles/components/admonition.css';
+import './styles/components/floating-toc.css';
 import './styles/layout/navbar.css';
 import './styles/layout/sidebar.css';
 import './styles/layout/home.css';
@@ -20,7 +21,10 @@ import { h, watch } from 'vue';
 
 import OutboundLink from './components/global/OutboundLink.vue';
 import { useLocalizedThemeConfig } from './composables/useLocalizedThemeConfig';
-import { useScrollPromise } from './composables/useScrollPromise';
+import {
+  routerScrollBehaviour,
+  useRouterScroll
+} from './composables/useRouterScroll';
 import NotFound from './layout/404.vue';
 import Layout from './layout/Layout.vue';
 
@@ -70,9 +74,22 @@ const theme: Theme = {
     // Handle scrollBehavior with transition.
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const scrollBehavior = router.options.scrollBehavior!;
-    router.options.scrollBehavior = async (...args) => {
-      await useScrollPromise().wait();
-      return scrollBehavior(...args);
+    router.options.scrollBehavior = async (to, ...args) => {
+      await useRouterScroll().wait();
+
+      if (to.hash) {
+        const navbarHeight =
+          document.querySelector('.navbar')?.getBoundingClientRect().height ??
+          0;
+
+        return {
+          el: to.hash,
+          top: navbarHeight,
+          behavior: routerScrollBehaviour.value
+        };
+      }
+
+      return scrollBehavior(to, ...args);
     };
   }
 };

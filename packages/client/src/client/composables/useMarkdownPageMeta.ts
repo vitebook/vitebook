@@ -4,11 +4,11 @@ import { computed, ComputedRef, shallowReadonly } from 'vue';
 
 import { usePage } from './usePage';
 
-export type MarkdownDataRef = ComputedRef<
+export type MarkdownPageMetaRef = ComputedRef<
   Readonly<MarkdownPageMeta> | undefined
 >;
 
-export function useMarkdownPageMeta(): Readonly<MarkdownDataRef> {
+export function useMarkdownPageMeta(): Readonly<MarkdownPageMetaRef> {
   const page = usePage();
   return computed(() =>
     isVueMarkdownPage(page.value) ? shallowReadonly(page.value.meta) : undefined

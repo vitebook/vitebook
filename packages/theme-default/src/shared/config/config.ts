@@ -159,6 +159,13 @@ export type DefaultThemeSidebarLocaleConfig = {
 
 export type DefaultThemeMarkdownLocaleConfig = {
   /**
+   * Whether the floating table of contents to the right of markdown pages should be enabled by
+   * default. This can be configured on a page-by-page basis via the `toc` frontmatter property.
+   *
+   * @default true
+   */
+  toc?: boolean;
+  /**
    * Whether to show edit links at the bottom of documents. When clicked they'll take the user
    * to the respective document in the provided repo.
    *
@@ -312,6 +319,7 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
   },
 
   markdown: {
+    toc: true,
     editLink: true,
     editLinkText: 'Edit this page',
     editLinkPattern: ':repo/edit/:branch/:path',

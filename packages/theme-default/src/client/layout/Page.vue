@@ -2,20 +2,20 @@
 import { PageView, usePage } from '@vitebook/client';
 import { inBrowser } from '@vitebook/core/shared';
 
-import { useScrollPromise } from '../composables/useScrollPromise';
+import { useRouterScroll } from '../composables/useRouterScroll';
 
 const page = usePage();
 
-const scrollPromise = useScrollPromise();
+const routerScroll = useRouterScroll();
 
 async function onBeforeLeave() {
-  await scrollPromise.pending;
+  await routerScroll.pending;
   if (!inBrowser) return;
   document.body.classList.add('page-transition');
 }
 
 async function onBeforeEnter() {
-  await scrollPromise.resolve();
+  await routerScroll.resolve();
 }
 
 async function onAfterEnter() {
