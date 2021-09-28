@@ -9,6 +9,8 @@ export type Page<PageModule extends DefaultPageModule = DefaultPageModule> = {
   name?: string;
   /** Route path to this page such as `/pages/page.html`. */
   route: string;
+  /** System file path relative to `<root>`. */
+  rootPath: string;
   /** Page module loader. Used to dynamically import page module client-side. */
   loader: () => Promise<PageModule>;
 };

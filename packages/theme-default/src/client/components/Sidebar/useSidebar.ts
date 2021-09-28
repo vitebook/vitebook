@@ -21,6 +21,7 @@ import {
   MultiSidebarItemsConfig,
   SidebarItem,
   SidebarItemGroup,
+  SidebarItemLink,
   SidebarItemsConfig
 } from '../../../shared';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
@@ -162,4 +163,16 @@ function useAutoSidebarItems(): ComputedRef<Readonly<SidebarItem[]>> {
 export function useHasSidebarItems(): ComputedRef<boolean> {
   const items = useSidebarItems();
   return computed(() => items.value.length > 0);
+}
+
+export function flattenSidebarLinks(items: SidebarItem[]): SidebarItemLink[] {
+  return items.reduce<SidebarItemLink[]>((links, item) => {
+    if (!isSidebarGroup(item)) {
+      links.push({ text: item.text, link: item.link });
+    } else {
+      links = [...links, ...flattenSidebarLinks(item.children)];
+    }
+
+    return links;
+  }, []);
 }

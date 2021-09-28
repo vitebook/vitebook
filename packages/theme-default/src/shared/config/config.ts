@@ -73,7 +73,7 @@ export type DefaultThemeLocaleData = {
 
 export type DefaultThemeRemoteGitRepoLocaleConfig = {
   /**
-   * Specify the repository url of your project. This will be used as the link of the repository
+   * Specify the repository URL of your project. This will be used as the link of the repository
    * link, which will be displayed as the last item of the navbar.
    */
   url?: string;
@@ -177,11 +177,11 @@ export type DefaultThemeMarkdownLocaleConfig = {
    * page link.
    *
    * **Patterns:**
-   * - `:repo` - The stories repo URL.
-   * - `:branch` - The stories repo branch.
-   * - `:path` - The path of the page source file.
+   * - `:repo` - The repo URL.
+   * - `:branch` - The repo branch.
+   * - `:path` - The path of the source file.
    *
-   * @default ':repo/edit/:branch/:path'
+   * @default ':repo/edit/:branch/:path' - Changes depending on repo.
    */
   editLinkPattern?: string;
   /**
@@ -192,27 +192,6 @@ export type DefaultThemeMarkdownLocaleConfig = {
    */
   editLinkText?: string;
   /**
-   * Remote Git repository configuration. Used for generating the 'edit this page' link.
-   */
-  remoteGitRepo?: {
-    /**
-     * Specify the repository url of your documentation files. This will be used for generating
-     * the edit this page link. If you don't set this option, it will use the `repo` option by .
-     * But if your files are in a different repository, you will need to set this option.
-     */
-    url?: string;
-    /**
-     * Specify the repository branch of your documentation files. This will be used for
-     * generating the edit this page link.
-     */
-    branch?: string;
-    /**
-     * Specify the directory of your documentation files in the repository. This will be used
-     * for generating the edit this page link.
-     */
-    dir?: string;
-  };
-  /**
    * Enable the last updated timestamp or not.
    *
    * @default true
@@ -221,9 +200,62 @@ export type DefaultThemeMarkdownLocaleConfig = {
   /**
    * Specify the text of the last updated timestamp label.
    *
-   * @default 'Last Updated'
+   * @default 'Last updated on'
    */
   lastUpdatedText?: string;
+  /**
+   * Whether the previous page link at the bottom of markdown pages is enabled.
+   *
+   * @default false
+   */
+  prevLink?: boolean;
+  /**
+   * Specify text to be displayed inside previous page link at the bottom of markdown pages.
+   *
+   * @default 'Previous'
+   */
+  prevLinkText?: string;
+  /**
+   * Whether the next page link at the bottom of markdown pages is enabled.
+   *
+   * @default true
+   */
+  nextLink?: boolean;
+  /**
+   * Specify text to be displayed inside previous page link at the bottom of markdown pages.
+   *
+   * @default 'Next'
+   */
+  nextLinkText?: string;
+  /**
+   * Remote Git repository configuration. Used for generating the 'Edit this page' link.
+   */
+  remoteGitRepo?: {
+    /**
+     * Specify the repository URL of your documentation files. This will be used for generating
+     * the edit this page link. If you don't set this option, it will be inferred from the
+     * root `remoteGitRepo.url` option.
+     *
+     * @example 'https://bitbucket.org'
+     * @example 'https://github.com'
+     * @example 'https://gitlab.com'
+     */
+    url?: string;
+    /**
+     * Specify the repository branch of your documentation files. This will be used for
+     * generating the edit this page link.
+     *
+     * @default 'main'
+     */
+    branch?: string;
+    /**
+     * Specify the directory of your documentation files in the repository. This will be used
+     * for generating the edit this page link.
+     *
+     * @default ''
+     */
+    dir?: string;
+  };
 };
 
 export type DefaultThemeHomePageLocaleConfig = {
@@ -320,11 +352,15 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
 
   markdown: {
     toc: true,
+    prevLink: true,
+    prevLinkText: 'Previous',
+    nextLink: true,
+    nextLinkText: 'Next',
     editLink: true,
     editLinkText: 'Edit this page',
     editLinkPattern: ':repo/edit/:branch/:path',
     lastUpdated: true,
-    lastUpdatedText: 'Last Updated',
+    lastUpdatedText: 'Last updated on',
     remoteGitRepo: {
       // url: undefined,
       // branch: undefined,

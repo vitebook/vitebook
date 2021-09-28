@@ -17,6 +17,7 @@ export type MarkdownPageMeta = PageMeta & {
   excerpt: string;
   headers: MarkdownHeader[];
   frontmatter: MarkdownFrontmatter;
+  lastUpdated: number;
 };
 
 export type MarkdownFrontmatter = Record<string, unknown>;

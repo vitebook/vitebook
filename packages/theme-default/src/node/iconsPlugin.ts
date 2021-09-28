@@ -11,6 +11,7 @@ export type VitebookIcon =
   | 'menu'
   | 'menu-caret'
   | 'back-arrow'
+  | 'edit-page'
   | 'forward-arrow'
   | 'external-link'
   | 'theme-switch-light'
@@ -50,6 +51,8 @@ const defaultIconResolver: VitebookIconResolver = (icon) => {
       return 'heroicons-outline/menu';
     case 'menu-caret':
       return 'heroicons-outline/chevron-down';
+    case 'edit-page':
+      return 'mdi/file-document-edit-outline';
     case 'external-link':
       return 'heroicons-outline/external-link';
     case 'back-arrow':

@@ -1,4 +1,5 @@
 import type { App } from '@vitebook/core/node';
+import { fs } from '@vitebook/core/node/utils';
 import {
   HeadConfig,
   LocaleConfig,
@@ -74,7 +75,8 @@ export function parseMarkdown(
       head: frontmatter.head as HeadConfig[],
       description: frontmatter.description as string,
       locales: frontmatter.locales as LocaleConfig,
-      frontmatter: omitPageMeta(frontmatter)
+      frontmatter: omitPageMeta(frontmatter),
+      lastUpdated: Math.round(fs.statSync(filePath).mtimeMs)
     }
   };
 

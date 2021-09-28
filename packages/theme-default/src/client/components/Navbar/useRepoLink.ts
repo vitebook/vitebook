@@ -20,7 +20,7 @@ export function useRepoLink(): ComputedRef<NavItemLink | null> {
   });
 }
 
-function getRepoLink(repo: string): string {
+export function getRepoLink(repo: string): string {
   return isLinkExternal(repo) ? repo : `https://github.com/${repo}`;
 }
 

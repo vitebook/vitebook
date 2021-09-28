@@ -94,7 +94,8 @@ async function resolvePage(app: App, filePath: string): Promise<void> {
         ...page,
         filePath,
         id: page.id ?? id,
-        route: page.route ?? route
+        route: page.route ?? route,
+        rootPath: app.dirs.root.relative(filePath)
       });
 
       pageResolvedBy.set(filePath, plugin);

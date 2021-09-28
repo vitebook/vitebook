@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup="props" lang="ts">
 import { useMarkdownPageMeta, usePage } from '@vitebook/client';
 import type { MarkdownHeader } from '@vitebook/plugin-markdown/shared';
 import {
@@ -11,10 +11,10 @@ import {
 } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { defaultThemeLocaleOptions } from '../../shared';
-import { useActiveHeaderLinks } from '../composables/useActiveHeaderLinks';
-import { useLocalizedThemeConfig } from '../composables/useLocalizedThemeConfig';
-import { useNavbarHeight } from './Navbar/useNavbar';
+import { defaultThemeLocaleOptions } from '../../../shared';
+import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
+import { useNavbarHeight } from '../Navbar/useNavbar';
+import { useActiveHeaderLinks } from './useActiveHeaderLinks';
 
 const page = usePage();
 const pageMeta = useMarkdownPageMeta();
@@ -38,7 +38,7 @@ function createTree(item: MarkdownHeader): VNode {
     // @ts-expect-error - ?
     resolveComponent('RouterLink'),
     {
-      class: ['floating-toc__link', currentHash === hash && 'active'],
+      class: ['md-floating-toc__link', currentHash === hash && 'active'],
       to: hash,
       replace: true
     },
@@ -47,10 +47,14 @@ function createTree(item: MarkdownHeader): VNode {
 
   const children =
     item.children.length > 0
-      ? h('ul', { class: 'floating-toc__list' }, item.children.map(createTree))
+      ? h(
+          'ul',
+          { class: 'md-floating-toc__list' },
+          item.children.map(createTree)
+        )
       : null;
 
-  return h('li', { class: 'floating-toc__list-item' }, [link, children]);
+  return h('li', { class: 'md-floating-toc__list-item' }, [link, children]);
 }
 
 const Tree = defineComponent({
@@ -59,7 +63,7 @@ const Tree = defineComponent({
     const tree = computed(() => markRaw(headers.value.map(createTree)));
 
     useActiveHeaderLinks({
-      headerLinkSelector: '.floating-toc__link',
+      headerLinkSelector: '.md-floating-toc__link',
       headerAnchorSelector: 'a.header-anchor',
       delay: 100,
       offset: computed(() => navbarHeight.value + 16)
@@ -76,9 +80,9 @@ const Tree = defineComponent({
 <template>
   <div
     v-if="enabled && page?.type.includes('md') && headers.length > 1"
-    class="floating-toc"
+    class="md-floating-toc"
   >
-    <ul class="floating-toc__list">
+    <ul class="md-floating-toc__list">
       <Tree />
     </ul>
   </div>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { usePage } from '@vitebook/client';
 import { useMediaQuery } from '@vueuse/core';
-import { onBeforeMount, watch, watchEffect } from 'vue';
+import { defineAsyncComponent, onBeforeMount, watch, watchEffect } from 'vue';
 
-import FloatingToc from '../components/FloatingToc.vue';
 import Navbar from '../components/Navbar/Navbar.vue';
 import NavbarTitle from '../components/Navbar/NavbarTitle.vue';
 import Scrim from '../components/Scrim/Scrim.vue';
@@ -20,6 +20,7 @@ import Page from './Page.vue';
 
 initDarkMode();
 
+const page = usePage();
 const theme = useLocalizedThemeConfig();
 const isSidebarOpen = useIsSidebarOpen();
 const isScrimActive = useIsScrimActive();
@@ -49,6 +50,14 @@ watchEffect(() => {
     document.documentElement.classList.add('no-navbar');
   }
 });
+
+const MarkdownFooter = defineAsyncComponent(
+  () => import('../components/markdown/MarkdownFooter.vue')
+);
+
+const MarkdownFloatingToc = defineAsyncComponent(
+  () => import('../components/markdown/MarkdownFloatingToc.vue')
+);
 </script>
 
 <template>
@@ -97,13 +106,15 @@ watchEffect(() => {
 
         <template #end>
           <slot name="page-end" />
+
+          <MarkdownFooter v-if="page?.type.includes('md')" />
         </template>
       </Page>
     </slot>
 
-    <slot name="floating-toc">
-      <FloatingToc />
-    </slot>
+    <slot name="root" />
+
+    <MarkdownFloatingToc v-if="page?.type.includes('md')" />
 
     <slot name="scrim">
       <Scrim
