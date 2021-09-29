@@ -141,9 +141,12 @@ function startWatchingPages(app: App, server: ViteDevServer) {
     filePath: string,
     action: 'add' | 'change' | 'unlink'
   ): Promise<void> {
+    const previousPages = JSON.stringify(app.pages);
     const absPath = resolveRelativePath(app.dirs.root.path, filePath);
     await resolvePages(app, action, [absPath]);
-    server.watcher.emit('change', virtualModuleRequestPath.pages);
+    if (previousPages !== JSON.stringify(app.pages)) {
+      server.watcher.emit('change', virtualModuleRequestPath.pages);
+    }
   }
 
   watcher

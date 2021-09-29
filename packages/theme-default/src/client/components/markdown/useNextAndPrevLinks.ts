@@ -1,4 +1,4 @@
-import { usePage } from '@vitebook/client';
+import { useMarkdownPageMeta, usePage } from '@vitebook/client';
 import { isArray } from '@vitebook/core/shared';
 import { computed, ComputedRef } from 'vue';
 
@@ -12,6 +12,7 @@ export function useNextAndPrevLinks(): {
   hasLinks: ComputedRef<boolean>;
 } {
   const page = usePage();
+  const pageMeta = useMarkdownPageMeta();
   const theme = useLocalizedThemeConfig();
 
   const candidates = computed(() => {
@@ -28,6 +29,7 @@ export function useNextAndPrevLinks(): {
   const next = computed(() => {
     if (
       theme.value.markdown?.nextLink !== false &&
+      pageMeta.value?.frontmatter.nextLink !== false &&
       index.value > -1 &&
       index.value < candidates.value.length - 1
     ) {
@@ -38,7 +40,11 @@ export function useNextAndPrevLinks(): {
   });
 
   const prev = computed(() => {
-    if (theme.value.markdown?.prevLink !== false && index.value > 0) {
+    if (
+      theme.value.markdown?.prevLink !== false &&
+      pageMeta.value?.frontmatter.prevLink !== false &&
+      index.value > 0
+    ) {
       return candidates.value[index.value - 1];
     }
 

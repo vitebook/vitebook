@@ -69,10 +69,6 @@ function addRoutes(router: Router, pages: Readonly<Page[]>): void {
       component: () => loadPage(page)
     });
 
-    if (router.currentRoute.value.path === path) {
-      router.replace(path);
-    }
-
     pageRouteDisposal?.push(() => {
       dispose();
       deleteCachedLoadedPage(page);
