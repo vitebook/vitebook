@@ -34,7 +34,7 @@ export async function loadPage(page: Page): Promise<Component> {
     ? await data.__pageMeta()
     : data.__pageMeta;
 
-  const loadedPage = { ...page, meta } as LoadedPage;
+  const loadedPage = { ...page, meta: meta ?? {} } as LoadedPage;
   if (loadedPage) loadedPageCache.set(page, loadedPage);
 
   setPageRef(loadedPage);

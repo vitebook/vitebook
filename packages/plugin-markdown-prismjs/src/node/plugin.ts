@@ -3,7 +3,7 @@ import type { MarkdownPlugin } from '@vitebook/plugin-markdown/node';
 import { loadLanguages } from './loadLanguages';
 import { resolveHighlighter } from './resolveHighlighter';
 
-export const PLUGIN_NAME = 'vitebook/plugin-markdown-prismjs' as const;
+export const PLUGIN_NAME = '@vitebook/plugin-markdown-prismjs' as const;
 
 export type PrismjsPluginOptions = {
   /**

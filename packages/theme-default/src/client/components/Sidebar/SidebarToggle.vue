@@ -29,3 +29,42 @@ const toggleAriaLabel = computed(
     </div>
   </button>
 </template>
+
+<style>
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  margin-right: 0.375rem;
+  padding-left: 1rem;
+  font-size: 1.5rem;
+  border: 0;
+  border-radius: 0.15rem;
+  cursor: pointer;
+  color: var(--vbk--toggle-color);
+  background-color: var(--vbk--toggle-bg-color);
+}
+
+.sidebar-toggle > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sidebar-toggle:hover > div {
+    color: var(--vbk--toggle-hover-color);
+    background-color: var(--vbk--toggle-hover-bg-color);
+  }
+}
+
+@media (min-width: 992px) {
+  .sidebar-toggle {
+    display: none;
+    padding-left: 1.25rem;
+  }
+}
+</style>

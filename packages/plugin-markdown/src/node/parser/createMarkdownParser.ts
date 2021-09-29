@@ -38,7 +38,7 @@ export async function createMarkdownParser({
 }: MarkdownParserOptions = {}): Promise<MarkdownParser> {
   const parser = MarkdownIt({
     ...markdownItOptions,
-    // should always enable html option
+    // Should always enable html option.
     html: true
   });
 
@@ -67,7 +67,10 @@ export async function createMarkdownParser({
 
   // Allow `toc` syntax.
   if (toc !== false) {
-    parser.use<TocPluginOptions>(tocPlugin, toc);
+    parser.use<TocPluginOptions>(tocPlugin, {
+      linkTag: 'RouterLink',
+      ...toc
+    });
   }
 
   // Extract `headers` into `env`.

@@ -34,8 +34,6 @@ export type LinksPluginOptions = {
   externalIcon?: boolean;
 };
 
-const HASH_RE = /^((?:.*)(?:\/|\.md|\.html))(#.*)?$/;
-
 /**
  * Resolves link URLs.
  */
@@ -65,10 +63,24 @@ export const linksPlugin: PluginWithOptions<LinksPluginOptions> = (
     if (hrefIndex >= 0) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const hrefAttr = token.attrs![hrefIndex];
-      const url = hrefAttr[1];
-      const isExternal = isLinkExternal(url);
+      const hrefLink = hrefAttr[1];
 
-      if (isExternal) {
+      const internalLinkMatch = hrefLink.match(
+        /^((?:.*)(?:\/|\.md|\.html))(#.*)?$/
+      );
+
+      const withRouterLink = () => {
+        if (internalTag === 'RouterLink') {
+          // Convert starting tag of internal link to `<RouterLink>`.
+          token.tag = internalTag;
+          // Replace the original `href` attr with `to` attr.
+          hrefAttr[0] = 'to';
+          // Set `hasOpenInternalLink` to modify the ending tag.
+          hasOpenInternalLink = true;
+        }
+      };
+
+      if (isLinkExternal(hrefLink, app?.site.options.baseUrl)) {
         Object.entries(externalAttrs ?? {}).forEach(([key, val]) => {
           token.attrSet(key, val);
         });
@@ -79,39 +91,28 @@ export const linksPlugin: PluginWithOptions<LinksPluginOptions> = (
         ) {
           hasOpenExternalLink = true;
         }
-      } else if (
-        // internal anchor links
-        !url.startsWith('#') &&
-        // mail links
-        !url.startsWith('mailto:')
-      ) {
-        if (internalTag === 'RouterLink') {
-          const pathMatch = hrefAttr[1].match(HASH_RE);
+      } else if (internalLinkMatch) {
+        const rawPath = internalLinkMatch?.[1];
+        const rawHash = internalLinkMatch?.[2] ?? '';
 
-          const rawPath = pathMatch?.[1] ?? hrefAttr[1];
-          const rawHash = pathMatch?.[2] ?? '';
+        const absolutePath = rawPath?.startsWith('/')
+          ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            app!.dirs.src.resolve('.' + rawPath)
+          : // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            resolveRelativePath(filePath!, rawPath);
 
-          const absolutePath = rawPath?.startsWith('/')
-            ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              app!.dirs.src.resolve('.' + rawPath)
-            : // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              resolveRelativePath(filePath!, rawPath);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const route = filePathToRoute(app!, absolutePath);
 
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          const route = filePathToRoute(app!, absolutePath);
+        withRouterLink();
 
-          // Convert starting tag of internal link to `<RouterLink>`.
-          token.tag = internalTag;
-          // Replace the original `href` attr with `to` attr.
-          hrefAttr[0] = 'to';
-          // Set new path.
-          hrefAttr[1] = route + rawHash;
-          // Set `hasOpenInternalLink` to modify the ending tag.
-          hasOpenInternalLink = true;
-        }
+        // Set new path.
+        hrefAttr[1] = route + rawHash;
 
         const links = env.links || (env.links = []);
         links.push(hrefAttr[1].replace(/\.html$/, ''));
+      } else if (hrefLink.startsWith('#')) {
+        withRouterLink();
       }
     }
 

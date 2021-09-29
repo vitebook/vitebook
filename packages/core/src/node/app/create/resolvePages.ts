@@ -134,7 +134,7 @@ export function filePathToRoute(app: App, filePath: string): string {
     .replace(rCombining, '')
     .replace(rControl, '')
     .replace(new RegExp(`(${path.extname(filePath)})$`), '.html')
-    .replace(/\/(README|index).html$/i, '/')
+    .replace(/\/(README|index).html($|\?)/i, '/')
     .toLowerCase();
 }
 

@@ -52,3 +52,43 @@ const hasSecondaryButton = computed(() => {
     </div>
   </header>
 </template>
+
+<style>
+.home__hero {
+  padding: 0 1.5rem;
+  text-align: center;
+  padding-top: 2rem;
+}
+
+.home__hero__title {
+  margin-top: 0;
+  line-height: 1.5;
+  font-size: 2.25rem;
+  justify-content: center;
+}
+
+.home__hero__actions {
+  margin-top: 3.5rem;
+}
+
+.home__hero__actions > a + a {
+  margin-left: 1rem;
+}
+
+@media (min-width: 576px) {
+  .home__hero__actions > a + a {
+    margin-left: 1.5rem;
+  }
+
+  .home__hero__title {
+    font-size: 2.5rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .home__hero {
+    margin-bottom: 3rem;
+    padding-top: 4rem;
+  }
+}
+</style>

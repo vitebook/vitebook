@@ -60,3 +60,71 @@ function handleLinkClick(event: Event, navigate: () => void): void {
     </router-link>
   </li>
 </template>
+
+<style>
+/**-------------------------------------------------------------------------------------------
+* Icons
+*-------------------------------------------------------------------------------------------*/
+
+.sidebar-item.active svg {
+  transition: var(--vbk--color-transition);
+}
+
+.sidebar.icon-colors .sidebar-item.type-md svg,
+.sidebar.icon-colors .sidebar-item.type-vue\:md svg,
+.sidebar-item.active.type-md svg,
+.sidebar-item.active.type-vue\:md svg {
+  color: var(--vbk--color-blue);
+}
+
+.sidebar.icon-colors .sidebar-item.type-vue svg,
+.sidebar-item.active.type-vue svg {
+  color: var(--vbk--color-green);
+}
+
+.sidebar.icon-colors .sidebar-item.type-svelte svg,
+.sidebar-item.active.type-svelte svg {
+  color: var(--vbk--color-red);
+}
+
+.sidebar.icon-colors .sidebar-item.type-js svg,
+.sidebar.icon-colors .sidebar-item.type-jsx svg,
+.sidebar-item.active.type-js svg,
+.sidebar-item.active.type-jsx svg {
+  color: var(--vbk--color-red);
+}
+
+.sidebar.icon-colors .sidebar-item.type-ts svg,
+.sidebar.icon-colors .sidebar-item.type-tsx svg,
+.sidebar-item.active.type-ts svg,
+.sidebar-item.active.type-tsx svg {
+  color: var(--vbk--color-blue);
+}
+
+.sidebar.icon-colors .sidebar-item.type-html svg,
+.sidebar-item.active.type-html svg {
+  color: var(--vbk--color-red);
+}
+
+.sidebar.icon-colors .sidebar-item.type-svg svg,
+.sidebar-item.active.type-svg svg {
+  color: var(--vbk--color-orange);
+}
+
+.sidebar.icon-colors .sidebar-item.type-png svg,
+.sidebar.icon-colors .sidebar-item.type-jpeg svg,
+.sidebar-item.active.type-png svg,
+.sidebar-item.active.type-jpeg svg {
+  color: var(--vbk--color-indigo);
+}
+
+.sidebar.icon-colors .sidebar-item.type-mp4 svg,
+.sidebar-item.active.type-mp4 svg {
+  color: var(--vbk--color-red);
+}
+
+html.dark .sidebar-item.active[class*='type'] svg,
+html.dark .sidebar.icon-colors .sidebar-item[class*='type'] svg {
+  filter: brightness(140%);
+}
+</style>

@@ -35,7 +35,7 @@ const illustration = computed(
 );
 
 const Illustration = useDynamicAsyncComponent(
-  computed(() => illustration.value + '?raw')
+  computed(() => illustration.value + '?raw&vue')
 );
 </script>
 
@@ -69,3 +69,74 @@ const Illustration = useDynamicAsyncComponent(
     </div>
   </div>
 </template>
+
+<style>
+.not-found {
+  width: 100%;
+  min-height: 100%;
+  padding: 0 2rem;
+}
+
+.not-found__container {
+  width: 100%;
+  padding-top: 0.5rem;
+  margin: 0 auto;
+  max-width: 960px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.not-found__title {
+  margin: 0;
+  padding: 0;
+  font-size: 1.75rem;
+  line-height: 1.5;
+  margin-top: 1rem;
+  margin-bottom: 3.5rem;
+  text-align: center;
+  justify-content: center;
+}
+
+.not-found__img-container {
+  max-width: 400px;
+}
+
+.not-found__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -1.5rem;
+}
+
+.not-found__actions > a + a {
+  margin-left: 1rem;
+}
+
+@media (min-width: 420px) {
+  .not-found__title {
+    font-size: 1.75rem;
+    margin-top: 2.5rem;
+  }
+
+  .not-found__container {
+    padding-top: 2rem;
+  }
+}
+
+@media (min-width: 576px) {
+  .not-found__container {
+    padding-top: 4rem;
+  }
+
+  .not-found__img-container {
+    max-width: 500px;
+  }
+
+  .not-found__title {
+    font-size: 2rem;
+    margin-top: 3.5rem;
+    margin-bottom: 3.5rem;
+  }
+}
+</style>

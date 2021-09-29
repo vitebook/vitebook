@@ -13,13 +13,13 @@ import {
   parseMarkdownToVue
 } from './parser/index';
 
-export const PLUGIN_NAME = 'vitebook/plugin-markdown-vue' as const;
+export const PLUGIN_NAME = '@vitebook/plugin-markdown-vue' as const;
 
 export type VueMarkdownPluginOptions = MarkdownParserOptions & {
   /**
    * Filter out which files to be included as vue markdown pages.
    *
-   * @default /\.md$/
+   * @default /\.md($|\?)/
    */
   include?: FilterPattern;
 
@@ -31,7 +31,7 @@ export type VueMarkdownPluginOptions = MarkdownParserOptions & {
   exclude?: FilterPattern;
 };
 
-const DEFAULT_INCLUDE = /\.md$/;
+const DEFAULT_INCLUDE = /\.md($|\?)/;
 
 export function vueMarkdownPlugin(
   options: VueMarkdownPluginOptions = {}
@@ -97,9 +97,9 @@ export function vueMarkdownPlugin(
         routes.delete(filePath);
       });
     },
-    transform(source, id) {
+    transform(code, id) {
       if (files.has(id)) {
-        const { component } = parseMarkdownToVue(app, parser, source, id, {
+        const { component } = parseMarkdownToVue(app, parser, code, id, {
           escapeConstants: isBuild,
           define
         });
@@ -121,8 +121,7 @@ export function vueMarkdownPlugin(
           define
         });
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return vuePlugin.handleHotUpdate!({
+        return vuePlugin.handleHotUpdate?.({
           ...ctx,
           read: () => component
         });

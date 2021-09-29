@@ -99,22 +99,6 @@ textarea {
   touch-action: manipulation;
 }
 
-code {
-  font-family: monospace;
-  font-weight: 400;
-  font-size: 0.875rem;
-  line-height: 1.5rem;
-  letter-spacing: 0.05rem;
-  text-align: left;
-  background-color: var(--vbk--color-gray-300);
-  border-radius: 0.25rem;
-  padding: 0.125rem 0.375rem;
-}
-
-html.dark code {
-  background-color: var(--vbk--color-gray-500);
-}
-
 figure {
   margin: 0;
 }
@@ -133,6 +117,34 @@ hr {
 }
 
 /**-------------------------------------------------------------------------------------------
+ * Code
+ *-------------------------------------------------------------------------------------------*/
+
+code {
+  font-family: monospace;
+  font-weight: 400;
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  letter-spacing: 0.05rem;
+  text-align: left;
+  background-color: var(--vbk--color-gray-300);
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.375rem;
+}
+
+html.dark code {
+  background-color: var(--vbk--color-gray-500);
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code {
+  font-size: 1.5rem;
+}
+
+/**-------------------------------------------------------------------------------------------
  * Headings
  *-------------------------------------------------------------------------------------------*/
 
@@ -142,6 +154,10 @@ h3,
 h4,
 h5,
 h6 {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
   margin: 0;
   padding: 1rem 0;
 }
@@ -211,32 +227,15 @@ a {
  *-------------------------------------------------------------------------------------------*/
 
 a.header-anchor {
+  position: absolute;
+  top: 50%;
+  left: 0;
   float: left;
-  margin-left: -0.87em;
+  margin-left: -1.05em;
   padding: 0 0.23em;
   font-size: 0.85em;
   opacity: 0;
-}
-
-h1 a.header-anchor {
-  margin-top: 0.45em;
-}
-
-h2 a.header-anchor {
-  margin-top: 0.375em;
-}
-
-h3 a.header-anchor {
-  margin-top: 0.4em;
-}
-
-h4 a.header-anchor,
-h5 a.header-anchor {
-  margin-top: 0.25em;
-}
-
-h6 a.header-anchor {
-  margin-top: -0.5em;
+  transform: translateY(-50%);
 }
 
 a.header-anchor:hover,

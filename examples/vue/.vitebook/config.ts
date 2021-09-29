@@ -1,28 +1,19 @@
 import { defineConfig } from '@vitebook/core/node';
-import { clientPlugin } from '@vitebook/client/node';
+import { clientPlugin, withIncludeMarkdown } from '@vitebook/client/node';
 import { vueMarkdownPlugin } from '@vitebook/plugin-markdown-vue/node';
 import { shikiMarkdownPlugin } from '@vitebook/plugin-markdown-shiki/node';
 // import { prismjsMarkdownPlugin } from '@vitebook/plugin-markdown-prismjs/node';
-import {
-  DefaultThemeConfig,
-  defaultThemePlugin
-} from '@vitebook/theme-default/node';
+import type { DefaultThemeConfig } from '@vitebook/theme-default/node';
 
 export default defineConfig<DefaultThemeConfig>({
-  include: ['src/**/*.{md,vue}'],
+  include: ['src/**/*.{html,md,svg,vue}'],
   plugins: [
     shikiMarkdownPlugin(),
     // prismjsMarkdownPlugin(),
-    vueMarkdownPlugin({
-      include: /.md$/
-    }),
+    vueMarkdownPlugin(),
     clientPlugin({
-      // include: /\.vue$/,
-      vue: {
-        include: [/\.vue$/, /\.md$/]
-      }
-    }),
-    defaultThemePlugin()
+      include: withIncludeMarkdown()
+    })
   ],
   site: {
     title: 'Vitebook',

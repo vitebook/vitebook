@@ -138,3 +138,71 @@ onUpdated(() => {
     </ul>
   </div>
 </template>
+
+<style>
+/** No mobile styles because a nav item menu is a sidebar group <992px. **/
+
+.nav-item__menu-button__caret {
+  padding-left: 0.12rem;
+  transform: rotate(270deg) translateX(-0.25rem) translateZ(0);
+  transform-origin: center;
+}
+
+.nav-item.open .nav-item__menu-button__caret {
+  transform: translateY(0.1rem) translateZ(0);
+}
+
+@media (hover: hover) {
+  .nav-item__menu-item:hover {
+    color: var(--vbk--menu-item-hover-color);
+    background-color: var(--vbk--menu-item-hover-bg-color);
+  }
+
+  .nav-item__menu-item .nav-link:not(.active) > .nav-link__text {
+    border-bottom: 0;
+  }
+
+  .nav-item.with-menu:hover .nav-item__menu {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@media (min-width: 992px) {
+  .nav-item__menu-button__caret,
+  .nav-item.open .nav-item__menu-button__caret {
+    transform: translateY(0) translateZ(0);
+  }
+
+  .nav-item.with-menu {
+    position: relative;
+    cursor: pointer;
+    overflow: visible;
+    width: 100%;
+  }
+
+  .nav-item__menu {
+    display: block;
+    position: absolute;
+    top: 100%;
+    right: 1rem;
+    padding: 0.8rem;
+    padding-bottom: 1rem;
+    margin: 0;
+    opacity: 0;
+    visibility: hidden;
+    z-index: calc(var(--vbk--navbar-z-index) + 1);
+    border-radius: 0.15rem;
+    box-shadow: var(--vbk--elevation-medium);
+    min-width: 10rem;
+    border: var(--vbk--menu-border);
+    background-color: var(--vbk--menu-bg-color);
+    transition: var(--vbk--menu-transition);
+  }
+
+  .nav-item.open .nav-item__menu {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+</style>

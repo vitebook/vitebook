@@ -1,18 +1,17 @@
-import type {
-  VueMarkdownPage,
-  VueMarkdownPageModule
-} from '@vitebook/plugin-markdown-vue/shared';
+import type { PageMeta } from '@vitebook/core/shared';
+import type { MarkdownPageMeta } from '@vitebook/plugin-markdown/shared';
+import type { VueMarkdownPage } from '@vitebook/plugin-markdown-vue/shared';
 
-import { VueComponentPage, VueComponentPageModule } from './VueComponentPage';
+import { VueComponentPage } from './VueComponentPage';
 
 export type Page = VueComponentPage | VueMarkdownPage;
 
 export type LoadedVueMarkdownPage = VueMarkdownPage & {
-  meta: VueMarkdownPageModule['__pageMeta'];
+  meta: MarkdownPageMeta;
 };
 
 export type LoadedVueComponentPage = VueComponentPage & {
-  meta: VueComponentPageModule['__pageMeta'];
+  meta: PageMeta;
 };
 
 export type LoadedPage = LoadedVueComponentPage | LoadedVueMarkdownPage;

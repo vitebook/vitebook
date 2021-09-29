@@ -1,166 +1,101 @@
-import { Plugin, VM_PREFIX } from '@vitebook/core/node';
+import type { Plugin } from '@vitebook/core/node';
+import { esmRequire, fs, path } from '@vitebook/core/node/utils';
 import { isFunction, removeLeadingSlash } from '@vitebook/core/shared';
-import type { Options as IconOptions } from 'unplugin-icons/dist/index.js';
-import Icons from 'unplugin-icons/dist/vite.js';
 
-export type IconCollection = string;
-export type IconName = string;
-export type IconPath = `${IconCollection}/${IconName}`;
+import {
+  VIRTUAL_EMPTY_ICON_MODULE_ID,
+  VIRTUAL_VITEBOOK_ICONS_RE,
+  VitebookIcon
+} from './icons';
 
-export type VitebookIcon =
-  | 'menu'
-  | 'menu-caret'
-  | 'back-arrow'
-  | 'edit-page'
-  | 'forward-arrow'
-  | 'external-link'
-  | 'theme-switch-light'
-  | 'theme-switch-dark'
-  | `home-feature-${number}`
-  | `sidebar-file-${string}`
-  | `sidebar-folder-open`
-  | `sidebar-folder-closed`;
+const ICONS_DIR = path.dirname(
+  esmRequire.resolve('@vitebook/theme-default/node/icons/menu.svg')
+);
+const SIDEBAR_ICONS_DIR = path.resolve(ICONS_DIR, './sidebar-file');
+const FILE_ICON_PATH = path.resolve(ICONS_DIR, './sidebar-file/file.svg');
 
-export type VitebookIconRecord = Record<VitebookIcon, IconPath>;
+export type IconsRecord = Partial<Record<VitebookIcon, string>>;
 
-export type VitebookIconResolver = (
+export type IconsResolver = (
   icon: VitebookIcon
 ) =>
   | void
   | null
   | undefined
   | false
-  | IconPath
-  | Promise<void | null | undefined | false | IconPath>;
+  | string
+  | Promise<void | null | undefined | false | string>;
 
-export type DefaultThemeIconsOptions = Omit<
-  IconOptions,
-  'compiler' | 'jsx' | 'webComponents'
-> & {
-  vitebook?: false | VitebookIconRecord | VitebookIconResolver;
-};
+export type DefaultThemeIconsOptions = false | IconsRecord | IconsResolver;
 
-const vitebookIconPathRE = /:virtual\/vitebook\/icons\//;
-
-const VIRTUAL_ICONS_MODULE_ID = `${VM_PREFIX}/vitebook/icons`;
-const VIRTUAL_EMPTY_ICON_MODULE_ID = `/${VM_PREFIX}/vitebook/icons/empty`;
-
-const defaultIconResolver: VitebookIconResolver = (icon) => {
-  switch (icon) {
-    case 'menu':
-      return 'heroicons-outline/menu';
-    case 'menu-caret':
-      return 'heroicons-outline/chevron-down';
-    case 'edit-page':
-      return 'mdi/file-document-edit-outline';
-    case 'external-link':
-      return 'heroicons-outline/external-link';
-    case 'back-arrow':
-      return 'heroicons-outline/arrow-sm-left';
-    case 'forward-arrow':
-      return 'heroicons-outline/arrow-sm-right';
-    case 'theme-switch-light':
-      return 'heroicons-outline/sun';
-    case 'theme-switch-dark':
-      return 'heroicons-outline/moon';
-    case 'sidebar-folder-open':
-      return 'mdi/folder-open';
-    case 'sidebar-folder-closed':
-      return 'mdi/folder';
-  }
-
-  if (icon.startsWith('home-feature-')) {
-    return 'heroicons-outline/star';
-  }
-
-  if (icon.startsWith('sidebar-file-')) {
-    const type = icon.replace('sidebar-file-', '');
-    switch (type) {
-      case 'md':
-      case 'vue:md':
-        return 'mdi/language-markdown';
-      case 'vue':
-        return 'mdi/vuejs';
-      case 'svelte':
-        return 'file-icons/svelte';
-      case 'js':
-      case 'jsx':
-        return 'mdi/language-javascript';
-      case 'ts':
-      case 'tsx':
-        return 'mdi/language-typescript';
-      case 'html':
-        return 'mdi/language-html5';
-      case 'svg':
-        return 'mdi/svg';
-      case 'png':
-      case 'jpeg':
-        return 'mdi/file-image';
-      case 'mp4':
-        return 'mdi/file-video';
-      default:
-        return 'mdi/file';
-    }
-  }
-
-  return null;
-};
-
-export function iconsPlugin(options: DefaultThemeIconsOptions = {}): Plugin {
-  const { vitebook: userIconResolver, ...iconsOptions } = options;
-
-  const iconsPlugin = Icons({
-    ...iconsOptions,
-    compiler: 'vue3'
-  });
-
+export function iconsPlugin(resolver?: DefaultThemeIconsOptions): Plugin {
   return {
-    name: 'vitebook/plugin-icons',
-    enforce: 'pre',
-    config() {
-      return {
-        resolve: {
-          alias: {
-            [VIRTUAL_ICONS_MODULE_ID]: '/' + VIRTUAL_ICONS_MODULE_ID
-          }
+    name: '@vitebook/theme-default/icons',
+    async resolveId(id) {
+      if (VIRTUAL_VITEBOOK_ICONS_RE.test(id)) {
+        if (resolver === false) {
+          return VIRTUAL_EMPTY_ICON_MODULE_ID;
         }
-      };
-    },
-    async resolveId(id, ...context) {
-      if (vitebookIconPathRE.test(id)) {
+
         id = removeLeadingSlash(id);
+        const name = id.replace(VIRTUAL_VITEBOOK_ICONS_RE, '') as VitebookIcon;
 
-        const name = id.replace(vitebookIconPathRE, '') as VitebookIcon;
+        const icon = isFunction(resolver)
+          ? await resolver(name)
+          : resolver?.[name] ?? getIconFilePath(name);
 
-        if (userIconResolver === false) {
+        if (!icon) {
           return VIRTUAL_EMPTY_ICON_MODULE_ID;
         }
 
-        const icon = isFunction(userIconResolver)
-          ? await userIconResolver(name)
-          : userIconResolver?.[name] ?? (await defaultIconResolver(name));
-
-        if (icon === false) {
-          return VIRTUAL_EMPTY_ICON_MODULE_ID;
-        }
-
-        if (icon) {
-          return iconsPlugin.resolveId?.call(
-            this,
-            `virtual:icons/${icon}`,
-            ...context
-          );
-        }
+        // Appending `?raw&vue` will ensure `@vitebook/client` will transform SVG into Vue component.
+        return `${icon}?raw&vue`;
       }
 
       return null;
     },
-    load(id, ...context) {
+    async load(id) {
       if (id === VIRTUAL_EMPTY_ICON_MODULE_ID) {
         return "export default () => ''";
       }
 
-      return iconsPlugin.load?.call(this, id, ...context);
+      return null;
     }
   };
+}
+
+function getIconFilePath(icon: VitebookIcon): string | false {
+  if (icon.startsWith('home-feature-')) {
+    return path.resolve(ICONS_DIR, 'home-feature.svg');
+  }
+
+  if (icon.startsWith('sidebar-file-')) {
+    const type = icon.replace('sidebar-file-', '');
+
+    if (/(md|:md)$/.test(type)) {
+      return path.resolve(SIDEBAR_ICONS_DIR, 'md.svg');
+    }
+
+    if (/(js|jsx)/.test(type)) {
+      return path.resolve(SIDEBAR_ICONS_DIR, 'js.svg');
+    }
+
+    if (/(ts|tsx)/.test(type)) {
+      return path.resolve(SIDEBAR_ICONS_DIR, 'ts.svg');
+    }
+
+    if (/(png|jpeg)/.test(type)) {
+      return path.resolve(SIDEBAR_ICONS_DIR, 'image.svg');
+    }
+
+    if (/mp4/.test(type)) {
+      return path.resolve(SIDEBAR_ICONS_DIR, 'video.svg');
+    }
+
+    const iconPath = path.resolve(SIDEBAR_ICONS_DIR, `${type}.svg`);
+    return fs.existsSync(iconPath) ? iconPath : FILE_ICON_PATH;
+  }
+
+  const iconPath = path.resolve(ICONS_DIR, `${icon}.svg`);
+  return fs.existsSync(iconPath) ? iconPath : false;
 }

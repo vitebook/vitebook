@@ -8,10 +8,10 @@ const fs = fsExtra['default'] as typeof fsExtra;
 export { fs, globby };
 
 export const isTypeScriptFile = (filePath: string): boolean =>
-  /\.(ts|tsx)$/.test(filePath);
+  /\.(ts|tsx)($|\?)/.test(filePath);
 
 export const isCommonJsFile = (filePath: string): boolean =>
-  /\.cjs$/.test(filePath);
+  /\.cjs($|\?)/.test(filePath);
 
 /**
  * vitejs/vite#610 when hot-reloading files, if we read immediately on the file change event

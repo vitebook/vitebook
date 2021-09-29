@@ -20,3 +20,27 @@ const footerText = computed(
     </div>
   </footer>
 </template>
+
+<style>
+.home__footer {
+  margin: 0 auto;
+  max-width: 960px;
+}
+
+.home__footer__container {
+  padding: 4rem 1.5rem 5rem;
+}
+
+.home__footer-text {
+  margin: 0;
+  text-align: center;
+  line-height: 1.4;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 768px) {
+  .home__footer__container {
+    padding: 6rem 1.5rem 4rem;
+  }
+}
+</style>

@@ -1,5 +1,7 @@
 # Pudet Aquilone suggerit
 
+[[toc]]
+
 ## Fidumque me fortis ratione monstravit
 
 Lorem markdownum rapiunt adhuc arces adfectu virili adplicat quondam angustum
@@ -52,3 +54,7 @@ incurvata venit, aliquam potes Achaemenias. Haud sic quod fiunt nivea, est aras
 instar illa Minos instruitur Panopesque funesto. Nec per comitant quos sine
 damnatus, pectus ictu tales uti eat urbis dederunt corpore demens positisque
 umida.
+
+## `code`
+
+Yep.

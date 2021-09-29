@@ -1,7 +1,7 @@
 import type { MarkdownPlugin } from '@vitebook/plugin-markdown/node';
 import { getHighlighter, HighlighterOptions } from 'shiki';
 
-export const PLUGIN_NAME = 'vitebook/plugin-markdown-shiki' as const;
+export const PLUGIN_NAME = '@vitebook/plugin-markdown-shiki' as const;
 
 export type ShikiPluginOptions = Pick<HighlighterOptions, 'theme' | 'langs'>;
 

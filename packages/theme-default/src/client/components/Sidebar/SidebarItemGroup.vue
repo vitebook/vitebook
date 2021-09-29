@@ -65,3 +65,16 @@ function onToggle() {
     </ul>
   </li>
 </template>
+
+<style>
+.sidebar__body .nav-item__menu,
+.sidebar-item__menu {
+  display: none !important;
+  margin-left: 1rem !important;
+}
+
+.sidebar__body .nav-item.open > .nav-item__menu,
+.sidebar-item.open > .sidebar-item__menu {
+  display: block !important;
+}
+</style>

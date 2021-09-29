@@ -10,13 +10,13 @@ import {
   parseMarkdown
 } from './parser/index';
 
-export const PLUGIN_NAME = 'vitebook/plugin-markdown' as const;
+export const PLUGIN_NAME = '@vitebook/plugin-markdown' as const;
 
 export type MarkdownPluginOptions = MarkdownParserOptions & {
   /**
    * Filter out which files to be included as markdown pages.
    *
-   * @default /\.md$/
+   * @default /\.md($|\?)/
    */
   include?: FilterPattern;
 
@@ -28,7 +28,7 @@ export type MarkdownPluginOptions = MarkdownParserOptions & {
   exclude?: FilterPattern;
 };
 
-const DEFAULT_INCLUDE = /\.md$/;
+const DEFAULT_INCLUDE = /\.md($|\?)/;
 
 export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
   let app: App;
@@ -67,9 +67,9 @@ export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
         files.delete(page.filePath);
       });
     },
-    transform(source, id) {
+    transform(code, id) {
       if (files.has(id)) {
-        const result = parseMarkdown(app, parser, source, id);
+        const result = parseMarkdown(app, parser, code, id);
         return loadParsedMarkdown(result);
       }
 

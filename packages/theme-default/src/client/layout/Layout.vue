@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { usePage } from '@vitebook/client';
 import { useMediaQuery } from '@vueuse/core';
 import { defineAsyncComponent, onBeforeMount, watch, watchEffect } from 'vue';
 
-import Navbar from '../components/Navbar/Navbar.vue';
 import NavbarTitle from '../components/Navbar/NavbarTitle.vue';
 import Scrim from '../components/Scrim/Scrim.vue';
 import { useIsScrimActive } from '../components/Scrim/useScrim';
@@ -20,7 +18,6 @@ import Page from './Page.vue';
 
 initDarkMode();
 
-const page = usePage();
 const theme = useLocalizedThemeConfig();
 const isSidebarOpen = useIsSidebarOpen();
 const isScrimActive = useIsScrimActive();
@@ -51,12 +48,8 @@ watchEffect(() => {
   }
 });
 
-const MarkdownFooter = defineAsyncComponent(
-  () => import('../components/markdown/MarkdownFooter.vue')
-);
-
-const MarkdownFloatingToc = defineAsyncComponent(
-  () => import('../components/markdown/MarkdownFloatingToc.vue')
+const Navbar = defineAsyncComponent(
+  () => import('../components/Navbar/Navbar.vue')
 );
 </script>
 
@@ -106,15 +99,14 @@ const MarkdownFloatingToc = defineAsyncComponent(
 
         <template #end>
           <slot name="page-end" />
-
-          <MarkdownFooter v-if="page?.type.includes('md')" />
         </template>
       </Page>
     </slot>
 
     <slot name="root" />
 
-    <MarkdownFloatingToc v-if="page?.type.includes('md')" />
+    <!-- Portal target. -->
+    <div id="layout-portal-root"></div>
 
     <slot name="scrim">
       <Scrim
@@ -126,3 +118,66 @@ const MarkdownFloatingToc = defineAsyncComponent(
     </slot>
   </div>
 </template>
+
+<style>
+.theme {
+  display: flex;
+}
+
+html.no-navbar .theme {
+  --vbk--navbar-height: 4rem;
+}
+
+html.no-navbar .navbar-fallback {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  top: 0;
+  left: 0;
+  height: var(--vbk--navbar-height);
+  width: 100%;
+  z-index: var(--vbk--navbar-z-index);
+  background-color: var(--vbk--color-bg-100);
+}
+
+.navbar-fallback.no-sidebar-toggle {
+  padding-left: 1rem;
+}
+
+html.no-navbar .sidebar-toggle {
+  padding-left: 0.75rem;
+}
+
+html.no-navbar.dark .navbar-fallback {
+  background-color: var(--vbk--color-bg-300);
+}
+
+.navbar__theme-switch {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  html.no-navbar.sidebar-open .theme {
+    --vbk--navbar-height: 0;
+  }
+
+  html.no-navbar.sidebar-open .navbar-fallback {
+    display: none;
+  }
+
+  html.no-navbar:not(.sidebar-open) .navbar-fallback {
+    padding-left: 1rem;
+  }
+
+  .navbar__theme-switch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.2rem;
+  }
+
+  .theme .scrim {
+    display: none;
+  }
+}
+</style>

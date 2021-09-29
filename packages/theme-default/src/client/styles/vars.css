@@ -72,7 +72,7 @@
 
   --vbk--color-divider: var(--vbk--color-gray-100);
 
-  --vbk--color-transition-duration: 150ms;
+  --vbk--color-transition-duration: 100ms;
   --vbk--color-transition-timing: ease-in;
   --vbk--color-transition: color var(--vbk--color-transition-duration)
     var(--vbk--color-transition-timing);
@@ -145,7 +145,7 @@
 
   /* Nav Item */
   --vbk--nav-item-color: var(--vbk--color-text);
-  --vbk--nav-item-bg-color: var(--vbk--color-bg-200);
+  --vbk--nav-item-bg-color: var(--vbk--color-bg-100);
 
   --vbk--nav-item-hover-color: unset;
   --vbk--nav-item-hover-bg-color: transparent;

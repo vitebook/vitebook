@@ -25,6 +25,8 @@ html.dark {
   --vbk--page-md-bg-color: var(--vbk--color-bg-400);
 
   --vbk--navbar-bg-color: var(--vbk--color-bg-400);
+  --vbk--nav-item-bg-color: var(--vbk--color-bg-400);
+
   --vbk--sidebar-bg-color: var(--vbk--color-bg-400);
 
   --vbk--scrim-bg-color: var(--vbk--color-bg-100);

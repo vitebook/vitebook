@@ -1,17 +1,22 @@
 <script setup lang="ts">
-import { usePage } from '@vitebook/client';
-
 import MarkdownEditPageLink from './MarkdownEditPageLink.vue';
 import MarkdownLastUpdated from './MarkdownLastUpdated.vue';
 import MarkdownNextAndPrevLinks from './MarkdownNextAndPrevLinks.vue';
-
-const page = usePage();
 </script>
 
 <template>
-  <div v-if="page?.type.includes('md')" class="md-footer">
+  <div class="md-footer">
     <MarkdownNextAndPrevLinks />
     <MarkdownEditPageLink />
     <MarkdownLastUpdated />
   </div>
 </template>
+
+<style>
+.md-footer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 3.5rem;
+}
+</style>
