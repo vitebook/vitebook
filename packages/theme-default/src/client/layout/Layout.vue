@@ -158,7 +158,7 @@ html.no-navbar.dark .navbar-fallback {
 
 @media (min-width: 992px) {
   html.no-navbar.sidebar-open .theme {
-    --vbk--navbar-height: 0;
+    --vbk--navbar-height: 0px;
   }
 
   html.no-navbar.sidebar-open .navbar-fallback {

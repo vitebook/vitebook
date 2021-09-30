@@ -123,6 +123,10 @@ function useAutoSidebarItems(): ComputedRef<Readonly<SidebarItem[]>> {
       }
 
       path.forEach((segment, i) => {
+        if (i === 0 && ensureLeadingSlash(segment) === routeLocale.value) {
+          return;
+        }
+
         const title = toTitleCase(segment.replace('.html', ''));
 
         if (i === path.length - 1) {

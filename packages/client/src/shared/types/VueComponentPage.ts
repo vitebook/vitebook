@@ -1,4 +1,5 @@
 import type {
+  DefaultLoadedPage,
   DefaultPageModule,
   Page as DefaultPage
 } from '@vitebook/core/shared';
@@ -9,6 +10,8 @@ export type VueComponentPage = DefaultPage<VueComponentPageModule> & {
 };
 
 export type VueComponentPageModule = DefaultPageModule<Component>;
+
+export type LoadedVueComponentPage = DefaultLoadedPage<VueComponentPageModule>;
 
 // User config
 export type VuePageConfig = VueComponentPageModule['__pageMeta'];

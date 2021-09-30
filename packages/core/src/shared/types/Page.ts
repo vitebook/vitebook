@@ -2,7 +2,10 @@
 
 import type { PageMeta } from './PageMeta';
 
-export type Page<PageModule extends DefaultPageModule = DefaultPageModule> = {
+export type Page<
+  PageModule extends DefaultPageModule = DefaultPageModule,
+  Context extends PageContext = PageContext
+> = {
   /** Optional page type declared by a plugin to help identify specific pages client-side. */
   type?: string;
   /** Page name. Also used as route name if client-side router supports it. */
@@ -11,8 +14,20 @@ export type Page<PageModule extends DefaultPageModule = DefaultPageModule> = {
   route: string;
   /** System file path relative to `<root>`. */
   rootPath: string;
+  /** Optional page data included by a plugin. */
+  context?: Context;
   /** Page module loader. Used to dynamically import page module client-side. */
   loader: () => Promise<PageModule>;
+};
+
+export type PageContext = Record<string, unknown>;
+
+export type DefaultLoadedPage<
+  PageModule extends DefaultPageModule = DefaultPageModule,
+  Context extends PageContext = PageContext
+> = Page<PageModule, Context> & {
+  meta: NonNullable<PageModule['__type']>;
+  module: PageModule;
 };
 
 export type Pages<PageModule extends DefaultPageModule = DefaultPageModule> =
@@ -22,8 +37,16 @@ export type DefaultPageModule<
   DefaultExport = unknown,
   PageMetaExport = PageMeta
 > = {
+  /** type def (doesn't actually exist). */
+  __type?: PageMetaExport;
+
   default: DefaultExport;
-  __pageMeta: PageMetaExport | (() => PageMetaExport | Promise<PageMetaExport>);
+  __pageMeta:
+    | PageMetaExport
+    | ((
+        page: Page,
+        mod: DefaultPageModule
+      ) => PageMetaExport | Promise<PageMetaExport>);
 };
 
 export type VirtualPagesModule = {
@@ -32,7 +55,10 @@ export type VirtualPagesModule = {
 
 // Server
 
-export type ServerPage = Omit<Page, 'loader'> & {
+export type ServerPage<Context extends PageContext = PageContext> = Omit<
+  Page,
+  'loader'
+> & {
   /**
    * Page module id used by the client-side router to dynamically load this page module. If not
    * resolved by a plugin, it'll default to the page file path.
@@ -50,6 +76,12 @@ export type ServerPage = Omit<Page, 'loader'> & {
    * page module when this route is visited.
    */
   route: string;
+
+  /**
+   * Additional data to be included with the page. This will be included in the client-side
+   * response.
+   */
+  context?: Context;
 };
 
 export type ResolvedPage = Partial<ServerPage>;

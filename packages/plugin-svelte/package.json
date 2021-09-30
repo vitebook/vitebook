@@ -1,12 +1,12 @@
 {
-  "name": "@vitebook/plugin-markdown-vue",
+  "name": "@vitebook/plugin-svelte",
   "version": "0.0.0",
   "keywords": [
     "esm",
-    "markdown",
     "plugin",
-    "vitebook",
-    "vue"
+    "storybook",
+    "svelte",
+    "vitebook"
   ],
   "bugs": {
     "url": "https://github.com/vitebook/vitebook/issues"
@@ -14,7 +14,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/vitebook/vitebook.git",
-    "directory": "packages/plugin-markdown-vue"
+    "directory": "packages/plugin-svelte"
   },
   "license": "MIT",
   "contributors": [
@@ -23,18 +23,18 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
+    "./client/*": "./src/client/*",
     "./node": "./src/node/index.ts",
-    "./node/*": "./src/node/*",
     "./shared": "./src/shared/index.ts",
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
+      "client/*": [
+        "src/client/*"
+      ],
       "node": [
         "src/node/index.ts"
-      ],
-      "node/*": [
-        "src/node/*"
       ],
       "shared": [
         "src/shared/index.ts"
@@ -46,14 +46,10 @@
   ],
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
-    "@vitebook/plugin-markdown": "*"
-  },
-  "devDependencies": {
-    "vue": "^3.2.1"
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.26"
   },
   "peerDependencies": {
-    "@vitejs/plugin-vue": "^1.6.0",
-    "vue": "^3.2.1"
+    "@vitebook/client": "*"
   },
   "publishConfig": {
     "access": "public"

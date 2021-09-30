@@ -41,6 +41,8 @@ export type ClientPluginOptions = {
 
   /**
    * `@vitejs/plugin-vue` plugin options.
+   *
+   * @link https://github.com/vitejs/vite/tree/main/packages/plugin-vue
    */
   vue?: VuePluginOptions;
 };
@@ -194,7 +196,9 @@ async function attemptToAutoLoadDefaultTheme(app: App) {
         outdir: app.dirs.tmp.path
       });
 
-      app.plugins.push(mod.defaultThemePlugin());
+      const plugin = mod.defaultThemePlugin();
+      app.plugins.push(plugin);
+      await plugin.configureApp?.(app, app.env);
     } catch (e) {
       //
     }

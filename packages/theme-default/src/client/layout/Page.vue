@@ -27,7 +27,7 @@ async function onAfterEnter() {
   });
 }
 
-const isMarkdownPage = computed(() => page.value?.type.includes('md'));
+const isMarkdownPage = computed(() => page.value?.type?.includes('md'));
 const isMarkdownFloatingTocEnabled = useIsMarkdownFloatingTocEnabled();
 
 const MarkdownFooter = defineAsyncComponent(
@@ -39,7 +39,7 @@ const MarkdownFloatingToc = defineAsyncComponent(
 );
 
 const hasShadowRoot = computed(() =>
-  /^(html|svg|vue)$/.test(page.value?.type ?? '')
+  /^(html|svg|vue|svelte)$/.test(page.value?.type ?? '')
 );
 </script>
 
@@ -83,7 +83,8 @@ const hasShadowRoot = computed(() =>
 
 .page[class~='type-vue'],
 .page[class~='type-html'],
-.page[class~='type-svg'] {
+.page[class~='type-svg'],
+.page[class~='type-svelte'] {
   display: flex;
   width: 100%;
   height: 100%;
@@ -100,12 +101,13 @@ const hasShadowRoot = computed(() =>
   margin: 0 auto;
   max-width: 48rem;
   padding: 0 2rem 4rem;
-  padding-bottom: calc(var(--vbk--navbar-height) * 3.5);
+  padding-bottom: 56vh;
 }
 
 .page[class~='type-vue'] > .page__container,
 .page[class~='type-html'] > .page__container,
-.page[class~='type-svg'] > .page__container {
+.page[class~='type-svg'] > .page__container,
+.page[class~='type-svelte'] > .page__container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -121,7 +123,6 @@ const hasShadowRoot = computed(() =>
   html.no-navbar .page[class~='type-md'] > .page__container,
   html.no-navbar .page[class~='type-vue:md'] > .page__container {
     margin-top: 1.5rem;
-    padding-bottom: 4rem;
   }
 }
 </style>

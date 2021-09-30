@@ -91,7 +91,7 @@ function handleLinkClick(event: Event, navigate: () => void): void {
 .sidebar.icon-colors .sidebar-item.type-jsx svg,
 .sidebar-item.active.type-js svg,
 .sidebar-item.active.type-jsx svg {
-  color: var(--vbk--color-red);
+  color: var(--vbk--color-yellow);
 }
 
 .sidebar.icon-colors .sidebar-item.type-ts svg,

@@ -69,11 +69,13 @@ async function resolvePage(app: App, filePath: string): Promise<void> {
     const plugin = app.plugins[i];
 
     const id = ensureLeadingSlash(path.relative(app.dirs.root.path, filePath));
+    const relativeFilePath = app.dirs.root.relative(filePath);
     const route = filePathToRoute(app, filePath);
 
     const page = await plugin.resolvePage?.({
       id,
       filePath,
+      relativeFilePath,
       route,
       read: () => readRecentlyChangedFile(filePath),
       env: app.env
@@ -117,7 +119,7 @@ function pageCouldNotBeResolved(app: App, filePath: string) {
         path.basename(app.dirs.root.path) +
           '/' +
           path.relative(app.dirs.root.path, filePath)
-      )}`
+      )}\n`
     )
   );
 

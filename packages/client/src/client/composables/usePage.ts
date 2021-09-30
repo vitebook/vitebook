@@ -28,16 +28,19 @@ export function setPageRef(loadedPage?: LoadedPage): void {
 }
 
 export async function loadPage(page: Page): Promise<Component> {
-  const data = await page.loader();
-  const component = data.default;
-  const meta = isFunction(data.__pageMeta)
-    ? await data.__pageMeta()
-    : data.__pageMeta;
+  const mod = await page.loader();
 
-  const loadedPage = { ...page, meta: meta ?? {} } as LoadedPage;
+  const component = mod.default;
+
+  const meta = isFunction(mod.__pageMeta)
+    ? await mod.__pageMeta(page, mod)
+    : mod.__pageMeta;
+
+  const loadedPage = { ...page, module: mod, meta: meta ?? {} } as LoadedPage;
   if (loadedPage) loadedPageCache.set(page, loadedPage);
 
   setPageRef(loadedPage);
+
   return component;
 }
 

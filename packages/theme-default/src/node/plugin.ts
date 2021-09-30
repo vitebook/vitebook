@@ -17,6 +17,7 @@ export function defaultThemePlugin(
 ): Plugin {
   return {
     name: PLUGIN_NAME,
+    enforce: 'pre',
     async configureApp(app) {
       if (options.iconify) {
         const plugin = await loadIconifyPlugin(app, options.iconify);

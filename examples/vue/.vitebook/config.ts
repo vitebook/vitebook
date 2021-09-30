@@ -4,13 +4,15 @@ import { vueMarkdownPlugin } from '@vitebook/plugin-markdown-vue/node';
 import { shikiMarkdownPlugin } from '@vitebook/plugin-markdown-shiki/node';
 // import { prismjsMarkdownPlugin } from '@vitebook/plugin-markdown-prismjs/node';
 import type { DefaultThemeConfig } from '@vitebook/theme-default/node';
+import { sveltePlugin } from '@vitebook/plugin-svelte/node';
 
 export default defineConfig<DefaultThemeConfig>({
-  include: ['src/**/*.{html,md,svg,vue}'],
+  include: ['src/**/*.{html,md,svg,vue,svelte}'],
   plugins: [
     shikiMarkdownPlugin(),
     // prismjsMarkdownPlugin(),
     vueMarkdownPlugin(),
+    sveltePlugin(),
     clientPlugin({
       include: withIncludeMarkdown()
     })

@@ -79,6 +79,8 @@ export type ResolvePageContext = {
   id: string;
   /** Absolute system file path of page file. */
   filePath: string;
+  /** System file path to page file relative to `<rootDir>` .  */
+  relativeFilePath: string;
   /** Safely read file content (avoid empty buffer issues). */
   read: () => Promise<string>;
   /**

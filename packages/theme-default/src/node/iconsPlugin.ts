@@ -31,6 +31,7 @@ export type DefaultThemeIconsOptions = false | IconsRecord | IconsResolver;
 export function iconsPlugin(resolver?: DefaultThemeIconsOptions): Plugin {
   return {
     name: '@vitebook/theme-default/icons',
+    enforce: 'pre',
     async resolveId(id) {
       if (VIRTUAL_VITEBOOK_ICONS_RE.test(id)) {
         if (resolver === false) {
