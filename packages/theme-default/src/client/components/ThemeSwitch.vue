@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import DarkIcon from ':virtual/vitebook/icons/theme-switch-dark';
-import LightIcon from ':virtual/vitebook/icons/theme-switch-light';
+import DarkIcon from ':virtual/vitebook/icons/theme-switch-dark?raw&vue';
+import LightIcon from ':virtual/vitebook/icons/theme-switch-light?raw&vue';
 
 import { defaultThemeLocaleOptions } from '../../shared';
 import { useDarkMode } from '../composables/useDarkMode';

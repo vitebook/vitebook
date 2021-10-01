@@ -207,6 +207,8 @@ h5 {
  *-------------------------------------------------------------------------------------------*/
 
 a {
+  display: inline-flex;
+  align-items: center;
   font-weight: 500;
   color: var(--vbk--color-primary);
   text-decoration: none;

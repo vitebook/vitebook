@@ -23,6 +23,7 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
+    "./client": "./src/client/index.ts",
     "./client/*": "./src/client/*",
     "./node": "./src/node/index.ts",
     "./shared": "./src/shared/index.ts",
@@ -30,6 +31,9 @@
   },
   "typesVersions": {
     "*": {
+      "client": [
+        "src/client/index.ts"
+      ],
       "client/*": [
         "src/client/*"
       ],
@@ -47,6 +51,9 @@
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.26"
+  },
+  "devDependencies": {
+    "@vitebook/client": "*"
   },
   "peerDependencies": {
     "@vitebook/client": "*"

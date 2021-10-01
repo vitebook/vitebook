@@ -52,16 +52,16 @@ export function parseMarkdownToVue(
   return result;
 }
 
-const scriptRE = /<\/script>/;
-const scriptSetupRE = /<\s*script[^>]*\bsetup\b[^>]*/;
-const defaultExportRE = /((?:^|\n|;)\s*)export(\s*)default/;
-const namedDefaultExportRE = /((?:^|\n|;)\s*)export(.+)as(\s*)default/;
+const CLOSING_SCRIPT_RE = /<\/script>/;
+const SCRIPT_SETUP_RE = /<\s*script[^>]*\bsetup\b[^>]*/;
+const DEFAULT_EXPORT_RE = /((?:^|\n|;)\s*)export(\s*)default/;
+const NAMED_DEFAULT_EXPORT_RE = /((?:^|\n|;)\s*)export(.+)as(\s*)default/;
 
 function buildMetaExport(tags: string[], meta: MarkdownPageMeta): string[] {
-  const code = `\nexport const __pageMeta = ${prettyJsonStr(meta)}`;
+  const code = `\nexport const __pageMeta = ${prettyJsonStr(meta)};\n`;
 
   const existingScriptIndex = tags.findIndex((tag) => {
-    return scriptRE.test(tag) && !scriptSetupRE.test(tag);
+    return CLOSING_SCRIPT_RE.test(tag) && !SCRIPT_SETUP_RE.test(tag);
   });
 
   if (existingScriptIndex > -1) {
@@ -69,10 +69,10 @@ function buildMetaExport(tags: string[], meta: MarkdownPageMeta): string[] {
     // User has `<script>` tag inside markdown.
     // If it doesn't have `export default` it will error out on build.
     const hasDefaultExport =
-      defaultExportRE.test(tagSrc) || namedDefaultExportRE.test(tagSrc);
+      DEFAULT_EXPORT_RE.test(tagSrc) || NAMED_DEFAULT_EXPORT_RE.test(tagSrc);
 
     tags[existingScriptIndex] = tagSrc.replace(
-      scriptRE,
+      CLOSING_SCRIPT_RE,
       code + (hasDefaultExport ? `` : `\nexport default{}\n`) + `</script>`
     );
   } else {

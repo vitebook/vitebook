@@ -2,7 +2,7 @@
 import { useMarkdownPageMeta, usePage } from '@vitebook/client';
 import { computed } from 'vue';
 
-import EditPageIcon from ':virtual/vitebook/icons/edit-page';
+import EditPageIcon from ':virtual/vitebook/icons/edit-page?raw&vue';
 
 import { defaultThemeLocaleOptions } from '../..';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';

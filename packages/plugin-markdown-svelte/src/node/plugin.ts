@@ -1,6 +1,7 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import type { App, Plugin } from '@vitebook/core/node';
 import { logger } from '@vitebook/core/node/utils';
+import { ensureLeadingSlash } from '@vitebook/core/shared';
 import type {
   MarkdownParser,
   MarkdownPlugin
@@ -10,21 +11,21 @@ import kleur from 'kleur';
 import {
   createMarkdownParser,
   MarkdownParserOptions,
-  parseMarkdownToVue
+  parseMarkdownToSvelte
 } from './parser/index';
 
-export const PLUGIN_NAME = '@vitebook/plugin-markdown-vue' as const;
+export const PLUGIN_NAME = '@vitebook/plugin-markdown-svelte' as const;
 
-export type VueMarkdownPluginOptions = MarkdownParserOptions & {
+export type SvelteMarkdownPluginOptions = MarkdownParserOptions & {
   /**
-   * Filter out which files to be included as vue markdown pages.
+   * Filter out which files to be included as svelte markdown pages.
    *
    * @default /\.md($|\?)/
    */
   include?: FilterPattern;
 
   /**
-   * Filter out which files to _not_ be included as vue markdown pages.
+   * Filter out which files to _not_ be included as svelte markdown pages.
    *
    * @default undefined
    */
@@ -33,8 +34,8 @@ export type VueMarkdownPluginOptions = MarkdownParserOptions & {
 
 const DEFAULT_INCLUDE_RE = /\.md($|\?)/;
 
-export function vueMarkdownPlugin(
-  options: VueMarkdownPluginOptions = {}
+export function svelteMarkdownPlugin(
+  options: SvelteMarkdownPluginOptions = {}
 ): Plugin {
   let app: App;
   let parser: MarkdownParser;
@@ -48,7 +49,7 @@ export function vueMarkdownPlugin(
   /** Page system file paths. */
   const files = new Set<string>();
 
-  let vuePlugin: Plugin;
+  let sveltePlugin: Plugin;
 
   return {
     name: PLUGIN_NAME,
@@ -61,15 +62,15 @@ export function vueMarkdownPlugin(
       app = _app;
       parser = await createMarkdownParser(parserOptions);
 
-      vuePlugin = _app.plugins.find(
-        (plugin) => plugin.name === 'vite:vue'
+      sveltePlugin = _app.plugins.find(
+        (plugin) => plugin.name === 'vite-plugin-svelte'
       ) as Plugin;
 
-      if (!vuePlugin) {
+      if (!sveltePlugin) {
         throw logger.createError(
           `${kleur.bold(
-            '@vitebook/plugin-markdown-vue'
-          )} requires the ${kleur.bold('@vitebook/client')} plugin.`
+            '@vitebook/plugin-markdown-svelte'
+          )} requires the ${kleur.bold('@vitebook/plugin-svelte')} plugin.`
         );
       }
 
@@ -78,11 +79,15 @@ export function vueMarkdownPlugin(
         await mdPlugin.configureMarkdownParser?.(parser);
       }
     },
-    async resolvePage({ filePath }) {
+    async resolvePage({ filePath, relativeFilePath }) {
       if (filter(filePath)) {
         files.add(filePath);
         return {
-          type: 'vue:md'
+          id: '@vitebook/plugin-svelte/client/SvelteAdapter.vue',
+          type: 'svelte:md',
+          context: {
+            loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`
+          }
         };
       }
 
@@ -95,7 +100,7 @@ export function vueMarkdownPlugin(
     },
     transform(code, id) {
       if (files.has(id)) {
-        const { component } = parseMarkdownToVue(app, parser, code, id, {
+        const { component } = parseMarkdownToSvelte(app, parser, code, id, {
           escapeConstants: isBuild,
           define
         });
@@ -108,16 +113,22 @@ export function vueMarkdownPlugin(
     async handleHotUpdate(ctx) {
       const { file, read } = ctx;
 
-      // Hot reload `.md` files as `.vue` files.
+      // Hot reload `.md` files as `.svelte` files.
       if (files.has(file)) {
         const content = await read();
 
-        const { component } = parseMarkdownToVue(app, parser, content, file, {
-          escapeConstants: isBuild,
-          define
-        });
+        const { component } = parseMarkdownToSvelte(
+          app,
+          parser,
+          content,
+          file,
+          {
+            escapeConstants: isBuild,
+            define
+          }
+        );
 
-        return vuePlugin.handleHotUpdate?.({
+        return sveltePlugin.handleHotUpdate?.({
           ...ctx,
           read: () => component
         });

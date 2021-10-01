@@ -1,6 +1,6 @@
 import type { Plugin } from '@vitebook/core/node';
 import { esmRequire, fs, path } from '@vitebook/core/node/utils';
-import { isFunction, removeLeadingSlash } from '@vitebook/core/shared';
+import { isFunction } from '@vitebook/core/shared';
 
 import {
   VIRTUAL_EMPTY_ICON_MODULE_ID,
@@ -28,36 +28,43 @@ export type IconsResolver = (
 
 export type DefaultThemeIconsOptions = false | IconsRecord | IconsResolver;
 
+const RAW_VUE_ID_RE = /(\?raw&vue|&raw&vue)/;
+
 export function iconsPlugin(resolver?: DefaultThemeIconsOptions): Plugin {
   return {
     name: '@vitebook/theme-default/icons',
     enforce: 'pre',
     async resolveId(id) {
-      if (VIRTUAL_VITEBOOK_ICONS_RE.test(id)) {
-        if (resolver === false) {
-          return VIRTUAL_EMPTY_ICON_MODULE_ID;
-        }
+      const match = id.match(VIRTUAL_VITEBOOK_ICONS_RE);
 
-        id = removeLeadingSlash(id);
-        const name = id.replace(VIRTUAL_VITEBOOK_ICONS_RE, '') as VitebookIcon;
+      if (match) {
+        const name = match[1] as VitebookIcon;
+        const qs = match[2];
+
+        if (resolver === false) {
+          return VIRTUAL_EMPTY_ICON_MODULE_ID + qs;
+        }
 
         const icon = isFunction(resolver)
           ? await resolver(name)
           : resolver?.[name] ?? getIconFilePath(name);
 
         if (!icon) {
-          return VIRTUAL_EMPTY_ICON_MODULE_ID;
+          return VIRTUAL_EMPTY_ICON_MODULE_ID + qs;
         }
 
-        // Appending `?raw&vue` will ensure `@vitebook/client` will transform SVG into Vue component.
-        return `${icon}?raw&vue`;
+        return `${icon}${qs}`;
       }
 
       return null;
     },
     async load(id) {
-      if (id === VIRTUAL_EMPTY_ICON_MODULE_ID) {
-        return "export default () => ''";
+      if (id.startsWith(VIRTUAL_EMPTY_ICON_MODULE_ID)) {
+        if (RAW_VUE_ID_RE.test(id)) {
+          return "export default () => ''";
+        } else {
+          return '';
+        }
       }
 
       return null;

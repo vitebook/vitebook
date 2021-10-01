@@ -16,7 +16,7 @@ const type = computed(() => propsRef.item.value.type);
 const { props: linkProps, isExternal } = useNavItemLink(propsRef.item);
 
 const Icon = useDynamicAsyncComponent(
-  computed(() => `/:virtual/vitebook/icons/sidebar-file-${type.value}`)
+  computed(() => `/:virtual/vitebook/icons/sidebar-file-${type.value}?raw&vue`)
 );
 
 function preventClick(event: Event) {

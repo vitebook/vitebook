@@ -4,7 +4,7 @@ import { useMediaQuery } from '@vueuse/core';
 import { computed, onMounted, onUpdated, ref, toRefs, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
-import MenuCaretIcon from ':virtual/vitebook/icons/menu-caret';
+import MenuCaretIcon from ':virtual/vitebook/icons/menu-caret?raw&vue';
 
 import type { NavItemWithMenu } from '../../../shared';
 import NavItemLink from './NavItemLink.vue';

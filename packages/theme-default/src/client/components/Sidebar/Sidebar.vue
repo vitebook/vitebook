@@ -3,7 +3,7 @@ import { useMediaQuery } from '@vueuse/core';
 import { computed, defineAsyncComponent, ref, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 
-import BackArrowIcon from ':virtual/vitebook/icons/back-arrow';
+import BackArrowIcon from ':virtual/vitebook/icons/back-arrow?raw&vue';
 
 import { defaultThemeLocaleOptions } from '../../../shared';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';

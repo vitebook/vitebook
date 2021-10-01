@@ -1,7 +1,7 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import { Options as SvelteOptions, svelte } from '@sveltejs/vite-plugin-svelte';
 import type { Plugin } from '@vitebook/core/node';
-import { ensureLeadingSlash } from '@vitebook/core/shared';
+import { ensureLeadingSlash, isArray } from '@vitebook/core/shared';
 
 import type { ResolvedSvelteServerPage } from '../shared';
 
@@ -30,15 +30,26 @@ export type SveltePluginOptions = {
   svelte?: SvelteOptions;
 };
 
-const DEFAULT_INCLUDE = /\.svelte($|\?)/;
+const DEFAULT_INCLUDE_RE = /\.svelte($|\?)/;
+const MARKDOWN_ID_RE = /\.md($|\?)/;
+
+export const withIncludeMarkdown = (
+  include: FilterPattern = DEFAULT_INCLUDE_RE
+): FilterPattern => [
+  ...(isArray(include) ? (include as string[]) : [include as string]),
+  MARKDOWN_ID_RE
+];
 
 export function sveltePlugin(options: SveltePluginOptions = {}): Plugin[] {
   const filter = createFilter(
-    options.include ?? DEFAULT_INCLUDE,
+    options.include ?? DEFAULT_INCLUDE_RE,
     options.exclude
   );
 
-  const sveltePlugin = svelte(options.svelte);
+  const sveltePlugin = svelte({
+    ...options.svelte,
+    include: options.svelte?.include ?? (options.include as string[])
+  });
 
   return [
     {

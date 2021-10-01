@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUpdated, ref } from 'vue';
 
-import FolderClosedIcon from ':virtual/vitebook/icons/sidebar-folder-closed';
-import FolderOpenIcon from ':virtual/vitebook/icons/sidebar-folder-open';
+import FolderClosedIcon from ':virtual/vitebook/icons/sidebar-folder-closed?raw&vue';
+import FolderOpenIcon from ':virtual/vitebook/icons/sidebar-folder-open?raw&vue';
 
 import type { SidebarItemGroup } from '../../../shared';
 

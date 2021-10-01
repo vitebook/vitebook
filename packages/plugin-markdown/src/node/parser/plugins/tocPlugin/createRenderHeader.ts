@@ -22,7 +22,7 @@ export const createRenderHeaders = ({
   const linkTagString = htmlEscape(linkTag);
   const linkClassString = linkClass ? ` class="${htmlEscape(linkClass)}` : '';
   const linkTo = (slug: string): string =>
-    linkTag === 'RouterLink' ? ` to="#${slug}"` : ` href="#${slug}"`;
+    linkTag === 'RouterLink' ? ` to="#${slug}" replace` : ` href="#${slug}"`;
 
   const renderHeaders: RenderHeadersFn = (headers) => `\
 <${listTagString}${listClassString}>\

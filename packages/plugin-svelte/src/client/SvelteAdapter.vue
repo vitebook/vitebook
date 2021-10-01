@@ -23,13 +23,19 @@ export const __pageMeta = async (
 import { isFunction, PageMeta } from '@vitebook/core/shared';
 import type { SvelteComponent } from 'svelte';
 import { onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
+import { useRouter } from 'vue-router';
 
 import type { LoadedSveltePage, SveltePage, SveltePageModule } from '../shared';
 import { useSveltePage } from '.';
+import { ROUTER_CONTEXT_KEY } from './context';
 
 const target = ref();
 const page = useSveltePage();
+const router = useRouter();
 const hasMounted = ref(false);
+
+const svelteContext = new Map();
+svelteContext.set(ROUTER_CONTEXT_KEY, router);
 
 let currentComponent: SvelteComponent | undefined;
 
@@ -48,6 +54,7 @@ function mount() {
   if (!CurrentComponentCtor) return;
   currentComponent = new CurrentComponentCtor({
     target: target.value,
+    context: svelteContext,
     hydrate: import.meta.env.PROD
   });
 }
@@ -66,5 +73,7 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div ref="target"></div>
+  <div v-pre>
+    <div ref="target"></div>
+  </div>
 </template>

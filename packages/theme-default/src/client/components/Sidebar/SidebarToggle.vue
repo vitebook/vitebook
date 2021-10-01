@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import MenuIcon from ':virtual/vitebook/icons/menu';
+import MenuIcon from ':virtual/vitebook/icons/menu?raw&vue';
 
 import { defaultThemeLocaleOptions } from '../..';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';

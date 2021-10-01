@@ -81,16 +81,11 @@ const hasShadowRoot = computed(() =>
   width: 100%;
 }
 
-.page[class~='type-md'],
-.page[class~='type-vue:md'],
-.page[class~='type-vue'] {
+.page[class*='md'] {
   background-color: var(--vbk--page-md-bg-color);
 }
 
-.page[class~='type-vue'],
-.page[class~='type-html'],
-.page[class~='type-svg'],
-.page[class~='type-svelte'] {
+.page[class*='type-']:not([class*='md']) {
   display: flex;
   width: 100%;
   height: 100%;
@@ -102,18 +97,14 @@ const hasShadowRoot = computed(() =>
   width: 100%;
 }
 
-.page[class~='type-md'] > .page__container,
-.page[class~='type-vue:md'] > .page__container {
+.page[class*='md'] > .page__container {
   margin: 0 auto;
   max-width: 48rem;
   padding: 0 2rem 4rem;
   padding-bottom: 56vh;
 }
 
-.page[class~='type-vue'] > .page__container,
-.page[class~='type-html'] > .page__container,
-.page[class~='type-svg'] > .page__container,
-.page[class~='type-svelte'] > .page__container {
+.page[class*='type-']:not([class*='md']) > .page__container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -126,8 +117,7 @@ const hasShadowRoot = computed(() =>
     width: auto;
   }
 
-  html.no-navbar .page[class~='type-md'] > .page__container,
-  html.no-navbar .page[class~='type-vue:md'] > .page__container {
+  html.no-navbar .page[class*='md'] > .page__container {
     margin-top: 1.5rem;
   }
 }

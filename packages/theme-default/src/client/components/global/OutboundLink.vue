@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import ExternalLinkIcon from ':virtual/vitebook/icons/external-link';
+import ExternalLinkIcon from ':virtual/vitebook/icons/external-link?raw&vue';
 
 import { defaultThemeLocaleOptions } from '../../../shared';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
@@ -17,7 +17,7 @@ const openInNewWindowText = computed(
 
 <template>
   <span>
-    <ExternalLinkIcon width="15" height="15" />
+    <ExternalLinkIcon />
     <span class="sr-only">{{ openInNewWindowText }}</span>
   </span>
 </template>
