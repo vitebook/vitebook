@@ -1,10 +1,5 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
-import type {
-  App,
-  ClientPlugin,
-  Plugin,
-  PluginOption
-} from '@vitebook/core/node';
+import type { App, ClientPlugin, Plugin } from '@vitebook/core/node';
 import { esmRequire, fs, loadModule, path } from '@vitebook/core/node/utils';
 import { isArray } from '@vitebook/core/shared';
 import createVuePlugin, {
@@ -57,7 +52,7 @@ export const PLUGIN_NAME = '@vitebook/client' as const;
 
 export function clientPlugin(
   options: ClientPluginOptions = {}
-): [ClientPlugin, ...PluginOption[]] {
+): [ClientPlugin, ...Plugin[]] {
   const filter = createFilter(
     options.include ?? DEFAULT_INCLUDE_RE,
     options.exclude
@@ -76,7 +71,7 @@ export function clientPlugin(
       options.vue?.include ??
       (options.include as string[]) ??
       DEFAULT_INCLUDE_RE
-  });
+  }) as Plugin;
 
   return [
     {

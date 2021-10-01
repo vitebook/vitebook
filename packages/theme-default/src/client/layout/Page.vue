@@ -54,12 +54,18 @@ const hasShadowRoot = computed(() =>
         @before-enter="onBeforeEnter"
         @after-enter="onAfterEnter"
       >
-        <PageView :shadow="hasShadowRoot" />
+        <keep-alive>
+          <PageView :shadow="hasShadowRoot" />
+        </keep-alive>
       </Transition>
-      <MarkdownFooter v-if="isMarkdownPage" />
-      <MarkdownFloatingToc
-        v-if="isMarkdownPage && isMarkdownFloatingTocEnabled"
-      />
+      <keep-alive>
+        <MarkdownFooter v-if="isMarkdownPage" />
+      </keep-alive>
+      <keep-alive>
+        <MarkdownFloatingToc
+          v-if="isMarkdownPage && isMarkdownFloatingTocEnabled"
+        />
+      </keep-alive>
       <slot name="end" />
     </div>
   </main>
