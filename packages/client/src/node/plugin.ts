@@ -1,7 +1,6 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import type { App, ClientPlugin, Plugin } from '@vitebook/core/node';
 import { esmRequire, fs, loadModule, path } from '@vitebook/core/node/utils';
-import { isArray } from '@vitebook/core/shared';
 import createVuePlugin, {
   Options as VuePluginOptions
 } from '@vitejs/plugin-vue';
@@ -42,7 +41,6 @@ export type ClientPluginOptions = {
   vue?: VuePluginOptions;
 };
 
-const MARKDOWN_ID_RE = /\.md($|\?)/;
 const SVG_ID_RE = /\.svg/;
 const RAW_ID_RE = /(\?raw&vue|&raw&vue)/;
 
@@ -162,13 +160,6 @@ export function clientPlugin(
 function svgToVue(svg: string): string {
   return `<template>${svg}</template><script>export default {}</script>`;
 }
-
-export const withIncludeMarkdown = (
-  include: FilterPattern = DEFAULT_INCLUDE_RE
-): FilterPattern => [
-  ...(isArray(include) ? (include as string[]) : [include as string]),
-  MARKDOWN_ID_RE
-];
 
 /**
  * Attempt to automatically add default theme plugin if missing.

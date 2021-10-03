@@ -7,9 +7,10 @@ import {
 import {
   customComponentPlugin,
   CustomComponentPluginOptions,
+  escapeCodePlugin,
   hoistTagsPlugin,
   HoistTagsPluginOptions
-} from './plugins/index';
+} from './plugins';
 
 export type MarkdownParserOptions = DefaultMarkdownParserOptions & {
   customComponent?: false | CustomComponentPluginOptions;
@@ -36,6 +37,8 @@ export function createMarkdownParser({
       if (hoistTags !== false) {
         parser.use<HoistTagsPluginOptions>(hoistTagsPlugin, hoistTags);
       }
+
+      parser.use(escapeCodePlugin);
     }
   });
 }

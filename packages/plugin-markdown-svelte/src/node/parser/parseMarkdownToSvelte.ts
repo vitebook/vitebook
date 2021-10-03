@@ -47,7 +47,7 @@ export function parseMarkdownToSvelte(
 
   const component =
     buildMetaExport(mergeDuplicateHoistedTags(hoistedTags), meta).join('\n') +
-    `\n\n${escapeCharsInPre(uncommentTemplateTags(html))}`;
+    `\n\n${uncommentTemplateTags(html)}`;
 
   const result: ParsedMarkdownToVueResult = {
     component,
@@ -101,19 +101,6 @@ const TEMPLATE_TAG_COMMENT_RE = /(<!--&%&\s)|(\s&%&-->)/gim;
 
 function uncommentTemplateTags(source: string) {
   return source.replace(TEMPLATE_TAG_COMMENT_RE, '');
-}
-
-const PRE_RE = />(\{|\}|\s+)<\/span/gim;
-const PRE_SPACES_RE = />\s+<\/span/;
-
-function escapeCharsInPre(source: string) {
-  return source.replace(PRE_RE, (match) => {
-    if (PRE_SPACES_RE.test(match)) {
-      return `>${'&nbsp;'.repeat(match.length - 7)}</span`;
-    }
-
-    return `>${match === '>{</span' ? '&#123;' : '&#125;'}</span`;
-  });
 }
 
 function mergeDuplicateHoistedTags(tags: string[] = []): string[] {

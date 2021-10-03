@@ -11,7 +11,7 @@ import {
   CustomComponentPluginOptions,
   hoistTagsPlugin,
   HoistTagsPluginOptions
-} from './plugins/index';
+} from './plugins';
 
 export type MarkdownParserOptions = DefaultMarkdownParserOptions & {
   code?: false | CodePluginOptions;
@@ -20,8 +20,8 @@ export type MarkdownParserOptions = DefaultMarkdownParserOptions & {
 };
 
 export function createMarkdownParser({
-  customComponent,
   code,
+  customComponent,
   hoistTags,
   ...markdownOptions
 }: MarkdownParserOptions): Promise<MarkdownParser> {
