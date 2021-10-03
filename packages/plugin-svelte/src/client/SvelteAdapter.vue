@@ -1,7 +1,5 @@
 <script lang="ts">
-let CurrentComponentCtor: typeof SvelteComponent | undefined;
-
-const cache = new WeakMap<LoadedSveltePage, typeof SvelteComponent>();
+const cache = new Map<string, typeof SvelteComponent>();
 
 export const __pageMeta = async (
   page: SveltePage,
@@ -9,13 +7,12 @@ export const __pageMeta = async (
 ): Promise<PageMeta> => {
   if (!page.context?.loader) return {};
 
-  const svelteMod = await page.context.loader();
+  const contextMod = await page.context.loader();
+  cache.set(page.route, contextMod.default);
 
-  CurrentComponentCtor = svelteMod.default;
-
-  return isFunction(svelteMod.__pageMeta)
-    ? svelteMod.__pageMeta(page, mod)
-    : svelteMod.__pageMeta;
+  return isFunction(contextMod.__pageMeta)
+    ? contextMod.__pageMeta(page, mod)
+    : contextMod.__pageMeta;
 };
 </script>
 
@@ -25,12 +22,10 @@ import type { SvelteComponent } from 'svelte';
 import { onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 
-import type { LoadedSveltePage, SveltePage, SveltePageModule } from '../shared';
-import { useSveltePage } from '.';
+import type { SveltePage, SveltePageModule } from '../shared';
 import { ROUTER_CONTEXT_KEY } from './context';
 
 const target = ref();
-const page = useSveltePage();
 const router = useRouter();
 const hasMounted = ref(false);
 
@@ -44,31 +39,29 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  currentComponent?.$destroy();
-  currentComponent = undefined;
+  destroy();
+  hasMounted.value = false;
 });
 
-function mount() {
-  currentComponent?.$destroy();
-  currentComponent = undefined;
-  if (!CurrentComponentCtor) return;
-  currentComponent = new CurrentComponentCtor({
+function mount(Component?: typeof SvelteComponent) {
+  if (!Component) return;
+  destroy();
+  currentComponent = new Component({
     target: target.value,
     context: svelteContext,
     hydrate: import.meta.env.PROD
   });
 }
 
+function destroy() {
+  currentComponent?.$destroy();
+  currentComponent = undefined;
+}
+
 watchEffect(() => {
   if (!hasMounted.value) return;
-
-  if (page.value && cache.has(page.value)) {
-    CurrentComponentCtor = cache.get(page.value);
-  } else if (page.value && CurrentComponentCtor) {
-    cache.set(page.value, CurrentComponentCtor);
-  }
-
-  mount();
+  const Component = cache.get(router.currentRoute.value.path);
+  mount(Component);
 });
 </script>
 

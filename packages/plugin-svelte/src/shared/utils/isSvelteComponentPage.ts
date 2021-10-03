@@ -7,5 +7,8 @@ export function isSvelteComponentPage(page?: Page): page is SveltePage {
 }
 
 export function isLoadedSveltePage(page?: Page): page is LoadedSveltePage {
-  return page?.type === 'svelte' && !!(page as LoadedSveltePage).module;
+  return (
+    (page?.type?.startsWith('svelte') ?? false) &&
+    !!(page as LoadedSveltePage).module
+  );
 }
