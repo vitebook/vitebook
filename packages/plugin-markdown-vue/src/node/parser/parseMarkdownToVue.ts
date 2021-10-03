@@ -52,8 +52,8 @@ export function parseMarkdownToVue(
   return result;
 }
 
-const CLOSING_SCRIPT_RE = /<\/script>/;
-const SCRIPT_SETUP_RE = /<\s*script[^>]*\bsetup\b[^>]*/;
+const CLOSING_SCRIPT_TAG_RE = /<\/script>/;
+const SCRIPT_SETUP_TAG_RE = /<\s*script[^>]*\bsetup\b[^>]*/;
 const DEFAULT_EXPORT_RE = /((?:^|\n|;)\s*)export(\s*)default/;
 const NAMED_DEFAULT_EXPORT_RE = /((?:^|\n|;)\s*)export(.+)as(\s*)default/;
 
@@ -61,7 +61,7 @@ function buildMetaExport(tags: string[], meta: MarkdownPageMeta): string[] {
   const code = `\nexport const __pageMeta = ${prettyJsonStr(meta)};\n`;
 
   const existingScriptIndex = tags.findIndex((tag) => {
-    return CLOSING_SCRIPT_RE.test(tag) && !SCRIPT_SETUP_RE.test(tag);
+    return CLOSING_SCRIPT_TAG_RE.test(tag) && !SCRIPT_SETUP_TAG_RE.test(tag);
   });
 
   if (existingScriptIndex > -1) {
@@ -72,7 +72,7 @@ function buildMetaExport(tags: string[], meta: MarkdownPageMeta): string[] {
       DEFAULT_EXPORT_RE.test(tagSrc) || NAMED_DEFAULT_EXPORT_RE.test(tagSrc);
 
     tags[existingScriptIndex] = tagSrc.replace(
-      CLOSING_SCRIPT_RE,
+      CLOSING_SCRIPT_TAG_RE,
       code + (hasDefaultExport ? `` : `\nexport default{}\n`) + `</script>`
     );
   } else {

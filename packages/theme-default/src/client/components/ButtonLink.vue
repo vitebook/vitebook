@@ -49,7 +49,7 @@ function onClick(event: Event) {
   text-decoration: none;
   transition: transform 150ms ease, var(--vbk--color-transition),
     background-color var(--vbk--color-transition-duration)
-      var(--vbk--color-transition-timing);
+      var(--vbk--color-transition-timing) !important;
 }
 
 .button:not(.secondary) {

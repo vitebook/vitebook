@@ -46,7 +46,7 @@ export function parseMarkdownToSvelte(
   const { hoistedTags } = parserEnv as SvelteMarkdownParserEnv;
 
   const component =
-    buildMetaExport(hoistedTags ?? [], meta).join('\n') +
+    buildMetaExport(mergeDuplicateHoistedTags(hoistedTags), meta).join('\n') +
     `\n\n${escapeCharsInPre(uncommentTemplateTags(html))}`;
 
   const result: ParsedMarkdownToVueResult = {
@@ -58,19 +58,25 @@ export function parseMarkdownToSvelte(
   return result;
 }
 
-const CLOSING_SCRIPT_RE = /<\/script>/;
-const SCRIPT_MODULE_RE = /<\s*script[^>]*\scontext="module"\s*[^>]*/;
+const OPENING_SCRIPT_TAG_RE = /<\s*script[^>]*>/;
+const OPENING_STYLE_TAG_RE = /<\s*style[^>]*>/;
+const CLOSING_STYLE_TAG_RE = /<\/style>/;
+const CLOSING_SCRIPT_TAG_RE = /<\/script>/;
+const OPENING_SCRIPT_MODULE_TAG_RE =
+  /<\s*script[^>]*\scontext="module"\s*[^>]*>/;
 const IMPORT_GLOBALS_CODE = `\nimport { RouterLink, OutboundLink } from '@vitebook/plugin-markdown-svelte/client';\n`;
 
 function buildMetaExport(tags: string[], meta: MarkdownPageMeta): string[] {
   const code = `\nexport const __pageMeta = ${prettyJsonStr(meta)};\n`;
 
-  const scriptModuleIndex = tags.findIndex((tag) => SCRIPT_MODULE_RE.test(tag));
+  const scriptModuleIndex = tags.findIndex((tag) =>
+    OPENING_SCRIPT_MODULE_TAG_RE.test(tag)
+  );
 
   if (scriptModuleIndex > -1) {
     const tagSrc = tags[scriptModuleIndex];
     tags[scriptModuleIndex] = tagSrc.replace(
-      CLOSING_SCRIPT_RE,
+      CLOSING_SCRIPT_TAG_RE,
       IMPORT_GLOBALS_CODE + code + `</script>`
     );
   } else {
@@ -108,4 +114,42 @@ function escapeCharsInPre(source: string) {
 
     return `>${match === '>{</span' ? '&#123;' : '&#125;'}</span`;
   });
+}
+
+function mergeDuplicateHoistedTags(tags: string[] = []): string[] {
+  const deduped = new Map();
+
+  const merge = (
+    key: string,
+    tag: string,
+    openingTagRe: RegExp,
+    closingTagRE: RegExp
+  ) => {
+    if (!deduped.has(key)) {
+      deduped.set(key, tag);
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const block = deduped.get(key)!;
+    deduped.set(
+      key,
+      block.replace(closingTagRE, tag.replace(openingTagRe, ''))
+    );
+  };
+
+  tags.forEach((tag) => {
+    if (OPENING_SCRIPT_MODULE_TAG_RE.test(tag)) {
+      merge('module', tag, OPENING_SCRIPT_MODULE_TAG_RE, CLOSING_SCRIPT_TAG_RE);
+    } else if (OPENING_SCRIPT_TAG_RE.test(tag)) {
+      merge('script', tag, OPENING_SCRIPT_TAG_RE, CLOSING_SCRIPT_TAG_RE);
+    } else if (OPENING_STYLE_TAG_RE.test(tag)) {
+      merge('style', tag, OPENING_STYLE_TAG_RE, CLOSING_STYLE_TAG_RE);
+    } else {
+      // Treat unknowns as unique and leave them as-is.
+      deduped.set(Symbol(), tag);
+    }
+  });
+
+  return Array.from(deduped.values());
 }
