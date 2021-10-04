@@ -3,6 +3,7 @@ export * from './ssr.js';
 // types
 export * from './types/HeadConfig.js';
 export * from './types/LocaleConfig.js';
+export * from './types/MarkdownPageMeta.js';
 export * from './types/Page.js';
 export * from './types/PageMeta.js';
 export * from './types/SiteOptions.js';

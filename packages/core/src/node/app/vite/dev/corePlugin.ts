@@ -1,4 +1,5 @@
 import { watch } from 'chokidar';
+import debounce from 'just-debounce-it';
 import kleur from 'kleur';
 import {
   Plugin as VitePlugin,
@@ -6,9 +7,9 @@ import {
   ViteDevServer
 } from 'vite';
 
-import { prettyJsonStr } from '../../../../shared/index.js';
+import { isArray, prettyJsonStr } from '../../../../shared/index.js';
 import { logger } from '../../../utils/logger.js';
-import { resolveRelativePath } from '../../../utils/path.js';
+import { isSubpath, resolveRelativePath } from '../../../utils/path.js';
 import type { App } from '../../App.js';
 import {
   loadPagesVirtualModule,
@@ -17,6 +18,8 @@ import {
 import { resolveApp } from '../../resolveApp.js';
 import { virtualModuleId, virtualModuleRequestPath } from './alias.js';
 import { indexHtmlMiddleware } from './middlewares/indexHtml.js';
+
+let pageChangesPending: Promise<void> | undefined;
 
 export async function corePlugin(app: App): Promise<VitePlugin> {
   let server: ViteDevServer;
@@ -88,7 +91,7 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
 
       return null;
     },
-    load(id) {
+    async load(id) {
       if (id === virtualModuleRequestPath.noop) {
         return `export default function() {};`;
       }
@@ -98,6 +101,7 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
       }
 
       if (id === virtualModuleRequestPath.pages) {
+        await pageChangesPending;
         return loadPagesVirtualModule(app);
       }
 
@@ -137,26 +141,122 @@ function startWatchingPages(app: App, server: ViteDevServer) {
     ignoreInitial: true
   });
 
-  async function handleChange(
-    filePath: string,
-    action: 'add' | 'change' | 'unlink'
-  ): Promise<void> {
-    const previousPages = JSON.stringify(app.pages);
-    const absPath = resolveRelativePath(app.dirs.root.path, filePath);
-    await resolvePages(app, action, [absPath]);
-    if (previousPages !== JSON.stringify(app.pages)) {
+  server.watcher.add(virtualModuleRequestPath.pages);
+
+  let resolvePendingChanges: (() => void) | undefined;
+
+  type ChangedFiles = {
+    filePaths: string | string[];
+    action: 'add' | 'change' | 'unlink';
+  };
+
+  let pendingChanges: ChangedFiles[] = [];
+
+  const resolveNewPages = debounce(async () => {
+    const prevNoOfPages = app.pages.length;
+
+    groupPendingChanges();
+
+    for (const { filePaths, action } of pendingChanges) {
+      const absPaths = (filePaths as string[]).map((filePath) =>
+        resolveRelativePath(app.dirs.root.path, filePath)
+      );
+
+      await resolvePages(app, action, absPaths);
+    }
+
+    pendingChanges = [];
+    resolvePendingChanges?.();
+    pageChangesPending = undefined;
+    resolvePendingChanges = undefined;
+
+    // Server is not aware of new pages being added.
+    if (app.pages.length > prevNoOfPages) {
       server.watcher.emit('change', virtualModuleRequestPath.pages);
     }
+  }, 300);
+
+  async function handleChange(changedFiles: ChangedFiles): Promise<void> {
+    if (!pageChangesPending) {
+      pageChangesPending = new Promise((res) => {
+        resolvePendingChanges = res;
+      });
+    }
+
+    pendingChanges.push(changedFiles);
+    resolveNewPages();
   }
 
   watcher
-    .on('add', (p) => handleChange(p, 'add'))
-    .on('change', (p) => handleChange(p, 'change'))
-    .on('unlink', (p) => handleChange(p, 'unlink'));
+    .on('add', (filePath) =>
+      handleChange({ filePaths: filePath, action: 'add' })
+    )
+    .on('change', (filePath) =>
+      handleChange({ filePaths: filePath, action: 'change' })
+    )
+    .on('unlink', (filePath) =>
+      handleChange({ filePaths: filePath, action: 'unlink' })
+    );
+
+  server.watcher.on('unlinkDir', (dir) => {
+    const filePaths: string[] = [];
+
+    app.pages.forEach((page) => {
+      if (isSubpath(dir, page.filePath)) {
+        filePaths.push(page.filePath);
+      }
+    });
+
+    if (filePaths.length > 0) {
+      handleChange({
+        filePaths,
+        action: 'unlink'
+      });
+    }
+  });
 
   app.disposal.add(() => {
+    resolveNewPages.cancel();
+    pendingChanges = [];
     watcher.close();
   });
+
+  function groupPendingChanges() {
+    const seen = new Set<ChangedFiles>();
+    const changes: ChangedFiles[] = [];
+
+    for (let i = 0; i < pendingChanges.length; i += 1) {
+      const change = pendingChanges[i];
+
+      if (seen.has(change)) continue;
+
+      change.filePaths = isArray(change.filePaths)
+        ? change.filePaths
+        : [change.filePaths];
+
+      let j = i + 1;
+      while (
+        j < pendingChanges.length &&
+        pendingChanges[j].action === change.action
+      ) {
+        const subsequentChange = pendingChanges[j];
+
+        if (isArray(subsequentChange.filePaths)) {
+          change.filePaths.push(...subsequentChange.filePaths);
+        } else {
+          change.filePaths.push(subsequentChange.filePaths);
+        }
+
+        seen.add(subsequentChange);
+
+        j += 1;
+      }
+
+      changes.push(change);
+    }
+
+    pendingChanges = changes;
+  }
 }
 
 async function resolveNewSiteData(app: App) {

@@ -1,5 +1,8 @@
-import type { NavbarItemsConfig } from './navbar.js';
-import type { MultiSidebarItemsConfig, SidebarItemsConfig } from './sidebar.js';
+import type { NavbarItemsConfig } from './NavbarItemsConfig.js';
+import type {
+  MultiSidebarItemsConfig,
+  SidebarItemsConfig
+} from './SidebarItemsConfig.js';
 
 export type DefaultThemeConfig = DefaultThemeLocaleData & {
   /**
@@ -162,14 +165,14 @@ export type DefaultThemeMarkdownLocaleConfig = {
    * Whether the floating table of contents to the right of markdown pages should be enabled by
    * default. This can be configured on a page-by-page basis via the `toc` frontmatter property.
    *
-   * @default true
+   * @default false
    */
   toc?: boolean;
   /**
    * Whether to show edit links at the bottom of documents. When clicked they'll take the user
    * to the respective document in the provided repo.
    *
-   * @default true
+   * @default false
    */
   editLink?: boolean;
   /**
@@ -194,7 +197,7 @@ export type DefaultThemeMarkdownLocaleConfig = {
   /**
    * Enable the last updated timestamp or not.
    *
-   * @default true
+   * @default false
    */
   lastUpdated?: boolean;
   /**
@@ -218,7 +221,7 @@ export type DefaultThemeMarkdownLocaleConfig = {
   /**
    * Whether the next page link at the bottom of markdown pages is enabled.
    *
-   * @default true
+   * @default false
    */
   nextLink?: boolean;
   /**
@@ -351,15 +354,15 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
   },
 
   markdown: {
-    toc: true,
-    prevLink: true,
+    toc: false,
+    prevLink: false,
     prevLinkText: 'Previous',
-    nextLink: true,
+    nextLink: false,
     nextLinkText: 'Next',
-    editLink: true,
+    editLink: false,
     editLinkText: 'Edit this page',
     editLinkPattern: ':repo/edit/:branch/:path',
-    lastUpdated: true,
+    lastUpdated: false,
     lastUpdatedText: 'Last updated on',
     remoteGitRepo: {
       // url: undefined,

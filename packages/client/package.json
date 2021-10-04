@@ -56,14 +56,12 @@
   ],
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
+    "@vitebook/core": "*",
     "@vitejs/plugin-vue": "^1.8.0",
     "quicklink": "^2.2.0",
     "vue": "^3.2.6",
     "vue-router": "^4.0.11",
     "vue-shadow-dom": "^2.0.0"
-  },
-  "peerDependencies": {
-    "@vitebook/core": "*"
   },
   "publishConfig": {
     "access": "public"

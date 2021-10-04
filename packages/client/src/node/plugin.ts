@@ -22,7 +22,7 @@ export type ClientPluginOptions = {
   /**
    * Filter out which files to be included as pages.
    *
-   * @default  /\.(html|svg|vue)($|\?)/
+   * @default  /\.(html|vue)($|\?)/
    */
   include?: FilterPattern;
 
@@ -44,7 +44,7 @@ export type ClientPluginOptions = {
 const SVG_ID_RE = /\.svg/;
 const RAW_ID_RE = /(\?raw&vue|&raw&vue)/;
 
-export const DEFAULT_INCLUDE_RE = /\.(html|svg|vue)($|\?)/;
+export const DEFAULT_INCLUDE_RE = /\.(html|vue)($|\?)/;
 
 export const PLUGIN_NAME = '@vitebook/client' as const;
 

@@ -1,6 +1,6 @@
 import type { PluginWithOptions } from 'markdown-it';
 
-import type { MarkdownHeader } from '../../../../shared/index';
+import type { MarkdownHeader } from '../../../../shared';
 import {
   resolveHeadersFromTokens,
   slugify as slugifyDefault

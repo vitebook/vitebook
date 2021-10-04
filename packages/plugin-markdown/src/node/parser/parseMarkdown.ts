@@ -10,7 +10,6 @@ import matter from 'gray-matter';
 import LRUCache from 'lru-cache';
 import toml from 'toml';
 
-import type { MarkdownPageModule } from '../../shared/index';
 import type {
   MarkdownParser,
   MarkdownParserEnv,
@@ -85,13 +84,14 @@ export function parseMarkdown(
 }
 
 export function loadParsedMarkdown(result: ParsedMarkdownResult): string {
-  const mod: MarkdownPageModule = {
-    default: result.html,
-    __pageMeta: result.meta
-  };
-
   return `
-export const __pageMeta = ${prettyJsonStr(mod.__pageMeta)};
-export default ${mod.default};
+<script>
+export const __pageMeta = ${prettyJsonStr(result.meta)};
+export default {};
+</script>
+
+<template>
+${result.html}
+</template>
   `;
 }

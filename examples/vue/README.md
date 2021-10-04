@@ -1,3 +1,3 @@
 # Vitebook + Vue
 
-⚠️ The `@vitebook/client` package is not ready.
+⚠️ This example is not ready.

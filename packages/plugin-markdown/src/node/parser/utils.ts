@@ -1,7 +1,7 @@
 import { htmlEscape, isFunction } from '@vitebook/core/shared';
 import type Token from 'markdown-it/lib/token';
 
-import type { MarkdownHeader } from '../../shared/index';
+import type { MarkdownHeader } from '../../shared';
 
 /**
  * Resolve headers from `markdown-it` tokens.

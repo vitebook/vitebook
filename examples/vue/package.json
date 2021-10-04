@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "vitebook:dev": "vitebook dev --host",
     "vitebook:build": "vitebook build",
+    "vitebook:dev": "vitebook dev",
     "vitebook:serve": "vitebook serve"
   },
   "dependencies": {
@@ -12,6 +12,8 @@
   },
   "devDependencies": {
     "@vitebook/client": "*",
+    "@vitebook/plugin-markdown-shiki": "*",
+    "@vitebook/plugin-markdown-vue": "*",
     "@vitebook/theme-default": "*"
   }
 }

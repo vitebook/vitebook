@@ -8,7 +8,7 @@ import {
   MarkdownParser,
   MarkdownParserOptions,
   parseMarkdown
-} from './parser/index';
+} from './parser';
 
 export const PLUGIN_NAME = '@vitebook/plugin-markdown' as const;
 

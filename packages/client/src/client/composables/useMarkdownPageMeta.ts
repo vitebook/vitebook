@@ -1,4 +1,4 @@
-import type { MarkdownPageMeta } from '@vitebook/plugin-markdown/shared';
+import type { MarkdownPageMeta } from '@vitebook/core/shared';
 import { computed, ComputedRef, shallowReadonly } from 'vue';
 
 import { usePage } from './usePage';

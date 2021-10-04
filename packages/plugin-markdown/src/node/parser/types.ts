@@ -6,7 +6,7 @@ import {
   MarkdownHeader,
   MarkdownLinks,
   MarkdownPageMeta
-} from '../../shared/index';
+} from '../../shared';
 import type {
   AnchorPluginOptions,
   CodePluginOptions,
@@ -16,7 +16,7 @@ import type {
   ImportCodePluginOptions,
   LinksPluginOptions,
   TocPluginOptions
-} from './plugins/index';
+} from './plugins';
 
 export type MarkdownParser = MarkdownIt;
 

@@ -1,13 +1,6 @@
 import type { Page } from '@vitebook/core/shared';
 
-import type {
-  LoadedSvelteMarkdownPage,
-  SvelteMarkdownPage
-} from './SvelteMarkdownPage';
-
-export function isSvelteMarkdownPage(page?: Page): page is SvelteMarkdownPage {
-  return page?.type === 'svelte:md';
-}
+import type { LoadedSvelteMarkdownPage } from '../types/SvelteMarkdownPage';
 
 export function isLoadedSvelteMarkdownPage(
   page?: Page

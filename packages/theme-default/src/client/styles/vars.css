@@ -18,9 +18,9 @@
    * Typography
    *-------------------------------------------------------------------------------------------*/
 
-  --vbk--font-family-base: 'Open Sans', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans',
-    'Helvetica Neue', sans-serif;
+  --vbk--font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
 
   --vbk--font-family-mono: source-code-pro, Menlo, Monaco, Consolas,
     'Courier New', monospace;

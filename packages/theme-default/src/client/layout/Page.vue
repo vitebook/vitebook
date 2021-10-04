@@ -27,7 +27,7 @@ async function onAfterEnter() {
   });
 }
 
-const isMarkdownPage = computed(() => page.value?.type?.includes('md'));
+const isMarkdownPage = computed(() => page.value?.type?.endsWith('md'));
 const isMarkdownFloatingTocEnabled = useIsMarkdownFloatingTocEnabled();
 
 const MarkdownFooter = defineAsyncComponent(

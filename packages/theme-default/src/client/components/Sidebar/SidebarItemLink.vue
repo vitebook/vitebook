@@ -123,6 +123,10 @@ function handleLinkClick(event: Event, navigate: () => void): void {
   color: var(--vbk--color-red);
 }
 
+.sidebar-item > .sidebar-item__menu-button > svg {
+  color: var(--vbk--color-primary);
+}
+
 html.dark .sidebar-item.active[class*='type'] svg,
 html.dark .sidebar.icon-colors .sidebar-item[class*='type'] svg {
   filter: brightness(140%);

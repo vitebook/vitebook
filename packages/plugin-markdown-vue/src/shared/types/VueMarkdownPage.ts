@@ -1,9 +1,9 @@
 import type {
   DefaultLoadedPage,
   DefaultPageModule,
+  MarkdownPageMeta,
   Page
 } from '@vitebook/core/shared';
-import type { MarkdownPageMeta } from '@vitebook/plugin-markdown/shared';
 import type { Component } from 'vue';
 
 export type VueMarkdownPage = Page<VueMarkdownPageModule> & {
@@ -16,3 +16,10 @@ export type VueMarkdownPageModule = DefaultPageModule<
 >;
 
 export type LoadedVueMarkdownPage = DefaultLoadedPage<VueMarkdownPageModule>;
+
+export type {
+  MarkdownFrontmatter,
+  MarkdownHeader,
+  MarkdownLinks,
+  MarkdownPageMeta
+} from '@vitebook/core/shared';

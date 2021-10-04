@@ -1,2 +1,4 @@
-export * from './MarkdownPage';
-export * from './utils';
+// types
+export * from './types/MarkdownPage';
+// utils
+export * from './utils/isMarkdownPage';

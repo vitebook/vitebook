@@ -23,8 +23,6 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    "./client": "./src/client/index.ts",
-    "./client/*": "./src/client/*",
     "./node": "./src/node/index.ts",
     "./node/*": "./src/node/*",
     "./shared": "./src/shared/index.ts",
@@ -32,12 +30,6 @@
   },
   "typesVersions": {
     "*": {
-      "client": [
-        "src/client/index.ts"
-      ],
-      "client/*": [
-        "src/client/*"
-      ],
       "node": [
         "src/node/index.ts"
       ],

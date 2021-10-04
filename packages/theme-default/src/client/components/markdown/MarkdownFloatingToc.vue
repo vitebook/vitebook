@@ -1,6 +1,5 @@
 <script setup="props" lang="ts">
-import { useMarkdownPageMeta } from '@vitebook/client';
-import type { MarkdownHeader } from '@vitebook/plugin-markdown/shared';
+import { MarkdownHeader, useMarkdownPageMeta } from '@vitebook/client';
 import {
   computed,
   defineComponent,

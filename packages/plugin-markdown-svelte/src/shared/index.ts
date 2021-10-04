@@ -1,2 +1,5 @@
-export * from './SvelteMarkdownPage';
-export * from './utils';
+// types
+export * from './types/SvelteMarkdownPage';
+// utils
+export * from './utils/isLoadedSvelteMarkdownPage';
+export * from './utils/isSvelteMarkdownPage';

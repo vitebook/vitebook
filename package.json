@@ -14,9 +14,7 @@
     "format:prettier": "npm run lint:prettier -- --write",
     "core:build": "npm run build --workspace=@vitebook/core",
     "core:watch": "npm run build:watch --workspace=@vitebook/core",
-    "vue:dev": "npm run vitebook:dev --workspace=@vitebook/example-vue",
-    "vue:build": "npm run vitebook:build --workspace=@vitebook/example-vue",
-    "vue:serve": "npm run vitebook:serve --workspace=@vitebook/example-vue",
+    "example": "node .scripts/run-example.mjs",
     "release": "echo \"Release command not created. Skipping...\"",
     "typecheck": "tsc -p tsconfig.eslint.json --noEmit",
     "prepare": "husky install"
@@ -31,6 +29,10 @@
     "tabWidth": 2,
     "trailingComma": "none",
     "useTabs": false
+  },
+  "dependencies": {
+    "prompts": "^2.4.1",
+    "upath": "^2.0.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
@@ -54,7 +56,7 @@
     "typescript": "^4.4.2"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=16.10.0"
   },
   "volta": {
     "node": "16.10.0"

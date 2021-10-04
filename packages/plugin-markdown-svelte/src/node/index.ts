@@ -1,2 +1,2 @@
-export * from './parser/index';
+export * from './parser';
 export * from './plugin';

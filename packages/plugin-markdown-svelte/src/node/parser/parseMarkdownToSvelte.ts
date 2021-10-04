@@ -64,7 +64,7 @@ const CLOSING_STYLE_TAG_RE = /<\/style>/;
 const CLOSING_SCRIPT_TAG_RE = /<\/script>/;
 const OPENING_SCRIPT_MODULE_TAG_RE =
   /<\s*script[^>]*\scontext="module"\s*[^>]*>/;
-const IMPORT_GLOBALS_CODE = `\nimport { RouterLink, OutboundLink } from '@vitebook/plugin-markdown-svelte/client';\n`;
+const IMPORT_GLOBALS_CODE = `\nimport { OutboundLink, RouterLink, Spacer as spacer } from '@vitebook/plugin-svelte/client';\n`;
 
 function buildMetaExport(tags: string[], meta: MarkdownPageMeta): string[] {
   const code = `\nexport const __pageMeta = ${prettyJsonStr(meta)};\n`;

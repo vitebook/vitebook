@@ -1,6 +1,6 @@
 import { htmlEscape } from '@vitebook/core/shared';
 
-import type { MarkdownHeader } from '../../../../shared/index';
+import type { MarkdownHeader } from '../../../../shared';
 import type { TocPluginOptions } from './tocPlugin';
 
 type RenderHeadersFn = (headers: MarkdownHeader[]) => string;

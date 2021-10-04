@@ -55,6 +55,12 @@
     "markdown-it-emoji": "^2.0.0",
     "toml": "^3.0.0"
   },
+  "devDependencies": {
+    "@vitebook/client": "*"
+  },
+  "peerDependencies": {
+    "@vitebook/client": "*"
+  },
   "publishConfig": {
     "access": "public"
   }

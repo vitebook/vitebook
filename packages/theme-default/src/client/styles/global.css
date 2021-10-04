@@ -125,7 +125,7 @@ code {
   font-weight: 400;
   font-size: 0.875rem;
   line-height: 1.5rem;
-  letter-spacing: 0.05rem;
+  word-spacing: -0.25rem;
   text-align: left;
   background-color: var(--vbk--color-gray-300);
   border-radius: 0.25rem;

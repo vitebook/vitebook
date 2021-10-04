@@ -1,4 +1,4 @@
-import type { UserConfig as ViteConfig } from 'vite';
+import type { AliasOptions, UserConfig as ViteConfig } from 'vite';
 
 import type { SiteConfig, ThemeConfig } from '../../shared/index.js';
 import { CLIArgs } from '../cli/args.js';
@@ -62,6 +62,20 @@ export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
    * Site-wide options for setting the base language, document title, description, locales, etc.
    */
   site: SiteConfig<Theme>;
+
+  /**
+   * Specifies an object, or an array of objects, which defines aliases used to replace values
+   * in `import` or `require` statements. With either format, the order of the entries is important,
+   * in that the first defined rules are applied first.
+   *
+   * Notes:
+   *
+   * - This is simply an alias for `vite.resolve.alias`.
+   * - This is passed to `@rollup/plugin-alias` as the "entries" field.
+   *
+   * @link https://github.com/rollup/plugins/tree/master/packages/alias#entries
+   */
+  alias?: AliasOptions;
 
   /**
    * Options to pass on to `vite`.

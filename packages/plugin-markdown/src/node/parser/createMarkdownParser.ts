@@ -18,7 +18,7 @@ import {
   LinksPluginOptions,
   tocPlugin,
   TocPluginOptions
-} from './plugins/index';
+} from './plugins';
 import type { MarkdownParser, MarkdownParserOptions } from './types';
 import { slugify } from './utils';
 

@@ -34,6 +34,13 @@ export async function resolveApp(
             args.publicDir ?? config.vite?.publicDir ?? config.publicDir,
           clearScreen: args.clearScreen ?? config.vite?.clearScreen ?? false,
           mode: args.mode ?? config.vite?.mode,
+          resolve: {
+            ...(config.vite?.resolve ?? {}),
+            alias: {
+              ...config.alias,
+              ...(config.vite?.resolve?.alias ?? {})
+            }
+          },
           server: {
             ...(config.vite?.server ?? {}),
             https: args.https ?? config.vite?.server?.https,

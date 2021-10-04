@@ -1,18 +1,21 @@
----
-title: 'Chicken'
-apples: 10
----
+# Button
+
+This is the documentation page for the awesome `<Button />` component.
+
+## Usage
+
+```vue{2}
+<template>
+  <Button />
+</template>
+```
+
+## Example
 
 <script setup>
-  import Button from './Button.vue'
+  import Button from './Button.vue';
 </script>
 
-Lots of content here.
-
-## Subheading 1
-
-This is my button!
-
-<Button />
-
-See it in [action](./button.html)
+<spacer>
+  <Button />
+</spacer>

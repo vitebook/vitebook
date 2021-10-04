@@ -25,3 +25,4 @@ export * from './composables/useUpdateHead';
 export * from './helpers/withBaseUrl';
 // shared
 export * from '../shared';
+export * from '@vitebook/core/shared';

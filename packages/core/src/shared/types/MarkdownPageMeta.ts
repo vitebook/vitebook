@@ -1,16 +1,4 @@
-import type { Page, PageMeta } from '@vitebook/core/shared';
-
-export type MarkdownPage = Page<MarkdownPageModule> & {
-  type: 'md';
-};
-
-export type MarkdownPageModule<
-  PageMetaExport extends MarkdownPageMeta = MarkdownPageMeta
-> = {
-  /** Parsed HTML template from markdown file. */
-  default: string;
-  __pageMeta: PageMetaExport;
-};
+import type { PageMeta } from './PageMeta';
 
 export type MarkdownPageMeta = PageMeta & {
   title: string;

@@ -1,6 +1,6 @@
-// theme config
-export * from './config/config';
-export * from './config/navbar';
-export * from './config/sidebar';
+// types
+export * from './types/DefaultThemeConfig';
+export * from './types/NavbarItemsConfig';
+export * from './types/SidebarItemsConfig';
 // utils
-export * from './utils/sidebar';
+export * from './utils/isSidebarGroup';

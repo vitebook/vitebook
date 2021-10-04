@@ -6,10 +6,11 @@ import './styles/utils.css';
 import './styles/components/code.css';
 import './styles/components/admonition.css';
 
-import { loadPage, Theme, useFirstPage } from '@vitebook/client';
+import { Theme, useFirstPage } from '@vitebook/client';
 import { h, watch } from 'vue';
 
 import OutboundLink from './components/global/OutboundLink.vue';
+import Spacer from './components/global/Spacer.vue';
 import { useLocalizedThemeConfig } from './composables/useLocalizedThemeConfig';
 import {
   routerScrollBehaviour,
@@ -18,7 +19,7 @@ import {
 import NotFound from './layout/404.vue';
 import Layout from './layout/Layout.vue';
 
-export * from '../shared/index';
+export * from '../shared';
 
 const BlankPage = Promise.resolve({
   name: 'Blank',
@@ -41,11 +42,13 @@ const theme: Theme = {
           router.addRoute({
             name: '/',
             path: '/',
+            redirect:
+              theme.value.homePage === false
+                ? firstPage.value?.route
+                : undefined,
             component: () =>
               theme.value.homePage === false
-                ? firstPage.value
-                  ? loadPage(firstPage.value)
-                  : BlankPage
+                ? BlankPage
                 : import('./components/Home/Home.vue')
           });
 
@@ -60,6 +63,8 @@ const theme: Theme = {
     // Unregister the built-in `<OutboundLink>` to avoid warning.
     delete app._context.components.OutboundLink;
     app.component('OutboundLink', OutboundLink);
+
+    app.component('Spacer', Spacer);
 
     // Handle scrollBehavior with transition.
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

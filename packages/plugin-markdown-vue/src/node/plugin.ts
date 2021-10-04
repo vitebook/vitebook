@@ -11,7 +11,7 @@ import {
   createMarkdownParser,
   MarkdownParserOptions,
   parseMarkdownToVue
-} from './parser/index';
+} from './parser';
 
 export const PLUGIN_NAME = '@vitebook/plugin-markdown-vue' as const;
 

@@ -1,6 +1,7 @@
 <script>
-  import { ROUTER_CONTEXT_KEY } from '@vitebook/plugin-svelte/client';
   import { getContext } from 'svelte';
+
+  import { ROUTER_CONTEXT_KEY } from '../context';
 
   export let to = '';
   export let replace = false;

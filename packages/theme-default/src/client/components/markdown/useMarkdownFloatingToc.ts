@@ -12,7 +12,7 @@ export function useIsMarkdownFloatingTocEnabled(): ComputedRef<boolean> {
     () =>
       (pageMeta.value?.headers.length ?? 0) > 1 &&
       ((pageMeta.value?.frontmatter.toc as boolean) ??
-        theme.value.markdown?.toc ??
-        defaultThemeLocaleOptions.markdown.toc)
+        theme.value.markdown?.toc !== false ??
+        defaultThemeLocaleOptions.markdown.toc !== false)
   );
 }

@@ -1,10 +1,12 @@
 <script lang="ts">
-export const __pageMeta = {
+import type { PageMeta } from '@vitebook/client';
+
+export const __pageMeta: PageMeta = {
   title: 'Button',
   description: 'My awesome button.'
 };
 </script>
 
 <template>
-  <button type="button">Click me</button>
+  <button>Click Me</button>
 </template>

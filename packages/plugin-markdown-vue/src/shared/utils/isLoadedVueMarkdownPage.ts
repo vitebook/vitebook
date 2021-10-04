@@ -1,10 +1,6 @@
 import type { Page } from '@vitebook/core/shared';
 
-import type { LoadedVueMarkdownPage, VueMarkdownPage } from './VueMarkdownPage';
-
-export function isVueMarkdownPage(page?: Page): page is VueMarkdownPage {
-  return page?.type === 'vue:md';
-}
+import type { LoadedVueMarkdownPage } from '../types/VueMarkdownPage';
 
 export function isLoadedVueMarkdownPage(
   page?: Page
