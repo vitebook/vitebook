@@ -70,10 +70,8 @@ function handleLinkClick(event: Event, navigate: () => void): void {
   transition: var(--vbk--color-transition);
 }
 
-.sidebar.icon-colors .sidebar-item.type-md svg,
-.sidebar.icon-colors .sidebar-item.type-vue\:md svg,
-.sidebar-item.active.type-md svg,
-.sidebar-item.active.type-vue\:md svg {
+.sidebar.icon-colors .sidebar-item[class*='md'] svg,
+.sidebar-item.active[class*='md'] svg {
   color: var(--vbk--color-blue);
 }
 

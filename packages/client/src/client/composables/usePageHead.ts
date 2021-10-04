@@ -1,7 +1,7 @@
 import { dedupeHead, HeadConfig, SiteLocaleData } from '@vitebook/core/shared';
 import { computed, ComputedRef } from 'vue';
 
-import type { LoadedPage } from '../../shared/types/Page';
+import type { LoadedClientPage } from '../../shared/types/ClientPage';
 import { useLocalizedSiteOptions } from './useLocalizedSiteOptions';
 import { usePage } from './usePage';
 import { usePageDescription } from './usePageDescription';
@@ -23,7 +23,7 @@ const resolvePageHead = (
   title: string,
   description: string,
   siteLocale: SiteLocaleData,
-  page?: LoadedPage
+  page?: LoadedClientPage
 ): HeadConfig[] => {
   const head: HeadConfig[] = [];
   head.push(...(page?.meta.head ?? []));

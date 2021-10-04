@@ -1,0 +1,19 @@
+{
+  "name": "@vitebook/example-svelte",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "vitebook:build": "vitebook build",
+    "vitebook:dev": "vitebook dev",
+    "vitebook:serve": "vitebook serve"
+  },
+  "devDependencies": {
+    "@vitebook/client": "*",
+    "@vitebook/plugin-markdown-shiki": "*",
+    "@vitebook/plugin-markdown-svelte": "*",
+    "@vitebook/plugin-svelte": "*",
+    "@vitebook/theme-default": "*",
+    "svelte-preprocess": "^4.9.8",
+    "typescript": "^4.4.3"
+  }
+}

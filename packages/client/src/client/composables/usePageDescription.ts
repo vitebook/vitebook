@@ -1,7 +1,7 @@
 import type { SiteLocaleData } from '@vitebook/core/shared';
 import { computed, ComputedRef } from 'vue';
 
-import type { LoadedPage } from '../../shared/types/Page';
+import type { LoadedClientPage } from '../../shared';
 import { useLocalizedSiteOptions } from './useLocalizedSiteOptions';
 import { usePage } from './usePage';
 
@@ -15,7 +15,7 @@ export function usePageDescription(): PageDescriptionRef {
 
 const resolvePageDescription = (
   siteLocale: SiteLocaleData,
-  page?: LoadedPage
+  page?: LoadedClientPage
 ): string => {
   const description = page?.meta.description;
   return description ? description : siteLocale.description;

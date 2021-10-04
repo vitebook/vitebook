@@ -1,6 +1,6 @@
-import type { VirtualThemeModule } from '../shared/types/Theme';
+import type { VirtualClientThemeModule } from '../shared';
 
 declare module ':virtual/vitebook/theme' {
-  declare const theme: VirtualThemeModule['default'];
+  declare const theme: VirtualClientThemeModule['default'];
   export default theme;
 }

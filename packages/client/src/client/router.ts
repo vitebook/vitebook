@@ -6,7 +6,7 @@ import {
   Router
 } from 'vue-router';
 
-import { Page } from '../shared/types/Page';
+import type { ClientPage } from '../shared';
 import {
   deleteCachedLoadedPage,
   getCachedLoadedPage,
@@ -55,7 +55,7 @@ const pageRouteDisposal: (() => void)[] | undefined = import.meta.hot
   ? []
   : undefined;
 
-function addRoutes(router: Router, pages: Readonly<Page[]>): void {
+function addRoutes(router: Router, pages: Readonly<ClientPage[]>): void {
   pages.forEach((page) => {
     const path = withBaseUrl(
       page.route === '/404.html' ? '/:pathMatch(.*)*' : page.route

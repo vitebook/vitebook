@@ -3,9 +3,9 @@ import { useRouter } from 'vue-router';
 
 import pages from ':virtual/vitebook/pages';
 
-import type { Page, VirtualPagesModule } from '../../shared/types/Page';
+import type { ClientPage, VirtualClientPagesModule } from '../../shared';
 
-export type PagesRef = Ref<Readonly<Page[]>>;
+export type PagesRef = Ref<Readonly<ClientPage[]>>;
 
 // Singleton.
 const pagesRef: PagesRef = ref(shallowReadonly(pages));
@@ -17,13 +17,13 @@ export function usePages(): Readonly<PagesRef> {
 if (import.meta.hot) {
   import.meta.hot.accept(
     '/:virtual/vitebook/pages',
-    (mod: VirtualPagesModule) => {
+    (mod: VirtualClientPagesModule) => {
       pagesRef.value = shallowReadonly(mod.default);
     }
   );
 }
 
-export function useFirstPage(): ComputedRef<Page | undefined> {
+export function useFirstPage(): ComputedRef<ClientPage | undefined> {
   return computed(() => pagesRef.value[0]);
 }
 

@@ -6,7 +6,7 @@ import './styles/utils.css';
 import './styles/components/code.css';
 import './styles/components/admonition.css';
 
-import { Theme, useFirstPage } from '@vitebook/client';
+import { ClientTheme, useFirstPage } from '@vitebook/client';
 import { h, watch } from 'vue';
 
 import OutboundLink from './components/global/OutboundLink.vue';
@@ -28,7 +28,7 @@ const BlankPage = Promise.resolve({
   }
 });
 
-const theme: Theme = {
+const theme: ClientTheme = {
   Layout: Layout,
   NotFound: NotFound,
   configureClientApp({ app, router }) {
