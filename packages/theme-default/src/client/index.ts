@@ -1,16 +1,14 @@
-import './styles/normalize.css';
 import './styles/vars.css';
 import './styles/vars-dark.css';
 import './styles/global.css';
 import './styles/utils.css';
-import './styles/components/code.css';
-import './styles/components/admonition.css';
+import './styles/code.css';
+import './styles/admonition.css';
 
 import { ClientTheme, useFirstPage } from '@vitebook/client';
 import { h, watch } from 'vue';
 
 import OutboundLink from './components/global/OutboundLink.vue';
-import Spacer from './components/global/Spacer.vue';
 import { useLocalizedThemeConfig } from './composables/useLocalizedThemeConfig';
 import {
   routerScrollBehaviour,
@@ -29,6 +27,7 @@ const BlankPage = Promise.resolve({
 });
 
 const theme: ClientTheme = {
+  explorer: false,
   Layout: Layout,
   NotFound: NotFound,
   configureClientApp({ app, router }) {
@@ -63,8 +62,6 @@ const theme: ClientTheme = {
     // Unregister the built-in `<OutboundLink>` to avoid warning.
     delete app._context.components.OutboundLink;
     app.component('OutboundLink', OutboundLink);
-
-    app.component('Spacer', Spacer);
 
     // Handle scrollBehavior with transition.
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

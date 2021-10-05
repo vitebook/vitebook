@@ -3,7 +3,7 @@
 import type { PageMeta } from './PageMeta';
 
 export type Page<
-  PageModule extends DefaultPageModule = DefaultPageModule,
+  PageModule = DefaultPageModule,
   Context extends DefaultPageContext = DefaultPageContext
 > = {
   /** Optional page type declared by a plugin to help identify specific pages client-side. */
@@ -39,9 +39,7 @@ export type DefaultPageModule<
 > = {
   /** type def (doesn't actually exist). */
   __type?: PageMetaExport;
-
   default: DefaultExport;
-
   __pageMeta:
     | PageMetaExport
     | ((

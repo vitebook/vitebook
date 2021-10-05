@@ -1,8 +1,10 @@
 // components
 export { default as ClientOnly } from './components/ClientOnly';
+export { default as Explorer } from './components/Explorer/Explorer.vue';
 export { default as OutboundLink } from './components/OutboundLink/OutboundLink';
 export { default as PageView } from './components/PageView';
 // composables
+export * from './components/Explorer/useExplorerItems';
 export * from './composables/useLocalizedSiteOptions';
 export * from './composables/useLocalizedThemeConfig';
 export * from './composables/useMarkdownPage';

@@ -2,7 +2,7 @@ import { Ref, ref, shallowReadonly } from 'vue';
 
 import Theme from ':virtual/vitebook/theme';
 
-import { VirtualThemeModule } from '../../shared';
+import type { VirtualClientThemeModule } from '../../shared';
 
 export type ThemeRef = Ref<Readonly<typeof Theme>>;
 
@@ -16,7 +16,7 @@ export function useTheme(): Readonly<ThemeRef> {
 if (import.meta.hot) {
   import.meta.hot.accept(
     '/:virtual/vitebook/theme',
-    (mod: VirtualThemeModule) => {
+    (mod: VirtualClientThemeModule) => {
       themeRef.value = shallowReadonly(mod.default);
     }
   );

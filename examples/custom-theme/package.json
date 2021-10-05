@@ -1,0 +1,16 @@
+{
+  "name": "@vitebook/example-custom-theme",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "vitebook:build": "vitebook build",
+    "vitebook:dev": "vitebook dev",
+    "vitebook:serve": "vitebook serve"
+  },
+  "dependencies": {
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@vitebook/client": "*"
+  }
+}

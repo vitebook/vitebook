@@ -3,6 +3,7 @@ export type ThemeConfig = Record<string, any>;
 
 // `Component` and `EnhanceAppCtx` are defined by client plugin.
 export type Theme<Component = unknown, ConfigureClientAppContext = unknown> = {
+  explorer?: boolean;
   Layout: Component;
   NotFound?: Component;
   configureClientApp?: (ctx: ConfigureClientAppContext) => void | Promise<void>;

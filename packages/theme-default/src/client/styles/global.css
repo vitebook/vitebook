@@ -2,20 +2,10 @@
  * HTML
  *-------------------------------------------------------------------------------------------*/
 
-*,
-::before,
-::after {
-  box-sizing: border-box;
-}
-
 html {
   line-height: 1.4;
   font-size: 16px;
-  -moz-tab-size: 4;
-  tab-size: 4;
-  -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
-
   /* prevent scrollbar jumping. */
   overflow-y: scroll;
 }

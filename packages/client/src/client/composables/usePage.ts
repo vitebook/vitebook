@@ -1,33 +1,35 @@
 import { isFunction } from '@vitebook/core/shared';
 import { Component, Ref, ref, shallowReadonly, watch } from 'vue';
 
-import { LoadedPage, Page } from '../../shared';
+import type { ClientPage, LoadedClientPage } from '../../shared';
 import { usePages } from './usePages';
 
-export type PageRef = Ref<Readonly<LoadedPage> | undefined>;
+export type PageRef = Ref<Readonly<LoadedClientPage> | undefined>;
 
 // Singleton.
 const pageRef: PageRef = ref(undefined);
 
-const loadedPageCache = new WeakMap<Page, LoadedPage>();
+const loadedPageCache = new WeakMap<ClientPage, LoadedClientPage>();
 
 export function usePage(): Readonly<PageRef> {
   return shallowReadonly(pageRef);
 }
 
-export function getCachedLoadedPage(page: Page): LoadedPage | undefined {
+export function getCachedLoadedPage(
+  page: ClientPage
+): LoadedClientPage | undefined {
   return loadedPageCache.get(page);
 }
 
-export function deleteCachedLoadedPage(page: Page): void {
+export function deleteCachedLoadedPage(page: ClientPage): void {
   loadedPageCache.delete(page);
 }
 
-export function setPageRef(loadedPage?: LoadedPage): void {
+export function setPageRef(loadedPage?: LoadedClientPage): void {
   pageRef.value = loadedPage ? shallowReadonly(loadedPage) : undefined;
 }
 
-export async function loadPage(page: Page): Promise<Component> {
+export async function loadPage(page: ClientPage): Promise<Component> {
   const mod = await page.loader();
 
   const component = mod.default;
@@ -36,7 +38,11 @@ export async function loadPage(page: Page): Promise<Component> {
     ? await mod.__pageMeta(page, mod)
     : mod.__pageMeta;
 
-  const loadedPage = { ...page, module: mod, meta: meta ?? {} } as LoadedPage;
+  const loadedPage = {
+    ...page,
+    module: mod,
+    meta: meta ?? {}
+  } as LoadedClientPage;
   if (loadedPage) loadedPageCache.set(page, loadedPage);
 
   setPageRef(loadedPage);

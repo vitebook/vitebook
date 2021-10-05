@@ -1,3 +1,5 @@
+import './styles/preflight.css';
+
 import { App as VueApp, createApp as createClientApp, createSSRApp } from 'vue';
 import type { Router } from 'vue-router';
 import Shadow from 'vue-shadow-dom';
@@ -32,6 +34,14 @@ export async function createApp(): Promise<{ app: VueApp; router: Router }> {
     siteOptions: site.value,
     env: import.meta.env
   });
+
+  if (!router.hasRoute('/') && theme.value.explorer !== false) {
+    router.addRoute({
+      name: 'Explorer',
+      path: '/',
+      component: () => import('./components/Explorer/Explorer.vue')
+    });
+  }
 
   app.use(router);
 

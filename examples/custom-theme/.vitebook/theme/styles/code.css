@@ -1,0 +1,354 @@
+:root {
+  --code-color-scheme: dark;
+  --code-line-height: 1.6;
+  --code-font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+  --code-font-size: 0.875rem;
+  --code-bg-color: #282c34;
+  --code-hl-bg-color: hsl(0, 0%, 15%);
+  --code-hl-ln-height: 1.4;
+  --code-ln-color: #9e9e9e;
+  --code-ln-wrapper-width: 3.5rem;
+}
+
+html.dark {
+  --code-hl-bg-color: #363b46;
+}
+
+div[class*='language-'] {
+  margin: 2rem 0;
+}
+
+div[class*='language-'] > pre,
+div[class*='language-'] > pre code {
+  color: #ccc;
+  background: none;
+  font-family: var(--code-font-family);
+  font-size: var(--code-font-size);
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: var(--code-line-height);
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+/* Code blocks */
+pre[class*='language-'] {
+  padding: 1em;
+  margin: 0.5em 0;
+  overflow: auto;
+}
+
+:not(pre) > code[class*='language-'],
+pre[class*='language-'] {
+  background: #2d2d2d;
+}
+
+/* Inline code */
+:not(pre) > code[class*='language-'] {
+  padding: 0.1em;
+  border-radius: 0.3em;
+  white-space: normal;
+}
+
+.token.comment,
+.token.block-comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #999;
+}
+
+.token.punctuation {
+  color: #ccc;
+}
+
+.token.tag,
+.token.attr-name,
+.token.namespace,
+.token.deleted {
+  color: #ec5975;
+}
+
+.token.function-name {
+  color: #6196cc;
+}
+
+.token.boolean,
+.token.number,
+.token.function {
+  color: #f08d49;
+}
+
+.token.property,
+.token.class-name,
+.token.constant,
+.token.symbol {
+  color: #f8c555;
+}
+
+.token.selector,
+.token.important,
+.token.atrule,
+.token.keyword,
+.token.builtin {
+  color: #cc99cd;
+}
+
+.token.string,
+.token.char,
+.token.attr-value,
+.token.regex,
+.token.variable {
+  color: #7ec699;
+}
+
+.token.operator,
+.token.entity,
+.token.url {
+  color: #67cdcc;
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.inserted {
+  color: #3eaf7c;
+}
+
+div[class*='language-'] pre,
+pre[class*='language-'] {
+  color-scheme: var(--code-color-scheme);
+  padding: 1.25rem 1.5rem;
+  margin: 0.85rem 0;
+  border-radius: 6px;
+  overflow: auto;
+}
+
+div[class*='language-'] pre code,
+pre[class*='language-'] code {
+  color: #fff;
+  padding: 0;
+  background-color: transparent;
+  border-radius: 0;
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+}
+
+.line-number {
+  font-family: var(--code-font-family);
+}
+
+div[class*='language-'] {
+  position: relative;
+  background-color: var(--code-bg-color);
+  border-radius: 6px;
+}
+
+div[class*='language-']::before {
+  position: absolute;
+  z-index: 3;
+  top: 0.8em;
+  right: 1em;
+  font-size: 0.75rem;
+  color: var(--code-ln-color);
+}
+
+div[class*='language-'] pre,
+div[class*='language-'] pre[class*='language-'] {
+  /* force override the background color to be compatible with shiki */
+  background: transparent !important;
+  position: relative;
+  z-index: 1;
+}
+
+div[class*='language-'] .highlight-lines {
+  user-select: none;
+  padding-top: 1.3rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  line-height: var(--code-hl-ln-height);
+}
+
+div[class*='language-'] .highlight-lines .highlight-line {
+  background-color: var(--code-hl-bg-color);
+}
+
+div[class*='language-']:not(.line-numbers-mode) .line-numbers {
+  display: none;
+}
+
+div[class*='language-'].line-numbers-mode .highlight-lines .highlight-line {
+  position: relative;
+}
+
+div[class*='language-'].line-numbers-mode
+  .highlight-lines
+  .highlight-line::before {
+  content: ' ';
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  display: block;
+  width: var(--code-ln-wrapper-width);
+  height: 100%;
+}
+
+div[class*='language-'].line-numbers-mode pre {
+  margin-left: var(--code-ln-wrapper-width);
+  padding-left: 1rem;
+  vertical-align: middle;
+}
+
+div[class*='language-'].line-numbers-mode .line-numbers {
+  position: absolute;
+  top: 0;
+  width: var(--code-ln-wrapper-width);
+  text-align: center;
+  color: var(--code-ln-color);
+  padding-top: 1.25rem;
+  line-height: 1.4;
+}
+
+div[class*='language-'].line-numbers-mode .line-numbers br {
+  user-select: none;
+}
+
+div[class*='language-'].line-numbers-mode .line-numbers .line-number {
+  position: relative;
+  z-index: 3;
+  user-select: none;
+  font-size: 0.85em;
+}
+
+div[class*='language-'].line-numbers-mode::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--code-ln-wrapper-width);
+  height: 100%;
+  border-radius: 6px 0 0 6px;
+  border-right: 1px solid var(--code-hl-bg-color);
+}
+
+div[class~='language-html']:before,
+div[class~='language-markup']:before {
+  content: 'html';
+}
+
+div[class~='language-md']:before,
+div[class~='language-markdown']:before {
+  content: 'md';
+}
+
+div[class~='language-css']:before {
+  content: 'css';
+}
+
+div[class~='language-sass']:before {
+  content: 'sass';
+}
+
+div[class~='language-scss']:before {
+  content: 'scss';
+}
+
+div[class~='language-less']:before {
+  content: 'less';
+}
+
+div[class~='language-stylus']:before {
+  content: 'styl';
+}
+
+div[class~='language-js']:before,
+div[class~='language-javascript']:before {
+  content: 'js';
+}
+
+div[class~='language-ts']:before,
+div[class~='language-typescript']:before {
+  content: 'ts';
+}
+
+div[class~='language-json']:before {
+  content: 'json';
+}
+
+div[class~='language-rb']:before,
+div[class~='language-ruby']:before {
+  content: 'rb';
+}
+
+div[class~='language-py']:before,
+div[class~='language-python']:before {
+  content: 'py';
+}
+
+div[class~='language-sh']:before,
+div[class~='language-bash']:before {
+  content: 'sh';
+}
+
+div[class~='language-php']:before {
+  content: 'php';
+}
+
+div[class~='language-go']:before {
+  content: 'go';
+}
+
+div[class~='language-rust']:before {
+  content: 'rust';
+}
+
+div[class~='language-java']:before {
+  content: 'java';
+}
+
+div[class~='language-c']:before {
+  content: 'c';
+}
+
+div[class~='language-yaml']:before {
+  content: 'yaml';
+}
+
+div[class~='language-dockerfile']:before {
+  content: 'dockerfile';
+}
+
+div[class~='language-vue']:before {
+  content: 'vue';
+}
+
+/* narrow mobile */
+@media (max-width: 419px) {
+  div[class*='language-'] {
+    margin: 0.85rem -1.5rem;
+    border-radius: 0;
+  }
+}

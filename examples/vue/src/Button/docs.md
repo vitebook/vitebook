@@ -16,6 +16,4 @@ This is the documentation page for the awesome `<Button />` component.
   import Button from './Button.vue';
 </script>
 
-<spacer>
-  <Button />
-</spacer>
+<Button />
