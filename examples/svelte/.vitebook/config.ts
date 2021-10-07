@@ -2,7 +2,10 @@ import { defineConfig, clientPlugin } from '@vitebook/client/node';
 import { sveltePlugin } from '@vitebook/plugin-svelte/node';
 import { svelteMarkdownPlugin } from '@vitebook/plugin-markdown-svelte/node';
 import { shikiMarkdownPlugin } from '@vitebook/plugin-markdown-shiki/node';
-import type { DefaultThemeConfig } from '@vitebook/theme-default/node';
+import {
+  DefaultThemeConfig,
+  defaultThemePlugin
+} from '@vitebook/theme-default/node';
 import sveltePreprocess from 'svelte-preprocess';
 
 export default defineConfig<DefaultThemeConfig>({
@@ -19,7 +22,8 @@ export default defineConfig<DefaultThemeConfig>({
         extensions: ['.svelte', '.md']
       }
     }),
-    clientPlugin()
+    clientPlugin(),
+    defaultThemePlugin()
   ],
   site: {
     title: 'Vitebook',

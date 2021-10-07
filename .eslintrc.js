@@ -4,13 +4,9 @@ module.exports = {
     es6: true,
     node: true
   },
-  ignorePatterns: ['.eslintrc.js', 'packages/**/bin'],
-  plugins: ['svelte3', '@typescript-eslint', 'simple-import-sort'],
+  ignorePatterns: ['.eslintrc.js', 'packages/**/bin', 'examples/**'],
+  plugins: ['@typescript-eslint', 'simple-import-sort'],
   overrides: [
-    {
-      files: ['*.svelte'],
-      processor: 'svelte3/svelte3'
-    },
     {
       files: ['*.ts', '*.vue'],
       parser: 'vue-eslint-parser',
@@ -18,6 +14,13 @@ module.exports = {
         parser: '@typescript-eslint/parser',
         project: './tsconfig.eslint.json',
         extraFileExtensions: ['.vue']
+      }
+    },
+    {
+      files: ['*.jsx', '*.tsx'],
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        project: './tsconfig.eslint.json'
       }
     }
   ],
@@ -41,7 +44,6 @@ module.exports = {
     'import/no-unresolved': 'off'
   },
   settings: {
-    'import/resolver': { typescript: {} },
-    'svelte3/typescript': () => require('typescript')
+    'import/resolver': { typescript: {} }
   }
 };

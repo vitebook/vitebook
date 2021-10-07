@@ -4,7 +4,7 @@ import {
 } from '@vitebook/plugin-markdown/node';
 import type { PluginWithOptions } from 'markdown-it';
 
-export { CustomComponentPluginOptions };
+export type { CustomComponentPluginOptions };
 
 /**
  * Svelte reserved tags.

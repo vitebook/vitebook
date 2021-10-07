@@ -1,7 +1,7 @@
 import { send, ViteDevServer } from 'vite';
 
-import { fs } from '../../../../utils/fs.js';
-import type { App } from '../../../App.js';
+import { fs } from '../../../../utils/fs';
+import type { App } from '../../../App';
 
 /**
  * @see https://github.com/vitejs/vite/blob/main/packages/vite/src/node/server/middlewares/indexHtml.ts

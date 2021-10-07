@@ -1,8 +1,8 @@
-import type { NavbarItemsConfig } from './NavbarItemsConfig.js';
+import type { NavbarItemsConfig } from './NavbarItemsConfig';
 import type {
   MultiSidebarItemsConfig,
   SidebarItemsConfig
-} from './SidebarItemsConfig.js';
+} from './SidebarItemsConfig';
 
 export type DefaultThemeConfig = DefaultThemeLocaleData & {
   /**

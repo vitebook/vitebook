@@ -23,8 +23,7 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    "./node": "./src/node/index.ts",
-    "./node/*": "./src/node/*",
+    "./node": "./dist/index.js",
     "./shared": "./src/shared/index.ts",
     "./package.json": "./package.json"
   },
@@ -33,28 +32,37 @@
       "node": [
         "src/node/index.ts"
       ],
-      "node/*": [
-        "src/node/*"
-      ],
       "shared": [
         "src/shared/index.ts"
       ]
     }
   },
   "files": [
-    "src/"
+    "src/",
+    "dist/"
   ],
+  "scripts": {
+    "build": "npm run clean && node .scripts/build.mjs",
+    "build:watch": "npm run build -- --watch",
+    "clean": "rimraf dist"
+  },
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
-    "@vitebook/plugin-markdown": "*"
+    "@types/lru-cache": "^5.1.1",
+    "@vitebook/plugin-markdown": "workspace:*",
+    "kleur": "^4.1.4",
+    "lru-cache": "^6.0.0",
+    "svelte": "^3.43.0"
   },
   "devDependencies": {
-    "@vitebook/plugin-svelte": "*",
-    "svelte": "^3.43.0"
+    "@vitebook/core": "workspace:*",
+    "@vitebook/plugin-svelte": "workspace:*",
+    "vue": "^3.2.6"
   },
   "peerDependencies": {
-    "@vitebook/plugin-svelte": "*",
-    "svelte": "^3.43.0"
+    "@vitebook/core": "workspace:*",
+    "@vitebook/plugin-svelte": "workspace:*",
+    "vue": "^3.2.6"
   },
   "publishConfig": {
     "access": "public"

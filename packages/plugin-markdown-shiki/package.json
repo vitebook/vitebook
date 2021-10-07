@@ -24,7 +24,7 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    "./node": "./src/node/index.ts",
+    "./node": "./dist/index.js",
     "./package.json": "./package.json"
   },
   "typesVersions": {
@@ -35,11 +35,23 @@
     }
   },
   "files": [
-    "src/"
+    "src/",
+    "dist/"
   ],
+  "scripts": {
+    "build": "npm run clean && node .scripts/build.mjs",
+    "build:watch": "npm run build -- --watch",
+    "clean": "rimraf dist"
+  },
   "dependencies": {
-    "@vitebook/plugin-markdown": "*",
+    "@vitebook/plugin-markdown": "workspace:*",
     "shiki": "^0.9.11"
+  },
+  "devDependencies": {
+    "@vitebook/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@vitebook/core": "workspace:*"
   },
   "publishConfig": {
     "access": "public"

@@ -1,6 +1,5 @@
-import { filePathToRoute } from '@vitebook/core/node';
+import { filePathToRoute, isLinkExternal } from '@vitebook/core/node';
 import { resolveRelativePath } from '@vitebook/core/node/utils';
-import { isLinkExternal } from '@vitebook/core/shared';
 import type { PluginWithOptions } from 'markdown-it';
 
 import type { MarkdownParserEnv } from '../types';

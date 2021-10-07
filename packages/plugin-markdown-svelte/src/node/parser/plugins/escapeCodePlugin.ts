@@ -22,7 +22,7 @@ export const escapeCodePlugin: PluginSimple = (parser) => {
 };
 
 const CODE_TAG_CONTENT_RE = /(?:<code>)([\s\S]*)(?:<\/code>)/g;
-const ESCAPE_RE = /{|\}|>\s+<\//g;
+const ESCAPE_RE = /\{|\}|>\s+<\//g;
 const SPACES_RE = /\s*/g;
 
 const ENTITIES = {

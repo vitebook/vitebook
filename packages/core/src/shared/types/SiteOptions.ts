@@ -1,6 +1,6 @@
 import type { HeadConfig } from './HeadConfig';
 import type { LocaleConfig } from './LocaleConfig';
-import { ThemeConfig } from './Theme.js';
+import { ThemeConfig } from './Theme';
 
 export type SiteOptions<Theme extends ThemeConfig = ThemeConfig> =
   SiteLocaleData & {

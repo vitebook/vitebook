@@ -1,5 +1,5 @@
+import { isLinkHttp } from '@vitebook/core/node';
 import { fs, path } from '@vitebook/core/node/utils';
-import { isLinkHttp } from '@vitebook/core/shared';
 
 const FAKE_HOST = 'https://a.com';
 

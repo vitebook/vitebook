@@ -25,7 +25,7 @@
   "exports": {
     "./client": "./src/client/index.ts",
     "./client/*": "./src/client/*",
-    "./node": "./src/node/index.ts",
+    "./node": "./dist/index.js",
     "./shared": "./src/shared/index.ts",
     "./package.json": "./package.json"
   },
@@ -46,17 +46,32 @@
     }
   },
   "files": [
-    "src/"
+    "src/",
+    "dist/"
   ],
+  "scripts": {
+    "build": "npm run clean && node .scripts/build.mjs",
+    "build:watch": "npm run build -- --watch",
+    "clean": "rimraf dist"
+  },
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.26"
   },
   "devDependencies": {
-    "@vitebook/client": "*"
+    "@vitebook/client": "workspace:*",
+    "@vitebook/core": "workspace:*",
+    "svelte": "^3.43.0",
+    "vite": "^2.5.3",
+    "vue": "^3.2.6",
+    "vue-router": "^4.0.11"
   },
   "peerDependencies": {
-    "@vitebook/client": "*"
+    "@vitebook/client": "workspace:*",
+    "@vitebook/core": "workspace:*",
+    "vite": "^2.5.3",
+    "vue": "^3.2.6",
+    "vue-router": "^4.0.11"
   },
   "publishConfig": {
     "access": "public"

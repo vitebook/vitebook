@@ -38,8 +38,8 @@ const MarkdownFloatingToc = defineAsyncComponent(
   () => import('../components/markdown/MarkdownFloatingToc.vue')
 );
 
-const hasShadowRoot = computed(() =>
-  /^(html|svg|vue|svelte)$/.test(page.value?.type ?? '')
+const hasShadowRoot = computed(
+  () => !/(^md|:md)$/.test(page.value?.type ?? '')
 );
 </script>
 

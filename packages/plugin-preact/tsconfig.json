@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "module": "es2020",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  },
+  "include": ["src"]
+}

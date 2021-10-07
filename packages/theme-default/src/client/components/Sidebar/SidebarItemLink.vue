@@ -85,39 +85,56 @@ function handleLinkClick(event: Event, navigate: () => void): void {
   color: var(--vbk--color-red);
 }
 
-.sidebar.icon-colors .sidebar-item.type-js svg,
-.sidebar.icon-colors .sidebar-item.type-jsx svg,
-.sidebar-item.active.type-js svg,
-.sidebar-item.active.type-jsx svg {
+.sidebar.icon-colors .sidebar-item[class~='type-js'] svg,
+.sidebar.icon-colors .sidebar-item[class~='type-jsx'] svg,
+.sidebar.icon-colors .sidebar-item[class*=':js'] svg,
+.sidebar-item.active[class~='type-js'] svg,
+.sidebar-item.active[class~='type-jsx'] svg,
+.sidebar-item.active[class*=':js'] svg {
   color: var(--vbk--color-yellow);
 }
 
-.sidebar.icon-colors .sidebar-item.type-ts svg,
-.sidebar.icon-colors .sidebar-item.type-tsx svg,
-.sidebar-item.active.type-ts svg,
-.sidebar-item.active.type-tsx svg {
+.sidebar.icon-colors .sidebar-item[class~='type-ts'] svg,
+.sidebar.icon-colors .sidebar-item[class~='type-tsx'] svg,
+.sidebar.icon-colors .sidebar-item[class*=':ts'] svg,
+.sidebar-item.active[class~='type-ts'] svg,
+.sidebar-item.active[class~='type-tsx'] svg,
+.sidebar-item.active[class*=':ts'] svg {
   color: var(--vbk--color-blue);
 }
 
-.sidebar.icon-colors .sidebar-item.type-html svg,
-.sidebar-item.active.type-html svg {
+.sidebar.icon-colors .sidebar-item[class~='type-html'] svg,
+.sidebar.icon-colors .sidebar-item[class*=':html'] svg,
+.sidebar-item.active[class~='type-html'] svg,
+.sidebar-item.active[class*=':html'] svg {
   color: var(--vbk--color-red);
 }
 
-.sidebar.icon-colors .sidebar-item.type-svg svg,
-.sidebar-item.active.type-svg svg {
+.sidebar.icon-colors .sidebar-item[class~='type-svg'] svg,
+.sidebar.icon-colors .sidebar-item[class*=':svg'] svg,
+.sidebar-item.active[class~='type-svg'] svg,
+.sidebar-item.active[class*=':svg'] svg {
   color: var(--vbk--color-orange);
 }
 
-.sidebar.icon-colors .sidebar-item.type-png svg,
-.sidebar.icon-colors .sidebar-item.type-jpeg svg,
-.sidebar-item.active.type-png svg,
-.sidebar-item.active.type-jpeg svg {
+.sidebar.icon-colors .sidebar-item[class~='type-png'] svg,
+.sidebar.icon-colors .sidebar-item[class*=':png'] svg,
+.sidebar-item.active[class~='type-png'] svg,
+.sidebar-item.active[class*=':png'] svg {
   color: var(--vbk--color-indigo);
 }
 
-.sidebar.icon-colors .sidebar-item.type-mp4 svg,
-.sidebar-item.active.type-mp4 svg {
+.sidebar.icon-colors .sidebar-item[class~='type-jpeg'] svg,
+.sidebar.icon-colors .sidebar-item[class*=':jpeg'] svg,
+.sidebar-item.active[class~='type-jpeg'] svg,
+.sidebar-item.active[class*=':jpeg'] svg {
+  color: var(--vbk--color-indigo);
+}
+
+.sidebar.icon-colors .sidebar-item[class~='type-mp4'] svg,
+.sidebar.icon-colors .sidebar-item[class*=':mp4'] svg,
+.sidebar-item.active[class~='type-mp4'] svg,
+.sidebar-item.active[class*=':mp4'] svg {
   color: var(--vbk--color-red);
 }
 

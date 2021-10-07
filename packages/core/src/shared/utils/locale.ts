@@ -1,6 +1,6 @@
-import type { LocaleConfig } from '../types/LocaleConfig.js';
-import { inBrowser } from './support.js';
-import { removeEndingSlash } from './url.js';
+import type { LocaleConfig } from '../types/LocaleConfig';
+import { inBrowser } from './support';
+import { removeEndingSlash } from './url';
 
 export const resolveLocalePath = (
   baseUrl: string,

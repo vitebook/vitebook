@@ -1,8 +1,8 @@
-import { VM_PREFIX } from '@vitebook/core/node';
 import {
   prettyJsonStr,
-  stripImportQuotesFromJson
-} from '@vitebook/core/shared';
+  stripImportQuotesFromJson,
+  VM_PREFIX
+} from '@vitebook/core/node';
 
 import type { PageAddonPlugin } from '../shared';
 

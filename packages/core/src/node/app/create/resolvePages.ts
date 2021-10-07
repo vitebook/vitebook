@@ -1,16 +1,16 @@
 import kleur from 'kleur';
 
-import type { ServerPage } from '../../../shared/index.js';
+import type { ServerPage } from '../../../shared';
 import {
   ensureLeadingSlash,
   prettyJsonStr,
   stripImportQuotesFromJson
-} from '../../../shared/index.js';
-import { globby, readRecentlyChangedFile } from '../../utils/fs.js';
-import { logger } from '../../utils/logger.js';
-import { path } from '../../utils/path.js';
-import type { App } from '../App.js';
-import type { Plugin } from '../plugin/Plugin.js';
+} from '../../../shared';
+import { globby, readRecentlyChangedFile } from '../../utils/fs';
+import { logger } from '../../utils/logger';
+import { path } from '../../utils/path';
+import type { App } from '../App';
+import type { Plugin } from '../plugin/Plugin';
 
 const resolvedPages = new Map<string, ServerPage>();
 const unresolvedPages = new Set<string>();

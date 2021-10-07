@@ -1,0 +1,21 @@
+{
+  "name": "@vitebook/example-preact",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "vitebook:build": "vitebook build",
+    "vitebook:dev": "vitebook dev",
+    "vitebook:serve": "vitebook serve"
+  },
+  "dependencies": {
+    "preact": "^10.5.14"
+  },
+  "devDependencies": {
+    "@vitebook/client": "workspace:*",
+    "@vitebook/core": "workspace:*",
+    "@vitebook/plugin-markdown-preact": "workspace:*",
+    "@vitebook/plugin-markdown-shiki": "workspace:*",
+    "@vitebook/plugin-preact": "workspace:*",
+    "@vitebook/theme-default": "workspace:*"
+  }
+}

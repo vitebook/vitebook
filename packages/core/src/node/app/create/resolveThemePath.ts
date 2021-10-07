@@ -1,4 +1,4 @@
-import { fs, globby } from '../../utils/fs.js';
+import { fs, globby } from '../../utils/fs';
 
 export function resolveThemePath(themeDir: string): string | undefined {
   if (!fs.ensureDir(themeDir)) return undefined;

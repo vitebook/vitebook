@@ -12,9 +12,9 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
-    "jsx": "react",
+    "jsx": "preserve",
     "lib": ["dom", "dom.iterable", "es2017"],
-    "module": "esnext",
+    "module": "es2020",
     "moduleResolution": "node",
     "newLine": "lf",
     "noImplicitAny": false,
@@ -27,8 +27,9 @@
     "sourceMap": true,
     "strict": true,
     "strictNullChecks": true,
-    "target": "es2017",
-    "useDefineForClassFields": false
+    "target": "es2020",
+    "useDefineForClassFields": false,
+    "types": ["node"]
   },
   "exclude": ["node_modules/**", "**/bin/**", "**/dist/**", "**/_old/**"]
 }

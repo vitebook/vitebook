@@ -1,10 +1,10 @@
-import type { CLIArgs } from '../cli/args.js';
-import { loadModule } from '../utils/module.js';
-import { resolveRelativePath } from '../utils/path.js';
-import type { App } from './App.js';
-import type { AppConfig } from './AppOptions.js';
-import { createApp } from './create/createApp.js';
-import { resolveConfigPath } from './create/resolveConfigPath.js';
+import type { CLIArgs } from '../cli/args';
+import { loadModule } from '../utils/module';
+import { resolveRelativePath } from '../utils/path';
+import type { App } from './App';
+import type { AppConfig } from './AppOptions';
+import { createApp } from './create/createApp';
+import { resolveConfigPath } from './create/resolveConfigPath';
 
 export async function resolveApp(
   args: CLIArgs = { '--': [], command: 'dev' },

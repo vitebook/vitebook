@@ -66,7 +66,5 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div v-pre>
-    <div ref="target"></div>
-  </div>
+  <div v-pre ref="target"></div>
 </template>

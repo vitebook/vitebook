@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SidebarItem from './SidebarItem';
+import SidebarListItem from './SidebarListItem';
 import { useSidebarItems } from './useSidebar';
 
 const items = useSidebarItems();
@@ -8,7 +8,7 @@ const items = useSidebarItems();
 <template>
   <nav class="sidebar__links">
     <ul v-if="items.length > 0" class="sidebar__links__list">
-      <SidebarItem
+      <SidebarListItem
         v-for="(item, i) of items"
         :key="i"
         :item="item"

@@ -1,7 +1,7 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import { Options as SvelteOptions, svelte } from '@sveltejs/vite-plugin-svelte';
 import type { Plugin } from '@vitebook/core/node';
-import { ensureLeadingSlash } from '@vitebook/core/shared';
+import { ensureLeadingSlash } from '@vitebook/core/node';
 
 import type { ResolvedSvelteServerPage } from '../shared';
 

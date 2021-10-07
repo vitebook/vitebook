@@ -1,4 +1,4 @@
-import type { Plugin } from './Plugin.js';
+import type { Plugin } from './Plugin';
 
 /**
  * A special type of plugin that contains the client-side code for running the application in

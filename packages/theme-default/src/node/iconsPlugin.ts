@@ -1,6 +1,7 @@
 import type { Plugin } from '@vitebook/core/node';
-import { esmRequire, fs, path } from '@vitebook/core/node/utils';
-import { isFunction } from '@vitebook/core/shared';
+import { isFunction } from '@vitebook/core/node';
+import { fs, path } from '@vitebook/core/node/utils';
+import { fileURLToPath } from 'url';
 
 import {
   VIRTUAL_EMPTY_ICON_MODULE_ID,
@@ -8,9 +9,11 @@ import {
   VitebookIcon
 } from './icons';
 
-const ICONS_DIR = path.dirname(
-  esmRequire.resolve('@vitebook/theme-default/node/icons/menu.svg')
+const ICONS_DIR = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  'icons'
 );
+
 const SIDEBAR_ICONS_DIR = path.resolve(ICONS_DIR, './sidebar-file');
 const FILE_ICON_PATH = path.resolve(ICONS_DIR, './sidebar-file/file.svg');
 
@@ -78,26 +81,18 @@ function getIconFilePath(icon: VitebookIcon): string | false {
   }
 
   if (icon.startsWith('sidebar-file-')) {
-    const type = icon.replace('sidebar-file-', '');
+    const type = icon.replace('sidebar-file-', '').replace(/^\w+:/, '');
 
-    if (/(md|:md)$/.test(type)) {
-      return path.resolve(SIDEBAR_ICONS_DIR, 'md.svg');
-    }
-
-    if (/(js|jsx)/.test(type)) {
-      return path.resolve(SIDEBAR_ICONS_DIR, 'js.svg');
-    }
-
-    if (/(ts|tsx)/.test(type)) {
-      return path.resolve(SIDEBAR_ICONS_DIR, 'ts.svg');
-    }
-
-    if (/(png|jpeg)/.test(type)) {
-      return path.resolve(SIDEBAR_ICONS_DIR, 'image.svg');
-    }
-
-    if (/mp4/.test(type)) {
-      return path.resolve(SIDEBAR_ICONS_DIR, 'video.svg');
+    switch (type) {
+      case 'jsx':
+        return path.resolve(SIDEBAR_ICONS_DIR, 'js.svg');
+      case 'tsx':
+        return path.resolve(SIDEBAR_ICONS_DIR, 'ts.svg');
+      case 'png':
+      case 'jpeg':
+        return path.resolve(SIDEBAR_ICONS_DIR, 'image.svg');
+      case 'mp4':
+        return path.resolve(SIDEBAR_ICONS_DIR, 'video.svg');
     }
 
     const iconPath = path.resolve(SIDEBAR_ICONS_DIR, `${type}.svg`);

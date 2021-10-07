@@ -19,16 +19,27 @@ const items = useExplorerItems();
 const isDev = import.meta.env.DEV;
 
 function getIcon(type = '') {
+  type = type.replace(/^\w+:/, '');
+
   const base = './icons/';
-  if (/(md|:md)$/.test(type)) return base + 'md.svg';
-  if (/(js|jsx)/.test(type)) return base + 'js.svg';
-  if (/(ts|tsx)/.test(type)) return base + 'ts.svg';
-  if (/(png|jpeg)/.test(type)) return base + 'image.svg';
-  if (/mp4/.test(type)) return base + 'video.svg';
-  if (/vue/.test(type)) return base + 'vue.svg';
-  if (/svelte/.test(type)) return base + 'svelte.svg';
-  if (/svg/.test(type)) return base + 'svg.svg';
-  return base + 'file.svg';
+
+  switch (type) {
+    case 'jsx':
+      return base + 'js.svg';
+    case 'tsx':
+      return base + 'ts.svg';
+    case 'png':
+    case 'jpeg':
+      return base + 'image.svg';
+    case 'mp4':
+      return base + 'video.svg';
+  }
+
+  if (/^(md|vue|svelte|js|ts|html|svg)$/.test(type)) {
+    return base + `${type}.svg`;
+  } else {
+    return base + 'file.svg';
+  }
 }
 
 function createTree(item: ExplorerItem): VNode {

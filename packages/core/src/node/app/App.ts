@@ -1,11 +1,11 @@
 import type { ViteDevServer } from 'vite';
 
-import type { ServerPage, SiteOptions } from '../../shared/index.js';
-import type { loadModule } from '../utils/module.js';
-import type { AppOptions } from './AppOptions.js';
-import type { DisposalBin } from './create/DisposalBin.js';
-import type { ClientPlugin } from './plugin/ClientPlugin.js';
-import type { FilteredPlugins } from './plugin/Plugin.js';
+import type { ServerPage, SiteOptions } from '../../shared';
+import type { loadModule } from '../utils/module';
+import type { AppOptions } from './AppOptions';
+import type { DisposalBin } from './create/DisposalBin';
+import type { ClientPlugin } from './plugin/ClientPlugin';
+import type { FilteredPlugins } from './plugin/Plugin';
 
 export type App = {
   /** Plugin extensions. */

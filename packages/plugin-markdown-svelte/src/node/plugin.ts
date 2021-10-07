@@ -1,7 +1,7 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import type { App, Plugin } from '@vitebook/core/node';
+import { ensureLeadingSlash } from '@vitebook/core/node';
 import { logger } from '@vitebook/core/node/utils';
-import { ensureLeadingSlash } from '@vitebook/core/shared';
 import type {
   MarkdownParser,
   MarkdownPlugin

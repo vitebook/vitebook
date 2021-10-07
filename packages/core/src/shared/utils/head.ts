@@ -1,4 +1,4 @@
-import type { HeadAttrsConfig, HeadConfig } from '../types/HeadConfig.js';
+import type { HeadAttrsConfig, HeadConfig } from '../types/HeadConfig';
 
 /**
  * Resolve identifier of a tag, to avoid duplicated tags in `<head>`.

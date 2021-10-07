@@ -1,21 +1,21 @@
 import { mergeConfig } from 'vite';
 
-import { isObject, SiteOptions } from '../../../shared/index.js';
-import { logger } from '../../utils/logger.js';
-import type { App, AppEnv } from '../App.js';
-import type { AppConfig } from '../AppOptions.js';
-import type { ClientPlugin } from '../plugin/ClientPlugin.js';
-import type { FilteredPlugins } from '../plugin/Plugin.js';
-import { build } from '../vite/build.js';
-import { createServer } from '../vite/dev/createServer.js';
-import { serve } from '../vite/serve.js';
-import { createAppDirs } from './createAppDirs.js';
-import { createAppEnv } from './createAppEnv.js';
-import { createAppOptions } from './createAppOptions.js';
-import { createSiteOptions } from './createSiteOptions.js';
-import { DisposalBin } from './DisposalBin.js';
-import { getAppVersion } from './getAppVersion.js';
-import { resolveConfigPath } from './resolveConfigPath.js';
+import { isObject, SiteOptions } from '../../../shared';
+import { logger } from '../../utils/logger';
+import type { App, AppEnv } from '../App';
+import type { AppConfig } from '../AppOptions';
+import type { ClientPlugin } from '../plugin/ClientPlugin';
+import type { FilteredPlugins } from '../plugin/Plugin';
+import { build } from '../vite/build';
+import { createServer } from '../vite/dev/createServer';
+import { serve } from '../vite/serve';
+import { createAppDirs } from './createAppDirs';
+import { createAppEnv } from './createAppEnv';
+import { createAppOptions } from './createAppOptions';
+import { createSiteOptions } from './createSiteOptions';
+import { DisposalBin } from './DisposalBin';
+import { getAppVersion } from './getAppVersion';
+import { resolveConfigPath } from './resolveConfigPath';
 
 export const createApp = async (
   config: AppConfig,

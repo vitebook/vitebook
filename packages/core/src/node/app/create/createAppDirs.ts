@@ -1,11 +1,11 @@
-import { fs } from '../../utils/fs.js';
+import { fs } from '../../utils/fs';
 import {
   loadModule as loadModuleUtil,
   LoadModuleOptions
-} from '../../utils/module.js';
-import { path } from '../../utils/path.js';
-import type { AppDirs, AppDirUtils } from '../App.js';
-import type { AppOptions } from '../AppOptions.js';
+} from '../../utils/module';
+import { path } from '../../utils/path';
+import type { AppDirs, AppDirUtils } from '../App';
+import type { AppOptions } from '../AppOptions';
 
 export const createAppDirUtil = (
   baseDir: string,

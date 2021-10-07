@@ -11,9 +11,10 @@
     "vue": "^3.0.0"
   },
   "devDependencies": {
-    "@vitebook/client": "*",
-    "@vitebook/plugin-markdown-shiki": "*",
-    "@vitebook/plugin-markdown-vue": "*",
-    "@vitebook/theme-default": "*"
+    "@vitebook/client": "workspace:*",
+    "@vitebook/core": "workspace:*",
+    "@vitebook/plugin-markdown-shiki": "workspace:*",
+    "@vitebook/plugin-markdown-vue": "workspace:*",
+    "@vitebook/theme-default": "workspace:*"
   }
 }

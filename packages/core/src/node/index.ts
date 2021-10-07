@@ -1,10 +1,10 @@
-import type { ThemeConfig } from '../shared/index.js';
-import type { AppConfig } from './app/AppOptions.js';
+import type { ThemeConfig } from '../shared';
+import type { AppConfig } from './app/AppOptions';
 
-export * from './app/App.js';
-export * from './app/AppOptions.js';
-export * from './app/plugin/ClientPlugin.js';
-export * from './app/plugin/Plugin.js';
+export * from './app/App';
+export * from './app/AppOptions';
+export * from './app/plugin/ClientPlugin';
+export * from './app/plugin/Plugin';
 
 export function defineConfig<Theme extends ThemeConfig = ThemeConfig>(
   config: AppConfig<Theme>
@@ -12,7 +12,6 @@ export function defineConfig<Theme extends ThemeConfig = ThemeConfig>(
   return config;
 }
 
-export { ThemeConfig };
-
-export { filePathToRoute } from './app/create/resolvePages.js';
-export { VM_PREFIX } from './app/vite/dev/alias.js';
+export * from '../shared';
+export { filePathToRoute } from './app/create/resolvePages';
+export { VM_PREFIX } from './app/vite/dev/alias';

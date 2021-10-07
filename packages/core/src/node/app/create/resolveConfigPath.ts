@@ -1,4 +1,4 @@
-import { globby } from '../../utils/fs.js';
+import { globby } from '../../utils/fs';
 
 export function resolveConfigPath(configDir: string): string | undefined {
   const [configPath] = globby.sync('config.{js,mjs,cjs,ts}', {

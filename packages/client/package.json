@@ -25,9 +25,7 @@
   "exports": {
     ".": "./src/client/index.ts",
     "./*": "./src/client/*",
-    "./node": "./src/node/index.ts",
-    "./node/*": "./src/node/*",
-    "./shared": "./src/shared/index.ts",
+    "./node": "./dist/index.js",
     "./shim": "./src/shim.d.ts",
     "./shim.d.ts": "./src/shim.d.ts",
     "./package.json": "./package.json"
@@ -36,9 +34,6 @@
     "*": {
       "node": [
         "src/node/index.ts"
-      ],
-      "node/*": [
-        "src/node/*"
       ],
       "shared": [
         "src/shared/index.ts"
@@ -52,16 +47,31 @@
     }
   },
   "files": [
-    "src/"
+    "src/",
+    "dist/"
   ],
+  "scripts": {
+    "build": "npm run clean && node .scripts/build.mjs",
+    "build:watch": "npm run build -- --watch",
+    "clean": "rimraf dist"
+  },
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
     "@vitebook/core": "*",
     "@vitejs/plugin-vue": "^1.8.0",
+    "@vue/compiler-sfc": "^3.2.19",
     "quicklink": "^2.2.0",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0",
     "vue": "^3.2.6",
     "vue-router": "^4.0.11",
     "vue-shadow-dom": "^2.0.0"
+  },
+  "devDependencies": {
+    "vite": "^2.5.3"
+  },
+  "peerDependencies": {
+    "vite": "^2.5.3"
   },
   "publishConfig": {
     "access": "public"

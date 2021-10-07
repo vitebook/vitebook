@@ -1,7 +1,10 @@
 import { defineConfig, clientPlugin } from '@vitebook/client/node';
 import { vueMarkdownPlugin } from '@vitebook/plugin-markdown-vue/node';
 import { shikiMarkdownPlugin } from '@vitebook/plugin-markdown-shiki/node';
-import type { DefaultThemeConfig } from '@vitebook/theme-default/node';
+import {
+  DefaultThemeConfig,
+  defaultThemePlugin
+} from '@vitebook/theme-default/node';
 
 export default defineConfig<DefaultThemeConfig>({
   include: ['src/**/*.{md,vue}'],
@@ -12,7 +15,8 @@ export default defineConfig<DefaultThemeConfig>({
     }),
     clientPlugin({
       include: /\.(md|vue)/
-    })
+    }),
+    defaultThemePlugin()
   ],
   site: {
     title: 'Vitebook',

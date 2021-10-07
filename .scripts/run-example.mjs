@@ -14,9 +14,9 @@ const examples = readdirSync(examplesDir).filter(
   (dirName) => !dirName.startsWith('.')
 );
 
-const exampleArg = process.argv
-  .find((arg) => arg.startsWith('--example='))
-  ?.replace('--example=', '');
+const exampleArg = examples.includes(process.argv[2])
+  ? process.argv[2]
+  : undefined;
 
 const exampleArgIndex = examples.findIndex((example) => example === exampleArg);
 

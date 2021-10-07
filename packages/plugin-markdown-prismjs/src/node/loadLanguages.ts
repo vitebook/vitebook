@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/default
 import prism from 'prismjs';
-import rawLoadLanguages from 'prismjs/components/index.js';
+import rawLoadLanguages from 'prismjs/components/index';
 
 // eslint-disable-next-line import/no-named-as-default-member
 const { languages } = prism;

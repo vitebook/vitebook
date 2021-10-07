@@ -1,6 +1,6 @@
 import path from 'upath';
 
-import { fs } from './fs.js';
+import { fs } from './fs';
 
 export { path };
 

@@ -3,9 +3,9 @@ import getFolderSize from 'get-folder-size';
 import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 
-import { isObject } from '../../shared/index.js';
-import { checksumFile, fs } from './fs.js';
-import { path } from './path.js';
+import { isObject } from '../../shared';
+import { checksumFile, fs } from './fs';
+import { path } from './path';
 
 /**
  * Check if a given module is an esm module with a default export.
@@ -97,7 +97,7 @@ export async function bundle(
     },
     platform: options.platform ?? 'node',
     format: options.format ?? 'esm',
-    target: options.target ?? 'es2017',
+    target: options.target ?? 'es2020',
     allowOverwrite: options.allowOverwrite ?? true,
     bundle: options.bundle ?? true,
     preserveSymlinks: options.preserveSymlinks ?? true,
@@ -111,14 +111,7 @@ export async function bundle(
           // Must not start with "/" or "./" or "../"
           // eslint-disable-next-line no-useless-escape
           const filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/;
-          build.onResolve({ filter }, async (args) => {
-            try {
-              await import(args.path); // ESM friendly?
-              return { external: true };
-            } catch (e) {
-              return;
-            }
-          });
+          build.onResolve({ filter }, async () => ({ external: true }));
         }
       }
     ]

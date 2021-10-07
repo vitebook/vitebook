@@ -1,5 +1,5 @@
-import { path, resolveRelativePath } from '../../utils/path.js';
-import type { AppConfig, AppOptions } from '../AppOptions.js';
+import { path, resolveRelativePath } from '../../utils/path';
+import type { AppConfig, AppOptions } from '../AppOptions';
 
 export const createAppOptions = ({
   cliArgs = { command: 'serve', '--': [] },

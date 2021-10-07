@@ -1,11 +1,7 @@
 import type { Plugin as VitePlugin } from 'vite';
 
-import type {
-  ResolvedPage,
-  ServerPage,
-  SiteOptions
-} from '../../../shared/index.js';
-import type { App, AppEnv } from '../App.js';
+import type { ResolvedPage, ServerPage, SiteOptions } from '../../../shared';
+import type { App, AppEnv } from '../App';
 
 export type Plugin = VitePlugin & {
   /**

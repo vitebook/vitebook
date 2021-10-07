@@ -1,4 +1,4 @@
-import type { AppEnv } from '../App.js';
+import type { AppEnv } from '../App';
 
 export const createAppEnv = ({
   command = 'serve',

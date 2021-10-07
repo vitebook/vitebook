@@ -1,5 +1,5 @@
-import { App, Plugin } from '@vitebook/core/node';
-import { esmRequire, loadModule, logger } from '@vitebook/core/node/utils';
+import type { App, Plugin } from '@vitebook/core/node';
+import { loadModule, logger } from '@vitebook/core/node/utils';
 import kleur from 'kleur';
 
 import type { DefaultThemeIconifyOptions } from './iconifyPlugin';
@@ -34,7 +34,7 @@ async function loadIconifyPlugin(
   options: DefaultThemeIconifyOptions
 ): Promise<Plugin | undefined> {
   try {
-    const path = esmRequire.resolve(
+    const path = require.resolve(
       '@vitebook/theme-default/node/iconifyPlugin.ts'
     );
 

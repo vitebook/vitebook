@@ -1,6 +1,6 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
-import type { App, ClientPlugin, Plugin } from '@vitebook/core/node';
-import { esmRequire, fs, loadModule, path } from '@vitebook/core/node/utils';
+import type { ClientPlugin, Plugin } from '@vitebook/core/node';
+import { fs, path } from '@vitebook/core/node/utils';
 import createVuePlugin, {
   Options as VuePluginOptions
 } from '@vitejs/plugin-vue';
@@ -83,7 +83,12 @@ export function clientPlugin(
         return {
           resolve: {
             alias: {
-              [VIRTUAL_ADDONS_MODULE_ID]: VIRTUAL_ADDONS_MODULE_REQUEST_PATH
+              [VIRTUAL_ADDONS_MODULE_ID]: VIRTUAL_ADDONS_MODULE_REQUEST_PATH,
+              // Packages can't be found by Vite in a PNPM workspace.
+              vue: require.resolve('vue'),
+              'vue-router': require.resolve('vue-router'),
+              'vue-shadow-dom': require.resolve('vue-shadow-dom'),
+              quicklink: require.resolve('quicklink')
             }
           },
           optimizeDeps: {
@@ -92,15 +97,12 @@ export function clientPlugin(
           }
         };
       },
-      async configureApp(app) {
-        await attemptToAutoLoadDefaultTheme(app);
-      },
       async resolvePage({ filePath }) {
         if (filter(filePath)) {
           files.add(filePath);
+          const type = path.extname(filePath).slice(1);
           return {
-            // strip `.`
-            type: path.extname(filePath).slice(1)
+            type: type === 'vue' ? 'vue' : `vue:${type}`
           };
         }
 
@@ -159,34 +161,4 @@ export function clientPlugin(
 
 function svgToVue(svg: string): string {
   return `<template>${svg}</template><script>export default {}</script>`;
-}
-
-/**
- * Attempt to automatically add default theme plugin if missing.
- */
-async function attemptToAutoLoadDefaultTheme(app: App) {
-  const defaultThemePluginNameRE = /@vitebook\/theme-default/;
-
-  const themePlugin = app.plugins.some((plugin) =>
-    defaultThemePluginNameRE.test(plugin.name)
-  );
-
-  if (!themePlugin) {
-    try {
-      const path = await esmRequire.resolve('@vitebook/theme-default/node');
-      if (!path) return;
-
-      const mod = await loadModule<{
-        defaultThemePlugin: () => Plugin;
-      }>(path, {
-        outdir: app.dirs.tmp.path
-      });
-
-      const plugin = mod.defaultThemePlugin();
-      app.plugins.push(plugin);
-      await plugin.configureApp?.(app, app.env);
-    } catch (e) {
-      //
-    }
-  }
 }

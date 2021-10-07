@@ -27,23 +27,22 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    ".": "./dist/node/index.js",
-    "./node": "./dist/node/index.js",
-    "./node/*": "./dist/node/*",
-    "./node/utils": "./dist/node/utils/index.js",
-    "./shared": "./dist/shared/index.js",
+    ".": "./dist/index.js",
+    "./node": "./dist/index.js",
+    "./node/utils": "./dist/utils/index.js",
+    "./shared": "./src/shared/index.ts",
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
       "node": [
-        "dist/node/index.d.ts"
+        "src/node/index.ts"
       ],
-      "node/*": [
-        "dist/node/*"
+      "node/utils": [
+        "src/node/utils/index.ts"
       ],
       "shared": [
-        "dist/shared/index.d.ts"
+        "src/shared/index.ts"
       ]
     }
   },
@@ -52,12 +51,13 @@
   },
   "files": [
     "bin/",
+    "src/",
     "dist/"
   ],
   "scripts": {
-    "build": "npm run clean && tsc",
-    "build:watch": "npm run build -- -w",
-    "clean": "rimraf *.tsbuildinfo dist"
+    "build": "npm run clean && node .scripts/build.mjs",
+    "build:watch": "npm run build -- --watch",
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "@types/debug": "^4.1.7",
@@ -79,11 +79,8 @@
     "upath": "^2.0.1",
     "vite": "^2.5.3"
   },
-  "devDependencies": {
-    "@types/pkg-up": "^3.1.0"
-  },
   "engines": {
-    "node": ">=14.13.0"
+    "node": ">=15"
   },
   "publishConfig": {
     "access": "public"

@@ -4,7 +4,7 @@ import { isSidebarGroup, SidebarItem } from '../../../shared';
 import SidebarItemGroup from './SidebarItemGroup.vue';
 import SidebarItemLink from './SidebarItemLink.vue';
 
-const SidebarItem: FunctionalComponent<{
+const SidebarListItem: FunctionalComponent<{
   item: SidebarItem;
 }> = ({ item }) => createSidebarTree(item, 0);
 
@@ -23,4 +23,4 @@ function createSidebarTree(item: SidebarItem, depth: number): VNode {
   );
 }
 
-export default SidebarItem;
+export default SidebarListItem;

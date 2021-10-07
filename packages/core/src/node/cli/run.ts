@@ -2,11 +2,11 @@
 
 import { cac } from 'cac';
 
-import { logger } from '../utils/logger.js';
-import { esmRequire } from '../utils/module.js';
-import { buildCommand } from './commands/buildCommand.js';
-import { devCommand } from './commands/devCommand.js';
-import { serveCommand } from './commands/serveCommand.js';
+import { logger } from '../utils/logger';
+import { esmRequire } from '../utils/module';
+import { buildCommand } from './commands/buildCommand';
+import { devCommand } from './commands/devCommand';
+import { serveCommand } from './commands/serveCommand';
 
 const program = cac('vitebook');
 

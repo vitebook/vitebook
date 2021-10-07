@@ -1,11 +1,11 @@
 import type { App } from '@vitebook/core/node';
-import { fs } from '@vitebook/core/node/utils';
 import {
   HeadConfig,
   LocaleConfig,
   omitPageMeta,
   prettyJsonStr
-} from '@vitebook/core/shared';
+} from '@vitebook/core/node';
+import { fs } from '@vitebook/core/node/utils';
 import matter from 'gray-matter';
 import LRUCache from 'lru-cache';
 import toml from 'toml';

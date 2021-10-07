@@ -7,17 +7,17 @@ import {
   ViteDevServer
 } from 'vite';
 
-import { isArray, prettyJsonStr } from '../../../../shared/index.js';
-import { logger } from '../../../utils/logger.js';
-import { isSubpath, resolveRelativePath } from '../../../utils/path.js';
-import type { App } from '../../App.js';
+import { isArray, prettyJsonStr } from '../../../../shared';
+import { logger } from '../../../utils/logger';
+import { isSubpath, resolveRelativePath } from '../../../utils/path';
+import type { App } from '../../App';
 import {
   loadPagesVirtualModule,
   resolvePages
-} from '../../create/resolvePages.js';
-import { resolveApp } from '../../resolveApp.js';
-import { virtualModuleId, virtualModuleRequestPath } from './alias.js';
-import { indexHtmlMiddleware } from './middlewares/indexHtml.js';
+} from '../../create/resolvePages';
+import { resolveApp } from '../../resolveApp';
+import { virtualModuleId, virtualModuleRequestPath } from './alias';
+import { indexHtmlMiddleware } from './middlewares/indexHtml';
 
 let pageChangesPending: Promise<void> | undefined;
 

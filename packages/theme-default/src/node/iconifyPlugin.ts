@@ -1,7 +1,6 @@
-import { Plugin } from '@vitebook/core/node';
-import { isFunction, removeLeadingSlash } from '@vitebook/core/shared';
-import type { Options as IconOptions } from 'unplugin-icons/dist/index.js';
-import Icons from 'unplugin-icons/dist/vite.js';
+import { isFunction, Plugin, removeLeadingSlash } from '@vitebook/core/node';
+import type { Options as IconOptions } from 'unplugin-icons/dist/index';
+import Icons from 'unplugin-icons/dist/vite';
 
 import {
   VIRTUAL_EMPTY_ICON_MODULE_ID,
@@ -62,10 +61,9 @@ const defaultIconifyResolver: VitebookIconifyResolver = (icon) => {
   }
 
   if (icon.startsWith('sidebar-file-')) {
-    const type = icon.replace('sidebar-file-', '');
+    const type = icon.replace('sidebar-file-', '').replace(/^\w+:/, '');
     switch (type) {
       case 'md':
-      case 'vue:md':
         return 'mdi/language-markdown';
       case 'vue':
         return 'mdi/vuejs';

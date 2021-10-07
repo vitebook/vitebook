@@ -6,22 +6,23 @@
     "examples/*"
   ],
   "scripts": {
+    "preinstall": "node .scripts/preinstall.mjs",
     "lint": "run-s lint:*",
-    "lint:eslint": "eslint --ext .js,.ts,.tsx,.svelte,.vue . --ignore-path .gitignore",
+    "lint:eslint": "eslint --ext .js,.ts,.tsx,.vue . --ignore-path .gitignore",
     "lint:prettier": "prettier . --check --ignore-path .gitignore --loglevel warn",
     "format": "run-s format:*",
     "format:eslint": "npm run lint:eslint -- --fix",
     "format:prettier": "npm run lint:prettier -- --write",
-    "core:build": "npm run build --workspace=@vitebook/core",
-    "core:watch": "npm run build:watch --workspace=@vitebook/core",
+    "build": "node .scripts/run-build.mjs",
+    "build:all": "pnpm build --filter ./packages",
+    "test:node-esm": "node .scripts/test-node-esm.mjs",
     "example": "node .scripts/run-example.mjs",
     "release": "echo \"Release command not created. Skipping...\"",
-    "typecheck": "tsc -p tsconfig.eslint.json --noEmit",
     "prepare": "husky install"
   },
   "lint-staged": {
-    "*.{js,ts,tsx,svelte,vue}": "eslint --cache --fix",
-    "*.{js,ts,tsx,vue,md,json}": "prettier --write",
+    "*.{js,ts,tsx,vue}": "eslint --cache --fix",
+    "*.{js,ts,tsx,svelte,vue,md,json}": "prettier --write",
     "package.json": "sort-package-json"
   },
   "prettier": {
@@ -30,34 +31,36 @@
     "trailingComma": "none",
     "useTabs": false
   },
-  "dependencies": {
-    "prompts": "^2.4.1",
-    "upath": "^2.0.1"
-  },
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
     "@types/node": "^16.0.1",
     "@typescript-eslint/eslint-plugin": "^4.28.4",
     "@typescript-eslint/parser": "^4.24.0",
+    "esbuild": "^0.12.24",
     "eslint": "^7.17.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-import-resolver-typescript": "^2.4.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-simple-import-sort": "^7.0.0",
-    "eslint-plugin-svelte3": "^3.2.0",
-    "eslint-plugin-vue": "^7.16.0",
+    "eslint-plugin-vue": "^7.19.0",
+    "fast-glob": "^3.2.7",
     "husky": "^7.0.0",
+    "kleur": "^4.1.4",
     "lint-staged": "^11.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
+    "prompts": "^2.4.1",
     "rimraf": "^3.0.2",
     "sort-package-json": "^1.50.0",
-    "typescript": "^4.4.2"
+    "typescript": "^4.4.2",
+    "upath": "^2.0.1"
   },
   "engines": {
-    "node": ">=16.10.0"
+    "node": ">=16.10.0",
+    "pnpm": "6.16.1"
   },
+  "packageManager": "pnpm",
   "volta": {
     "node": "16.10.0"
   }

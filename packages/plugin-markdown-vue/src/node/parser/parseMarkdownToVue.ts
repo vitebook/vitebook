@@ -1,11 +1,11 @@
 import type { App } from '@vitebook/core/node';
-import { prettyJsonStr } from '@vitebook/core/shared';
+import { prettyJsonStr } from '@vitebook/core/node';
+import type { MarkdownPageMeta } from '@vitebook/plugin-markdown';
 import {
   MarkdownParser,
-  parseMarkdown as parseMarkdownDefault,
+  parseMarkdown,
   ParseMarkdownOptions
 } from '@vitebook/plugin-markdown/node';
-import type { MarkdownPageMeta } from '@vitebook/plugin-markdown/shared';
 import LRUCache from 'lru-cache';
 
 import type { VueMarkdownParserEnv } from './types';
@@ -33,7 +33,7 @@ export function parseMarkdownToVue(
     html,
     meta,
     env: parserEnv
-  } = parseMarkdownDefault(app, parser, source, filePath, {
+  } = parseMarkdown(app, parser, source, filePath, {
     ...options
   });
 

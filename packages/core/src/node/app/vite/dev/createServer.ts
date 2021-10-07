@@ -4,8 +4,8 @@ import {
   ViteDevServer
 } from 'vite';
 
-import type { App } from '../../App.js';
-import { corePlugin } from './corePlugin.js';
+import type { App } from '../../App';
+import { corePlugin } from './corePlugin';
 
 export async function createServer(
   app: App,

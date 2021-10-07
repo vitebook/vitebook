@@ -22,8 +22,8 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    "./node": "./src/node/index.ts",
-    "./node/*": "./src/node/*",
+    ".": "./dist/index.js",
+    "./node": "./dist/index.js",
     "./shared": "./src/shared/index.ts",
     "./package.json": "./package.json"
   },
@@ -32,17 +32,23 @@
       "node": [
         "./src/node/index.ts"
       ],
-      "node/*": [
-        "./src/node/*"
-      ],
       "shared": [
         "./src/shared/index.ts"
+      ],
+      "*": [
+        "src/node/index.ts"
       ]
     }
   },
   "files": [
-    "src/"
+    "src/",
+    "dist/"
   ],
+  "scripts": {
+    "build": "npm run clean && node .scripts/build.mjs",
+    "build:watch": "npm run build -- --watch",
+    "clean": "rimraf dist"
+  },
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
     "@types/lru-cache": "^5.1.1",
@@ -56,10 +62,14 @@
     "toml": "^3.0.0"
   },
   "devDependencies": {
-    "@vitebook/client": "*"
+    "@vitebook/client": "workspace:*",
+    "@vitebook/core": "workspace:*",
+    "vue": "^3.2.6"
   },
   "peerDependencies": {
-    "@vitebook/client": "*"
+    "@vitebook/client": "workspace:*",
+    "@vitebook/core": "workspace:*",
+    "vue": "^3.2.6"
   },
   "publishConfig": {
     "access": "public"

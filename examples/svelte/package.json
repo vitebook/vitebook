@@ -8,11 +8,13 @@
     "vitebook:serve": "vitebook serve"
   },
   "devDependencies": {
-    "@vitebook/client": "*",
-    "@vitebook/plugin-markdown-shiki": "*",
-    "@vitebook/plugin-markdown-svelte": "*",
-    "@vitebook/plugin-svelte": "*",
-    "@vitebook/theme-default": "*",
+    "@vitebook/client": "workspace:*",
+    "@vitebook/core": "workspace:*",
+    "@vitebook/plugin-markdown-shiki": "workspace:*",
+    "@vitebook/plugin-markdown-svelte": "workspace:*",
+    "@vitebook/plugin-svelte": "workspace:*",
+    "@vitebook/theme-default": "workspace:*",
+    "svelte": "^3.43.1",
     "svelte-preprocess": "^4.9.8",
     "typescript": "^4.4.3"
   }

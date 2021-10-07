@@ -43,6 +43,7 @@ export const htmlInlineRule: RuleInline = (state, silent) => {
     const token = state.push('html_inline', '', 0);
     token.content = state.src.slice(pos, pos + match[0].length);
   }
+
   state.pos += match[0].length;
   return true;
 };

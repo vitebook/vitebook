@@ -1,31 +1,31 @@
 import type { App } from '@vitebook/core/node';
-import { prettyJsonStr } from '@vitebook/core/shared';
+import { prettyJsonStr } from '@vitebook/core/node';
+import type { MarkdownPageMeta } from '@vitebook/plugin-markdown/node';
 import {
   MarkdownParser,
-  parseMarkdown as parseMarkdownDefault,
+  parseMarkdown,
   ParseMarkdownOptions
 } from '@vitebook/plugin-markdown/node';
-import type { MarkdownPageMeta } from '@vitebook/plugin-markdown/shared';
 import LRUCache from 'lru-cache';
 
 import type { SvelteMarkdownParserEnv } from './types';
 
-export type ParseMarkdownToVueOptions = ParseMarkdownOptions;
+export type ParseMarkdownToSvelteOptions = ParseMarkdownOptions;
 
-export type ParsedMarkdownToVueResult = {
+export type ParsedMarkdownToSvelteResult = {
   component: string;
   meta: MarkdownPageMeta;
 };
 
-const cache = new LRUCache<string, ParsedMarkdownToVueResult>({ max: 1024 });
+const cache = new LRUCache<string, ParsedMarkdownToSvelteResult>({ max: 1024 });
 
 export function parseMarkdownToSvelte(
   app: App,
   parser: MarkdownParser,
   source: string,
   filePath: string,
-  options: ParseMarkdownToVueOptions = {}
-): ParsedMarkdownToVueResult {
+  options: ParseMarkdownToSvelteOptions = {}
+): ParsedMarkdownToSvelteResult {
   const cachedResult = cache.get(source);
   if (cachedResult) return cachedResult;
 
@@ -33,23 +33,17 @@ export function parseMarkdownToSvelte(
     html,
     meta,
     env: parserEnv
-  } = parseMarkdownDefault(
-    app,
-    parser,
-    commentOutTemplateTags(source),
-    filePath,
-    {
-      ...options
-    }
-  );
+  } = parseMarkdown(app, parser, commentOutTemplateTags(source), filePath, {
+    ...options
+  });
 
   const { hoistedTags } = parserEnv as SvelteMarkdownParserEnv;
 
   const component =
-    buildMetaExport(mergeDuplicateHoistedTags(hoistedTags), meta).join('\n') +
+    buildMetaExport(dedupeHoistedTags(hoistedTags), meta).join('\n') +
     `\n\n${uncommentTemplateTags(html)}`;
 
-  const result: ParsedMarkdownToVueResult = {
+  const result: ParsedMarkdownToSvelteResult = {
     component,
     meta
   };
@@ -103,7 +97,7 @@ function uncommentTemplateTags(source: string) {
   return source.replace(TEMPLATE_TAG_COMMENT_RE, '');
 }
 
-function mergeDuplicateHoistedTags(tags: string[] = []): string[] {
+function dedupeHoistedTags(tags: string[] = []): string[] {
   const deduped = new Map();
 
   const merge = (

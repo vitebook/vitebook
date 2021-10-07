@@ -1,4 +1,4 @@
-import { htmlEscape } from '@vitebook/core/shared';
+import { htmlEscape } from '@vitebook/core/node';
 
 import type { MarkdownHeader } from '../../../../shared';
 import type { TocPluginOptions } from './tocPlugin';

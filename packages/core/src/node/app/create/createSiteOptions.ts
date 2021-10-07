@@ -1,4 +1,4 @@
-import type { SiteConfig, SiteOptions } from '../../../shared/index.js';
+import type { SiteConfig, SiteOptions } from '../../../shared';
 
 export const createSiteOptions = ({
   baseUrl = '/',

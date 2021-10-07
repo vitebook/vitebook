@@ -11,6 +11,7 @@
     "vue": "^3.0.0"
   },
   "devDependencies": {
-    "@vitebook/client": "*"
+    "@vitebook/client": "workspace:*",
+    "@vitebook/core": "workspace:*"
   }
 }
