@@ -2,7 +2,6 @@
 import { computed, toRefs } from 'vue';
 
 import type { SidebarItemLink } from '../../../shared';
-import { useDynamicAsyncComponent } from '../../composables/useDynamicAsyncComponent';
 import { useNavItemLink } from '../Navbar/useNavItemLink';
 
 const props = defineProps<{
@@ -15,9 +14,11 @@ const type = computed(() => propsRef.item.value.type);
 
 const { props: linkProps, isExternal } = useNavItemLink(propsRef.item);
 
-const Icon = useDynamicAsyncComponent(
-  computed(() => `/:virtual/vitebook/icons/sidebar-file-${type.value}?raw&vue`)
-);
+const Icon = () => '';
+
+// useDynamicAsyncComponent(
+//   computed(() => `/:virtual/vitebook/icons/sidebar-file-${type.value}?raw&vue`)
+// );
 
 function preventClick(event: Event) {
   if (!isExternal) {

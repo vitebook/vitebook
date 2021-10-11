@@ -84,5 +84,11 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "peerDependencies": {
+    "rollup": "^2.58.0"
+  },
+  "devDependencies": {
+    "rollup": "^2.58.0"
   }
 }

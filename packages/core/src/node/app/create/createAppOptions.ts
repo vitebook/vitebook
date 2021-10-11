@@ -2,7 +2,7 @@ import { path, resolveRelativePath } from '../../utils/path';
 import type { AppConfig, AppOptions } from '../AppOptions';
 
 export const createAppOptions = ({
-  cliArgs = { command: 'serve', '--': [] },
+  cliArgs = { command: 'dev', '--': [] },
   root = process.cwd(),
   srcDir = path.resolve(root, 'src'),
   configDir = path.resolve(root, '.vitebook'),
@@ -34,6 +34,7 @@ export const createAppOptions = ({
     publicDir: _publicDir,
     vite: {
       ...vite,
+      root: vite.root ?? _root,
       cacheDir: vite.cacheDir ?? _cacheDir,
       publicDir: vite.publicDir ?? _publicDir
     },

@@ -54,13 +54,12 @@ export type AppDirUtils = {
 };
 
 export type AppEnv = {
-  command: 'build' | 'serve';
+  command: 'dev' | 'build' | 'serve';
   isDebug: boolean;
   isDev: boolean;
   isProd: boolean;
-  isSSR?: boolean;
   /** @see https://vitejs.dev/guide/env-and-mode.html */
-  mode: string;
+  mode?: string;
 };
 
 export type AppSite = {

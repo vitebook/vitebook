@@ -2,11 +2,15 @@ import { build } from 'esbuild';
 import path from 'upath';
 import { fileURLToPath } from 'url';
 
-const esmRequireCode = [
-  "import { createRequire } from 'module';",
-  'const require = createRequire(import.meta.url);',
+const requireShim = [
+  "import __vitebook__path from 'path';",
+  "import { fileURLToPath as __vitebook__fileURLToPath } from 'url';",
+  "import { createRequire as __vitebook__createRequire } from 'module';",
+  'const require = __vitebook__createRequire(import.meta.url);',
   'var __require = function(x) { return require(x); };',
   '__require.__proto__.resolve = require.resolve;',
+  'const __filename = __vitebook__fileURLToPath(import.meta.url);',
+  'const __dirname = __vitebook__path.dirname(__filename);',
   '\n'
 ].join('\n');
 
@@ -24,7 +28,7 @@ async function main() {
   );
 
   await build({
-    banner: { js: esmRequireCode },
+    banner: { js: requireShim },
     entryPoints: [entry],
     outfile,
     platform: 'node',

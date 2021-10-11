@@ -6,7 +6,8 @@
     "target": "es2020",
     "module": "es2020",
     "paths": {
-      ":virtual/vitebook/icons/*": ["./src/virtual/icons.d.ts"]
+      ":virtual/vitebook/icons/*": ["./src/virtual/icons.d.ts"],
+      ":virtual/vitebook/*.svg": ["./src/virtual/vue-svg.d.ts"]
     }
   },
   "include": ["src"]

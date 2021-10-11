@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue';
+import { Component, computed, defineAsyncComponent } from 'vue';
 
 import type { DefaultThemeHomePageFeature } from '../../../shared';
 import { useHomePageConfig } from './useHomePageConfig';
@@ -14,11 +14,30 @@ const features = computed<DefaultThemeHomePageFeature[]>(
   () => homePageConfig.value?.features ?? []
 );
 
-const icons = computed(() =>
-  features.value
-    .map((_, i) => `/:virtual/vitebook/icons/home-feature-${i}?raw&vue`)
-    .map((path) => defineAsyncComponent(() => import(/* @vite-ignore */ path)))
-);
+// TODO: better way so Vite can parse imports? Bundle via plugin?
+const icons = computed(() => {
+  if (features.value.length === 0) return [];
+  return [
+    () =>
+      features.value.length > 0 &&
+      import(`:virtual/vitebook/icons/home-feature-0?raw&vue`),
+    () =>
+      features.value.length > 1 &&
+      import(`:virtual/vitebook/icons/home-feature-1?raw&vue`),
+    () =>
+      features.value.length > 2 &&
+      import(`:virtual/vitebook/icons/home-feature-2?raw&vue`),
+    () =>
+      features.value.length > 3 &&
+      import(`:virtual/vitebook/icons/home-feature-3?raw&vue`),
+    () =>
+      features.value.length > 4 &&
+      import(`:virtual/vitebook/icons/home-feature-4?raw&vue`),
+    () =>
+      features.value.length > 5 &&
+      import(`:virtual/vitebook/icons/home-feature-5?raw&vue`)
+  ].map((i) => i && defineAsyncComponent(i as () => Promise<Component>));
+});
 </script>
 
 <template>
@@ -31,10 +50,12 @@ const icons = computed(() =>
       >
         <div>
           <h2 v-if="feature.title" class="home__feature__title">
-            <component
-              :is="icons[index]"
-              class="home__feature__icon"
-            ></component>
+            <keep-alive>
+              <component
+                :is="icons[index]"
+                class="home__feature__icon"
+              ></component>
+            </keep-alive>
             {{ feature.title }}
           </h2>
           <p v-if="feature.body" class="home__feature__body">

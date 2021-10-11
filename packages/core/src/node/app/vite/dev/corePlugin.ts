@@ -1,11 +1,7 @@
 import { watch } from 'chokidar';
 import debounce from 'just-debounce-it';
 import kleur from 'kleur';
-import {
-  Plugin as VitePlugin,
-  UserConfig as ViteConfig,
-  ViteDevServer
-} from 'vite';
+import { UserConfig as ViteConfig, ViteDevServer } from 'vite';
 
 import { isArray, prettyJsonStr } from '../../../../shared';
 import { logger } from '../../../utils/logger';
@@ -15,13 +11,15 @@ import {
   loadPagesVirtualModule,
   resolvePages
 } from '../../create/resolvePages';
+import type { Plugin } from '../../plugin/Plugin';
 import { resolveApp } from '../../resolveApp';
 import { virtualModuleId, virtualModuleRequestPath } from './alias';
 import { indexHtmlMiddleware } from './middlewares/indexHtml';
 
 let pageChangesPending: Promise<void> | undefined;
 
-export async function corePlugin(app: App): Promise<VitePlugin> {
+export function corePlugin(): Plugin {
+  let app: App;
   let server: ViteDevServer;
 
   const virtualModuleRequestPaths = new Set<string>(
@@ -43,18 +41,15 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
             [virtualModuleId.clientEntry]: virtualModuleRequestPath.clientEntry,
             [virtualModuleId.pages]: virtualModuleRequestPath.pages
           }
-        },
-        build: {
-          rollupOptions: {
-            input: app.dirs.config.resolve('index.html')
-          }
         }
       };
 
       return config;
     },
-    async configResolved(config) {
-      (app.options.vite.resolve ??= {}).alias = config.resolve.alias;
+    configureApp(_app) {
+      app = _app;
+    },
+    async configResolved() {
       // Resolve pages after aliases have been resolved.
       await resolvePages(app, 'add');
     },
@@ -106,16 +101,6 @@ export async function corePlugin(app: App): Promise<VitePlugin> {
       }
 
       return null;
-    },
-    generateBundle(_, bundle) {
-      if (app.env.isSSR) {
-        // SSR build - delete all asset chunks.
-        for (const name in bundle) {
-          if (bundle[name].type === 'asset') {
-            delete bundle[name];
-          }
-        }
-      }
     },
     async handleHotUpdate(ctx) {
       const { file } = ctx;

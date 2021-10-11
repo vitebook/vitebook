@@ -83,17 +83,12 @@ export function clientPlugin(
         return {
           resolve: {
             alias: {
-              [VIRTUAL_ADDONS_MODULE_ID]: VIRTUAL_ADDONS_MODULE_REQUEST_PATH,
-              // Packages can't be found by Vite in a PNPM workspace.
-              vue: require.resolve('vue'),
-              'vue-router': require.resolve('vue-router'),
-              'vue-shadow-dom': require.resolve('vue-shadow-dom'),
-              quicklink: require.resolve('quicklink')
+              [VIRTUAL_ADDONS_MODULE_ID]: VIRTUAL_ADDONS_MODULE_REQUEST_PATH
             }
           },
           optimizeDeps: {
             // Force include `vue` to avoid duplicated copies when linked + optimized.
-            include: ['vue', 'vue-router', 'vue-shadow-dom', 'quicklink']
+            include: ['vue']
           }
         };
       },

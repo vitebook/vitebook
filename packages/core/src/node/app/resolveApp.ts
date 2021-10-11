@@ -15,23 +15,25 @@ export async function resolveApp(
     {
       ...config,
       cliArgs: args,
-      root: args.root ?? config.root,
+      root: args.root ?? config.root ?? config.vite?.root,
       srcDir: args.srcDir ?? config.srcDir,
       publicDir: args.publicDir ?? config.publicDir,
-      cacheDir: args.cacheDir ?? config.cacheDir,
+      cacheDir: args.cacheDir ?? config.cacheDir ?? config.vite?.cacheDir,
       configDir: args.configDir ?? config.configDir,
       include: args.include ?? config.include,
       debug: args.debug ?? config.debug,
       ...{
         site: {
           ...(config.site ?? {}),
-          baseUrl: args.baseUrl ?? config.site?.baseUrl
+          baseUrl: args.baseUrl ?? config.site?.baseUrl ?? config.vite?.base
         },
         vite: {
           ...(config.vite ?? {}),
-          cacheDir: args.cacheDir ?? config.vite?.cacheDir ?? config.cacheDir,
+          root: args.root ?? config.root ?? config.vite?.root,
+          base: args.baseUrl ?? config.site?.baseUrl ?? config.vite?.base,
+          cacheDir: args.cacheDir ?? config.cacheDir ?? config.vite?.cacheDir,
           publicDir:
-            args.publicDir ?? config.vite?.publicDir ?? config.publicDir,
+            args.publicDir ?? config.publicDir ?? config.vite?.publicDir,
           clearScreen: args.clearScreen ?? config.vite?.clearScreen ?? false,
           mode: args.mode ?? config.vite?.mode,
           resolve: {
@@ -69,7 +71,7 @@ export async function resolveApp(
       }
     },
     {
-      command: args.command === 'build' ? 'build' : 'serve',
+      command: args.command as 'dev' | 'build' | 'serve',
       mode: args.mode ?? config.vite?.mode,
       isDev: args.mode ? args.mode === 'development' : args.command === 'dev'
     }

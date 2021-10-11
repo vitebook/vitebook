@@ -6,7 +6,8 @@ import type { App, AppEnv } from '../App';
 import type { AppConfig } from '../AppOptions';
 import type { ClientPlugin } from '../plugin/ClientPlugin';
 import type { FilteredPlugins } from '../plugin/Plugin';
-import { build } from '../vite/build';
+import { build } from '../vite/build/build';
+import { corePlugin } from '../vite/dev/corePlugin';
 import { createServer } from '../vite/dev/createServer';
 import { serve } from '../vite/serve';
 import { createAppDirs } from './createAppDirs';
@@ -45,6 +46,7 @@ export const createApp = async (
   const configPath = resolveConfigPath(dirs.config.path);
 
   const plugins = [
+    corePlugin(),
     ...options.plugins.flat(),
     ...(options.vite.plugins ?? []).flat()
   ].filter((plugin) => !!plugin) as FilteredPlugins;
@@ -61,7 +63,14 @@ export const createApp = async (
     context: {},
     client,
     disposal: new DisposalBin(),
-    dev: () => createServer(app),
+    dev: () =>
+      createServer(app, {
+        build: {
+          rollupOptions: {
+            input: app.dirs.config.resolve('index.html')
+          }
+        }
+      }),
     build: () => build(app),
     serve: () => serve(app),
     close: () => app.disposal.empty()
@@ -81,6 +90,11 @@ export const createApp = async (
   for (const plugin of plugins) {
     await plugin.siteDataResolved?.(site.options);
   }
+
+  // Make sure we call it after the `configureApp` plugin hook as plugins might push additional
+  // plugins to the list.
+  app.options.vite.plugins = app.plugins;
+  app.options.vite.base = app.options.vite.base ?? site.options.baseUrl;
 
   return app;
 };

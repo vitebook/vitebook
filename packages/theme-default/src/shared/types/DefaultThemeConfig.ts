@@ -25,13 +25,6 @@ export type DefaultThemeConfig = DefaultThemeLocaleData & {
 
 export type DefaultThemeLocaleData = {
   /**
-   * A relative URL from the project root to a logo. You can also place this inside the `<public>`
-   * directory.
-   *
-   * @default '/logo.svg'
-   */
-  logo?: string;
-  /**
    * Miscellaneous A11y configuration options.
    */
   a11y?: {
@@ -305,13 +298,6 @@ export type DefaultThemeNotFoundPageLocaleConfig = {
    */
   message?: string;
   /**
-   * A relative URL from the project root to a 404 illustration. You can also place this inside
-   * the `<public>` directory.
-   *
-   * @default '/404.svg'
-   */
-  illustration?: string;
-  /**
    * Displayed text inside back to home button.
    *
    * @default 'Take me home'
@@ -328,8 +314,6 @@ export type DefaultThemeNotFoundPageLocaleConfig = {
 export type DefaultThemeLocaleConfig = Record<string, DefaultThemeLocaleData>;
 
 export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
-  logo: '/logo.svg',
-
   a11y: {
     openInNewWindow: 'open in new window'
   },
@@ -376,7 +360,6 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
   notFoundPage: {
     message: 'Oops, something went wrong.',
     goHomeText: 'Take me home',
-    illustration: '/404.svg',
     goBackText: 'Go back'
   }
 };

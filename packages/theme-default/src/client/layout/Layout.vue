@@ -40,12 +40,14 @@ onBeforeMount(() => {
   );
 });
 
-watchEffect(() => {
-  if (theme.value.navbar !== false) {
-    document.documentElement.classList.remove('no-navbar');
-  } else {
-    document.documentElement.classList.add('no-navbar');
-  }
+onBeforeMount(() => {
+  watchEffect(() => {
+    if (theme.value.navbar !== false) {
+      document.documentElement.classList.remove('no-navbar');
+    } else {
+      document.documentElement.classList.add('no-navbar');
+    }
+  });
 });
 
 const Navbar = defineAsyncComponent(

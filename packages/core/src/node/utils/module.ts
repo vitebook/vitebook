@@ -45,11 +45,15 @@ let tmpDir: string;
 
 export type LoadModuleOptions = BuildOptions;
 
-const esmRequireCode = [
-  "import { createRequire } from 'module';",
-  'const require = createRequire(import.meta.url);',
+const requireShim = [
+  "import __vitebook__path from 'path';",
+  "import { fileURLToPath as __vitebook__fileURLToPath } from 'url';",
+  "import { createRequire as __vitebook__createRequire } from 'module';",
+  'const require = __vitebook__createRequire(import.meta.url);',
   'var __require = function(x) { return require(x); };',
   '__require.__proto__.resolve = require.resolve;',
+  'const __filename = __vitebook__fileURLToPath(import.meta.url);',
+  'const __dirname = __vitebook__path.dirname(__filename);',
   '\n'
 ].join('\n');
 
@@ -79,7 +83,7 @@ export const loadModule = async <T>(
 
   const fileComment = `// FILE: ${filePath}\n\n`;
   const code = await bundle(filePath, buildOptions);
-  await fs.writeFile(outputPath, fileComment + esmRequireCode + code);
+  await fs.writeFile(outputPath, fileComment + requireShim + code);
   const mod = import(outputPath + `?t=${Date.now()}`) as unknown as T;
 
   return mod;

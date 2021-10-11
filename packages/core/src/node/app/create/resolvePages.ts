@@ -126,18 +126,13 @@ function pageCouldNotBeResolved(app: App, filePath: string) {
   unresolvedPages.add(filePath);
 }
 
-// eslint-disable-next-line no-control-regex
-const rControl = /[\u0000-\u001f]/g;
-const rCombining = /[\u0300-\u036F]/g;
+const FAKE_HOST = 'http://a.com';
 export function filePathToRoute(app: App, filePath: string): string {
   const relativePath = path.relative(app.dirs.src.path, filePath);
-  return ensureLeadingSlash(relativePath)
-    .normalize('NFKD')
-    .replace(rCombining, '')
-    .replace(rControl, '')
-    .replace(new RegExp(`(${path.extname(filePath)})$`), '.html')
-    .replace(/\/(README|index).html($|\?)/i, '/')
-    .toLowerCase();
+  const url = new URL(relativePath.toLowerCase(), FAKE_HOST).pathname;
+  return url
+    .replace(new RegExp(`(${path.extname(filePath)})($|\\?)`, 'i'), '.html')
+    .replace(/\/(README|index).html($|\?)/i, '/');
 }
 
 export function loadPagesVirtualModule(app: App): string {

@@ -1,11 +1,11 @@
 import type { AppEnv } from '../App';
 
 export const createAppEnv = ({
-  command = 'serve',
+  command = 'dev',
   isDebug = false,
-  isDev = true,
+  isDev = process.env.NODE_ENV === 'development',
   isProd = !isDev,
-  mode = 'serve'
+  mode
 }: Partial<AppEnv>): AppEnv => ({
   command,
   isProd,

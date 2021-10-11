@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { useRouteLocale, withBaseUrl } from '@vitebook/client';
-import { computed } from 'vue';
+import { computed, defineAsyncComponent } from 'vue';
 
 import { defaultThemeLocaleOptions } from '../../shared';
 import ButtonLink from '../components/ButtonLink.vue';
-import { useDynamicAsyncComponent } from '../composables/useDynamicAsyncComponent';
 import { useLocalizedThemeConfig } from '../composables/useLocalizedThemeConfig';
 
 const homeLink = useRouteLocale();
@@ -28,14 +27,8 @@ const goBackText = computed(
     defaultThemeLocaleOptions.notFoundPage.goBackText
 );
 
-const illustration = computed(
-  () =>
-    theme.value.notFoundPage?.illustration ??
-    defaultThemeLocaleOptions.notFoundPage.illustration
-);
-
-const Illustration = useDynamicAsyncComponent(
-  computed(() => illustration.value + '?raw&vue')
+const Illustration = defineAsyncComponent(
+  async () => await import(':virtual/vitebook/404.svg')
 );
 </script>
 

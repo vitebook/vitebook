@@ -1,14 +1,14 @@
 /**
  * Special prefix used throughout Vitebook to identify virtual modules (VM).
  */
-export const VM_PREFIX = ':virtual' as const;
+export const VM_PREFIX = ':virtual/vitebook' as const;
 
 export const virtualModuleId = {
-  noop: `${VM_PREFIX}/vitebook/noop`,
-  siteOptions: `${VM_PREFIX}/vitebook/site`,
-  pages: `${VM_PREFIX}/vitebook/pages`,
-  themeEntry: `${VM_PREFIX}/vitebook/theme`,
-  clientEntry: `${VM_PREFIX}/vitebook/client`
+  noop: `${VM_PREFIX}/noop`,
+  siteOptions: `${VM_PREFIX}/site`,
+  pages: `${VM_PREFIX}/pages`,
+  themeEntry: `${VM_PREFIX}/theme`,
+  clientEntry: `${VM_PREFIX}/client`
 } as const;
 
 export const virtualModuleRequestPath = Object.keys(virtualModuleId).reduce(

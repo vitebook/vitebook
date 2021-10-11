@@ -14,7 +14,7 @@ export type ConfigureClientAppContext<Theme extends ThemeConfig = ThemeConfig> =
     app: App;
     router: Router;
     siteOptions: Readonly<SiteOptions<Theme>>;
-    env: ImportMetaEnv;
+    env: { isProd: boolean; isSSR: boolean };
   };
 
 export type VirtualClientThemeModule<Theme extends ThemeConfig = ThemeConfig> =

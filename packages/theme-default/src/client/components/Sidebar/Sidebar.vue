@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { useMediaQuery } from '@vueuse/core';
-import { computed, defineAsyncComponent, ref, watch, watchEffect } from 'vue';
+import {
+  computed,
+  defineAsyncComponent,
+  onBeforeMount,
+  ref,
+  watch,
+  watchEffect
+} from 'vue';
 import { useRoute } from 'vue-router';
 
 import BackArrowIcon from ':virtual/vitebook/icons/back-arrow?raw&vue';
@@ -69,12 +76,14 @@ watchEffect(() => {
     (!hasSidebarItems.value && hasMainMenuItems.value);
 });
 
-watchEffect(() => {
-  if (isSidebarOpen.value) {
-    document.documentElement.classList.add('sidebar-open');
-  } else {
-    document.documentElement.classList.remove('sidebar-open');
-  }
+onBeforeMount(() => {
+  watchEffect(() => {
+    if (isSidebarOpen.value) {
+      document.documentElement.classList.add('sidebar-open');
+    } else {
+      document.documentElement.classList.remove('sidebar-open');
+    }
+  });
 });
 
 function handleToggleMenus() {

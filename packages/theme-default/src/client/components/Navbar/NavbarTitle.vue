@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { useLocalizedSiteOptions, useRouteLocale } from '@vitebook/client';
-import { computed } from 'vue';
+import { computed, defineAsyncComponent } from 'vue';
 
 import { defaultThemeLocaleOptions } from '../../../shared';
-import { useDynamicAsyncComponent } from '../../composables/useDynamicAsyncComponent';
 import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
 
 const localePath = useRouteLocale();
@@ -16,8 +15,8 @@ const goHomeText = computed(
     defaultThemeLocaleOptions.notFoundPage.goHomeText
 );
 
-const Logo = useDynamicAsyncComponent(
-  computed(() => theme.value.logo + '?raw&vue')
+const Logo = defineAsyncComponent(
+  async () => await import(':virtual/vitebook/logo.svg')
 );
 </script>
 

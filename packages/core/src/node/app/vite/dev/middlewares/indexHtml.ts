@@ -27,13 +27,10 @@ export function readIndexHtmlFile(app: App): string {
 
   let html = fs.readFileSync(indexPath, 'utf-8');
 
-  if (app.options.cliArgs.command === 'dev') {
-    html = html.replace(
-      '<!--@vitebook/preload-links-->',
-      // `@id` will be stripped out by Vite (identifies resolved ids that are invalid browser module ids).
-      ' <script type="module" src="/:virtual/vitebook/client"></script>'
-    );
-  }
+  html = html.replace(
+    '<!--@vitebook/head-->',
+    ' <!--@vitebook/head-->\n<script type="module" src="/:virtual/vitebook/client"></script>'
+  );
 
   return html.replace('{{ version }}', app.version);
 }

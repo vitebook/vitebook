@@ -1,4 +1,4 @@
-import { useMarkdownPageMeta } from '@vitebook/client';
+import { inBrowser, useMarkdownPageMeta } from '@vitebook/client';
 import { onBeforeUnmount, onMounted, Ref, watch } from 'vue';
 import type { Router } from 'vue-router';
 import { useRouter } from 'vue-router';
@@ -114,7 +114,12 @@ export const useActiveHeaderLinks = ({
     window.removeEventListener('scroll', onScroll);
   });
 
-  watch(() => [markdownMeta, offset], onScroll);
+  watch(
+    () => [markdownMeta, offset],
+    () => {
+      if (inBrowser) onScroll();
+    }
+  );
 };
 
 /**

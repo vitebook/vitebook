@@ -104,7 +104,7 @@ function useAutoSidebarItems(): ComputedRef<Readonly<SidebarItem[]>> {
     let items = sidebarItems;
 
     for (const page of pages.value) {
-      let path = page.route.split('/').slice(1);
+      let path = decodeURI(page.route).split('/').slice(1);
 
       if (path[0] === '' && path.length === 1) continue;
 

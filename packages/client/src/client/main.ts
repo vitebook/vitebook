@@ -32,7 +32,10 @@ export async function createApp(): Promise<{ app: VueApp; router: Router }> {
     app,
     router,
     siteOptions: site.value,
-    env: import.meta.env
+    env: {
+      isProd: import.meta.env.PROD,
+      isSSR: import.meta.env.SSR
+    }
   });
 
   if (!router.hasRoute('/') && theme.value.explorer !== false) {
