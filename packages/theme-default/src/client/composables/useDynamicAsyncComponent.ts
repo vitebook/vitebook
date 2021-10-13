@@ -20,7 +20,6 @@ export function useDynamicAsyncComponent(
     if (url.value) {
       component.value = markRaw(
         defineAsyncComponent(
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           async () => await import(/* @vite-ignore */ url.value!)
         )
       );

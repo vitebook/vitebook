@@ -13,9 +13,9 @@
   "devDependencies": {
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
-    "@vitebook/plugin-markdown-preact": "workspace:*",
-    "@vitebook/plugin-markdown-shiki": "workspace:*",
-    "@vitebook/plugin-preact": "workspace:*",
+    "@vitebook/markdown-preact": "workspace:*",
+    "@vitebook/markdown-shiki": "workspace:*",
+    "@vitebook/preact": "workspace:*",
     "@vitebook/theme-default": "workspace:*"
   }
 }

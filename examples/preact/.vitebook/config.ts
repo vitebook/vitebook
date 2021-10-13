@@ -1,7 +1,7 @@
 import { defineConfig, clientPlugin } from '@vitebook/client/node';
-import { preactPlugin } from '@vitebook/plugin-preact/node';
-import { preactMarkdownPlugin } from '@vitebook/plugin-markdown-preact/node';
-import { shikiMarkdownPlugin } from '@vitebook/plugin-markdown-shiki/node';
+import { preactPlugin } from '@vitebook/preact/node';
+import { preactMarkdownPlugin } from '@vitebook/markdown-preact/node';
+import { shikiMarkdownPlugin } from '@vitebook/markdown-shiki/node';
 import {
   DefaultThemeConfig,
   defaultThemePlugin

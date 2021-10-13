@@ -1,21 +1,12 @@
-import type {
-  SiteOptions,
-  Theme as DefaultTheme,
-  ThemeConfig,
-  VirtualThemeModule as DefaultVirtualThemeModule
-} from '@vitebook/core/shared';
-import type { App, Component } from 'vue';
-import type { Router } from 'vue-router';
+import type { Theme as DefaultTheme } from '@vitebook/core/shared';
+import type { SvelteComponent } from 'svelte';
 
-export type ClientTheme = DefaultTheme<Component, ConfigureClientAppContext>;
+import type { Router } from '../../client/router/router';
 
-export type ConfigureClientAppContext<Theme extends ThemeConfig = ThemeConfig> =
-  {
-    app: App;
-    router: Router;
-    siteOptions: Readonly<SiteOptions<Theme>>;
-    env: { isProd: boolean; isSSR: boolean };
-  };
+export type ClientTheme = DefaultTheme<typeof SvelteComponent> & {
+  configureRouter?(router: Router): void | Promise<void>;
+};
 
-export type VirtualClientThemeModule<Theme extends ThemeConfig = ThemeConfig> =
-  DefaultVirtualThemeModule<Component, ConfigureClientAppContext<Theme>>;
+export type VirtualClientThemeModule = {
+  default: ClientTheme;
+};

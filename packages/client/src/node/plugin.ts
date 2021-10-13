@@ -1,9 +1,7 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
+import { Options as SvelteOptions, svelte } from '@sveltejs/vite-plugin-svelte';
 import type { ClientPlugin, Plugin } from '@vitebook/core/node';
-import { fs, path } from '@vitebook/core/node/utils';
-import createVuePlugin, {
-  Options as VuePluginOptions
-} from '@vitejs/plugin-vue';
+import { compile as svelteCompile } from 'svelte/compiler';
 
 import type { PageAddonPlugin, PageAddons } from '../shared';
 import {
@@ -11,7 +9,8 @@ import {
   VIRTUAL_ADDONS_MODULE_ID,
   VIRTUAL_ADDONS_MODULE_REQUEST_PATH
 } from './addon';
-import { compileHTML } from './compilers/compileHTML';
+
+export const PLUGIN_NAME = '@vitebook/client' as const;
 
 export type ClientPluginOptions = {
   /**
@@ -20,33 +19,31 @@ export type ClientPluginOptions = {
   addons?: PageAddons[];
 
   /**
-   * Filter out which files to be included as pages.
+   * Filter out which files to be included as svelte pages.
    *
-   * @default  /\.(html|vue)($|\?)/
+   * @default /\.svelte($|\?)/
    */
   include?: FilterPattern;
 
   /**
-   * Filter out which files to _not_ be included as pages.
+   * Filter out which files to _not_ be included as svelte pages.
    *
    * @default undefined
    */
   exclude?: FilterPattern;
 
   /**
-   * `@vitejs/plugin-vue` plugin options.
+   * `@sveltejs/vite-plugin-svelte` plugin options.
    *
-   * @link https://github.com/vitejs/vite/tree/main/packages/plugin-vue
+   * @link https://github.com/sveltejs/vite-plugin-svelte
    */
-  vue?: VuePluginOptions;
+  svelte?: SvelteOptions;
 };
 
+const DEFAULT_INCLUDE_RE = /\.svelte($|\?)/;
+
 const SVG_ID_RE = /\.svg/;
-const RAW_ID_RE = /(\?raw&vue|&raw&vue)/;
-
-export const DEFAULT_INCLUDE_RE = /\.(html|vue)($|\?)/;
-
-export const PLUGIN_NAME = '@vitebook/client' as const;
+const RAW_ID_RE = /(\?raw&svelte|&raw&svelte)/;
 
 export function clientPlugin(
   options: ClientPluginOptions = {}
@@ -60,16 +57,7 @@ export function clientPlugin(
     .flat()
     .filter((addon) => !!addon) as PageAddonPlugin[];
 
-  /** Page system file paths. */
-  const files = new Set<string>();
-
-  const vuePlugin = createVuePlugin({
-    ...options.vue,
-    include:
-      options.vue?.include ??
-      (options.include as string[]) ??
-      DEFAULT_INCLUDE_RE
-  }) as Plugin;
+  const sveltePlugin = svelte(options.svelte);
 
   return [
     {
@@ -85,28 +73,17 @@ export function clientPlugin(
             alias: {
               [VIRTUAL_ADDONS_MODULE_ID]: VIRTUAL_ADDONS_MODULE_REQUEST_PATH
             }
-          },
-          optimizeDeps: {
-            // Force include `vue` to avoid duplicated copies when linked + optimized.
-            include: ['vue']
           }
         };
       },
-      async resolvePage({ filePath }) {
+      resolvePage({ filePath }) {
         if (filter(filePath)) {
-          files.add(filePath);
-          const type = path.extname(filePath).slice(1);
           return {
-            type: type === 'vue' ? 'vue' : `vue:${type}`
+            type: 'svelte'
           };
         }
 
         return null;
-      },
-      pagesRemoved(pages) {
-        pages.forEach(({ filePath }) => {
-          files.delete(filePath);
-        });
       },
       resolveId(id) {
         if (id === VIRTUAL_ADDONS_MODULE_REQUEST_PATH) {
@@ -122,38 +99,17 @@ export function clientPlugin(
 
         return null;
       },
-      async transform(code, id) {
-        // Transform raw SVG's into Vue components.
+      transform(code, id) {
+        // Transform raw SVG's into Svelte components.
         if (SVG_ID_RE.test(id) && RAW_ID_RE.test(id)) {
           const content = JSON.parse(code.replace('export default', ''));
-          return compileHTML(content, id);
-        }
-
-        if (files.has(id) && SVG_ID_RE.test(id)) {
-          const content = (await fs.readFile(id)).toString();
-          return svgToVue(content);
+          return svelteCompile(content).js;
         }
 
         return null;
-      },
-      async handleHotUpdate(ctx) {
-        const { file, read } = ctx;
-
-        // Hot reload `.svg` files as `.vue` files.
-        if (files.has(file) && SVG_ID_RE.test(file)) {
-          const content = await read();
-          return vuePlugin.handleHotUpdate?.({
-            ...ctx,
-            read: () => svgToVue(content)
-          });
-        }
       }
     },
     ...filteredAddons,
-    vuePlugin
+    sveltePlugin
   ];
-}
-
-function svgToVue(svg: string): string {
-  return `<template>${svg}</template><script>export default {}</script>`;
 }

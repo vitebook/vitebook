@@ -1,9 +1,9 @@
 import type { LocaleConfig } from '@vitebook/core/shared';
-import type { Component as VueComponent } from 'vue';
+import type { SvelteComponent } from 'svelte';
 
 export type PageAddon<
   AddonMeta = unknown,
-  Component = VueComponent
+  Component = typeof SvelteComponent
 > = PageAddonLocaleData & {
   /** Page addon name. */
   name?: string;
@@ -24,7 +24,10 @@ export type PageAddonLocaleData = {
 
 export type PageAddonLocaleConfig = LocaleConfig<PageAddonLocaleData>;
 
-export type PageAddonModule<AddonMeta = unknown, Component = VueComponent> = {
+export type PageAddonModule<
+  AddonMeta = unknown,
+  Component = typeof SvelteComponent
+> = {
   default: PageAddon<AddonMeta, Component>;
 };
 

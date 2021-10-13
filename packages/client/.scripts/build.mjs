@@ -15,34 +15,29 @@ const requireShim = [
 ].join('\n');
 
 async function main() {
-  const entry = path.resolve(
+  const nodeEntry = path.resolve(
     // @ts-expect-error - target is set but error?
     path.dirname(fileURLToPath(import.meta.url)),
     '../src/node/index.ts'
   );
 
-  const outfile = path.resolve(
+  const outdir = path.resolve(
     // @ts-expect-error - target is set but error?
     path.dirname(fileURLToPath(import.meta.url)),
-    '../dist/index.js'
+    '../dist'
   );
 
   await build({
     banner: { js: requireShim },
-    entryPoints: [entry],
-    outfile,
+    entryPoints: [nodeEntry],
+    outdir,
     platform: 'node',
     format: 'esm',
     target: 'es2020',
     watch: process.argv.includes('--watch'),
     bundle: true,
     logLevel: 'info',
-    external: [
-      '@vitebook/core',
-      '@vitejs/plugin-vue',
-      '@vue/compiler-sfc',
-      'vite'
-    ]
+    external: ['@vitebook/core', '@sveltejs/vite-plugin-svelte', 'svelte']
   });
 }
 

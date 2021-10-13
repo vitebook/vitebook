@@ -15,7 +15,6 @@ export * from './utils/head';
 export * from './utils/html';
 export * from './utils/json';
 export * from './utils/locale';
-export * from './utils/page';
 export * from './utils/string';
 export * from './utils/support';
 export * from './utils/unit';

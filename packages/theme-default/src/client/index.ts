@@ -64,7 +64,6 @@ const theme: ClientTheme = {
     app.component('OutboundLink', OutboundLink);
 
     // Handle scrollBehavior with transition.
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const scrollBehavior = router.options.scrollBehavior!;
     router.options.scrollBehavior = async (to, ...args) => {
       await useRouterScroll().wait();

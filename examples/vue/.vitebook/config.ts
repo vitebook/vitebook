@@ -1,6 +1,6 @@
 import { defineConfig, clientPlugin } from '@vitebook/client/node';
-import { vueMarkdownPlugin } from '@vitebook/plugin-markdown-vue/node';
-import { shikiMarkdownPlugin } from '@vitebook/plugin-markdown-shiki/node';
+import { vueMarkdownPlugin } from '@vitebook/markdown-vue/node';
+import { shikiMarkdownPlugin } from '@vitebook/markdown-shiki/node';
 import {
   DefaultThemeConfig,
   defaultThemePlugin

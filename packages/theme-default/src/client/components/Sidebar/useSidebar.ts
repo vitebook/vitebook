@@ -153,7 +153,6 @@ function useAutoSidebarItems(): ComputedRef<Readonly<SidebarItem[]>> {
           items.push(group);
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         items = group!.children;
       });
 

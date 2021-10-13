@@ -13,8 +13,8 @@
   "devDependencies": {
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
-    "@vitebook/plugin-markdown-shiki": "workspace:*",
-    "@vitebook/plugin-markdown-vue": "workspace:*",
+    "@vitebook/markdown-shiki": "workspace:*",
+    "@vitebook/markdown-vue": "workspace:*",
     "@vitebook/theme-default": "workspace:*"
   }
 }

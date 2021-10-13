@@ -4,14 +4,14 @@
   "references": [
     { "path": "./packages/client" },
     { "path": "./packages/core" },
-    { "path": "./packages/plugin-markdown-prismjs" },
-    { "path": "./packages/plugin-markdown-shiki" },
-    { "path": "./packages/plugin-markdown-preact" },
-    { "path": "./packages/plugin-markdown-svelte" },
-    { "path": "./packages/plugin-markdown-vue" },
-    { "path": "./packages/plugin-markdown" },
-    { "path": "./packages/plugin-preact" },
-    { "path": "./packages/plugin-svelte" },
-    { "path": "./packages/theme-default" }
+    { "path": "./packages/markdown-prismjs" },
+    { "path": "./packages/markdown-shiki" },
+    { "path": "./packages/markdown-preact" },
+    { "path": "./packages/markdown-svelte" },
+    { "path": "./packages/markdown-vue" },
+    { "path": "./packages/markdown" },
+    { "path": "./packages/preact" },
+    { "path": "./packages/theme-default" },
+    { "path": "./packages/vue" }
   ]
 }

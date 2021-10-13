@@ -1,0 +1,80 @@
+{
+  "name": "@vitebook/vue",
+  "version": "0.0.0",
+  "keywords": [
+    "client",
+    "esm",
+    "plugin",
+    "storybook",
+    "vitebook"
+  ],
+  "bugs": {
+    "url": "https://github.com/vitebook/vitebook/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitebook/vitebook.git",
+    "directory": "packages/vue"
+  },
+  "license": "MIT",
+  "contributors": [
+    "Rahim Alwer <rahim.alwer@gmail.com>"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": "./src/client/index.ts",
+    "./*": "./src/client/*",
+    "./node": "./dist/index.js",
+    "./shim": "./src/shim.d.ts",
+    "./shim.d.ts": "./src/shim.d.ts",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "node": [
+        "src/node/index.ts"
+      ],
+      "shared": [
+        "src/shared/index.ts"
+      ],
+      "shim": [
+        "src/shim.d.ts"
+      ],
+      "*": [
+        "src/client/*"
+      ]
+    }
+  },
+  "files": [
+    "src/",
+    "dist/"
+  ],
+  "scripts": {
+    "build": "npm run clean && node .scripts/build.mjs",
+    "build:watch": "npm run build -- --watch",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@rollup/pluginutils": "^4.1.1",
+    "@vitebook/core": "*",
+    "@vitejs/plugin-vue": "^1.8.0",
+    "@vue/compiler-sfc": "^3.2.19",
+    "@vue/server-renderer": "^3.2.20",
+    "preact": "^10.5.14",
+    "preact-render-to-string": "^5.1.19",
+    "vue": "^3.2.6",
+    "vue-router": "^4.0.11",
+    "vue-shadow-dom": "^2.0.0",
+    "wouter": "^2.8.0-alpha.1"
+  },
+  "devDependencies": {
+    "vite": "^2.5.3"
+  },
+  "peerDependencies": {
+    "vite": "^2.5.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

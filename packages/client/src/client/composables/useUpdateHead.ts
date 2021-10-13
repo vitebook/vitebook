@@ -1,27 +1,21 @@
-import {
-  HeadConfig,
-  isObject,
-  isString,
-  VitebookSSRContext
-} from '@vitebook/core/shared';
-import { onMounted, ref, useSSRContext, watch } from 'vue';
+import { HeadConfig, isObject, isString } from '@vitebook/core/shared';
+import { onMount } from 'svelte';
+import { get } from 'svelte/store';
 
-import { usePageHead } from './usePageHead';
-import { useSiteLang } from './useSiteLang';
+import { useSSRContext } from '../context/useSSRContext';
+import { currentPageHead } from '../stores/currentPageHead';
+import { siteLang } from '../stores/siteLang';
 
 /**
  * Returns function that can be called to force update head tags.
  */
 export function useUpdateHead(): () => void {
-  const head = usePageHead();
-  const lang = useSiteLang();
-
   if (import.meta.env.SSR) {
-    const ssrContext: VitebookSSRContext | undefined = useSSRContext();
+    const ssrContext = useSSRContext();
 
     if (ssrContext) {
-      ssrContext.head = head.value;
-      ssrContext.lang = lang.value;
+      ssrContext.head = get(currentPageHead);
+      ssrContext.lang = get(siteLang);
     }
 
     return () => {
@@ -29,42 +23,38 @@ export function useUpdateHead(): () => void {
     };
   }
 
-  const headTags = ref<HTMLElement[]>([]);
+  const headTags: HTMLElement[] = [];
 
   const loadHeadTags = (): void => {
-    head.value.forEach((item) => {
+    get(currentPageHead).forEach((item) => {
       const tag = queryHeadTag(item);
       if (tag) {
-        headTags.value.push(tag);
+        headTags.push(tag);
       }
     });
   };
 
   const updateHead = () => {
-    headTags.value.forEach((item) => {
+    headTags.forEach((item) => {
       if (item.parentNode === document.head) {
         document.head.removeChild(item);
       }
     });
 
-    headTags.value.splice(0, headTags.value.length);
+    headTags.splice(0, headTags.length);
 
-    head.value.forEach((item) => {
+    get(currentPageHead).forEach((item) => {
       const tag = createHeadTag(item);
       if (tag !== null) {
         document.head.appendChild(tag);
-        headTags.value.push(tag);
+        headTags.push(tag);
       }
     });
   };
 
-  onMounted(() => {
+  onMount(() => {
     loadHeadTags();
-    updateHead();
-    watch(
-      () => head.value,
-      () => updateHead()
-    );
+    return currentPageHead.subscribe(() => updateHead());
   });
 
   return updateHead;

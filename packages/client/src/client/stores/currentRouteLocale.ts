@@ -1,0 +1,10 @@
+import { resolveLocalePath } from '@vitebook/core/shared';
+import { derived } from 'svelte/store';
+
+import { currentRoute } from './currentRoute';
+import { siteOptions } from './siteOptions';
+
+export const currentRouteLocale = derived(
+  [siteOptions, currentRoute],
+  ([site, route]) => resolveLocalePath(site.baseUrl, site.locales, route.path)
+);

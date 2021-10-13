@@ -30,14 +30,14 @@ export async function bundle(app: App): Promise<BundleResult> {
 const clientPackages = [
   '@vitebook/client',
   '@vitebook/core',
-  '@vitebook/plugin-markdown',
-  '@vitebook/plugin-markdown-preact',
-  '@vitebook/plugin-markdown-prismjs',
-  '@vitebook/plugin-markdown-shiki',
-  '@vitebook/plugin-markdown-svelte',
-  '@vitebook/plugin-markdown-vue',
-  '@vitebook/plugin-preact',
-  '@vitebook/plugin-svelte',
+  '@vitebook/markdown',
+  '@vitebook/markdown-preact',
+  '@vitebook/markdown-prismjs',
+  '@vitebook/markdown-shiki',
+  '@vitebook/markdown-svelte',
+  '@vitebook/markdown-vue',
+  '@vitebook/preact',
+  '@vitebook/svelte',
   '@vitebook/theme-default'
 ];
 

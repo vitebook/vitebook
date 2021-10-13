@@ -6,6 +6,7 @@
     "esm",
     "plugin",
     "storybook",
+    "svelte",
     "vitebook"
   ],
   "bugs": {
@@ -23,7 +24,7 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    ".": "./src/client/index.ts",
+    ".": "./src/client/index.js",
     "./*": "./src/client/*",
     "./node": "./dist/index.js",
     "./shim": "./src/shim.d.ts",
@@ -57,13 +58,10 @@
   },
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.26",
     "@vitebook/core": "*",
-    "@vitejs/plugin-vue": "^1.8.0",
-    "@vue/compiler-sfc": "^3.2.19",
-    "@vue/server-renderer": "^3.2.20",
-    "vue": "^3.2.6",
-    "vue-router": "^4.0.11",
-    "vue-shadow-dom": "^2.0.0"
+    "kleur": "^4.1.4",
+    "svelte": "^3.43.2"
   },
   "devDependencies": {
     "vite": "^2.5.3"

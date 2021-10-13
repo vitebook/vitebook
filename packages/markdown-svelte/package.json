@@ -1,0 +1,70 @@
+{
+  "name": "@vitebook/markdown-svelte",
+  "version": "0.0.0",
+  "keywords": [
+    "esm",
+    "markdown",
+    "plugin",
+    "vitebook",
+    "svelte"
+  ],
+  "bugs": {
+    "url": "https://github.com/vitebook/vitebook/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitebook/vitebook.git",
+    "directory": "packages/markdown-svelte"
+  },
+  "license": "MIT",
+  "contributors": [
+    "Rahim Alwer <rahim.alwer@gmail.com>"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    "./node": "./dist/index.js",
+    "./shared": "./src/shared/index.ts",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "node": [
+        "src/node/index.ts"
+      ],
+      "shared": [
+        "src/shared/index.ts"
+      ]
+    }
+  },
+  "files": [
+    "src/",
+    "dist/"
+  ],
+  "scripts": {
+    "build": "npm run clean && node .scripts/build.mjs",
+    "build:watch": "npm run build -- --watch",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@rollup/pluginutils": "^4.1.1",
+    "@types/lru-cache": "^5.1.1",
+    "@vitebook/markdown": "workspace:*",
+    "kleur": "^4.1.4",
+    "lru-cache": "^6.0.0",
+    "svelte": "^3.43.0"
+  },
+  "devDependencies": {
+    "@vitebook/client": "workspace:*",
+    "@vitebook/core": "workspace:*",
+    "vue": "^3.2.6"
+  },
+  "peerDependencies": {
+    "@vitebook/client": "workspace:*",
+    "@vitebook/core": "workspace:*",
+    "vue": "^3.2.6"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

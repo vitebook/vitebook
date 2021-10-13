@@ -4,6 +4,7 @@ import kleur from 'kleur';
 import { UserConfig as ViteConfig, ViteDevServer } from 'vite';
 
 import { isArray, prettyJsonStr } from '../../../../shared';
+import { globby } from '../../../utils';
 import { logger } from '../../../utils/logger';
 import { isSubpath, resolveRelativePath } from '../../../utils/path';
 import type { App } from '../../App';
@@ -77,7 +78,13 @@ export function corePlugin(): Plugin {
       }
 
       if (id === virtualModuleRequestPath.themeEntry) {
-        return { id: app.dirs.theme.resolve('index.ts') };
+        return {
+          id: app.dirs.theme.resolve(
+            globby.sync('index.{js,ts,jsx,tsx}', {
+              cwd: app.dirs.theme.path
+            })[0]
+          )
+        };
       }
 
       if (virtualModuleRequestPaths.has(id)) {
@@ -108,7 +115,6 @@ export function corePlugin(): Plugin {
       if (file === app.configPath) {
         await resolveNewSiteData(app);
         return [
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           server.moduleGraph.getModuleById(
             virtualModuleRequestPath.siteOptions
           )!

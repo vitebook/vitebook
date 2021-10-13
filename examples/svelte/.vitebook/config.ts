@@ -1,29 +1,28 @@
 import { defineConfig, clientPlugin } from '@vitebook/client/node';
-import { sveltePlugin } from '@vitebook/plugin-svelte/node';
-import { svelteMarkdownPlugin } from '@vitebook/plugin-markdown-svelte/node';
-import { shikiMarkdownPlugin } from '@vitebook/plugin-markdown-shiki/node';
-import {
-  DefaultThemeConfig,
-  defaultThemePlugin
-} from '@vitebook/theme-default/node';
+// import { svelteMarkdownPlugin } from '@vitebook/markdown-svelte/node';
+// import { shikiMarkdownPlugin } from '@vitebook/markdown-shiki/node';
+// import {
+//   DefaultThemeConfig,
+//   defaultThemePlugin
+// } from '@vitebook/theme-default/node';
 import sveltePreprocess from 'svelte-preprocess';
 
-export default defineConfig<DefaultThemeConfig>({
-  include: ['src/**/*.{md,svelte}'],
+export default defineConfig({
+  // include: ['src/**/*.{md,svelte}'],
+  include: ['src/**/*.svelte'],
   plugins: [
-    shikiMarkdownPlugin(),
-    svelteMarkdownPlugin({
-      include: /\.md/
-    }),
-    sveltePlugin({
+    // shikiMarkdownPlugin(),
+    // svelteMarkdownPlugin({
+    //   include: /\.md/
+    // }),
+    clientPlugin({
       include: /\.(md|svelte)/,
       svelte: {
         preprocess: [sveltePreprocess({ typescript: true })],
         extensions: ['.svelte', '.md']
       }
-    }),
-    clientPlugin(),
-    defaultThemePlugin()
+    })
+    // defaultThemePlugin()
   ],
   site: {
     title: 'Vitebook',

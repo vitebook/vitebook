@@ -1,0 +1,59 @@
+{
+  "name": "@vitebook/markdown-shiki",
+  "version": "0.0.0",
+  "keywords": [
+    "esm",
+    "markdown",
+    "plugin",
+    "shiki",
+    "storybook",
+    "vitebook"
+  ],
+  "bugs": {
+    "url": "https://github.com/vitebook/vitebook/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vitebook/vitebook.git",
+    "directory": "packages/markdown-shiki"
+  },
+  "license": "MIT",
+  "contributors": [
+    "Rahim Alwer <rahim.alwer@gmail.com>"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    "./node": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "node": [
+        "src/node/index.ts"
+      ]
+    }
+  },
+  "files": [
+    "src/",
+    "dist/"
+  ],
+  "scripts": {
+    "build": "npm run clean && node .scripts/build.mjs",
+    "build:watch": "npm run build -- --watch",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@vitebook/markdown": "workspace:*",
+    "shiki": "^0.9.11"
+  },
+  "devDependencies": {
+    "@vitebook/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@vitebook/core": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

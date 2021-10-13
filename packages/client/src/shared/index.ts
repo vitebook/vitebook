@@ -4,8 +4,8 @@ export * from './types/ClientTheme';
 export * from './types/MarkdownPage';
 export * from './types/PageAddon';
 export * from './types/PageAddonPlugin';
-export * from './types/VueComponentPage';
+export * from './types/SveltePage';
 // utils
 export * from './utils/isLoadedMarkdownPage';
 export * from './utils/isMarkdownPage';
-export * from './utils/isVueComponentPage';
+export * from './utils/isSveltePage';

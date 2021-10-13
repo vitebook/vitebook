@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" context="module">
   import type { PageMeta } from '@vitebook/client';
 
   export const __pageMeta: PageMeta = {

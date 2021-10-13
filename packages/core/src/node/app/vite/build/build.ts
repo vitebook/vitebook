@@ -126,7 +126,6 @@ export async function build(app: App): Promise<void> {
     kleur.bold(
       `${LoggerIcon.Success} Build complete in ${kleur.bold(
         kleur.underline(`${endTime}s`)
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       )} ${speedIcon[Object.keys(speedIcon).find((t) => endTime <= t)!]}`
     )
   );

@@ -10,9 +10,8 @@
   "devDependencies": {
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
-    "@vitebook/plugin-markdown-shiki": "workspace:*",
-    "@vitebook/plugin-markdown-svelte": "workspace:*",
-    "@vitebook/plugin-svelte": "workspace:*",
+    "@vitebook/markdown-shiki": "workspace:*",
+    "@vitebook/markdown-svelte": "workspace:*",
     "@vitebook/theme-default": "workspace:*",
     "svelte": "^3.43.1",
     "svelte-preprocess": "^4.9.8",

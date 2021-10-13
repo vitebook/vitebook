@@ -8,7 +8,7 @@
   "scripts": {
     "preinstall": "node .scripts/preinstall.mjs",
     "lint": "run-s lint:*",
-    "lint:eslint": "eslint --ext .js,.ts,.tsx,.vue . --ignore-path .gitignore",
+    "lint:eslint": "eslint --ext .js,.ts,.tsx . --ignore-path .gitignore",
     "lint:prettier": "prettier . --check --ignore-path .gitignore --loglevel warn",
     "format": "run-s format:*",
     "format:eslint": "npm run lint:eslint -- --fix",
@@ -21,7 +21,7 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "*.{js,ts,tsx,vue}": "eslint --cache --fix",
+    "*.{js,ts,tsx}": "eslint --cache --fix",
     "*.{js,ts,tsx,svelte,vue,md,json}": "prettier --write",
     "package.json": "sort-package-json"
   },
@@ -43,7 +43,6 @@
     "eslint-import-resolver-typescript": "^2.4.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-simple-import-sort": "^7.0.0",
-    "eslint-plugin-vue": "^7.19.0",
     "fast-glob": "^3.2.7",
     "husky": "^7.0.0",
     "kleur": "^4.1.4",
@@ -58,7 +57,7 @@
   },
   "engines": {
     "node": ">=16.10.0",
-    "pnpm": "6.16.1"
+    "pnpm": ">=6.16.1"
   },
   "packageManager": "pnpm",
   "volta": {
