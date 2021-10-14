@@ -16,7 +16,7 @@ const goHomeText = computed(
 );
 
 const Logo = defineAsyncComponent(
-  async () => await import(':virtual/vitebook/logo.svg')
+  async () => await import('../../../virtual/svg')
 );
 </script>
 

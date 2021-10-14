@@ -1,12 +1,17 @@
 import { inBrowser, isFunction } from '@vitebook/core/shared';
-import { SvelteComponent, tick } from 'svelte';
+import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
-import type { ClientPage, LoadedClientPage } from '../shared';
+import type {
+  ClientPage,
+  LoadedClientPage,
+  SvelteConstructor
+} from '../shared';
 import DefaultNotFound from './components/DefaultNotFound.svelte';
 import { createMemoryHistory } from './router/history/memory';
 import { Router } from './router/router';
 import { currentPage } from './stores/currentPage';
+import { currentRoute } from './stores/currentRoute';
 import { pages } from './stores/pages';
 import { siteOptions } from './stores/siteOptions';
 import { theme } from './stores/theme';
@@ -20,7 +25,7 @@ export async function createRouter() {
   addRoutes(router, get(pages));
   handleHMR(router);
 
-  get(theme).configureRouter?.(router);
+  await get(theme).configureRouter?.(router);
 
   if (!router.hasRoute('/404.html')) {
     router.addRoute({
@@ -47,9 +52,6 @@ export async function createRouter() {
 
 let routes: string[] = [];
 
-// Memory usage concern for larger projects?
-let loadedPageCache = new WeakMap<ClientPage, LoadedClientPage>();
-
 function addRoutes(router: Router, pages: Readonly<ClientPage[]>) {
   pages.forEach((page) => {
     router.addRoute({
@@ -70,28 +72,44 @@ function addRoutes(router: Router, pages: Readonly<ClientPage[]>) {
 
 function handleHMR(router: Router) {
   if (import.meta.hot) {
+    let prevBaseUrl = '/';
+
     siteOptions.subscribe((site) => {
-      router.baseUrl = site.baseUrl;
-      router.go(location.href, { replace: true });
+      // Only after init.
+      if (get(currentRoute) && site.baseUrl !== prevBaseUrl) {
+        router.baseUrl = site.baseUrl;
+        router.go(location.href, { replace: true });
+        prevBaseUrl = site.baseUrl;
+      }
     });
 
-    pages.subscribe(async (pages) => {
-      loadedPageCache = new WeakMap();
+    const updatePages = (pages: ClientPage[]) => {
       routes.forEach((route) => router.removeRoute(route));
       routes = [];
       addRoutes(router, pages);
+    };
+
+    let pagesUpdateTimer;
+    pages.subscribe(async (pages) => {
+      clearTimeout(pagesUpdateTimer);
+      pagesUpdateTimer = setTimeout(() => updatePages(pages), 100);
     });
   }
 }
 
+// Memory usage concern for larger projects?
+const loadedPageCache = new WeakMap<ClientPage, LoadedClientPage>();
+
 async function loadPage(
   page: ClientPage,
   { prefetch = false } = {}
-): Promise<typeof SvelteComponent> {
-  if (loadedPageCache.has(page)) {
-    const loadedPage = loadedPageCache.get(page)!;
-    if (!prefetch) currentPage.__set(loadedPage);
-    return loadedPage.module.default;
+): Promise<SvelteConstructor> {
+  if (import.meta.env.PROD) {
+    if (loadedPageCache.has(page)) {
+      const loadedPage = loadedPageCache.get(page)!;
+      if (!prefetch) currentPage.__set(loadedPage);
+      return loadedPage.module.default;
+    }
   }
 
   const mod = await page.loader();
@@ -108,7 +126,9 @@ async function loadPage(
     meta: meta ?? {}
   } as LoadedClientPage;
 
-  if (loadedPage) loadedPageCache.set(page, loadedPage);
+  if (import.meta.env.PROD) {
+    if (loadedPage) loadedPageCache.set(page, loadedPage);
+  }
 
   if (!prefetch) currentPage.__set(loadedPage);
 

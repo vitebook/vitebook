@@ -51,7 +51,7 @@
     "dist/"
   ],
   "scripts": {
-    "build": "npm run clean && node .scripts/build.mjs",
+    "build": "npm run clean",
     "build:watch": "npm run build -- --watch",
     "clean": "rimraf dist"
   },

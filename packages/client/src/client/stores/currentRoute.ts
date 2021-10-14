@@ -2,7 +2,7 @@ import { writable } from 'svelte/store';
 
 import type { LoadedRouteLocation } from '../router/types';
 
-const store = writable<LoadedRouteLocation>();
+const store = writable<LoadedRouteLocation | undefined>();
 
 export const currentRoute = {
   ...store,

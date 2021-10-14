@@ -3,7 +3,7 @@ import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import babelTransformHookNames from 'babel-plugin-transform-hook-names';
 import type { Plugin, ResolvedConfig } from 'vite';
 
-export const PLUGIN_NAME = '@vitebook/plugin-preact:hook-names' as const;
+export const PLUGIN_NAME = '@vitebook/preact:hook-names' as const;
 
 export type HookNamesPluginOptions = {
   /**

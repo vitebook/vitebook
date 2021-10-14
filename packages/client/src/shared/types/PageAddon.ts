@@ -1,9 +1,10 @@
 import type { LocaleConfig } from '@vitebook/core/shared';
-import type { SvelteComponent } from 'svelte';
+
+import type { SvelteConstructor } from './SveltePage';
 
 export type PageAddon<
   AddonMeta = unknown,
-  Component = typeof SvelteComponent
+  Component = SvelteConstructor
 > = PageAddonLocaleData & {
   /** Page addon name. */
   name?: string;
@@ -26,7 +27,7 @@ export type PageAddonLocaleConfig = LocaleConfig<PageAddonLocaleData>;
 
 export type PageAddonModule<
   AddonMeta = unknown,
-  Component = typeof SvelteComponent
+  Component = SvelteConstructor
 > = {
   default: PageAddon<AddonMeta, Component>;
 };

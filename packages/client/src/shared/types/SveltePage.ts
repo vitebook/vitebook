@@ -9,6 +9,12 @@ export type SveltePage = DefaultPage<SveltePageModule> & {
   type: 'svelte';
 };
 
-export type SveltePageModule = DefaultPageModule<typeof SvelteComponent>;
+export type SvelteConstructor = typeof SvelteComponent;
+
+export type SvelteModule = {
+  default: SvelteConstructor;
+};
+
+export type SveltePageModule = DefaultPageModule<SvelteConstructor>;
 
 export type LoadedSveltePage = DefaultLoadedPage<SveltePageModule>;

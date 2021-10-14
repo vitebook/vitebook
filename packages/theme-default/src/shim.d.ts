@@ -1,7 +1,11 @@
 /// <reference types="vite/client" />
 
-declare module '*.vue' {
-  import { ComponentOptions } from 'vue';
-  const comp: ComponentOptions;
-  export default comp;
+declare module ':virtual/vitebook/icons/*' {
+  const component: string;
+  export default component;
+}
+
+declare module ':virtual/vitebook/*.svg' {
+  const component: string;
+  export default component;
 }

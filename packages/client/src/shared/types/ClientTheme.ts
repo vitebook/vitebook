@@ -1,9 +1,9 @@
 import type { Theme as DefaultTheme } from '@vitebook/core/shared';
-import type { SvelteComponent } from 'svelte';
 
 import type { Router } from '../../client/router/router';
+import type { SvelteConstructor } from './SveltePage';
 
-export type ClientTheme = DefaultTheme<typeof SvelteComponent> & {
+export type ClientTheme = DefaultTheme<SvelteConstructor> & {
   configureRouter?(router: Router): void | Promise<void>;
 };
 

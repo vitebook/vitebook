@@ -2,7 +2,7 @@ import './preflight.css';
 
 import App from './App.svelte';
 import { ROUTER_CTX_KEY } from './context/context-keys';
-import { createRouter } from './router';
+import { createRouter } from './createRouter';
 
 async function mount() {
   const router = await createRouter();

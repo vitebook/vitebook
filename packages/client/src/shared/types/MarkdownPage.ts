@@ -4,14 +4,15 @@ import type {
   MarkdownPageMeta,
   Page
 } from '@vitebook/core/shared';
-import type { SvelteComponent } from 'svelte';
+
+import type { SvelteConstructor } from './SveltePage';
 
 export type MarkdownPage = Page<MarkdownPageModule> & {
   type: `${string}md`;
 };
 
 export type MarkdownPageModule = DefaultPageModule<
-  typeof SvelteComponent,
+  SvelteConstructor,
   MarkdownPageMeta
 >;
 

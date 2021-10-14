@@ -1,14 +1,18 @@
-import type { SvelteComponent } from 'svelte';
-import type { Readable } from 'svelte/store';
+import type { SvelteConstructor, SvelteModule } from '../../shared';
 
 export type RoutePrefetch = (location: RouteLocation) => void | Promise<void>;
 
 export type RouteLoader = (
   location: RouteLocation
-) => typeof SvelteComponent | Promise<typeof SvelteComponent>;
+) =>
+  | SvelteConstructor
+  | SvelteModule
+  | Promise<SvelteConstructor>
+  | Promise<SvelteModule>;
 
 export type Route = {
   path: string;
+  redirect?: string;
   prefetch?: RoutePrefetch;
   loader: RouteLoader;
 };
@@ -28,7 +32,7 @@ export type RouteLocation = {
 };
 
 export type LoadedRouteLocation = RouteLocation & {
-  component: typeof SvelteComponent;
+  component: SvelteConstructor;
 };
 
 export type NavigationOptions = {

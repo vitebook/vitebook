@@ -99,7 +99,7 @@ export function iconifyPlugin(
 
   const iconsPlugin = Icons({
     ...iconsOptions,
-    compiler: 'vue3'
+    compiler: 'none'
   });
 
   return {

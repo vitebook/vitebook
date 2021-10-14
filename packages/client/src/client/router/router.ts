@@ -1,6 +1,7 @@
 import { ensureLeadingSlash, inBrowser, isString } from '@vitebook/core/shared';
 import { tick } from 'svelte';
 
+import type { SvelteModule } from '../../shared';
 import { currentPage } from '../stores/currentPage';
 import { currentRoute } from '../stores/currentRoute';
 import type {
@@ -18,7 +19,7 @@ export class Router {
   protected readonly routes: Map<string, Route> = new Map();
 
   enabled = true;
-  baseUrl: string;
+  baseUrl = '/';
   scrollYOffset = () => 0;
   beforeNavigate?: (url: URL) => void | Promise<void>;
   afterNavigate?: (url: URL) => void | Promise<void>;
@@ -35,7 +36,7 @@ export class Router {
     this.history = history;
 
     routes?.forEach((route) => {
-      this.routes.set(route.path, route);
+      this.addRoute(route);
     });
 
     if (inBrowser) {
@@ -74,6 +75,7 @@ export class Router {
       const decodedPath = decodeURI(path);
       const route =
         this.routes.get(decodedPath) ?? this.routes.get('/404.html')!;
+
       const query = new URLSearchParams(url.search);
       const id = `${path}?${query}`;
       return { id, route, path, query, hash: url.hash };
@@ -82,17 +84,15 @@ export class Router {
     return undefined;
   }
 
+  back() {
+    this.history.back();
+  }
+
   async go(
     href,
     { noscroll = false, replace = false, keepfocus = false, state = {} } = {}
   ) {
-    const baseUri = import.meta.env.SSR
-      ? `https://ssr.com/${this.baseUrl}` // protocol/host irrelevant during SSR
-      : `${location.protocol}//${location.host}${
-          this.baseUrl === '/' ? '' : this.baseUrl
-        }`;
-
-    const url = new URL(href, baseUri);
+    const url = new URL(href, getBaseUri(this.baseUrl));
 
     await this.beforeNavigate?.(url);
 
@@ -123,6 +123,13 @@ export class Router {
   async prefetch(url: URL): Promise<void> {
     const routeLocation = this.parse(url);
 
+    if (routeLocation?.route.redirect) {
+      await this.prefetch(
+        new URL(routeLocation.route.redirect, getBaseUri(this.baseUrl))
+      );
+      return;
+    }
+
     if (!routeLocation) {
       throw new Error(
         'Attempted to prefetch a URL that does not belong to this app'
@@ -142,6 +149,11 @@ export class Router {
 
     const routeLocation = this.parse(url);
 
+    if (routeLocation?.route.redirect) {
+      await this.go(routeLocation.route.redirect, { replace: true });
+      return;
+    }
+
     if (!routeLocation) {
       throw new Error(
         'Attempted to navigate to a URL that does not belong to this app'
@@ -152,7 +164,7 @@ export class Router {
 
     currentRoute.__set({
       ...routeLocation,
-      component
+      component: (component as SvelteModule).default ?? component
     });
 
     await tick();
@@ -317,4 +329,10 @@ function getHref(node: HTMLAnchorElement | SVGAElement): URL {
   return node instanceof SVGAElement
     ? new URL(node.href.baseVal, document.baseURI)
     : new URL(node.href);
+}
+
+function getBaseUri(baseUrl = '/') {
+  return import.meta.env.SSR
+    ? `https://ssr.com/${baseUrl}` // protocol/host irrelevant during SSR
+    : `${location.protocol}//${location.host}${baseUrl === '/' ? '' : baseUrl}`;
 }

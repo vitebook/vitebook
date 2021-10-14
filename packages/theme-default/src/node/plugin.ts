@@ -59,7 +59,7 @@ export function defaultThemePlugin(
 }
 
 function resolveVirtualPublicSvg(app: App, name: string): string {
-  if (app.env.isDev) return `/${name}.svg?raw&vue`;
+  if (app.env.isDev) return `/${name}.svg?raw`;
   const path = app.dirs.public.resolve(`${name}.svg`);
   return fs.existsSync(path) ? `${path}?raw&svg` : VIRTUAL_EMPTY_ICON_MODULE_ID;
 }

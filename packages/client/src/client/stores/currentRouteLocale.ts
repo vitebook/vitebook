@@ -6,5 +6,8 @@ import { siteOptions } from './siteOptions';
 
 export const currentRouteLocale = derived(
   [siteOptions, currentRoute],
-  ([site, route]) => resolveLocalePath(site.baseUrl, site.locales, route.path)
+  ([site, route]) =>
+    route?.path
+      ? resolveLocalePath(site.baseUrl, site.locales, route.path)
+      : '/'
 );

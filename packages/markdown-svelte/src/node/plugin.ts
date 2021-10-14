@@ -1,6 +1,5 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import type { App, Plugin } from '@vitebook/core/node';
-import { ensureLeadingSlash } from '@vitebook/core/node';
 import { logger } from '@vitebook/core/node/utils';
 import type { MarkdownParser, MarkdownPlugin } from '@vitebook/markdown/node';
 import kleur from 'kleur';
@@ -66,7 +65,7 @@ export function svelteMarkdownPlugin(
       if (!sveltePlugin) {
         throw logger.createError(
           `${kleur.bold('@vitebook/markdown-svelte')} requires the ${kleur.bold(
-            '@vitebook/svelte'
+            '@vitebook/client'
           )} plugin.`
         );
       }
@@ -76,15 +75,11 @@ export function svelteMarkdownPlugin(
         await mdPlugin.configureMarkdownParser?.(parser);
       }
     },
-    async resolvePage({ filePath, relativeFilePath }) {
+    async resolvePage({ filePath }) {
       if (filter(filePath)) {
         files.add(filePath);
         return {
-          id: '@vitebook/svelte/client/SvelteAdapter.vue',
-          type: 'svelte:md',
-          context: {
-            loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`
-          }
+          type: 'svelte:md'
         };
       }
 

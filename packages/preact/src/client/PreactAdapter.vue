@@ -23,7 +23,6 @@ import { onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 
 import type { PreactPage, PreactPageModule } from '../shared';
-import { withRouter } from './withRouter';
 
 const target = ref();
 const router = useRouter();
@@ -42,9 +41,9 @@ function mount(Component?: FunctionComponent) {
   if (!Component) return;
   destroy();
   if (import.meta.env.PROD) {
-    hydrate(withRouter({ Component, router }), target.value);
+    hydrate(Component, target.value);
   } else {
-    render(withRouter({ Component, router }), target.value);
+    render(Component, target.value);
   }
 }
 

@@ -5,86 +5,68 @@ import './styles/utils.css';
 import './styles/code.css';
 import './styles/admonition.css';
 
-import { ClientTheme, useFirstPage } from '@vitebook/client';
-import { h, watch } from 'vue';
+import { ClientTheme, currentRoute, pages } from '@vitebook/client';
+import { get } from 'svelte/store';
 
-import OutboundLink from './components/global/OutboundLink.vue';
-import { useLocalizedThemeConfig } from './composables/useLocalizedThemeConfig';
-import {
-  routerScrollBehaviour,
-  useRouterScroll
-} from './composables/useRouterScroll';
-import NotFound from './layout/404.vue';
-import Layout from './layout/Layout.vue';
-
-export * from '../shared';
-
-const BlankPage = Promise.resolve({
-  name: 'Blank',
-  render() {
-    return h('div');
-  }
-});
+import Layout from './layout/Layout.svelte';
+import NotFound from './layout/NotFound.svelte';
+import { localizedThemeConfig } from './stores/localizedThemeConfig';
 
 const theme: ClientTheme = {
   explorer: false,
-  Layout: Layout,
-  NotFound: NotFound,
-  configureClientApp({ app, router }) {
+  Layout,
+  NotFound,
+  configureRouter(router) {
+    let prevRedirect: string;
+
     if (!router.hasRoute('/')) {
-      const theme = useLocalizedThemeConfig();
-      const firstPage = useFirstPage();
+      const setHomePage = () => {
+        const theme = get(localizedThemeConfig);
+        const firstPage = get(pages)[0];
+        const redirect =
+          theme.homePage === false ? firstPage?.route : undefined;
 
-      watch(
-        () => [theme.value, firstPage.value],
-        () => {
-          router.addRoute({
-            name: '/',
-            path: '/',
-            redirect:
-              theme.value.homePage === false
-                ? firstPage.value?.route
-                : undefined,
-            component: () =>
-              theme.value.homePage === false
-                ? BlankPage
-                : import('./components/Home/Home.vue')
-          });
+        router.addRoute({
+          path: '/',
+          redirect,
+          loader: () =>
+            theme.homePage === false
+              ? import('./layout/Blank.svelte')
+              : import('./components/Home/Home.svelte')
+        });
 
-          if (router.currentRoute.value.name === '/') {
-            router.replace('/');
+        if (import.meta.env.DEV) {
+          const currentPath = get(currentRoute)?.path;
+
+          if (
+            (prevRedirect && currentPath === prevRedirect) ||
+            currentPath === '/'
+          ) {
+            router.go('/', { replace: true });
           }
-        },
-        { immediate: true }
-      );
+
+          prevRedirect = redirect;
+        }
+      };
+
+      if (import.meta.env.DEV) {
+        let timer;
+        const setHomePageDebounced = () => {
+          clearTimeout(timer);
+          timer = setTimeout(setHomePage, 100);
+        };
+
+        setHomePage();
+        localizedThemeConfig.subscribe(setHomePageDebounced);
+        pages.subscribe(setHomePageDebounced);
+      } else {
+        setHomePage();
+      }
     }
 
-    // Unregister the built-in `<OutboundLink>` to avoid warning.
-    delete app._context.components.OutboundLink;
-    app.component('OutboundLink', OutboundLink);
-
-    // Handle scrollBehavior with transition.
-    const scrollBehavior = router.options.scrollBehavior!;
-    router.options.scrollBehavior = async (to, ...args) => {
-      await useRouterScroll().wait();
-
-      if (to.hash) {
-        const navbarHeight =
-          document.querySelector('.navbar')?.getBoundingClientRect().height ??
-          0;
-
-        return {
-          el: to.hash,
-          top: navbarHeight,
-          behavior: routerScrollBehaviour.value
-        };
-      }
-
-      return scrollBehavior(to, ...args);
-    };
+    router.scrollYOffset = () =>
+      document.querySelector('.navbar')?.getBoundingClientRect().height ?? 0;
   }
 };
-
-export { Layout, NotFound };
 
 export default theme;

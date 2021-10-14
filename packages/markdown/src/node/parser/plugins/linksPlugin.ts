@@ -8,7 +8,7 @@ export type LinksPluginOptions = {
   /**
    * Tag for internal links.
    *
-   * @default 'RouterLink'
+   * @default 'a'
    */
   internalTag?: 'a' | 'RouterLink';
 
@@ -43,7 +43,7 @@ export const linksPlugin: PluginWithOptions<LinksPluginOptions> = (
   let hasOpenInternalLink = false;
   let hasOpenExternalLink = false;
 
-  const internalTag = linkOptions.internalTag ?? 'RouterLink';
+  const internalTag = linkOptions.internalTag ?? 'a';
   const externalIcon = linkOptions.externalIcon ?? true;
 
   // Attrs that going to be added to external links.

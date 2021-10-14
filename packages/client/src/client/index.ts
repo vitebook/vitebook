@@ -1,5 +1,6 @@
 // components
 export { default as ClientOnly } from './components/ClientOnly.svelte';
+export { default as Component } from './components/Component.svelte';
 export { default as OutboundLink } from './components/OutboundLink.svelte';
 export { default as PageView } from './components/PageView.svelte';
 // router

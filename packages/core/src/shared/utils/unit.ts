@@ -1,3 +1,7 @@
+export function noop() {
+  //
+}
+
 /**
  * Check if a value is `undefined`.
  */

@@ -24,7 +24,7 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    ".": "./src/client/index.js",
+    ".": "./src/client/index.ts",
     "./*": "./src/client/*",
     "./node": "./dist/index.js",
     "./shim": "./src/shim.d.ts",

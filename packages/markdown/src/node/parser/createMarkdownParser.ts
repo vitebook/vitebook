@@ -67,10 +67,7 @@ export async function createMarkdownParser({
 
   // Allow `toc` syntax.
   if (toc !== false) {
-    parser.use<TocPluginOptions>(tocPlugin, {
-      linkTag: 'RouterLink',
-      ...toc
-    });
+    parser.use<TocPluginOptions>(tocPlugin, toc);
   }
 
   // Extract `headers` into `env`.
