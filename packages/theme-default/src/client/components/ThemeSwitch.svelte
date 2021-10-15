@@ -7,6 +7,10 @@
   import { darkMode } from '../stores/darkMode';
   import { localizedThemeConfig } from '../stores/localizedThemeConfig';
 
+  let classes;
+
+  export { classes as class };
+
   $: isDarkModeEnabled =
     $localizedThemeConfig.darkMode?.enabled ??
     defaultThemeLocaleOptions.darkMode.enabled;
@@ -22,7 +26,7 @@
 
 {#if isDarkModeEnabled}
   <button
-    class="theme-switch"
+    class={'theme-switch ' + classes}
     role="switch"
     aria-label={buttonAriaLabel}
     aria-checked={$darkMode}

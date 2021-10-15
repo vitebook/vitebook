@@ -1,5 +1,7 @@
 <script>
-  import { currentRouteLocale, joinPath, withBaseUrl } from '@vitebook/client';
+  import Illustration from ':virtual/vitebook/404.svg';
+
+  import { currentRouteLocale } from '@vitebook/client';
   import { defaultThemeLocaleOptions } from '../../shared';
 
   import ButtonLink from '../components/ButtonLink.svelte';
@@ -18,14 +20,6 @@
   $: goBackText =
     $localizedThemeConfig.notFoundPage?.goBackText ??
     defaultThemeLocaleOptions.notFoundPage.goBackText;
-
-  let Illustration;
-
-  async function loadIllustration() {
-    Illustration = (await import(':virtual/vitebook/404.svg')).default;
-  }
-
-  loadIllustration();
 </script>
 
 <div class="not-found">
@@ -38,7 +32,7 @@
 
     <div class="not-found__actions">
       <div class="not-found__actions__primary">
-        <ButtonLink href={withBaseUrl($homeLink)}>
+        <ButtonLink href={$homeLink}>
           {goHomeText}
         </ButtonLink>
       </div>

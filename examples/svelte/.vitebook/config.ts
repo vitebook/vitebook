@@ -26,6 +26,16 @@ export default defineConfig<DefaultThemeConfig>({
   site: {
     title: 'Vitebook',
     description: 'Blazing fast Storybook alternative.',
+    locales: {
+      '/': {
+        lang: 'en-US',
+        langLabel: 'English'
+      },
+      '/tr': {
+        lang: 'tr',
+        langLabel: 'Turkish'
+      }
+    },
     theme: {
       remoteGitRepo: {
         url: 'vitebook/vitebook'
@@ -63,6 +73,39 @@ export default defineConfig<DefaultThemeConfig>({
           }
         ],
         footer: 'MIT Licensed | Copyright © 2021 - Vitebook'
+      },
+      navbar: {
+        items: [
+          {
+            text: 'Components',
+            link: '/components.html'
+          },
+          {
+            text: 'Docs',
+            link: '/docs.html'
+          },
+          {
+            text: 'Community',
+            menu: [
+              {
+                text: 'Learn More',
+                link: '/learn-more.html'
+              },
+              {
+                text: 'Discord',
+                link: 'https://discord.com'
+              },
+              {
+                text: 'Twitter',
+                link: 'https://twitter.com'
+              }
+            ]
+          },
+          {
+            text: 'Twitch',
+            link: 'https://twitch.com'
+          }
+        ]
       }
     }
   }

@@ -1,24 +1,20 @@
-import { isLinkExternal } from '@vitebook/core/shared';
-import { computed, ComputedRef } from 'vue';
+import { isLinkExternal } from '@vitebook/client';
+import { derived } from 'svelte/store';
 
-import type { NavItemLink } from '../../../shared';
-import { useLocalizedThemeConfig } from '../../composables/useLocalizedThemeConfig';
+import { localizedThemeConfig } from './localizedThemeConfig';
 
-export function useRepoLink(): ComputedRef<NavItemLink | null> {
-  const theme = useLocalizedThemeConfig();
-  return computed(() => {
-    const { label, url } = theme.value.remoteGitRepo ?? {};
+export const repoLink = derived(localizedThemeConfig, (theme) => {
+  const { label, url } = theme.remoteGitRepo ?? {};
 
-    if (!url) {
-      return null;
-    }
+  if (!url) {
+    return null;
+  }
 
-    const link = getRepoLink(url);
-    const text = getRepoText(link, label);
+  const link = getRepoLink(url);
+  const text = getRepoText(link, label);
 
-    return { text, link };
-  });
-}
+  return { text, link };
+});
 
 export function getRepoLink(repo: string): string {
   return isLinkExternal(repo) ? repo : `https://github.com/${repo}`;

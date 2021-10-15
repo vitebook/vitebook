@@ -1,4 +1,9 @@
-import { ensureLeadingSlash, inBrowser, isString } from '@vitebook/core/shared';
+import {
+  ensureLeadingSlash,
+  inBrowser,
+  isLinkExternal,
+  isString
+} from '@vitebook/core/shared';
 import { tick } from 'svelte';
 
 import type { SvelteModule } from '../../shared';
@@ -226,11 +231,22 @@ export class Router {
       }, 50);
     });
 
+    const hasPrefetched = new Set();
     const triggerPrefetch = (event: MouseEvent | TouchEvent) => {
       const a = findAnchor(event.target as Node | null);
-      if (a && a.href && this.routes.has(getHref(a).pathname)) {
-        this.prefetch(getHref(a));
+
+      if (
+        !a ||
+        !a.href ||
+        hasPrefetched.has(getHref(a)) ||
+        isLinkExternal(getHref(a)) ||
+        !this.routes.has(getHrefURL(a).pathname)
+      ) {
+        return;
       }
+
+      this.prefetch(getHrefURL(a));
+      hasPrefetched.add(getHref(a));
     };
 
     let mouseMoveTimeout;
@@ -257,7 +273,7 @@ export class Router {
       const a = findAnchor(event.target as Node | null);
       if (!a || !a.href) return;
 
-      const url = getHref(a);
+      const url = getHrefURL(a);
       const urlString = url.toString();
 
       if (urlString === location.href) {
@@ -325,7 +341,11 @@ function findAnchor(node: Node | null): HTMLAnchorElement | SVGAElement | null {
   return node as HTMLAnchorElement | SVGAElement;
 }
 
-function getHref(node: HTMLAnchorElement | SVGAElement): URL {
+function getHref(node: HTMLAnchorElement | SVGAElement): string {
+  return node instanceof SVGAElement ? node.href.baseVal : node.href;
+}
+
+function getHrefURL(node: HTMLAnchorElement | SVGAElement): URL {
   return node instanceof SVGAElement
     ? new URL(node.href.baseVal, document.baseURI)
     : new URL(node.href);
