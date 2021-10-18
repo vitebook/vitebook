@@ -2,7 +2,7 @@
   /** Minimum supported width. Keep code so breakpoint shows in devtools. **/
 }
 
-:root {
+.vbk-theme-default {
   /**-------------------------------------------------------------------------------------------
    * Breakpoints
    *-------------------------------------------------------------------------------------------*/
@@ -168,7 +168,7 @@
 
   --vbk--sidebar-item-color: var(--vbk--color-text);
   --vbk--sidebar-item-bg-color: var(--vbk--sidebar-bg-color);
-  --vbk--sidebar-item-padding: 0.5rem 0;
+  --vbk--sidebar-item-padding: 0.5rem;
   --vbk--sidebar-item-font-size: 1rem;
   --vbk--sidebar-item-spacing: 0.2rem;
   --vbk--sidebar-item-font-weight: 500;

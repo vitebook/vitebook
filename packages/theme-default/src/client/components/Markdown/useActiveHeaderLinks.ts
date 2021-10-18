@@ -1,7 +1,12 @@
-import { inBrowser, useMarkdownPageMeta } from '@vitebook/client';
-import { onBeforeUnmount, onMounted, Ref, watch } from 'vue';
-import type { Router } from 'vue-router';
-import { useRouter } from 'vue-router';
+import {
+  currentMarkdownPageMeta,
+  currentRoute,
+  useRouter
+} from '@vitebook/client';
+import { onMount, tick } from 'svelte';
+import { get, Readable } from 'svelte/store';
+
+import { throttleAndDebounce } from '../../utils/throttleAndDebounce';
 
 /**
  * Thanks `vuepress-next` for the following code!
@@ -11,19 +16,20 @@ export interface UseActiveHeaderLinksOptions {
   headerLinkSelector: string;
   headerAnchorSelector: string;
   delay: number;
-  offset: Ref<number>;
+  offset: Readable<number>;
 }
 
-export const useActiveHeaderLinks = ({
+export function useActiveHeaderLinks({
   headerLinkSelector,
   headerAnchorSelector,
   delay,
-  offset
-}: UseActiveHeaderLinksOptions): void => {
+  offset: offsetStore
+}: UseActiveHeaderLinksOptions) {
   const router = useRouter();
-  const markdownMeta = useMarkdownPageMeta();
 
-  const setActiveRouteHash = (): void => {
+  const setActiveRouteHash = () => {
+    const offset = get(offsetStore);
+
     const headerLinks: HTMLAnchorElement[] = Array.from(
       document.querySelectorAll(headerLinkSelector)
     );
@@ -53,7 +59,7 @@ export const useActiveHeaderLinks = ({
 
     // Check if we have reached page bottom.
     // Notice the `scrollBottom` might not be exactly equal to `scrollHeight`, so we add an offset.
-    const isAtPageBottom = Math.abs(scrollHeight - scrollBottom) < offset.value;
+    const isAtPageBottom = Math.abs(scrollHeight - scrollBottom) < offset;
 
     for (let i = 0; i < validAnchors.length; i++) {
       const anchor = validAnchors[i];
@@ -61,14 +67,15 @@ export const useActiveHeaderLinks = ({
 
       const isTheFirstAnchorActive = i === 0 && scrollTop === 0;
 
+      const currentPosition = (anchor.parentElement?.offsetTop ?? 0) - offset;
+
       // If has scrolled past this anchor.
-      const hasPassedCurrentAnchor =
-        scrollTop >= (anchor.parentElement?.offsetTop ?? 0) - offset.value;
+      const hasPassedCurrentAnchor = scrollTop >= currentPosition;
 
       // If has not scrolled past next anchor.
       const hasNotPassedNextAnchor =
         !nextAnchor ||
-        scrollTop < (nextAnchor.parentElement?.offsetTop ?? 0) - offset.value;
+        scrollTop < (nextAnchor.parentElement?.offsetTop ?? 0) - offset;
 
       // If this anchor is the active anchor.
       const isActive =
@@ -77,7 +84,7 @@ export const useActiveHeaderLinks = ({
 
       if (!isActive) continue;
 
-      const routeHash = decodeURIComponent(router.currentRoute.value.hash);
+      const routeHash = decodeURIComponent(get(currentRoute).hash);
       const anchorHash = decodeURIComponent(anchor.hash);
 
       // If the active anchor hash is current route hash, do nothing.
@@ -93,67 +100,34 @@ export const useActiveHeaderLinks = ({
         }
       }
 
-      // Replace current route hash with the active anchor hash.
-      replaceRouteWithoutScrolling(router, {
-        hash: anchorHash,
-        force: true
+      router.go(anchorHash, {
+        scroll: false,
+        replace: true
       });
 
       return;
     }
   };
 
-  const onScroll = throttleAndDebounce(() => setActiveRouteHash(), delay);
+  const onScroll = throttleAndDebounce(
+    () => tick().then(setActiveRouteHash),
+    delay
+  );
 
-  onMounted(() => {
+  onMount(() => {
     onScroll();
     window.addEventListener('scroll', onScroll);
+
+    const dispose: (() => void)[] = [];
+    dispose.push(currentRoute.subscribe(onScroll));
+    dispose.push(currentMarkdownPageMeta.subscribe(onScroll));
+    dispose.push(offsetStore.subscribe(onScroll));
+    dispose.push(() => {
+      window.removeEventListener('scroll', onScroll);
+    });
+
+    return () => {
+      dispose.forEach((unsub) => unsub());
+    };
   });
-
-  onBeforeUnmount(() => {
-    window.removeEventListener('scroll', onScroll);
-  });
-
-  watch(
-    () => [markdownMeta, offset],
-    () => {
-      if (inBrowser) onScroll();
-    }
-  );
-};
-
-/**
- * Call `router.replace()` without triggering scrolling behaviour.
- */
-export const replaceRouteWithoutScrolling = async (
-  router: Router,
-  ...args: Parameters<Router['replace']>
-): Promise<void> => {
-  // Temporarily disable `scrollBehavior`.
-  const { scrollBehavior } = router.options;
-  router.options.scrollBehavior = undefined;
-  await router
-    .replace(...args)
-    .finally(() => (router.options.scrollBehavior = scrollBehavior));
-};
-
-function throttleAndDebounce(fn: () => void, delay: number): () => void {
-  let timeout: number;
-  let called = false;
-
-  return () => {
-    if (timeout) {
-      window.clearTimeout(timeout);
-    }
-
-    if (!called) {
-      fn();
-      called = true;
-      window.setTimeout(() => {
-        called = false;
-      }, delay);
-    } else {
-      timeout = window.setTimeout(fn, delay);
-    }
-  };
 }

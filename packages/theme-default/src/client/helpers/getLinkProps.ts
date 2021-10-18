@@ -5,20 +5,20 @@ import {
   withBaseUrl
 } from '@vitebook/client';
 
-import type { NavItemLink, SidebarItemLink } from '../../shared';
+import type { NavLink, SidebarLink } from '../../shared';
 
 export function getLinkProps(
-  link: NavItemLink | SidebarItemLink,
+  link: NavLink | SidebarLink,
   site: SiteOptions,
   currentRoute: RouteLocation
 ) {
   const isExternal = isLinkExternal(link.link, site.baseUrl);
-  const routePath = decodeURI(currentRoute.path);
+  const routePath = currentRoute.path;
 
   let active = link.link === routePath;
 
   if (link.activeMatch) {
-    active = new RegExp(link.activeMatch).test(routePath);
+    active = new RegExp(link.activeMatch).test(currentRoute.decodedPath);
   } else {
     const itemPath = withBaseUrl(link.link);
     active =
@@ -28,7 +28,8 @@ export function getLinkProps(
   }
 
   return {
-    class: `link${active ? ' active' : ''}${isExternal ? ' external' : ''}`,
+    active,
+    external: isExternal,
     href: !isExternal ? withBaseUrl(link.link) : link.link,
     target: link.target ?? (isExternal ? `_blank` : undefined),
     rel: link.rel ?? (isExternal ? `noopener noreferrer` : undefined),

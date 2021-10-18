@@ -64,8 +64,11 @@ const theme: ClientTheme = {
       }
     }
 
-    router.scrollYOffset = () =>
-      document.querySelector('.navbar')?.getBoundingClientRect().height ?? 0;
+    router.scrollOffset = () => ({
+      top:
+        document.querySelector('.navbar')?.getBoundingClientRect().height ?? 0,
+      left: 0
+    });
   }
 };
 

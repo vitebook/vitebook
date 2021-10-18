@@ -338,7 +338,7 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
   },
 
   markdown: {
-    toc: false,
+    toc: true,
     prevLink: false,
     prevLinkText: 'Previous',
     nextLink: false,

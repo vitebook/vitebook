@@ -25,7 +25,7 @@
 <div class="not-found">
   <div class="not-found__container">
     <div class="not-found__img-container">
-      {@html Illustration}
+      {@html Illustration.replace(/width=".+"/, 'width="100%"')}
     </div>
 
     <h1 class="not-found__title">{notFoundText}</h1>

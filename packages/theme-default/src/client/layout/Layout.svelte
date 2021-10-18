@@ -1,22 +1,28 @@
 <script>
+  import { currentPage } from '@vitebook/client';
+
   import { onMount } from 'svelte';
 
+  import { isMarkdownFloatingTocEnabled } from '../components/Markdown/isMarkdownFloatingTocEnabled';
   import NavbarTitle from '../components/Navbar/NavbarTitle.svelte';
   import Scrim from '../components/Scrim.svelte';
+  import { hasSidebarItems } from '../components/Sidebar/hasSidebarItems';
+  import Sidebar from '../components/Sidebar/Sidebar.svelte';
+  import SidebarToggle from '../components/Sidebar/SidebarToggle.svelte';
   import ThemeSwitch from '../components/ThemeSwitch.svelte';
   import { darkMode, useDarkMode } from '../stores/darkMode';
+  import { isLargeScreen } from '../stores/isLargeScreen';
   import { localizedThemeConfig } from '../stores/localizedThemeConfig';
-  import { useMediaQuery } from '../stores/useMediaQuery';
   import Page from './Page.svelte';
 
   useDarkMode();
 
   let isSidebarOpen = false;
-
-  const hasSidebarItems = false;
-  const isLargeScreen = useMediaQuery('(min-width: 992px)');
+  let hasMounted = false;
 
   $: noNavbar = $localizedThemeConfig.navbar === false;
+
+  $: isMarkdownPage = $currentPage?.type?.endsWith('md');
 
   onMount(() => {
     let scrollbarWidth = window.innerWidth - document.body.clientWidth + 'px';
@@ -24,21 +30,22 @@
       '--vbk--scrollbar-width',
       scrollbarWidth
     );
+
+    hasMounted = true;
   });
 
-  onMount(() => {
-    return localizedThemeConfig.subscribe((config) => {
-      if (config.navbar !== false) {
-        document.documentElement.classList.remove('no-navbar');
-      } else {
-        document.documentElement.classList.add('no-navbar');
-      }
-    });
-  });
+  $: if (hasMounted) {
+    const htmlEl = window?.document.querySelector('html');
+    htmlEl?.setAttribute('data-vbk-sidebar', isSidebarOpen ? 'open' : 'closed');
+  }
+
+  function onToggleSidebar() {
+    isSidebarOpen = !isSidebarOpen;
+  }
 </script>
 
 <div
-  class="theme"
+  class="vbk-theme-default"
   class:no-navbar={noNavbar}
   class:dark={$darkMode}
   class:sidebar-open={isSidebarOpen}
@@ -49,22 +56,35 @@
         <svelte:component this={Navbar.default}>
           <svelte:fragment slot="start">
             <slot name="navbar-start" />
-            <!-- <SidebarToggle /> -->
+            <span class="navbar__sidebar-toggle">
+              <SidebarToggle on:toggle={onToggleSidebar} />
+            </span>
           </svelte:fragment>
 
           <svelte:fragment slot="end">
             <slot name="navbar-end">
-              <ThemeSwitch class="navbar__theme-switch" />
-              <!-- pointless element to silence warning. -->
-              <span class="navbar__theme-switch" style="display: none;" />
+              {#if $isLargeScreen}
+                <ThemeSwitch class="navbar__theme-switch" />
+              {/if}
+
+              {#if false}
+                <!-- pointless element to silence unused CSS warnings. -->
+                <span
+                  class="navbar__theme-switch"
+                  style="display: none;"
+                  hidden
+                />
+              {/if}
             </slot>
           </svelte:fragment>
         </svelte:component>
       {/await}
     {:else}
-      <div class="navbar-fallback" class:no-sidebar-toggle={!hasSidebarItems}>
-        {#if !hasSidebarItems}
-          <!-- <SidebarToggle /> -->
+      <div class="navbar-fallback" class:no-sidebar-toggle={!$hasSidebarItems}>
+        {#if $hasSidebarItems}
+          <span class="navbar__sidebar-toggle">
+            <SidebarToggle on:toggle={onToggleSidebar} />
+          </span>
         {/if}
         <NavbarTitle />
       </div>
@@ -72,7 +92,7 @@
   </slot>
 
   <slot name="sidebar">
-    <!-- <Sidebar>
+    <Sidebar bind:open={isSidebarOpen}>
       <svelte:fragment slot="start">
         <slot name="sidebar-start" />
       </svelte:fragment>
@@ -80,7 +100,7 @@
       <svelte:fragment slot="end">
         <slot name="sidebar-end" />
       </svelte:fragment>
-    </Sidebar> -->
+    </Sidebar>
   </slot>
 
   <slot name="page">
@@ -97,9 +117,15 @@
 
   <slot name="root" />
 
+  {#if isMarkdownPage && $isMarkdownFloatingTocEnabled}
+    {#await import('../components/markdown/MarkdownFloatingToc.svelte') then c}
+      <svelte:component this={c.default} />
+    {/await}
+  {/if}
+
   <slot name="scrim">
     {#if !$isLargeScreen}
-      <div class="theme__scrim">
+      <div class="scrim">
         <Scrim
           active={isSidebarOpen}
           on:pointerdown={() => {
@@ -113,15 +139,32 @@
 </div>
 
 <style>
-  .theme {
+  .vbk-theme-default {
     display: flex;
+    font-family: var(--vbk--font-family-base);
+    color: var(--vbk--color-text);
+    background-color: var(--vbk--body-bg-color);
+    line-height: 1.4;
+    font-size: 100%;
+    font-weight: 400;
+    direction: ltr;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  .theme.no-navbar {
+  @media (max-width: 991px) {
+    .vbk-theme-default.sidebar-open {
+      overflow: hidden;
+    }
+  }
+
+  .vbk-theme-default.no-navbar {
     --vbk--navbar-height: 4rem;
   }
 
-  .theme.no-navbar .navbar-fallback {
+  .vbk-theme-default.no-navbar .navbar-fallback {
     position: fixed;
     display: flex;
     align-items: center;
@@ -137,11 +180,12 @@
     padding-left: 1rem;
   }
 
-  /* .theme.no-navbar .sidebar-toggle {
+  .vbk-theme-default.no-navbar .navbar__sidebar-toggle {
+    display: inline-block;
     padding-left: 0.75rem;
-  } */
+  }
 
-  .theme.no-navbar.dark .navbar-fallback {
+  .vbk-theme-default.no-navbar.dark .navbar-fallback {
     background-color: var(--vbk--color-bg-300);
   }
 
@@ -150,15 +194,15 @@
   }
 
   @media (min-width: 992px) {
-    .theme.no-navbar.sidebar-open {
+    .vbk-theme-default.no-navbar.sidebar-open {
       --vbk--navbar-height: 0px;
     }
 
-    .theme.no-navbar.sidebar-open .navbar-fallback {
+    .vbk-theme-default.no-navbar.sidebar-open .navbar-fallback {
       display: none;
     }
 
-    .theme.no-navbar:not(.sidebar-open) .navbar-fallback {
+    .vbk-theme-default.no-navbar:not(.sidebar-open) .navbar-fallback {
       padding-left: 1rem;
     }
 
@@ -169,7 +213,7 @@
       margin-left: 0.2rem;
     }
 
-    .theme__scrim {
+    .scrim {
       display: none;
     }
   }

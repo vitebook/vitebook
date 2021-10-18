@@ -19,7 +19,7 @@
   margin-right: 0.325rem;
 }
 
-html.dark .admonition:not(.warning) .admonition__title {
+html[data-vbk-theme='dark'] .admonition:not(.warning) .admonition__title {
   filter: brightness(125%);
 }
 
@@ -27,7 +27,7 @@ html.dark .admonition:not(.warning) .admonition__title {
   background-color: var(--vbk--color-gray-400);
 }
 
-html.dark .admonition code {
+html[data-vbk-theme='dark'] .admonition code {
   background-color: var(--vbk--color-gray-500);
 }
 

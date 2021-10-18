@@ -9,7 +9,7 @@
 
     <NavbarTitle />
 
-    <div class="flex-grow" />
+    <div style="flex-grow: 1;" />
 
     <NavLinks />
 

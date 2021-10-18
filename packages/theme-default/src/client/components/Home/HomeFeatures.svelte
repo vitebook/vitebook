@@ -35,7 +35,7 @@
 {#if hasFeatures}
   <div class="home__features">
     <div class="home__features__container">
-      {#each features as feature, i (feature.title)}
+      {#each features as feature, i (feature)}
         <section class="home__feature with-icon">
           <div>
             {#if feature.title}

@@ -2,7 +2,7 @@ import kleur from 'kleur';
 import ora from 'ora';
 import type { OutputAsset, OutputChunk } from 'rollup';
 
-import type { ServerEntryModule } from '../../../../shared';
+import { removeLeadingSlash, ServerEntryModule } from '../../../../shared';
 import { fs, path } from '../../../utils';
 import { logger, LoggerIcon } from '../../../utils/logger';
 import type { App } from '../../App';
@@ -150,8 +150,12 @@ function logRoutes(app: App) {
 
   app.pages.forEach((page) => {
     logs.push(
-      kleur.dim(
-        `- ${page.route === '/' ? 'index.html' : decodeURI(page.route)}`
+      kleur.white(
+        `- ${removeLeadingSlash(
+          page.route === '/' ? 'index.html' : decodeURI(page.route)
+        )} ${kleur.dim(
+          page.rootPath ? `(${removeLeadingSlash(page.rootPath)})` : ''
+        )}`
       )
     );
   });

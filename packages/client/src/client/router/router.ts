@@ -1,15 +1,13 @@
-import {
-  ensureLeadingSlash,
-  inBrowser,
-  isLinkExternal,
-  isString
-} from '@vitebook/core/shared';
+import { ensureLeadingSlash, inBrowser, isString } from '@vitebook/core/shared';
 import { tick } from 'svelte';
+import { get } from 'svelte/store';
 
 import type { SvelteModule } from '../../shared';
 import { currentPage } from '../stores/currentPage';
 import { currentRoute } from '../stores/currentRoute';
+import { pages } from '../stores/pages';
 import type {
+  GoToRouteOptions,
   NavigationOptions,
   Route,
   RouteLocation,
@@ -25,7 +23,8 @@ export class Router {
 
   enabled = true;
   baseUrl = '/';
-  scrollYOffset = () => 0;
+  scrollBehaviour?: ScrollBehavior = 'auto';
+  scrollOffset = () => ({ top: 0, left: 0 });
   beforeNavigate?: (url: URL) => void | Promise<void>;
   afterNavigate?: (url: URL) => void | Promise<void>;
 
@@ -54,15 +53,15 @@ export class Router {
   }
 
   hasRoute(path: string) {
-    return this.routes.has(path);
+    return this.routes.has(decodeURI(path));
   }
 
   addRoute(route: Route) {
-    this.routes.set(route.path, route);
+    this.routes.set(decodeURI(route.path), route);
   }
 
   removeRoute(route: string | Route) {
-    this.routes.delete(isString(route) ? route : route.path);
+    this.routes.delete(decodeURI(isString(route) ? route : route.path));
   }
 
   owns(url: URL) {
@@ -83,7 +82,7 @@ export class Router {
 
       const query = new URLSearchParams(url.search);
       const id = `${path}?${query}`;
-      return { id, route, path, query, hash: url.hash };
+      return { id, route, path, query, hash: url.hash, decodedPath };
     }
 
     return undefined;
@@ -95,18 +94,46 @@ export class Router {
 
   async go(
     href,
-    { noscroll = false, replace = false, keepfocus = false, state = {} } = {}
+    {
+      scroll = undefined,
+      replace = false,
+      keepfocus = false,
+      state = {}
+    }: GoToRouteOptions = {}
   ) {
-    const url = new URL(href, getBaseUri(this.baseUrl));
+    const url = new URL(
+      href,
+      href.startsWith('#')
+        ? /(.*?)(#|$)/.exec(location.href)![1]
+        : getBaseUri(this.baseUrl)
+    );
 
     await this.beforeNavigate?.(url);
 
     if (this.enabled && this.owns(url)) {
       this.history[replace ? 'replaceState' : 'pushState'](state, '', href);
 
+      if (href.startsWith('#')) {
+        if (scroll !== false) {
+          const savedScrollBehaviour = this.scrollBehaviour;
+          this.scrollBehaviour = undefined;
+          this.scrollToPosition({ hash: href });
+          this.scrollBehaviour = savedScrollBehaviour;
+        }
+
+        window.requestAnimationFrame(() => {
+          currentRoute.__update((route) => ({
+            ...route,
+            hash: href
+          }));
+        });
+
+        return;
+      }
+
       await this.navigate({
         url,
-        scroll: noscroll ? scrollState() : undefined,
+        scroll,
         keepfocus,
         hash: url.hash
       });
@@ -150,8 +177,6 @@ export class Router {
     scroll,
     hash
   }: NavigationOptions) {
-    currentPage.__set(undefined);
-
     const routeLocation = this.parse(url);
 
     if (routeLocation?.route.redirect) {
@@ -167,6 +192,10 @@ export class Router {
 
     const component = await routeLocation.route.loader(routeLocation);
 
+    if (!get(pages).find((page) => page.route === routeLocation.path)) {
+      currentPage.__set(undefined);
+    }
+
     currentRoute.__set({
       ...routeLocation,
       component: (component as SvelteModule).default ?? component
@@ -179,17 +208,48 @@ export class Router {
         document.body.focus();
       }
 
-      const deepLinked = hash && document.getElementById(hash.slice(1));
-      if (scroll) {
-        scrollTo(scroll.x, scroll.y + this.scrollYOffset());
-      } else if (deepLinked) {
-        scrollTo(0, deepLinked.offsetTop + this.scrollYOffset());
-      } else {
-        scrollTo(0, this.scrollYOffset());
+      if (scroll !== false) {
+        this.scrollToPosition({ scroll, hash });
       }
     }
 
     await this.afterNavigate?.(url);
+  }
+
+  protected scrollToPosition({
+    scroll,
+    hash
+  }: Pick<NavigationOptions, 'scroll' | 'hash'>) {
+    if (!inBrowser) return;
+
+    const deepLinked = hash && document.getElementById(hash.slice(1));
+
+    const scrollTo = (options: ScrollToOptions) => {
+      if ('scrollBehavior' in document.documentElement.style)
+        window.scrollTo(options);
+      else {
+        window.scrollTo(options.left ?? 0, options.top ?? 0);
+      }
+    };
+
+    window.requestAnimationFrame(() => {
+      if (scroll) {
+        scrollTo({
+          left: scroll.x,
+          top: scroll.y,
+          behavior: this.scrollBehaviour
+        });
+      } else if (deepLinked) {
+        const docRect = document.documentElement.getBoundingClientRect();
+        const elRect = deepLinked.getBoundingClientRect();
+        const offset = this.scrollOffset();
+        const left = elRect.left - docRect.left - offset.left;
+        const top = elRect.top - docRect.top - offset.top;
+        scrollTo({ left, top, behavior: this.scrollBehaviour });
+      } else {
+        scrollTo({ left: 0, top: 0, behavior: this.scrollBehaviour });
+      }
+    });
   }
 
   initListeners() {
@@ -239,8 +299,8 @@ export class Router {
         !a ||
         !a.href ||
         hasPrefetched.has(getHref(a)) ||
-        isLinkExternal(getHref(a)) ||
-        !this.routes.has(getHrefURL(a).pathname)
+        !getHref(a).startsWith(getBaseUri(this.baseUrl)) ||
+        !this.routes.has(decodeURI(getHrefURL(a).pathname))
       ) {
         return;
       }
@@ -295,24 +355,17 @@ export class Router {
 
       if (!this.owns(url)) return;
 
-      const noscroll = a.hasAttribute('vitebook:noscroll');
-
       const i1 = urlString.indexOf('#');
       const i2 = location.href.indexOf('#');
       const u1 = i1 >= 0 ? urlString.substring(0, i1) : urlString;
       const u2 = i2 >= 0 ? location.href.substring(0, i2) : location.href;
 
-      this.history.pushState({}, '', url.href);
-
       if (u1 === u2) {
-        window.dispatchEvent(new HashChangeEvent('hashchange'));
+        this.go(url.hash, { replace: true });
+        return;
       }
 
-      this.navigate({
-        url,
-        scroll: noscroll ? scrollState() : undefined,
-        hash: url.hash
-      });
+      this.go(url.href);
 
       event.preventDefault();
     });

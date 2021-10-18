@@ -10,13 +10,13 @@ html {
   overflow-y: scroll;
 }
 
-html.sidebar-open {
+html[data-vbk-sidebar='open'] {
   overflow: hidden;
   margin-right: var(--vbk--scrollbar-width);
 }
 
 @media (min-width: 992px) {
-  html.sidebar-open {
+  html[data-vbk-sidebar='open'] {
     overflow-y: scroll;
     margin-right: 0;
   }
@@ -26,17 +26,6 @@ body {
   margin: 0;
   width: 100%;
   min-height: 100vh;
-  line-height: 1.4;
-  font-family: var(--vbk--font-family-base);
-  font-size: 100%;
-  font-weight: 400;
-  color: var(--vbk--color-text);
-  background-color: var(--vbk--body-bg-color);
-  direction: ltr;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 main {
@@ -122,7 +111,7 @@ code {
   padding: 0.125rem 0.375rem;
 }
 
-html.dark code {
+html[data-vbk-theme='dark'] code {
   background-color: var(--vbk--color-gray-500);
 }
 
@@ -299,7 +288,7 @@ tr:nth-child(2n) {
   background-color: var(--vbk--color-gray-200);
 }
 
-html.dark tr:nth-child(2n) {
+html[data-vbk-theme='dark'] tr:nth-child(2n) {
   background-color: var(--vbk--color-gray-600);
 }
 
@@ -309,8 +298,8 @@ td {
   padding: 0.6rem 1.15rem;
 }
 
-html.dark th,
-html.dark td {
+html[data-vbk-theme='dark'] th,
+html[data-vbk-theme='dark'] td {
   border: 1px solid var(--vbk--color-gray-500);
 }
 

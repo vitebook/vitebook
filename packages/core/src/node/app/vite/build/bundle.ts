@@ -85,8 +85,8 @@ function resolveBundleConfig(
                   return `assets/framework.[hash].js`;
                 }
 
-                if (!chunk.isEntry && /@vitebook/.test(chunk.name)) {
-                  return `assets/vitebook.[hash].js`;
+                if (!chunk.isEntry && /vitebook/.test(chunk.name)) {
+                  return `assets/vitebook/[name].[hash].js`;
                 }
 
                 return 'assets/[name].[hash].js';

@@ -2,7 +2,13 @@
   export let active = false;
 </script>
 
-<button class="scrim" class:active aria-label="Close scrim" on:keydown />
+<button
+  class="scrim"
+  class:active
+  aria-label="Close scrim"
+  on:pointerdown
+  on:keydown
+/>
 
 <style>
   .scrim {

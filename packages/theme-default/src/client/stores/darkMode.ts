@@ -44,7 +44,7 @@ export function useDarkMode(): void {
   }
 
   updateDarkMode(get(localizedThemeConfig));
-  updateHtmlDarkClass(get(darkMode));
+  updateHtmlDarkDataAttr(get(darkMode));
 
   onMount(() => {
     return localizedThemeConfig.subscribe(updateDarkMode);
@@ -52,7 +52,7 @@ export function useDarkMode(): void {
 
   onMount(() => {
     return darkMode.subscribe((isDark) => {
-      updateHtmlDarkClass(isDark);
+      updateHtmlDarkDataAttr(isDark);
 
       if (isDark === isDarkPreferred()) {
         window.localStorage.setItem(STORAGE_KEY, 'auto');
@@ -63,9 +63,8 @@ export function useDarkMode(): void {
   });
 }
 
-function updateHtmlDarkClass(isDarkMode: boolean): void {
+function updateHtmlDarkDataAttr(isDarkMode: boolean): void {
   if (!inBrowser) return;
-  // Set `class="dark"` on `<html>` element.
   const htmlEl = window?.document.querySelector('html');
-  htmlEl?.classList.toggle('dark', isDarkMode);
+  htmlEl?.setAttribute('data-vbk-theme', isDarkMode ? 'dark' : 'light');
 }

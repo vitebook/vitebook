@@ -144,7 +144,7 @@ function startWatchingPages(app: App, server: ViteDevServer) {
   let pendingChanges: ChangedFiles[] = [];
 
   const resolveNewPages = debounce(async () => {
-    const prevNoOfPages = app.pages.length;
+    // const prevNoOfPages = app.pages.length;
 
     groupPendingChanges();
 
@@ -161,10 +161,13 @@ function startWatchingPages(app: App, server: ViteDevServer) {
     pageChangesPending = undefined;
     resolvePendingChanges = undefined;
 
+    // Need to emit all changes to ensure pages is hot updated on the client, so current page meta
+    // is also hot updated.
+    server.watcher.emit('change', virtualModuleRequestPath.pages);
+
     // Server is not aware of new pages being added.
-    if (app.pages.length > prevNoOfPages) {
-      server.watcher.emit('change', virtualModuleRequestPath.pages);
-    }
+    // if (app.pages.length > prevNoOfPages) {
+    // }
   }, 300);
 
   async function handleChange(changedFiles: ChangedFiles): Promise<void> {

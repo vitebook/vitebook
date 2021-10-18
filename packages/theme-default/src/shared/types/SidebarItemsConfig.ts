@@ -4,9 +4,9 @@ export type MultiSidebarItemsConfig = {
   [path: string]: SidebarItemsConfig;
 };
 
-export type SidebarItem = SidebarItemLink | SidebarItemGroup;
+export type SidebarItem = SidebarLink | SidebarMenu;
 
-export type SidebarItemLink = {
+export type SidebarLink = {
   text: string;
   link: string;
   type?: string;
@@ -16,7 +16,7 @@ export type SidebarItemLink = {
   activeMatch?: string;
 };
 
-export type SidebarItemGroup = {
+export type SidebarMenu = {
   text: string;
   collapsible?: boolean;
   children: SidebarItem[];

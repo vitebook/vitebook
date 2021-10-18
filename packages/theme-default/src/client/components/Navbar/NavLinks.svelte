@@ -3,32 +3,34 @@
   import { repoLink } from '../../stores/repoLink';
   import { hasNavbarItems } from './hasNavbarItems';
   import { navbarConfig } from './navbarConfig';
-  import NavItemLink from './NavItemLink.svelte';
-  import NavItemWithMenu from './NavItemWithMenu.svelte';
+  import NavLink from './NavLink.svelte';
+  import NavMenu from './NavMenu.svelte';
+
+  export let active = undefined;
 </script>
 
 {#if $hasNavbarItems}
-  <nav class="navbar__links">
+  <nav class="navbar__links" class:active>
     <ul class="navbar__links__list">
-      {#each $navbarConfig?.items ?? [] as item (item.text)}
+      {#each $navbarConfig?.items ?? [] as item (item)}
         <li class="navbar__links__list-item">
           {#if 'menu' in item}
-            <NavItemWithMenu {item} />
+            <NavMenu {item} />
           {:else}
-            <NavItemLink {item} />
+            <NavLink {item} />
           {/if}
         </li>
       {/each}
 
       {#if $languageLinks}
         <li class="navbar__links__list-item">
-          <NavItemWithMenu item={$languageLinks} />
+          <NavMenu item={$languageLinks} />
         </li>
       {/if}
 
       {#if $repoLink}
         <li class="navbar__links__list-item">
-          <NavItemLink item={$repoLink} />
+          <NavLink item={$repoLink} />
         </li>
       {/if}
     </ul>
@@ -40,6 +42,15 @@
     display: none;
   }
 
+  .navbar__links.active {
+    display: block;
+  }
+
+  .navbar__links__list {
+    margin: 0;
+    padding: 0;
+  }
+
   @media (min-width: 992px) {
     .navbar__links {
       display: block;
@@ -49,6 +60,10 @@
       display: flex;
       flex-direction: row;
       align-items: center;
+    }
+
+    .navbar__links__list-item {
+      margin: 0 0.125rem;
     }
   }
 </style>

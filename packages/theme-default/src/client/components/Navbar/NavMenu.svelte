@@ -1,12 +1,11 @@
 <script>
   import MenuCaretIcon from ':virtual/vitebook/icons/menu-caret?raw';
   import { currentRoute, inBrowser } from '@vitebook/client';
-  import { onMount } from 'svelte';
-  import { afterUpdate } from 'svelte';
-  import { tick } from 'svelte';
+  import { onMount, afterUpdate, tick } from 'svelte';
+  import { isLargeScreen } from '../../stores/isLargeScreen';
   import { languageLinks } from '../../stores/languageLinks';
-  import { useMediaQuery } from '../../stores/useMediaQuery';
-  import NavItemLink from './NavItemLink.svelte';
+  import NavButton from './NavButton.svelte';
+  import NavItemLink from './NavLink.svelte';
 
   export let item;
 
@@ -15,8 +14,6 @@
 
   let isMenuOpen = false;
   let isMenuActive = false;
-
-  const isLargeScreen = useMediaQuery('(min-width: 992px)');
 
   $: isLanguagesGroup = item.text === $languageLinks?.text;
 
@@ -46,7 +43,9 @@
 
   afterUpdate(() => {
     tick().then(() => {
-      checkHasActiveItem();
+      window.requestAnimationFrame(() => {
+        checkHasActiveItem();
+      });
     });
   });
 
@@ -75,9 +74,11 @@
       menuButtonRef?.focus();
     } else if (e.key === 'Tab') {
       tick().then(() => {
-        if (!navItemRef?.contains(document.activeElement)) {
-          isMenuOpen = false;
-        }
+        window.requestAnimationFrame(() => {
+          if (!navItemRef?.contains(document.activeElement)) {
+            isMenuOpen = false;
+          }
+        });
       });
     }
   }
@@ -90,7 +91,7 @@
   class:active={isMenuActive}
   bind:this={navItemRef}
 >
-  <button
+  <NavButton
     id={menuButtonId}
     class="nav-item__menu-button"
     aria-label={item.ariaLabel}
@@ -98,13 +99,13 @@
     aria-haspopup="true"
     on:pointerdown={onToggle}
     on:keydown={(e) => e.key === 'Enter' && onToggle()}
-    bind:this={menuButtonRef}
+    bind:ref={menuButtonRef}
   >
     <span class="nav-item__menu-button__text">{item.text}</span>
     <div class="nav-item__menu-button__caret">
       {@html MenuCaretIcon}
     </div>
-  </button>
+  </NavButton>
 
   <ul
     id={menuId}
@@ -113,7 +114,7 @@
     aria-expanded={isMenuOpen}
     on:pointerleave={onMenuPointerLeave}
   >
-    {#each item.menu as menuItem (menuItem.text)}
+    {#each item.menu as menuItem (menuItem)}
       <li class="nav-item__menu-item">
         <NavItemLink item={menuItem} />
       </li>
@@ -132,6 +133,15 @@
 
   .nav-item.open .nav-item__menu-button__caret {
     transform: translateY(0.1rem) translateZ(0);
+  }
+
+  .nav-item__menu {
+    display: none;
+    margin: 0;
+  }
+
+  .nav-item__menu[aria-expanded='true'] {
+    display: block;
   }
 
   @media (hover: hover) and (min-width: 992px) {
@@ -163,25 +173,6 @@
       background-color: var(--vbk--nav-item-bg-color);
     }
 
-    .nav-item > button {
-      display: flex;
-      align-items: center;
-      font-size: 1rem;
-      border: 0;
-      font-weight: 500;
-      line-height: 1.4;
-      margin-top: 0.5rem;
-      padding: 0.5rem 1rem;
-      border-radius: 0;
-      color: var(--vbk--nav-item-color);
-      white-space: nowrap;
-      text-decoration: none;
-      width: 100%;
-      cursor: pointer;
-      text-align: left;
-      background-color: transparent;
-    }
-
     .nav-item__menu-button__caret,
     .nav-item.open .nav-item__menu-button__caret {
       transform: translateY(0) translateZ(0);
@@ -195,6 +186,8 @@
     }
 
     .nav-item__menu {
+      --vbk--nav-item-bg-color: transparent;
+
       display: block;
       position: absolute;
       top: 100%;

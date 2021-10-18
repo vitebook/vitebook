@@ -7,7 +7,7 @@
   import { darkMode } from '../stores/darkMode';
   import { localizedThemeConfig } from '../stores/localizedThemeConfig';
 
-  let classes;
+  let classes = '';
 
   export { classes as class };
 

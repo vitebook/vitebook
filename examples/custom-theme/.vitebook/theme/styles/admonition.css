@@ -6,7 +6,7 @@
   background-color: hsl(0, 0%, 91.5%);
 }
 
-html.dark .admonition {
+html[data-vbk-theme='dark'] .admonition {
   background-color: hsl(0, 0%, 12.3%);
 }
 
@@ -23,7 +23,7 @@ html.dark .admonition {
   margin-right: 0.325rem;
 }
 
-html.dark .admonition:not(.warning) .admonition__title {
+html[data-vbk-theme='dark'] .admonition:not(.warning) .admonition__title {
   filter: brightness(125%);
 }
 
@@ -31,7 +31,7 @@ html.dark .admonition:not(.warning) .admonition__title {
   background-color: hsl(0, 0%, 82.5%);
 }
 
-html.dark .admonition code {
+html[data-vbk-theme='dark'] .admonition code {
   background-color: hsl(0, 0%, 17%);
 }
 

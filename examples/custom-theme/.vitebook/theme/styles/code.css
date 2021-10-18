@@ -11,7 +11,7 @@
   --code-ln-wrapper-width: 3.5rem;
 }
 
-html.dark {
+html[data-vbk-theme='dark'] {
   --code-hl-bg-color: #363b46;
 }
 

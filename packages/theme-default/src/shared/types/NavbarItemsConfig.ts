@@ -1,4 +1,4 @@
-export type NavbarItemsConfig = (NavItemLink | NavItemWithMenu)[];
+export type NavbarItemsConfig = (NavLink | NavMenu)[];
 
 export type NavItem = {
   text: string;
@@ -8,10 +8,10 @@ export type NavItem = {
   activeMatch?: string;
 };
 
-export type NavItemLink = NavItem & {
+export type NavLink = NavItem & {
   link: string;
 };
 
-export type NavItemWithMenu = NavItem & {
-  menu: NavItemLink[];
+export type NavMenu = NavItem & {
+  menu: NavLink[];
 };

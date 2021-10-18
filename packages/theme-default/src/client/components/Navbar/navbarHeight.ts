@@ -2,7 +2,7 @@ import { currentRoute } from '@vitebook/client';
 import { tick } from 'svelte';
 import { readable } from 'svelte/store';
 
-import { useMediaQuery } from '../../stores/useMediaQuery';
+import { isLargeScreen } from '../../stores/isLargeScreen';
 
 export const navbarHeight = readable(0, (set) => {
   const update = () => {
@@ -10,7 +10,7 @@ export const navbarHeight = readable(0, (set) => {
       set(
         parseFloat(
           window
-            .getComputedStyle(document.body)
+            .getComputedStyle(document.querySelector('.vbk-theme-default')!)
             .getPropertyValue('--vbk--navbar-height')
         ) * 16
       );
@@ -19,7 +19,7 @@ export const navbarHeight = readable(0, (set) => {
 
   const dispose: (() => void)[] = [];
   dispose.push(currentRoute.subscribe(update));
-  dispose.push(useMediaQuery('(min-width: 992px)').subscribe(update));
+  dispose.push(isLargeScreen.subscribe(update));
   return () => {
     dispose.forEach((unsub) => unsub());
   };

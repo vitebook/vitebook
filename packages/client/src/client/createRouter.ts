@@ -64,7 +64,7 @@ function addRoutes(router: Router, pages: Readonly<ClientPage[]>) {
 
     routes.push(page.route);
 
-    if (import.meta.hot && get(currentPage)?.route === page.route) {
+    if (import.meta.hot && get(currentPage)?.route === decodeURI(page.route)) {
       loadPage(page); // load new page meta
     }
   });
