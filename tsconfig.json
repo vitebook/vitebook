@@ -4,12 +4,12 @@
   "references": [
     { "path": "./packages/client" },
     { "path": "./packages/core" },
+    { "path": "./packages/markdown" },
+    { "path": "./packages/markdown-preact" },
     { "path": "./packages/markdown-prismjs" },
     { "path": "./packages/markdown-shiki" },
-    { "path": "./packages/markdown-preact" },
     { "path": "./packages/markdown-svelte" },
     { "path": "./packages/markdown-vue" },
-    { "path": "./packages/markdown" },
     { "path": "./packages/preact" },
     { "path": "./packages/theme-default" },
     { "path": "./packages/vue" }

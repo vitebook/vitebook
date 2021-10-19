@@ -16,6 +16,7 @@
     "@vitebook/markdown-preact": "workspace:*",
     "@vitebook/markdown-shiki": "workspace:*",
     "@vitebook/preact": "workspace:*",
-    "@vitebook/theme-default": "workspace:*"
+    "@vitebook/theme-default": "workspace:*",
+    "svelte": "^3.44.0"
   }
 }

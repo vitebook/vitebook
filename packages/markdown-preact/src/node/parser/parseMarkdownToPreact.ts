@@ -84,7 +84,7 @@ function buildReactComponentModule(
 
   const jsx = `
 import { h, Fragment } from 'preact';
-import { OutboundLink } from '@vitebook/preact/client';
+import { OutboundLink } from '@vitebook/preact';
 ${moduleCode ? `\n${moduleCode}\n` : ''}
 function Markdown() {
   ${componentCode ? `${componentCode}\n` : ''}

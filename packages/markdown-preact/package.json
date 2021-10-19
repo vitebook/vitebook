@@ -56,13 +56,13 @@
   },
   "devDependencies": {
     "@vitebook/core": "workspace:*",
-    "@vitebook/preact": "workspace:*",
-    "vue": "^2.6.14"
+    "@vitebook/client": "workspace:*",
+    "@vitebook/preact": "workspace:*"
   },
   "peerDependencies": {
     "@vitebook/core": "workspace:*",
-    "@vitebook/preact": "workspace:*",
-    "vue": "^2.6.14"
+    "@vitebook/client": "workspace:*",
+    "@vitebook/preact": "workspace:*"
   },
   "publishConfig": {
     "access": "public"

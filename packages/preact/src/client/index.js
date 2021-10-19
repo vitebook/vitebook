@@ -1,2 +1,2 @@
 export { default as OutboundLink } from './components/OutboundLink';
-export { default as PreactAdapter } from './PreactAdapter.vue';
+export { default as PreactAdapter } from './PreactAdapter.svelte';

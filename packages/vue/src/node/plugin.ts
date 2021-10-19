@@ -1,33 +1,20 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
-import type { ClientPlugin, Plugin } from '@vitebook/core/node';
+import { ensureLeadingSlash, Plugin } from '@vitebook/core/node';
 import { fs, path } from '@vitebook/core/node/utils';
-import createVuePlugin, {
-  Options as VuePluginOptions
-} from '@vitejs/plugin-vue';
+import createVuePlugin, { Options as ViteVueOptions } from '@vitejs/plugin-vue';
 
-import type { PageAddonPlugin, PageAddons } from '../shared';
-import {
-  loadAddonsVirtualModule,
-  VIRTUAL_ADDONS_MODULE_ID,
-  VIRTUAL_ADDONS_MODULE_REQUEST_PATH
-} from './addon';
 import { compileHTML } from './compilers/compileHTML';
 
-export type ClientPluginOptions = {
+export type VuePluginOptions = {
   /**
-   * Page addon plugins.
-   */
-  addons?: PageAddons[];
-
-  /**
-   * Filter out which files to be included as pages.
+   * Filter out which files to be included as vue pages.
    *
-   * @default  /\.(html|vue)($|\?)/
+   * @default  /\.(vue)($|\?)/
    */
   include?: FilterPattern;
 
   /**
-   * Filter out which files to _not_ be included as pages.
+   * Filter out which files to _not_ be included as vue pages.
    *
    * @default undefined
    */
@@ -38,64 +25,49 @@ export type ClientPluginOptions = {
    *
    * @link https://github.com/vitejs/vite/tree/main/packages/plugin-vue
    */
-  vue?: VuePluginOptions;
+  vue?: ViteVueOptions;
 };
 
 const SVG_ID_RE = /\.svg/;
-const RAW_ID_RE = /(\?raw&vue|&raw&vue)/;
+const RAW_VUE_ID_RE = /(\?raw&vue|&raw&vue)/;
 
-export const DEFAULT_INCLUDE_RE = /\.(html|vue)($|\?)/;
+export const DEFAULT_INCLUDE_RE = /\.vue($|\?)/;
 
 export const PLUGIN_NAME = '@vitebook/client' as const;
 
-export function clientPlugin(
-  options: ClientPluginOptions = {}
-): [ClientPlugin, ...Plugin[]] {
+export function vuePlugin(options: VuePluginOptions = {}): Plugin[] {
   const filter = createFilter(
     options.include ?? DEFAULT_INCLUDE_RE,
     options.exclude
   );
 
-  const filteredAddons = (options.addons ?? [])
-    .flat()
-    .filter((addon) => !!addon) as PageAddonPlugin[];
-
   /** Page system file paths. */
   const files = new Set<string>();
 
-  const vuePlugin = createVuePlugin({
-    ...options.vue,
-    include:
-      options.vue?.include ??
-      (options.include as string[]) ??
-      DEFAULT_INCLUDE_RE
-  }) as Plugin;
+  const vuePlugin = createVuePlugin(options.vue) as Plugin;
 
   return [
     {
       name: PLUGIN_NAME,
       enforce: 'pre',
-      entry: {
-        client: require.resolve(`${PLUGIN_NAME}/entry-client.ts`),
-        server: require.resolve(`${PLUGIN_NAME}/entry-server.ts`)
-      },
       config() {
         return {
-          resolve: {
-            alias: {}
-          },
           optimizeDeps: {
             // Force include `vue` to avoid duplicated copies when linked + optimized.
             include: ['vue']
           }
         };
       },
-      async resolvePage({ filePath }) {
+      async resolvePage({ filePath, relativeFilePath }) {
         if (filter(filePath)) {
           files.add(filePath);
           const type = path.extname(filePath).slice(1);
           return {
-            type: type === 'vue' ? 'vue' : `vue:${type}`
+            id: '@vitebook/vue/VueAdapter.svelte',
+            type: type === 'vue' ? 'vue' : `vue:${type}`,
+            context: {
+              loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`
+            }
           };
         }
 
@@ -106,23 +78,9 @@ export function clientPlugin(
           files.delete(filePath);
         });
       },
-      resolveId(id) {
-        if (id === VIRTUAL_ADDONS_MODULE_REQUEST_PATH) {
-          return id;
-        }
-
-        return null;
-      },
-      load(id) {
-        if (id === VIRTUAL_ADDONS_MODULE_REQUEST_PATH) {
-          return loadAddonsVirtualModule(filteredAddons);
-        }
-
-        return null;
-      },
       async transform(code, id) {
         // Transform raw SVG's into Vue components.
-        if (SVG_ID_RE.test(id) && RAW_ID_RE.test(id)) {
+        if (SVG_ID_RE.test(id) && RAW_VUE_ID_RE.test(id)) {
           const content = JSON.parse(code.replace('export default', ''));
           return compileHTML(content, id);
         }
@@ -147,7 +105,6 @@ export function clientPlugin(
         }
       }
     },
-    ...filteredAddons,
     vuePlugin
   ];
 }

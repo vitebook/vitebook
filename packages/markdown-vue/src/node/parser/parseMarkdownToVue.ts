@@ -57,8 +57,12 @@ const SCRIPT_SETUP_TAG_RE = /<\s*script[^>]*\bsetup\b[^>]*/;
 const DEFAULT_EXPORT_RE = /((?:^|\n|;)\s*)export(\s*)default/;
 const NAMED_DEFAULT_EXPORT_RE = /((?:^|\n|;)\s*)export(.+)as(\s*)default/;
 
+const GLOBAL_IMPORTS_CODE = "\nimport { OutboundLink } from '@vitebook/vue';\n";
+
 function buildMetaExport(tags: string[], meta: MarkdownPageMeta): string[] {
-  const code = `\nexport const __pageMeta = ${prettyJsonStr(meta)};\n`;
+  const PAGE_META_CODE = `\nexport const __pageMeta = ${prettyJsonStr(
+    meta
+  )};\n`;
 
   const existingScriptIndex = tags.findIndex((tag) => {
     return CLOSING_SCRIPT_TAG_RE.test(tag) && !SCRIPT_SETUP_TAG_RE.test(tag);
@@ -73,10 +77,15 @@ function buildMetaExport(tags: string[], meta: MarkdownPageMeta): string[] {
 
     tags[existingScriptIndex] = tagSrc.replace(
       CLOSING_SCRIPT_TAG_RE,
-      code + (hasDefaultExport ? `` : `\nexport default{}\n`) + `</script>`
+      GLOBAL_IMPORTS_CODE +
+        PAGE_META_CODE +
+        (hasDefaultExport ? `` : `\nexport default{}\n`) +
+        `</script>`
     );
   } else {
-    tags.unshift(`<script>${code}\nexport default {}</script>`);
+    tags.unshift(
+      `<script>${GLOBAL_IMPORTS_CODE}\n${PAGE_META_CODE}\nexport default {}</script>`
+    );
   }
 
   return tags;

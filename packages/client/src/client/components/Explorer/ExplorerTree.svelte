@@ -44,7 +44,8 @@
 {#if !isExplorerGroup(item)}
   <li>
     <a href={item.link} class={{}}>
-      {@html icon?.default}{item.text}
+      <span class="icon">{@html icon?.default}</span>
+      {item.text}
     </a>
   </li>
 {:else}
@@ -55,3 +56,43 @@
     {/each}
   </ul>
 {/if}
+
+<style>
+  ul {
+    margin: 0.5rem 0;
+    padding: 0;
+    padding-left: 0.375rem;
+    margin-left: 0.5rem;
+    list-style: none;
+    border-left: 0.5px solid hsl(0, 0%, 87.5%);
+    border-radius: 4px;
+  }
+
+  ul > span {
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  li {
+    padding: 0.25rem 0;
+  }
+
+  a {
+    margin-left: 0.5rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    color: hsl(0, 0%, 12.3%);
+    text-decoration: underline;
+  }
+
+  a > .icon {
+    font-size: 0.8125rem;
+    margin-right: 0.25rem;
+  }
+
+  a:hover {
+    color: #610fe6;
+  }
+</style>

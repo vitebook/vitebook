@@ -17,7 +17,7 @@
 >
   <div class="page__container">
     <slot name="start" />
-    <Component component={$currentRoute?.component} shadow={hasShadowRoot} />
+    <Component this={$currentRoute?.component} shadow={hasShadowRoot} />
     {#if isMarkdownPage}
       {#await import('../components/Markdown/MarkdownFooter.svelte') then c}
         <svelte:component this={c.default} />

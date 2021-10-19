@@ -1,10 +1,13 @@
 import { defineConfig, clientPlugin } from '@vitebook/client/node';
 
 export default defineConfig({
-  include: ['src/**/*.vue'],
+  include: ['src/**/*.svelte'],
   plugins: [
     clientPlugin({
-      include: /\.(vue)/
+      include: /\.(svelte)/,
+      svelte: {
+        extensions: ['.svelte']
+      }
     })
   ],
   site: {

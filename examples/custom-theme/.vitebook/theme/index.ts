@@ -5,14 +5,14 @@
 // import './styles/code.css';
 
 import type { ClientTheme } from '@vitebook/client';
-import Layout from './layout/Layout.vue';
-import NotFound from './layout/404.vue';
+import Layout from './layout/Layout.svelte';
+import NotFound from './layout/404.svelte';
 
 const Theme: ClientTheme = {
   explorer: true,
   Layout,
   NotFound,
-  configureClientApp({ app, router, env }) {
+  configureRouter(router) {
     // ...
   }
 };

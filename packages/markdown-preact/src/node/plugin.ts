@@ -80,7 +80,7 @@ export function preactMarkdownPlugin(
       if (filter(filePath)) {
         files.add(filePath);
         return {
-          id: '@vitebook/preact/client/PreactAdapter.vue',
+          id: '@vitebook/preact/PreactAdapter.svelte',
           type: 'preact:md',
           context: {
             loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`

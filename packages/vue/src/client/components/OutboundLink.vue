@@ -1,4 +1,4 @@
-<span>
+<template>
   <svg
     class="external-link"
     xmlns="http://www.w3.org/2000/svg"
@@ -20,14 +20,14 @@
       />
     </g>
   </svg>
-</span>
+</template>
 
-<style>
-  svg {
-    position: relative;
-    display: inline-block;
-    color: #aaa;
-    vertical-align: middle;
-    top: -1px;
-  }
+<style scoped>
+svg {
+  position: relative;
+  display: inline-block;
+  color: #aaa;
+  vertical-align: middle;
+  top: -1px;
+}
 </style>

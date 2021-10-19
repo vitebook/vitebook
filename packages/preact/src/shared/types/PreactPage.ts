@@ -1,3 +1,4 @@
+import type { SvelteConstructor } from '@vitebook/client';
 import type {
   DefaultLoadedPage,
   DefaultPageModule,
@@ -5,17 +6,18 @@ import type {
   ServerPage
 } from '@vitebook/core/shared';
 import type { FunctionComponent as PreactComponent } from 'preact';
-import type { Component as VueComponent } from 'vue';
+
+export type PreactPageType = 'preact:jsx' | 'preact:tsx';
 
 export type PreactPage = Page<PreactPageModule, PreactPageContext> & {
-  type: 'preact:jsx' | 'preact:tsx';
+  type: PreactPageType;
 };
 
 export type PreactServerPage = ServerPage<PreactServerPageContext> & {
-  type: 'preact:jsx' | 'preact:tsx';
+  type: PreactPageType;
 };
 
-export type PreactPageModule = DefaultPageModule<VueComponent>;
+export type PreactPageModule = DefaultPageModule<SvelteConstructor>;
 
 export type LoadedPreactPage = DefaultLoadedPage<
   PreactPageModule,

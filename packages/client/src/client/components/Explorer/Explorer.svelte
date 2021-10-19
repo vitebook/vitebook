@@ -15,9 +15,11 @@
   </header>
 
   <main>
-    {#each $explorerItems as item (item)}
-      <ExplorerTree {item} />
-    {/each}
+    <ul>
+      {#each $explorerItems as item (item)}
+        <ExplorerTree {item} />
+      {/each}
+    </ul>
   </main>
 
   {#if isDev}
@@ -36,25 +38,26 @@
 
   header {
     width: 100%;
-    padding: 16px;
-    font-size: 32px;
+    padding: 1rem;
+    font-size: 1.25rem;
   }
 
   p {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     color: #999;
-    font-size: 16px;
+    font-size: 0.75rem;
   }
 
   main {
     width: auto;
     display: inline-block;
-    padding: 0 8px;
+    padding: 0 0.5rem;
+    margin-top: 0.5rem;
   }
 
   footer {
     color: #999;
-    font-size: 14px;
+    font-size: 0.625rem;
     width: 100vw;
     display: flex;
     align-items: center;
@@ -64,39 +67,9 @@
     padding: 2rem;
   }
 
-  :global(.explorer ul) {
+  ul {
     margin: 0;
     padding: 0;
-    margin-left: 12px;
     list-style: none;
-  }
-
-  :global(.explorer ul > span) {
-    display: inline-block;
-    margin: 8px 0;
-    font-size: 20px;
-    font-weight: bold;
-  }
-
-  :global(.explorer li) {
-    padding: 4px 0;
-  }
-
-  :global(.explorer a) {
-    margin-left: 12px;
-    display: flex;
-    align-items: center;
-    font-size: 18px;
-    color: hsl(0, 0%, 12.3%);
-    text-decoration: underline;
-  }
-
-  :global(.explorer a > svg) {
-    font-size: 13px;
-    margin-right: 4px;
-  }
-
-  :global(.explorer a:hover) {
-    color: #610fe6;
   }
 </style>

@@ -1,5 +1,5 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
-import type { App, Plugin } from '@vitebook/core/node';
+import { App, ensureLeadingSlash, Plugin } from '@vitebook/core/node';
 import { logger } from '@vitebook/core/node/utils';
 import type { MarkdownParser, MarkdownPlugin } from '@vitebook/markdown/node';
 import kleur from 'kleur';
@@ -75,11 +75,15 @@ export function vueMarkdownPlugin(
         await mdPlugin.configureMarkdownParser?.(parser);
       }
     },
-    async resolvePage({ filePath }) {
+    async resolvePage({ filePath, relativeFilePath }) {
       if (filter(filePath)) {
         files.add(filePath);
         return {
-          type: 'vue:md'
+          id: '@vitebook/vue/VueAdapter.svelte',
+          type: 'vue:md',
+          context: {
+            loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`
+          }
         };
       }
 

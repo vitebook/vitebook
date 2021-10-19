@@ -1,3 +1,4 @@
+import type { SvelteConstructor } from '@vitebook/client';
 import type {
   DefaultLoadedPage,
   DefaultPageModule,
@@ -5,7 +6,6 @@ import type {
 } from '@vitebook/core/shared';
 import type { MarkdownPageMeta } from '@vitebook/markdown/node';
 import type { PreactPageContext } from '@vitebook/preact/node';
-import type { Component } from 'vue';
 
 export type PreactMarkdownPage = Page<
   PreactMarkdownPageModule,
@@ -15,7 +15,7 @@ export type PreactMarkdownPage = Page<
 };
 
 export type PreactMarkdownPageModule = DefaultPageModule<
-  Component,
+  SvelteConstructor,
   MarkdownPageMeta
 >;
 

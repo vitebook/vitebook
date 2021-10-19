@@ -24,8 +24,8 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    "./client": "./src/client/index.ts",
-    "./client/*": "./src/client/*",
+    ".": "./src/client/index.js",
+    "./*": "./src/client/*",
     "./node": "./dist/index.js",
     "./shared": "./src/shared/index.ts",
     "./package.json": "./package.json"
@@ -70,16 +70,14 @@
     "@rollup/pluginutils": "^4.1.1",
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
-    "vite": "^2.5.3",
-    "vue": "^3.2.6",
-    "vue-router": "^4.0.11"
+    "svelte": "^3.44.0",
+    "vite": "^2.5.3"
   },
   "peerDependencies": {
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
-    "vite": "^2.5.3",
-    "vue": "^3.2.6",
-    "vue-router": "^4.0.11"
+    "svelte": "^3.44.0",
+    "vite": "^2.5.3"
   },
   "publishConfig": {
     "access": "public"

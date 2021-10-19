@@ -1,11 +1,12 @@
 import type { Page } from '@vitebook/core/shared';
 
 import type { LoadedPreactMarkdownPage } from '../types/PreactMarkdownPage';
+import { isPreactMarkdownPage } from './isPreactMarkdownPage';
 
 export function isLoadedPreactMarkdownPage(
   page?: Page
 ): page is LoadedPreactMarkdownPage {
   return (
-    page?.type === 'preact:md' && !!(page as LoadedPreactMarkdownPage).module
+    isPreactMarkdownPage(page) && !!(page as LoadedPreactMarkdownPage).module
   );
 }

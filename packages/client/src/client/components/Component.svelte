@@ -5,8 +5,9 @@
   let target;
   let shadowRoot;
   let currentComponent;
+  let component = undefined;
 
-  export let component = undefined;
+  export { component as this };
   export let shadow = false;
 
   const context = getAllContexts();

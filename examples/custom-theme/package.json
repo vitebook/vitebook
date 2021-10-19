@@ -7,11 +7,9 @@
     "vitebook:dev": "vitebook dev",
     "vitebook:serve": "vitebook serve"
   },
-  "dependencies": {
-    "vue": "^3.0.0"
-  },
   "devDependencies": {
     "@vitebook/client": "workspace:*",
-    "@vitebook/core": "workspace:*"
+    "@vitebook/core": "workspace:*",
+    "svelte": "^3.44.0"
   }
 }

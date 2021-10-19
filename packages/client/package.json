@@ -59,7 +59,7 @@
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.26",
-    "@vitebook/core": "*",
+    "@vitebook/core": "workspace:*",
     "kleur": "^4.1.4",
     "svelte": "^3.43.2"
   },

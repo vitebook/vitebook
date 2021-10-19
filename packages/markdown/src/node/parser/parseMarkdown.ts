@@ -80,13 +80,10 @@ export function parseMarkdown(
 
 export function loadParsedMarkdown(result: ParsedMarkdownResult): string {
   return `
-<script>
+<script context="module">
 export const __pageMeta = ${prettyJsonStr(result.meta)};
-export default {};
 </script>
 
-<template>
 ${result.html}
-</template>
   `;
 }

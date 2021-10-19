@@ -1,5 +1,5 @@
 // types
 export * from './types/PreactPage';
 // utils
-export * from './utils/isLoadedPreactComponentPage';
-export * from './utils/isPreactComponentPage';
+export * from './utils/isLoadedPreactPage';
+export * from './utils/isPreactPage';

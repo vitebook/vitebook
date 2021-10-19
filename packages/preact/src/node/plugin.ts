@@ -25,11 +25,6 @@ export type PreactPluginOptions = {
   exclude?: FilterPattern;
 
   /**
-   * Whether devtools should be active in production.
-   */
-  devtoolsInProd?: boolean;
-
-  /**
    * `@prefresh/vite` plugin options.
    *
    * @link https://github.com/preactjs/prefresh/tree/main/packages/vite
@@ -75,7 +70,7 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
       }): ResolvedPreactServerPage | null {
         if (filter(filePath)) {
           return {
-            id: '@vitebook/preact/client/PreactAdapter.vue',
+            id: '@vitebook/preact/PreactAdapter.svelte',
             type: `preact:${path.extname(filePath).slice(1) as 'jsx' | 'tsx'}`,
             context: {
               loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`
@@ -86,12 +81,7 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
         return null;
       }
     },
-    prefresh({
-      ...options.prefresh,
-      // @ts-expect-error - type missing
-      include: options.include ?? DEFAULT_INCLUDE_RE,
-      exclude: options.exclude
-    }),
+    prefresh(options.prefresh),
     hookNamesPlugin({
       include: options.include ?? DEFAULT_INCLUDE_RE,
       exclude: options.exclude
