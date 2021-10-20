@@ -44,7 +44,7 @@
 {#if !isExplorerGroup(item)}
   <li>
     <a href={item.link} class={{}}>
-      <span class="icon">{@html icon?.default}</span>
+      <span class="icon">{@html icon?.default ?? ''}</span>
       {item.text}
     </a>
   </li>

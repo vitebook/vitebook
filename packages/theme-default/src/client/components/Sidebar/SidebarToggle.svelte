@@ -34,7 +34,7 @@
     margin: 0;
     padding: 0;
     margin-right: 0.375rem;
-    padding-left: 1rem;
+    padding-left: 0.75rem;
     font-size: 1.5rem;
     border: 0;
     border-radius: 0.15rem;

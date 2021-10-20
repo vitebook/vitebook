@@ -13,6 +13,8 @@ export type ServerEntryModule = {
 
 export type ServerRenderResult = {
   context: VitebookSSRContext;
+  head: string;
+  css: string;
   html: string;
 };
 

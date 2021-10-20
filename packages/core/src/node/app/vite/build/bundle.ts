@@ -63,12 +63,11 @@ function resolveBundleConfig(
       exclude: clientPackages
     },
     esbuild: { treeShaking: !ssr },
-    minify: ssr ? false : !app.env.isDebug,
     build: {
       emptyOutDir: true,
       ssr,
       ssrManifest: !ssr,
-      cssCodeSplit: false,
+      cssCodeSplit: true,
       assetsDir: 'assets',
       minify: ssr ? false : !app.env.isDebug,
       outDir: ssr

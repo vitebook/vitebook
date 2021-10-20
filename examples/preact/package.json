@@ -5,7 +5,7 @@
   "scripts": {
     "vitebook:build": "vitebook build",
     "vitebook:dev": "vitebook dev",
-    "vitebook:serve": "vitebook serve"
+    "vitebook:preview": "vitebook preview"
   },
   "dependencies": {
     "preact": "^10.5.14"
@@ -17,6 +17,7 @@
     "@vitebook/markdown-shiki": "workspace:*",
     "@vitebook/preact": "workspace:*",
     "@vitebook/theme-default": "workspace:*",
+    "preact-render-to-string": "^5.1.19",
     "svelte": "^3.44.0"
   }
 }

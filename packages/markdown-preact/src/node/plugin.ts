@@ -102,12 +102,14 @@ export function preactMarkdownPlugin(
           define
         });
 
-        return prefreshPlugin.transform?.call(
-          this,
-          component,
-          id.replace(DEFAULT_INCLUDE_RE, '.tsx'),
-          ...args
-        );
+        return app.env.command === 'dev'
+          ? prefreshPlugin.transform?.call(
+              this,
+              component,
+              id.replace(DEFAULT_INCLUDE_RE, '.tsx'),
+              ...args
+            )
+          : component;
       }
 
       return null;

@@ -46,7 +46,7 @@ export type BuildCommandArgs = {
   debug?: boolean;
 };
 
-export type ServeCommandArgs = {
+export type PreviewCommandArgs = {
   '--': string[];
   command: string;
   root?: string;
@@ -63,4 +63,4 @@ export type ServeCommandArgs = {
   debug?: boolean;
 };
 
-export type CLIArgs = DevCommandArgs & BuildCommandArgs & ServeCommandArgs;
+export type CLIArgs = DevCommandArgs & BuildCommandArgs & PreviewCommandArgs;

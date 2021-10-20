@@ -1,8 +1,6 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import type { App, Plugin } from '@vitebook/core/node';
-import { logger } from '@vitebook/core/node/utils';
 import type { MarkdownParser, MarkdownPlugin } from '@vitebook/markdown/node';
-import kleur from 'kleur';
 
 import {
   createMarkdownParser,
@@ -62,14 +60,6 @@ export function svelteMarkdownPlugin(
         (plugin) => plugin.name === 'vite-plugin-svelte'
       ) as Plugin;
 
-      if (!sveltePlugin) {
-        throw logger.createError(
-          `${kleur.bold('@vitebook/markdown-svelte')} requires the ${kleur.bold(
-            '@vitebook/client'
-          )} plugin.`
-        );
-      }
-
       for (const plugin of app.plugins) {
         const mdPlugin = plugin as MarkdownPlugin;
         await mdPlugin.configureMarkdownParser?.(parser);
@@ -120,7 +110,7 @@ export function svelteMarkdownPlugin(
           }
         );
 
-        return sveltePlugin.handleHotUpdate?.({
+        return sveltePlugin?.handleHotUpdate?.({
           ...ctx,
           read: () => component
         });

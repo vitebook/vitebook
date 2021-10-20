@@ -5,7 +5,6 @@ import { ensureLeadingSlash } from '@vitebook/core/node';
 import { path } from '@vitebook/core/node/utils';
 
 import type { ResolvedPreactServerPage } from '../shared';
-import { hookNamesPlugin } from './hookNamesPlugin';
 
 export const PLUGIN_NAME = '@vitebook/preact' as const;
 
@@ -81,10 +80,6 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
         return null;
       }
     },
-    prefresh(options.prefresh),
-    hookNamesPlugin({
-      include: options.include ?? DEFAULT_INCLUDE_RE,
-      exclude: options.exclude
-    })
+    prefresh(options.prefresh)
   ];
 }

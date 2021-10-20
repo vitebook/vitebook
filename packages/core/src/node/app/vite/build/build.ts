@@ -1,8 +1,14 @@
 import kleur from 'kleur';
 import ora from 'ora';
-import type { OutputAsset, OutputChunk } from 'rollup';
+import type { OutputAsset, OutputChunk, RollupOutput } from 'rollup';
 
-import { removeLeadingSlash, ServerEntryModule } from '../../../../shared';
+import {
+  HeadAttrsConfig,
+  HeadConfig,
+  removeLeadingSlash,
+  ServerEntryModule,
+  ServerPage
+} from '../../../../shared';
 import { fs, path } from '../../../utils';
 import { logger, LoggerIcon } from '../../../utils/logger';
 import type { App } from '../../App';
@@ -42,16 +48,19 @@ export async function build(app: App): Promise<void> {
     ) as OutputChunk;
 
     const CSS_CHUNK = clientBundle.output.find(
-      (chunk) => chunk.type === 'asset' && chunk.fileName.endsWith('.css')
+      (chunk) =>
+        chunk.type === 'asset' &&
+        chunk.fileName.startsWith(`assets/${APP_CHUNK.name}`) &&
+        chunk.fileName.endsWith('.css')
     ) as OutputAsset;
 
     const HTML_TEMPLATE = (
       await fs.readFile(app.dirs.config.resolve('index.html'), 'utf-8')
     ).replace('{{ version }}', app.version);
 
-    const SSR_MANIFEST = JSON.parse(
-      await fs.readFile(app.dirs.out.resolve('ssr-manifest.json'), 'utf-8')
-    );
+    // const SSR_MANIFEST = JSON.parse(
+    //   await fs.readFile(app.dirs.out.resolve('ssr-manifest.json'), 'utf-8')
+    // );
 
     const serverEntryPath = app.dirs.out.resolve('server', 'entry-server.cjs');
 
@@ -76,14 +85,44 @@ export async function build(app: App): Promise<void> {
     }
 
     for (const page of app.pages) {
-      const { context, html } = await render(page);
+      const { context, html, head } = await render(page);
 
-      // TODO: determine page + preload links
+      const stylesheetLinks = [CSS_CHUNK.fileName]
+        .map((fileName) => createLinkTag(app, 'stylesheet', fileName))
+        .filter((tag) => tag.length > 0)
+        .join('\n    ');
+
+      const pageImports = resolvePageImports(
+        app,
+        page,
+        clientBundle,
+        APP_CHUNK
+      );
+
+      const preloadLinks = [...pageImports.imports, APP_CHUNK.fileName]
+        .map((fileName) => createLinkTag(app, 'modulepreload', fileName))
+        .join('\n    ');
+
+      const prefetchLinks = pageImports.dynamicImports
+        .map((fileName) => createLinkTag(app, 'prefetch', fileName))
+        .join('\n    ');
+
+      const headTags = [
+        context.head.map(renderHeadTag).join('\n   '),
+        head,
+        stylesheetLinks,
+        preloadLinks,
+        prefetchLinks
+      ]
+        .filter((t) => t.length > 0)
+        .join('\n    ');
+
+      const appScriptTag = `<script type="module" src="${app.site.options.baseUrl}${APP_CHUNK.fileName}" defer></script>`;
 
       const pageHtml = HTML_TEMPLATE.replace('{{ lang }}', context.lang)
-        .replace(`<!--@vitebook/head-->`, '')
+        .replace(`<!--@vitebook/head-->`, headTags)
         .replace(`<!--@vitebook/app-->`, html)
-        .replace('<!--@vitebook/body-->', '');
+        .replace('<!--@vitebook/body-->', appScriptTag);
 
       const decodedRoute = decodeURI(page.route);
       const filePath = decodedRoute === '/' ? '/index.html' : decodedRoute;
@@ -131,16 +170,16 @@ export async function build(app: App): Promise<void> {
   );
 
   const pkgManager = guessPackageManager(app);
-  const serveCommand = await findServeScriptName(app);
+  const previewCommand = await findPreviewScriptName(app);
   logger.success(
     kleur.bold(
       `\n⚡ ${
-        serveCommand
+        previewCommand
           ? `Run \`${
               pkgManager === 'npm' ? 'npm run' : pkgManager
-            } ${serveCommand}\` to`
-          : 'Ready for'
-      } preview\n`
+            } ${previewCommand}\` to serve production build`
+          : 'Ready for preview'
+      }\n`
     )
   );
 }
@@ -175,7 +214,7 @@ function guessPackageManager(app: App): 'npm' | 'yarn' | 'pnpm' {
   return 'npm';
 }
 
-async function findServeScriptName(app: App): Promise<string | undefined> {
+async function findPreviewScriptName(app: App): Promise<string | undefined> {
   try {
     const packageJson = app.dirs.root.resolve('package.json');
     if (fs.existsSync(packageJson)) {
@@ -183,7 +222,7 @@ async function findServeScriptName(app: App): Promise<string | undefined> {
       const json = JSON.parse(content);
 
       const script = Object.keys(json.scripts ?? {}).find((script) => {
-        return json.scripts[script].includes('vitebook serve');
+        return json.scripts[script].includes('vitebook preview');
       });
 
       return script;
@@ -193,4 +232,52 @@ async function findServeScriptName(app: App): Promise<string | undefined> {
   }
 
   return undefined;
+}
+
+function createLinkTag(app: App, rel: string, fileName?: string) {
+  if (!fileName) return '';
+  return `<link rel="${rel}" href="${app.site.options.baseUrl}${fileName}">`;
+}
+
+function resolvePageImports(
+  app: App,
+  page: ServerPage,
+  clientBundle: RollupOutput,
+  appChunk: OutputChunk
+) {
+  const srcPath = fs.realpathSync(app.dirs.root.relative(page.rootPath ?? ''));
+
+  const pageChunk = clientBundle.output.find(
+    (chunk) => chunk.type === 'chunk' && chunk.facadeModuleId === srcPath
+  ) as OutputChunk;
+
+  return {
+    imports: Array.from(
+      new Set([...appChunk.imports, ...(pageChunk?.imports ?? [])])
+    ),
+    dynamicImports: Array.from(
+      new Set([
+        // Needs to be filtered.
+        // ...appChunk.dynamicImports,
+        ...(pageChunk?.dynamicImports ?? [])
+      ])
+    )
+  };
+}
+
+function renderHeadTag([tag, attrs, innerHTML = '']: HeadConfig): string {
+  const openTag = `<${tag}${renderHeadAttrs(attrs)}>`;
+  if (tag === 'link' || tag === 'meta' || tag === 'base') {
+    return openTag;
+  }
+  return `${openTag}${innerHTML}</${tag}>`;
+}
+
+function renderHeadAttrs(attrs: HeadAttrsConfig): string {
+  return Object.entries(attrs)
+    .filter((item): item is [string, string | true] => item[1] !== false)
+    .map(([key, value]) =>
+      value === true ? ` ${key}` : ` ${key}="${attrs[key]}"`
+    )
+    .join('');
 }

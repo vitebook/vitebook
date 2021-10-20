@@ -9,7 +9,7 @@ import type { FilteredPlugins } from '../plugin/Plugin';
 import { build } from '../vite/build/build';
 import { corePlugin } from '../vite/dev/corePlugin';
 import { createServer } from '../vite/dev/createServer';
-import { serve } from '../vite/serve';
+import { preview } from '../vite/preview';
 import { createAppDirs } from './createAppDirs';
 import { createAppEnv } from './createAppEnv';
 import { createAppOptions } from './createAppOptions';
@@ -72,7 +72,7 @@ export const createApp = async (
         }
       }),
     build: () => build(app),
-    serve: () => serve(app),
+    preview: () => preview(app),
     close: () => app.disposal.empty()
   };
 

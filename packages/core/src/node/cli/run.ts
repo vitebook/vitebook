@@ -6,7 +6,7 @@ import { logger } from '../utils/logger';
 import { esmRequire } from '../utils/module';
 import { buildCommand } from './commands/buildCommand';
 import { devCommand } from './commands/devCommand';
-import { serveCommand } from './commands/serveCommand';
+import { previewCommand } from './commands/previewCommand';
 
 const program = cac('vitebook');
 
@@ -131,9 +131,9 @@ program
     });
   });
 
-// Serve
+// Preview
 program
-  .command('serve [root]', 'Serve production build')
+  .command('preview', 'Preview production build')
   .option('--base <baseUrl>', '[string] Set public base path (default: /)')
   .option(
     '-c, --configDir <configDir>',
@@ -147,15 +147,14 @@ program
   .option('--open [path]', '[boolean | string] Open browser on startup')
   .option('-m, --mode', '[string] Set env mode')
   .option('-d, --debug', '[boolean] Enable debug mode')
-  .action(function runServeCommand(root, options) {
-    options.root = root;
+  .action(function runPreviewCommand(options) {
     options.baseUrl = options.base;
     options.configDir = options.configDir ?? options.c;
     options.port = options.port ?? options.p;
     options.mode = options.mode ?? options.m;
     options.debug = options.debug ?? options.d;
-    serveCommand({
-      command: 'serve',
+    previewCommand({
+      command: 'preview',
       ...options
     }).catch((err) => {
       logger.error('\n', err, '\n');

@@ -5,7 +5,7 @@
   "scripts": {
     "vitebook:build": "vitebook build",
     "vitebook:dev": "vitebook dev",
-    "vitebook:serve": "vitebook serve"
+    "vitebook:preview": "vitebook preview"
   },
   "devDependencies": {
     "@vitebook/client": "workspace:*",

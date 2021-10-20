@@ -36,7 +36,11 @@ export const createAppOptions = ({
       ...vite,
       root: vite.root ?? _root,
       cacheDir: vite.cacheDir ?? _cacheDir,
-      publicDir: vite.publicDir ?? _publicDir
+      publicDir: vite.publicDir ?? _publicDir,
+      build: {
+        ...vite.build,
+        outDir: vite.build?.outDir ?? outDir
+      }
     },
     include,
     plugins

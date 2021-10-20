@@ -73,7 +73,7 @@
         class:active={linkProps.active}
         class:color={iconColors}
       >
-        {@html icon?.default}
+        {@html icon?.default ?? ''}
       </span>
       {item.text}
       {#if linkProps.external}

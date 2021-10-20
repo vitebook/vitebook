@@ -58,13 +58,11 @@
     "postinstall": "node .scripts/patch-prefresh.mjs"
   },
   "dependencies": {
-    "@babel/core": "^7.15.8",
     "@prefresh/core": "^1.3.1",
     "@prefresh/vite": "^2.2.3",
-    "@types/babel__core": "^7.1.16",
-    "babel-plugin-transform-hook-names": "^1.0.2",
     "kleur": "^4.1.4",
-    "preact": "^10.5.14"
+    "preact": "^10.5.14",
+    "preact-render-to-string": "^5.1.19"
   },
   "devDependencies": {
     "@rollup/pluginutils": "^4.1.1",

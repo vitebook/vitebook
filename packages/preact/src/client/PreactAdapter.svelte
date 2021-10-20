@@ -15,7 +15,11 @@
 
 <script>
   import { isFunction } from '@vitebook/core/shared';
-  import { currentRoute } from '@vitebook/client';
+  import {
+    COMPONENT_SSR_CTX_KEY,
+    currentRoute,
+    useAppContext
+  } from '@vitebook/client';
   import { h, hydrate as preactHydrate, render as preactRender } from 'preact';
   import { onDestroy } from 'svelte';
 
@@ -43,8 +47,25 @@
   }
 
   function destroy() {
+    if (!target) return;
     preactRender(null, target);
+  }
+
+  let ssr = '';
+  let ssrId = import.meta.env.SSR ? Math.random().toString(16).slice(2) : '';
+
+  if (import.meta.env.SSR) {
+    const Component = cache.get($currentRoute.decodedPath);
+    const renderToString = require('preact-render-to-string');
+    // @ts-expect-error - .
+    ssr = renderToString(h(Component, {}));
+    const ssrContext = useAppContext(COMPONENT_SSR_CTX_KEY);
+    ssrContext[ssrId] = {};
   }
 </script>
 
-<div bind:this={target} />
+<div bind:this={target}>
+  {#if import.meta.env.SSR}
+    {@html ssr}
+  {/if}
+</div>

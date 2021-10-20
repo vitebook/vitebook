@@ -1,3 +1,4 @@
+import type { Server } from 'net';
 import type { ViteDevServer } from 'vite';
 
 import type { ServerPage, SiteOptions } from '../../shared';
@@ -23,7 +24,7 @@ export type App = {
   disposal: DisposalBin;
   dev: () => Promise<ViteDevServer>;
   build: () => Promise<void>;
-  serve: () => Promise<void>;
+  preview: () => Promise<Server>;
   close: () => Promise<void>;
 };
 
@@ -54,7 +55,7 @@ export type AppDirUtils = {
 };
 
 export type AppEnv = {
-  command: 'dev' | 'build' | 'serve';
+  command: 'dev' | 'build' | 'preview';
   isDebug: boolean;
   isDev: boolean;
   isProd: boolean;

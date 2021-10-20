@@ -8,6 +8,7 @@ export * from './router/router';
 export * from './router/types';
 // context
 export * from './context/context-keys';
+export * from './context/useAppContext';
 export * from './context/useRouter';
 export * from './context/useSSRContext';
 // stores

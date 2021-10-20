@@ -69,6 +69,7 @@ importers:
       '@vitebook/preact': workspace:*
       '@vitebook/theme-default': workspace:*
       preact: ^10.5.14
+      preact-render-to-string: ^5.1.19
       svelte: ^3.44.0
     dependencies:
       preact: 10.5.14
@@ -79,6 +80,7 @@ importers:
       '@vitebook/markdown-shiki': link:../../packages/markdown-shiki
       '@vitebook/preact': link:../../packages/preact
       '@vitebook/theme-default': link:../../packages/theme-default
+      preact-render-to-string: 5.1.19_preact@10.5.14
       svelte: 3.44.0
 
   examples/svelte:
@@ -304,26 +306,22 @@ importers:
 
   packages/preact:
     specifiers:
-      '@babel/core': ^7.15.8
       '@prefresh/core': ^1.3.1
       '@prefresh/vite': ^2.2.3
       '@rollup/pluginutils': ^4.1.1
-      '@types/babel__core': ^7.1.16
       '@vitebook/client': workspace:*
       '@vitebook/core': workspace:*
-      babel-plugin-transform-hook-names: ^1.0.2
       kleur: ^4.1.4
       preact: ^10.5.14
+      preact-render-to-string: ^5.1.19
       svelte: ^3.44.0
       vite: ^2.5.3
     dependencies:
-      '@babel/core': 7.15.8
       '@prefresh/core': 1.3.2_preact@10.5.14
       '@prefresh/vite': 2.2.3_preact@10.5.14+vite@2.6.5
-      '@types/babel__core': 7.1.16
-      babel-plugin-transform-hook-names: 1.0.2_@babel+core@7.15.8
       kleur: 4.1.4
       preact: 10.5.14
+      preact-render-to-string: 5.1.19_preact@10.5.14
     devDependencies:
       '@rollup/pluginutils': 4.1.1
       '@vitebook/client': link:../client
@@ -871,35 +869,6 @@ packages:
       - supports-color
     dev: false
 
-  /@types/babel__core/7.1.16:
-    resolution: {integrity: sha512-EAEHtisTMM+KaKwfWdC3oyllIqswlznXCIVCt7/oRNrh+DhgT4UEBNC/jlADNjvw7UnfbcdkGQcPVZ1xYiLcrQ==}
-    dependencies:
-      '@babel/parser': 7.15.8
-      '@babel/types': 7.15.6
-      '@types/babel__generator': 7.6.3
-      '@types/babel__template': 7.4.1
-      '@types/babel__traverse': 7.14.2
-    dev: false
-
-  /@types/babel__generator/7.6.3:
-    resolution: {integrity: sha512-/GWCmzJWqV7diQW54smJZzWbSFf4QYtF71WCKhcx6Ru/tFyQIY2eiiITcCAeuPbNSvT9YCGkVMqqvSk2Z0mXiA==}
-    dependencies:
-      '@babel/types': 7.15.6
-    dev: false
-
-  /@types/babel__template/7.4.1:
-    resolution: {integrity: sha512-azBFKemX6kMg5Io+/rdGT0dkGreboUVR0Cdm3fz9QJWpaQGJRQXl7C+6hOTCZcMll7KFyEQpgbYI2lHdsS4U7g==}
-    dependencies:
-      '@babel/parser': 7.15.8
-      '@babel/types': 7.15.6
-    dev: false
-
-  /@types/babel__traverse/7.14.2:
-    resolution: {integrity: sha512-K2waXdXBi2302XUdcHcR1jCeU0LL4TD9HRs/gk0N2Xvrht+G/BfJa4QObBQZfhMdxiCpV3COl5Nfq4uKTeTnJA==}
-    dependencies:
-      '@babel/types': 7.15.6
-    dev: false
-
   /@types/debug/4.1.7:
     resolution: {integrity: sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg==}
     dependencies:
@@ -1316,14 +1285,6 @@ packages:
     resolution: {integrity: sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==}
     engines: {node: '>=8'}
     dev: true
-
-  /babel-plugin-transform-hook-names/1.0.2_@babel+core@7.15.8:
-    resolution: {integrity: sha512-5gafyjyyBTTdX/tQQ0hRgu4AhNHG/hqWi0ZZmg2xvs2FgRkJXzDNKBZCyoYqgFkovfDrgM8OoKg8karoUvWeCw==}
-    peerDependencies:
-      '@babel/core': ^7.12.10
-    dependencies:
-      '@babel/core': 7.15.8
-    dev: false
 
   /balanced-match/1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -3332,6 +3293,14 @@ packages:
       picocolors: 0.2.1
       source-map-js: 0.6.2
 
+  /preact-render-to-string/5.1.19_preact@10.5.14:
+    resolution: {integrity: sha512-bj8sn/oytIKO6RtOGSS/1+5CrQyRSC99eLUnEVbqUa6MzJX5dYh7wu9bmT0d6lm/Vea21k9KhCQwvr2sYN3rrQ==}
+    peerDependencies:
+      preact: '>=10'
+    dependencies:
+      preact: 10.5.14
+      pretty-format: 3.8.0
+
   /preact/10.5.14:
     resolution: {integrity: sha512-KojoltCrshZ099ksUZ2OQKfbH66uquFoxHSbnwKbTJHeQNvx42EmC7wQVWNuDt6vC5s3nudRHFtKbpY4ijKlaQ==}
     dev: false
@@ -3346,6 +3315,9 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true
+
+  /pretty-format/3.8.0:
+    resolution: {integrity: sha1-v77VbV6ad2ZF9LH/eqGjrE+jw4U=}
 
   /prismjs/1.25.0:
     resolution: {integrity: sha512-WCjJHl1KEWbnkQom1+SzftbtXMKQoezOCYs5rECqMN+jP+apI7ftoflyqigqzopSO3hMhTEb0mFClA8lkolgEg==}

@@ -57,8 +57,6 @@ export function clientPlugin(
     .flat()
     .filter((addon) => !!addon) as PageAddonPlugin[];
 
-  const sveltePlugin = svelte(options.svelte);
-
   return [
     {
       name: PLUGIN_NAME,
@@ -66,6 +64,17 @@ export function clientPlugin(
       entry: {
         client: require.resolve(`${PLUGIN_NAME}/entry-client.ts`),
         server: require.resolve(`${PLUGIN_NAME}/entry-server.ts`)
+      },
+      configureApp(app) {
+        const sveltePlugin = svelte({
+          ...options.svelte,
+          compilerOptions: {
+            ...options.svelte?.compilerOptions,
+            hydratable: app.env.isProd
+          }
+        });
+
+        app.plugins.push(sveltePlugin);
       },
       config() {
         return {
@@ -109,7 +118,6 @@ export function clientPlugin(
         return null;
       }
     },
-    ...filteredAddons,
-    sveltePlugin
+    ...filteredAddons
   ];
 }

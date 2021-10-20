@@ -22,7 +22,7 @@
   },
   "lint-staged": {
     "*.{js,ts,tsx}": "eslint --cache --fix",
-    "*.{js,ts,tsx,svelte,vue,md,json}": "prettier --write",
+    "*.{js,ts,tsx,vue,md,json}": "prettier --write",
     "package.json": "sort-package-json"
   },
   "prettier": {

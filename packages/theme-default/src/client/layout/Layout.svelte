@@ -180,11 +180,6 @@
     padding-left: 1rem;
   }
 
-  .vbk-theme-default.no-navbar .navbar__sidebar-toggle {
-    display: inline-block;
-    padding-left: 0.75rem;
-  }
-
   .vbk-theme-default.no-navbar.dark .navbar-fallback {
     background-color: var(--vbk--color-bg-300);
   }

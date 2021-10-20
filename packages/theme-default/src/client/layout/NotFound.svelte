@@ -25,7 +25,7 @@
 <div class="not-found">
   <div class="not-found__container">
     <div class="not-found__img-container">
-      {@html Illustration.replace(/width=".+"/, 'width="100%"')}
+      {@html Illustration.replace(/width=".*?"/, 'width="100%"')}
     </div>
 
     <h1 class="not-found__title">{notFoundText}</h1>
@@ -76,6 +76,7 @@
 
   .not-found__img-container {
     max-width: 400px;
+    color: var(--vbk--color-primary);
   }
 
   .not-found__actions {
