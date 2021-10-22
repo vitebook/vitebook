@@ -2,7 +2,7 @@
   /** Minimum supported width. Keep code so breakpoint shows in devtools. **/
 }
 
-.vbk-theme-default {
+.theme.__vbk__ {
   /**-------------------------------------------------------------------------------------------
    * Breakpoints
    *-------------------------------------------------------------------------------------------*/
@@ -18,9 +18,10 @@
    * Typography
    *-------------------------------------------------------------------------------------------*/
 
-  --vbk--font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  --vbk--fony-family: ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
 
   --vbk--font-family-mono: source-code-pro, Menlo, Monaco, Consolas,
     'Courier New', monospace;

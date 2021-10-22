@@ -3,48 +3,22 @@
 </script>
 
 <script>
-  import { getAllContexts, tick } from 'svelte';
+  import { getAllContexts } from 'svelte';
   import { COMPONENT_SSR_CTX_KEY } from '../context/context-keys';
   import { useAppContext } from '../context/useAppContext';
 
   let target;
-  let shadowRootParent;
-  let shadowRoot;
   let currentComponent;
   let component;
-  let isShadowRootReady = false;
 
   export { component as this };
-  export let shadow = false;
 
   const context = getAllContexts();
 
-  $: if (target && shadowRootParent) {
-    shadowRoot = shadowRootParent.attachShadow({ mode: 'open' });
-
-    if (import.meta.env.PROD) {
-      tick().then(() => {
-        for (const child of Array.from(target.children)) {
-          shadowRoot.appendChild(child.cloneNode(true));
-        }
-
-        while (target.firstChild) {
-          target.firstChild.remove();
-        }
-
-        shadowRootParent.append(shadowRoot);
-        isShadowRootReady = true;
-      });
-    } else {
-      shadowRootParent.append(shadowRoot);
-      isShadowRootReady = true;
-    }
-  }
-
-  $: if (shadowRoot && component && isShadowRootReady) {
+  $: if (target && component) {
     currentComponent?.$destroy();
     currentComponent = new component({
-      target: shadow ? shadowRoot : target,
+      target,
       context,
       hydrate: import.meta.env.PROD && !hasHydrated
     });
@@ -66,28 +40,8 @@
   }
 </script>
 
-<div>
-  <div class="shadow-root" bind:this={shadowRootParent} />
-  <div
-    bind:this={target}
-    class:not-ready={shadow && import.meta.env.PROD && !isShadowRootReady}
-  >
-    {#if import.meta.env.SSR}
-      {@html ssr.html}
-    {/if}
-  </div>
+<div bind:this={target}>
+  {#if import.meta.env.SSR}
+    {@html ssr.html}
+  {/if}
 </div>
-
-<noscript>
-  <style>
-    .not-ready {
-      opacity: 1 !important;
-    }
-  </style>
-</noscript>
-
-<style>
-  .not-ready {
-    opacity: 0;
-  }
-</style>

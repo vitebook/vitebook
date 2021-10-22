@@ -1,11 +1,7 @@
 <script>
-  import { Component, currentPage, currentRoute } from '@vitebook/client';
-
-  $: hasShadowRoot = $currentPage?.type
-    ? !/(^md|:md)$/.test($currentPage.type ?? '')
-    : false;
+  import { Component, currentRoute } from '@vitebook/client';
 </script>
 
 <main>
-  <Component this={$currentRoute?.component} shadow={hasShadowRoot} />
+  <Component this={$currentRoute?.component} />
 </main>

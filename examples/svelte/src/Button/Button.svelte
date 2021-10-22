@@ -7,6 +7,4 @@
   };
 </script>
 
-<template>
-  <button>Click Me</button>
-</template>
+<button>Click Me</button>

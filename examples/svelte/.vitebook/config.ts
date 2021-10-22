@@ -17,8 +17,13 @@ export default defineConfig<DefaultThemeConfig>({
     clientPlugin({
       include: /\.(md|svelte)/,
       svelte: {
-        preprocess: [sveltePreprocess({ typescript: true })],
-        extensions: ['.svelte', '.md']
+        extensions: ['.svelte', '.md'],
+        preprocess: [
+          sveltePreprocess({
+            // Vitebook internally handles preprocessing typescript with `esbuild`.
+            typescript: false
+          })
+        ]
       }
     }),
     defaultThemePlugin()

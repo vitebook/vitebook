@@ -8,6 +8,9 @@ html {
   -webkit-tap-highlight-color: transparent;
   /* prevent scrollbar jumping. */
   overflow-y: scroll;
+  -webkit-text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
 }
 
 html[data-vbk-sidebar='open'] {
@@ -26,23 +29,25 @@ body {
   margin: 0;
   width: 100%;
   min-height: 100vh;
+  margin: 0;
+  line-height: inherit;
 }
 
-main {
-  display: block;
+.__vbk__ {
+  font-family: var(--vbk--fony-family);
 }
 
 /**-------------------------------------------------------------------------------------------
  * Focus
  *-------------------------------------------------------------------------------------------*/
 
-*:focus {
+.__vbk__:focus {
   outline: 0;
   border-radius: 0.15rem !important;
   box-shadow: 0 0 0 4px rgba(var(--vbk--color-text-rgb)) !important;
 }
 
-*:focus:not(:focus-visible) {
+.__vbk__:focus:not(:focus-visible) {
   box-shadow: none !important;
 }
 
@@ -50,11 +55,11 @@ main {
  * Misc
  *-------------------------------------------------------------------------------------------*/
 
-p,
-a,
-ul,
-ol,
-blockquote {
+p.__vbk__,
+a.__vbk__,
+ul.__vbk__,
+ol.__vbk__,
+blockquote.__vbk__ {
   font-weight: 400;
   font-size: 1rem;
   line-height: 1.5rem;
@@ -62,35 +67,35 @@ blockquote {
   text-align: left;
 }
 
-p {
+p.__vbk__ {
   margin: 1.15rem 0;
 }
 
-a,
-area,
-button,
-[role='button'],
-input,
-label,
-select,
-summary,
-textarea {
+a.__vbk__,
+area.__vbk__,
+button.__vbk__,
+[role='button'].__vbk__,
+input.__vbk__,
+label.__vbk__,
+select.__vbk__,
+summary.__vbk__,
+textarea.__vbk__ {
   touch-action: manipulation;
 }
 
-figure {
+figure.__vbk__ {
   margin: 0;
 }
 
-img {
+img.__vbk__ {
   max-width: 100%;
 }
 
-form {
+form.__vbk__ {
   margin: 0;
 }
 
-hr {
+hr.__vbk__ {
   margin: 1.15rem 0;
   height: 1px;
 }
@@ -99,7 +104,7 @@ hr {
  * Code
  *-------------------------------------------------------------------------------------------*/
 
-code {
+code.__vbk__ {
   font-family: monospace;
   font-weight: 400;
   font-size: 0.875rem;
@@ -111,15 +116,15 @@ code {
   padding: 0.125rem 0.375rem;
 }
 
-html[data-vbk-theme='dark'] code {
+html[data-vbk-theme='dark'] code.__vbk__ {
   background-color: var(--vbk--color-gray-500);
 }
 
-h1 code,
-h2 code,
-h3 code,
-h4 code,
-h5 code {
+h1.__vbk__ code,
+h2.__vbk__ code,
+h3.__vbk__ code,
+h4.__vbk__ code,
+h5.__vbk__ code {
   font-size: 1.5rem;
 }
 
@@ -127,12 +132,12 @@ h5 code {
  * Headings
  *-------------------------------------------------------------------------------------------*/
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1.__vbk__,
+h2.__vbk__,
+h3.__vbk__,
+h4.__vbk__,
+h5.__vbk__,
+h6.__vbk__ {
   width: 100%;
   display: inline-flex;
   align-items: center;
@@ -141,41 +146,41 @@ h6 {
   padding: 1rem 0;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-strong,
-b {
+h1.__vbk__,
+h2.__vbk__,
+h3.__vbk__,
+h4.__vbk__,
+h5.__vbk__,
+h6.__vbk__,
+strong.__vbk__,
+b.__vbk__ {
   font-weight: 600;
 }
 
-h1 {
+h1.__vbk__ {
   font-size: 2.5rem;
   line-height: 3.5rem;
   letter-spacing: 0.01rem;
 }
 
-h2 {
+h2.__vbk__ {
   font-size: 2.0625rem;
   line-height: 3rem;
 }
 
-h3 {
+h3.__vbk__ {
   font-size: 1.75rem;
   line-height: 2.5rem;
   letter-spacing: 0.001rem;
 }
 
-h4 {
+h4.__vbk__ {
   font-size: 1.4375rem;
   line-height: 2rem;
   letter-spacing: 0.002rem;
 }
 
-h5 {
+h5.__vbk__ {
   font-size: 1.1875rem;
   line-height: 2rem;
   letter-spacing: 0.003rem;
@@ -185,7 +190,7 @@ h5 {
  * Anchor
  *-------------------------------------------------------------------------------------------*/
 
-a {
+a.__vbk__ {
   display: inline-flex;
   align-items: center;
   font-weight: 500;
@@ -194,12 +199,12 @@ a {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  a:hover {
+  a.__vbk__:hover {
     text-decoration: underline;
   }
 }
 
-.page a {
+.page.__vbk__ a {
   transition: var(--vbk--color-transition);
 }
 
@@ -207,7 +212,7 @@ a {
  * Header Anchor
  *-------------------------------------------------------------------------------------------*/
 
-a.header-anchor {
+a.__vbk__.header-anchor {
   position: absolute;
   top: 50%;
   left: 0;
@@ -219,22 +224,22 @@ a.header-anchor {
   transform: translateY(-50%);
 }
 
-a.header-anchor:hover,
-a.header-anchor:focus {
+a.__vbk__.header-anchor:hover,
+a.__vbk__.header-anchor:focus {
   text-decoration: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  h1:hover .header-anchor,
-  h2:hover .header-anchor,
-  h3:hover .header-anchor,
-  h4:hover .header-anchor,
-  h5:hover .header-anchor,
-  h6:hover .header-anchor {
+  h1.__vbk__:hover .header-anchor,
+  h2.__vbk__:hover .header-anchor,
+  h3.__vbk__:hover .header-anchor,
+  h4.__vbk__:hover .header-anchor,
+  h5.__vbk__:hover .header-anchor,
+  h6.__vbk__:hover .header-anchor {
     opacity: 1;
   }
 
-  a.header-anchor:hover {
+  a.__vbk__.header-anchor:hover {
     text-decoration: underline;
   }
 }
@@ -247,24 +252,24 @@ a.header-anchor:focus {
  * List
  *-------------------------------------------------------------------------------------------*/
 
-ul,
-ol {
+ul.__vbk__,
+ol.__vbk__ {
   margin: 1.15rem 0;
   line-height: 1.8;
 }
 
-ul,
-ol {
+ul.__vbk__,
+ol.__vbk__ {
   padding-left: 1.15rem;
 }
 
-li > ul,
-li > ol {
+li.__vbk__ > ul.__vbk__,
+li.__vbk__ > ol.__vbk__ {
   margin: 0;
 }
 
-ul p,
-ol p {
+ul.__vbk__ p.__vbk__,
+ol.__vbk__ p.__vbk__ {
   margin: 0;
   padding: 0;
 }
@@ -273,33 +278,33 @@ ol p {
  * Table
  *-------------------------------------------------------------------------------------------*/
 
-table {
+table.__vbk__ {
   display: block;
   border-collapse: collapse;
   margin: 1.15rem 0;
   overflow-x: auto;
 }
 
-tr {
+tr.__vbk__ {
   border-top: 1px solid var(--vbk--color-gray-400);
 }
 
-tr:nth-child(2n) {
+tr.__vbk__:nth-child(2n) {
   background-color: var(--vbk--color-gray-200);
 }
 
-html[data-vbk-theme='dark'] tr:nth-child(2n) {
+html[data-vbk-theme='dark'] tr.__vbk__:nth-child(2n) {
   background-color: var(--vbk--color-gray-600);
 }
 
-th,
-td {
+th.__vbk__,
+td.__vbk__ {
   border: 1px solid var(--vbk--color-gray-400);
   padding: 0.6rem 1.15rem;
 }
 
-html[data-vbk-theme='dark'] th,
-html[data-vbk-theme='dark'] td {
+html[data-vbk-theme='dark'] th.__vbk__,
+html[data-vbk-theme='dark'] td.__vbk__ {
   border: 1px solid var(--vbk--color-gray-500);
 }
 
@@ -307,13 +312,13 @@ html[data-vbk-theme='dark'] td {
  * Blockquote
  *-------------------------------------------------------------------------------------------*/
 
-blockquote {
+blockquote.__vbk__ {
   margin: 1.5rem 0;
   border-left: 0.2rem solid var(--vbk--color-gray-400);
   padding: 0.25rem 0 0.25rem 1rem;
   color: #999;
 }
 
-blockquote > p {
+blockquote.__vbk__ > p.__vbk__ {
   margin: 0;
 }

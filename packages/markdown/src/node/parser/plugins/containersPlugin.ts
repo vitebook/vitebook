@@ -53,7 +53,7 @@ function createContainer(klass: string, defaultTitle: string): ContainerArgs {
         const token = tokens[idx];
         const info = token.info.trim().slice(klass.length).trim();
         if (token.nesting === 1) {
-          return `<div class="admonition ${klass}"><p class="admonition__title">${
+          return `<div class="__vbk__ admonition ${klass}"><p class="__vbk__ admonition__title">${
             SVG[klass]
           }<span>${info || defaultTitle}</span></p>\n`;
         } else {

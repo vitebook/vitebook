@@ -1,7 +1,6 @@
 import './styles/vars.css';
 import './styles/vars-dark.css';
 import './styles/global.css';
-import './styles/utils.css';
 import './styles/code.css';
 import './styles/admonition.css';
 

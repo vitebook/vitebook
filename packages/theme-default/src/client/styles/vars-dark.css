@@ -2,7 +2,7 @@ html[data-vbk-theme='dark'] {
   color-scheme: dark;
 }
 
-html[data-vbk-theme='dark'] .vbk-theme-default {
+html[data-vbk-theme='dark'] .theme.__vbk__ {
   /**-------------------------------------------------------------------------------------------
    * Colors
    *-------------------------------------------------------------------------------------------*/

@@ -4,10 +4,6 @@
 
   $: noNavbar = $localizedThemeConfig.navbar === false;
 
-  $: hasShadowRoot = $currentPage?.type
-    ? !/(^md|:md)$/.test($currentPage.type ?? '')
-    : false;
-
   $: isMarkdownPage = $currentPage?.type?.endsWith('md');
 </script>
 
@@ -17,7 +13,7 @@
 >
   <div class="page__container">
     <slot name="start" />
-    <Component this={$currentRoute?.component} shadow={hasShadowRoot} />
+    <Component this={$currentRoute?.component} />
     {#if isMarkdownPage}
       {#await import('../components/Markdown/MarkdownFooter.svelte') then c}
         <svelte:component this={c.default} />
@@ -28,6 +24,10 @@
 </main>
 
 <style>
+  main {
+    display: block;
+  }
+
   .page {
     position: relative;
     margin: 0;

@@ -28,8 +28,8 @@ export type VuePluginOptions = {
   vue?: ViteVueOptions;
 };
 
-const SVG_ID_RE = /\.svg/;
-const RAW_VUE_ID_RE = /(\?raw&vue|&raw&vue)/;
+const SVG_ID_RE = /\.svg($|\?)/;
+const RAW_VUE_ID_RE = /(\?|&)raw&vue/;
 
 export const DEFAULT_INCLUDE_RE = /\.vue($|\?)/;
 

@@ -45,7 +45,7 @@
 </script>
 
 <div
-  class="vbk-theme-default"
+  class="theme"
   class:no-navbar={noNavbar}
   class:dark={$darkMode}
   class:sidebar-open={isSidebarOpen}
@@ -139,7 +139,7 @@
 </div>
 
 <style>
-  .vbk-theme-default {
+  .theme {
     display: flex;
     font-family: var(--vbk--font-family-base);
     color: var(--vbk--color-text);
@@ -155,16 +155,16 @@
   }
 
   @media (max-width: 991px) {
-    .vbk-theme-default.sidebar-open {
+    .theme.sidebar-open {
       overflow: hidden;
     }
   }
 
-  .vbk-theme-default.no-navbar {
+  .theme.no-navbar {
     --vbk--navbar-height: 4rem;
   }
 
-  .vbk-theme-default.no-navbar .navbar-fallback {
+  .theme.no-navbar .navbar-fallback {
     position: fixed;
     display: flex;
     align-items: center;
@@ -180,7 +180,7 @@
     padding-left: 1rem;
   }
 
-  .vbk-theme-default.no-navbar.dark .navbar-fallback {
+  .theme.no-navbar.dark .navbar-fallback {
     background-color: var(--vbk--color-bg-300);
   }
 
@@ -189,15 +189,15 @@
   }
 
   @media (min-width: 992px) {
-    .vbk-theme-default.no-navbar.sidebar-open {
+    .theme.no-navbar.sidebar-open {
       --vbk--navbar-height: 0px;
     }
 
-    .vbk-theme-default.no-navbar.sidebar-open .navbar-fallback {
+    .theme.no-navbar.sidebar-open .navbar-fallback {
       display: none;
     }
 
-    .vbk-theme-default.no-navbar:not(.sidebar-open) .navbar-fallback {
+    .theme.no-navbar:not(.sidebar-open) .navbar-fallback {
       padding-left: 1rem;
     }
 

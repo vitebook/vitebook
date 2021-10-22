@@ -5,40 +5,13 @@
 2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
 */
 
-*,
-::before,
-::after {
-  box-sizing: border-box; /* 1 */
-  border-width: 0; /* 2 */
-  border-style: solid; /* 2 */
-  border-color: currentColor; /* 2 */
-}
-
-/*
-1. Use a consistent sensible line-height in all browsers.
-2. Prevent adjustments of font size after orientation changes in iOS.
-3. Use a more readable tab size.
-4. Use sensible font-family default.
-*/
-
-html {
-  line-height: 1.5; /* 1 */
-  -webkit-text-size-adjust: 100%; /* 2 */
-  -moz-tab-size: 4; /* 3 */
-  tab-size: 4; /* 3 */
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-}
-
-/*
-1. Remove the margin in all browsers.
-2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
-*/
-
-body {
-  margin: 0; /* 1 */
-  line-height: inherit; /* 2 */
+.__vbk__,
+.__vbk__::before,
+.__vbk__::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: currentColor;
 }
 
 /*
@@ -47,7 +20,7 @@ body {
 3. Ensure horizontal rules are visible by default.
 */
 
-hr {
+hr.__vbk__ {
   height: 0; /* 1 */
   color: inherit; /* 2 */
   border-top-width: 1px; /* 3 */
@@ -57,7 +30,7 @@ hr {
 Add the correct text decoration in Chrome, Edge, and Safari.
 */
 
-abbr[title] {
+abbr.__vbk__[title] {
   text-decoration: underline dotted;
 }
 
@@ -65,12 +38,12 @@ abbr[title] {
 Remove the default font size and weight for headings.
 */
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1.__vbk__,
+h2.__vbk__,
+h3.__vbk__,
+h4.__vbk__,
+h5.__vbk__,
+h6.__vbk__ {
   font-size: inherit;
   font-weight: inherit;
 }
@@ -79,7 +52,7 @@ h6 {
 Reset links to optimize for opt-in styling instead of opt-out.
 */
 
-a {
+a.__vbk__ {
   color: inherit;
   text-decoration: inherit;
 }
@@ -88,8 +61,8 @@ a {
 Add the correct font weight in Edge and Safari.
 */
 
-b,
-strong {
+b.__vbk__,
+strong.__vbk__ {
   font-weight: bolder;
 }
 
@@ -98,10 +71,10 @@ strong {
 2. Correct the odd `em` font sizing in all browsers.
 */
 
-code,
-kbd,
-samp,
-pre {
+code.__vbk__,
+kbd.__vbk__,
+samp.__vbk__,
+pre.__vbk__ {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     'Liberation Mono', 'Courier New', monospace; /* 1 */
   font-size: 1em; /* 2 */
@@ -111,7 +84,7 @@ pre {
 Add the correct font size in all browsers.
 */
 
-small {
+small.__vbk__ {
   font-size: 80%;
 }
 
@@ -119,19 +92,19 @@ small {
 Prevent `sub` and `sup` elements from affecting the line height in all browsers.
 */
 
-sub,
-sup {
+sub.__vbk__,
+sup.__vbk__ {
   font-size: 75%;
   line-height: 0;
   position: relative;
   vertical-align: baseline;
 }
 
-sub {
+sub.__vbk__ {
   bottom: -0.25em;
 }
 
-sup {
+sup.__vbk__ {
   top: -0.5em;
 }
 
@@ -141,7 +114,7 @@ sup {
 3. Remove gaps between table borders by default.
 */
 
-table {
+table.__vbk__ {
   text-indent: 0; /* 1 */
   border-color: inherit; /* 2 */
   border-collapse: collapse; /* 3 */
@@ -153,11 +126,11 @@ table {
 3. Remove default padding in all browsers.
 */
 
-button,
-input,
-optgroup,
-select,
-textarea {
+button.__vbk__,
+input.__vbk__,
+optgroup.__vbk__,
+select.__vbk__,
+textarea.__vbk__ {
   font-family: inherit; /* 1 */
   font-size: 100%; /* 1 */
   line-height: inherit; /* 1 */
@@ -170,8 +143,8 @@ textarea {
 Remove the inheritance of text transform in Edge and Firefox.
 */
 
-button,
-select {
+button.__vbk__,
+select.__vbk__ {
   text-transform: none;
 }
 
@@ -180,10 +153,10 @@ select {
 2. Remove default button styles.
 */
 
-button,
-[type='button'],
-[type='reset'],
-[type='submit'] {
+button.__vbk__,
+[type='button'].__vbk__,
+[type='reset'].__vbk__,
+[type='submit'].__vbk__ {
   -webkit-appearance: button; /* 1 */
   background-color: transparent; /* 2 */
   background-image: none; /* 2 */
@@ -193,7 +166,7 @@ button,
 Use the modern Firefox focus style for all focusable elements.
 */
 
-:-moz-focusring {
+:-moz-focusring.__vbk__ {
   outline: auto;
 }
 
@@ -201,7 +174,7 @@ Use the modern Firefox focus style for all focusable elements.
 Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
 */
 
-:-moz-ui-invalid {
+:-moz-ui-invalid.__vbk__ {
   box-shadow: none;
 }
 
@@ -209,7 +182,7 @@ Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/
 Add the correct vertical alignment in Chrome and Firefox.
 */
 
-progress {
+progress.__vbk__ {
   vertical-align: baseline;
 }
 
@@ -217,8 +190,8 @@ progress {
 Correct the cursor style of increment and decrement buttons in Safari.
 */
 
-::-webkit-inner-spin-button,
-::-webkit-outer-spin-button {
+::-webkit-inner-spin-button.__vbk__,
+::-webkit-outer-spin-button.__vbk__ {
   height: auto;
 }
 
@@ -227,7 +200,7 @@ Correct the cursor style of increment and decrement buttons in Safari.
 2. Correct the outline style in Safari.
 */
 
-[type='search'] {
+[type='search'].__vbk__ {
   -webkit-appearance: textfield; /* 1 */
   outline-offset: -2px; /* 2 */
 }
@@ -236,7 +209,7 @@ Correct the cursor style of increment and decrement buttons in Safari.
 Remove the inner padding in Chrome and Safari on macOS.
 */
 
-::-webkit-search-decoration {
+::-webkit-search-decoration.__vbk__ {
   -webkit-appearance: none;
 }
 
@@ -245,7 +218,7 @@ Remove the inner padding in Chrome and Safari on macOS.
 2. Change font properties to `inherit` in Safari.
 */
 
-::-webkit-file-upload-button {
+::-webkit-file-upload-button.__vbk__ {
   -webkit-appearance: button; /* 1 */
   font: inherit; /* 2 */
 }
@@ -254,7 +227,7 @@ Remove the inner padding in Chrome and Safari on macOS.
 Add the correct display in Chrome and Safari.
 */
 
-summary {
+summary.__vbk__ {
   display: list-item;
 }
 
@@ -262,33 +235,33 @@ summary {
 Removes the default spacing and border for appropriate elements.
 */
 
-blockquote,
-dl,
-dd,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-hr,
-figure,
-p,
-pre {
+blockquote.__vbk__,
+dl.__vbk__,
+dd.__vbk__,
+h1.__vbk__,
+h2.__vbk__,
+h3.__vbk__,
+h4.__vbk__,
+h5.__vbk__,
+h6.__vbk__,
+hr.__vbk__,
+figure.__vbk__,
+p.__vbk__,
+pre.__vbk__ {
   margin: 0;
 }
 
-fieldset {
+fieldset.__vbk__ {
   margin: 0;
   padding: 0;
 }
 
-legend {
+legend.__vbk__ {
   padding: 0;
 }
 
-ol,
-ul {
+ol.__vbk__,
+ul.__vbk__ {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -298,7 +271,7 @@ ul {
 Prevent resizing textareas horizontally by default.
 */
 
-textarea {
+textarea.__vbk__ {
   resize: vertical;
 }
 
@@ -307,8 +280,8 @@ textarea {
 2. Set sensible default placeholder color.
 */
 
-input::placeholder,
-textarea::placeholder {
+input.__vbk__::placeholder,
+textarea.__vbk__::placeholder {
   opacity: 1; /* 1 */
   color: #9ca3af; /* 2 */
 }
@@ -317,7 +290,7 @@ textarea::placeholder {
 Set the default cursor for buttons.
 */
 
-button,
+button.__vbk__,
 [role='button'] {
   cursor: pointer;
 }
@@ -328,14 +301,14 @@ button,
    This can trigger a poorly considered lint error in some tools but is included by design.
 */
 
-img,
-svg,
-video,
-canvas,
-audio,
-iframe,
-embed,
-object {
+img.__vbk__,
+svg.__vbk__,
+video.__vbk__,
+canvas.__vbk__,
+audio.__vbk__,
+iframe.__vbk__,
+embed.__vbk__,
+object.__vbk__ {
   display: block; /* 1 */
   vertical-align: middle; /* 2 */
 }
@@ -344,8 +317,8 @@ object {
 Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
 */
 
-img,
-video {
+img.__vbk__,
+video.__vbk__ {
   max-width: 100%;
   height: auto;
 }
@@ -354,6 +327,6 @@ video {
 Ensure the default browser behavior of the `hidden` attribute.
 */
 
-[hidden] {
+[hidden].__vbk__ {
   display: none;
 }

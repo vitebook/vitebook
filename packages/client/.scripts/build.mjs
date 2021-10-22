@@ -37,7 +37,14 @@ async function main() {
     watch: process.argv.includes('--watch'),
     bundle: true,
     logLevel: 'info',
-    external: ['@vitebook/core', '@sveltejs/vite-plugin-svelte', 'svelte']
+    external: [
+      '@sveltejs/vite-plugin-svelte',
+      '@vitebook/core',
+      'esbuild',
+      'magic-string',
+      'svelte-preprocess-esbuild',
+      'svelte'
+    ]
   });
 }
 

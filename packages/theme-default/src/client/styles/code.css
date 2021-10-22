@@ -1,9 +1,9 @@
-div[class*='language-'] {
+div.__vbk__[class*='language-'] {
   margin: 2rem 0;
 }
 
-div[class*='language-'] > pre,
-div[class*='language-'] > pre code {
+div.__vbk__[class*='language-'] > pre.__vbk__,
+div.__vbk__[class*='language-'] > pre.__vbk__ code.__vbk__ {
   color: #ccc;
   background: none;
   font-family: var(--vbk--code-font-family);
@@ -26,19 +26,19 @@ div[class*='language-'] > pre code {
 }
 
 /* Code blocks */
-pre[class*='language-'] {
+pre.__vbk__[class*='language-'] {
   padding: 1em;
   margin: 0.5em 0;
   overflow: auto;
 }
 
-:not(pre) > code[class*='language-'],
-pre[class*='language-'] {
+:not(pre.__vbk__) > code.__vbk__[class*='language-'],
+pre.__vbk__[class*='language-'] {
   background: #2d2d2d;
 }
 
 /* Inline code */
-:not(pre) > code[class*='language-'] {
+:not(pre.__vbk__) > code.__vbk__[class*='language-'] {
   padding: 0.1em;
   border-radius: 0.3em;
   white-space: normal;
@@ -118,8 +118,8 @@ pre[class*='language-'] {
   color: #3eaf7c;
 }
 
-div[class*='language-'] pre,
-pre[class*='language-'] {
+div.__vbk__[class*='language-'] pre.__vbk__,
+pre.__vbk__[class*='language-'] {
   color-scheme: var(--vbk--code-color-scheme);
   padding: 1.25rem 1.5rem;
   margin: 0.85rem 0;
@@ -127,8 +127,8 @@ pre[class*='language-'] {
   overflow: auto;
 }
 
-div[class*='language-'] pre code,
-pre[class*='language-'] code {
+div.__vbk__[class*='language-'] pre.__vbk__ code.__vbk__,
+pre.__vbk__[class*='language-'] code.__vbk__ {
   color: #fff;
   padding: 0;
   background-color: transparent;
@@ -141,13 +141,13 @@ pre[class*='language-'] code {
   font-family: var(--vbk--code-font-family);
 }
 
-div[class*='language-'] {
+div.__vbk__[class*='language-'] {
   position: relative;
   background-color: var(--vbk--code-bg-color);
   border-radius: 6px;
 }
 
-div[class*='language-']::before {
+div.__vbk__[class*='language-']::before {
   position: absolute;
   z-index: 3;
   top: 0.8em;
@@ -156,15 +156,15 @@ div[class*='language-']::before {
   color: var(--vbk--code-ln-color);
 }
 
-div[class*='language-'] pre,
-div[class*='language-'] pre[class*='language-'] {
+div.__vbk__[class*='language-'] pre.__vbk__,
+div.__vbk__[class*='language-'] pre.__vbk__[class*='language-'] {
   /* force override the background color to be compatible with shiki */
   background: transparent !important;
   position: relative;
   z-index: 1;
 }
 
-div[class*='language-'] .highlight-lines {
+div.__vbk__[class*='language-'] .highlight-lines {
   user-select: none;
   padding-top: 1.3rem;
   position: absolute;
@@ -174,19 +174,21 @@ div[class*='language-'] .highlight-lines {
   line-height: var(--vbk--code-hl-ln-height);
 }
 
-div[class*='language-'] .highlight-lines .highlight-line {
+div.__vbk__[class*='language-'] .highlight-lines .highlight-line {
   background-color: var(--vbk--code-hl-bg-color);
 }
 
-div[class*='language-']:not(.line-numbers-mode) .line-numbers {
+div.__vbk__[class*='language-']:not(.line-numbers-mode) .line-numbers {
   display: none;
 }
 
-div[class*='language-'].line-numbers-mode .highlight-lines .highlight-line {
+div.__vbk__[class*='language-'].line-numbers-mode
+  .highlight-lines
+  .highlight-line {
   position: relative;
 }
 
-div[class*='language-'].line-numbers-mode
+div.__vbk__[class*='language-'].line-numbers-mode
   .highlight-lines
   .highlight-line::before {
   content: ' ';
@@ -199,13 +201,13 @@ div[class*='language-'].line-numbers-mode
   height: 100%;
 }
 
-div[class*='language-'].line-numbers-mode pre {
+div.__vbk__[class*='language-'].line-numbers-mode pre.__vbk__ {
   margin-left: var(--vbk--code-ln-wrapper-width);
   padding-left: 1rem;
   vertical-align: middle;
 }
 
-div[class*='language-'].line-numbers-mode .line-numbers {
+div.__vbk__[class*='language-'].line-numbers-mode .line-numbers {
   position: absolute;
   top: 0;
   width: var(--vbk--code-ln-wrapper-width);
@@ -215,18 +217,18 @@ div[class*='language-'].line-numbers-mode .line-numbers {
   line-height: 1.4;
 }
 
-div[class*='language-'].line-numbers-mode .line-numbers br {
+div.__vbk__[class*='language-'].line-numbers-mode .line-numbers br.__vbk__ {
   user-select: none;
 }
 
-div[class*='language-'].line-numbers-mode .line-numbers .line-number {
+div.__vbk__[class*='language-'].line-numbers-mode .line-numbers .line-number {
   position: relative;
   z-index: 3;
   user-select: none;
   font-size: 0.85em;
 }
 
-div[class*='language-'].line-numbers-mode::after {
+div.__vbk__[class*='language-'].line-numbers-mode::after {
   content: '';
   position: absolute;
   top: 0;
@@ -237,100 +239,100 @@ div[class*='language-'].line-numbers-mode::after {
   border-right: 1px solid var(--vbk--code-hl-bg-color);
 }
 
-div[class~='language-html']:before,
-div[class~='language-markup']:before {
+div.__vbk__[class~='language-html']:before,
+div.__vbk__[class~='language-markup']:before {
   content: 'html';
 }
 
-div[class~='language-md']:before,
-div[class~='language-markdown']:before {
+div.__vbk__[class~='language-md']:before,
+div.__vbk__[class~='language-markdown']:before {
   content: 'md';
 }
 
-div[class~='language-css']:before {
+div.__vbk__[class~='language-css']:before {
   content: 'css';
 }
 
-div[class~='language-sass']:before {
+div.__vbk__[class~='language-sass']:before {
   content: 'sass';
 }
 
-div[class~='language-scss']:before {
+div.__vbk__[class~='language-scss']:before {
   content: 'scss';
 }
 
-div[class~='language-less']:before {
+div.__vbk__[class~='language-less']:before {
   content: 'less';
 }
 
-div[class~='language-stylus']:before {
+div.__vbk__[class~='language-stylus']:before {
   content: 'styl';
 }
 
-div[class~='language-js']:before,
-div[class~='language-javascript']:before {
+div.__vbk__[class~='language-js']:before,
+div.__vbk__[class~='language-javascript']:before {
   content: 'js';
 }
 
-div[class~='language-ts']:before,
-div[class~='language-typescript']:before {
+div.__vbk__[class~='language-ts']:before,
+div.__vbk__[class~='language-typescript']:before {
   content: 'ts';
 }
 
-div[class~='language-json']:before {
+div.__vbk__[class~='language-json']:before {
   content: 'json';
 }
 
-div[class~='language-rb']:before,
-div[class~='language-ruby']:before {
+div.__vbk__[class~='language-rb']:before,
+div.__vbk__[class~='language-ruby']:before {
   content: 'rb';
 }
 
-div[class~='language-py']:before,
-div[class~='language-python']:before {
+div.__vbk__[class~='language-py']:before,
+div.__vbk__[class~='language-python']:before {
   content: 'py';
 }
 
-div[class~='language-sh']:before,
-div[class~='language-bash']:before {
+div.__vbk__[class~='language-sh']:before,
+div.__vbk__[class~='language-bash']:before {
   content: 'sh';
 }
 
-div[class~='language-php']:before {
+div.__vbk__[class~='language-php']:before {
   content: 'php';
 }
 
-div[class~='language-go']:before {
+div.__vbk__[class~='language-go']:before {
   content: 'go';
 }
 
-div[class~='language-rust']:before {
+div.__vbk__[class~='language-rust']:before {
   content: 'rust';
 }
 
-div[class~='language-java']:before {
+div.__vbk__[class~='language-java']:before {
   content: 'java';
 }
 
-div[class~='language-c']:before {
+div.__vbk__[class~='language-c']:before {
   content: 'c';
 }
 
-div[class~='language-yaml']:before {
+div.__vbk__[class~='language-yaml']:before {
   content: 'yaml';
 }
 
-div[class~='language-dockerfile']:before {
+div.__vbk__[class~='language-dockerfile']:before {
   content: 'dockerfile';
 }
 
-div[class~='language-vue']:before {
+div.__vbk__[class~='language-vue']:before {
   content: 'vue';
 }
 
 /* narrow mobile */
 @media (max-width: 419px) {
-  div[class*='language-'] {
+  div.__vbk__[class*='language-'] {
     margin: 0.85rem -1.5rem;
     border-radius: 0;
   }

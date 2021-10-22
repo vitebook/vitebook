@@ -1,3 +1,5 @@
+import './styles/global.css';
+
 // ** Uncomment if using markdown. **
 // import './styles/admonition.css';
 
