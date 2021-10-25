@@ -25,10 +25,19 @@ export type HeadTagNonEmpty =
   | 'noscript'
   | 'template';
 
+export type SocialHeadTags =
+  | 'og:url'
+  | 'og:site_name'
+  | 'og:title'
+  | 'og:description'
+  | 'twitter:title'
+  | 'twitter:description'
+  | 'twitter:url';
+
 /**
  * Empty tags in `<head>`.
  */
-export type HeadTagEmpty = 'base' | 'link' | 'meta' | 'script';
+export type HeadTagEmpty = 'base' | 'link' | 'meta' | 'script' | SocialHeadTags;
 
 /**
  * Attributes to be set for tags in `<head>`.

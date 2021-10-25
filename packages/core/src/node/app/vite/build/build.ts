@@ -7,7 +7,8 @@ import {
   HeadConfig,
   removeLeadingSlash,
   ServerEntryModule,
-  ServerPage
+  ServerPage,
+  SiteOptions
 } from '../../../../shared';
 import { fs, path } from '../../../utils';
 import { logger, LoggerIcon } from '../../../utils/logger';
@@ -108,7 +109,9 @@ export async function build(app: App): Promise<void> {
         .join('\n    ');
 
       const headTags = [
-        context.head.map(renderHeadTag).join('\n   '),
+        addSocialTags(app.site.options, page, context.head)
+          .map(renderHeadTag)
+          .join('\n   '),
         head,
         stylesheetLinks,
         preloadLinks,
@@ -280,4 +283,32 @@ function renderHeadAttrs(attrs: HeadAttrsConfig): string {
       value === true ? ` ${key}` : ` ${key}="${attrs[key]}"`
     )
     .join('');
+}
+
+function addSocialTags(
+  site: SiteOptions,
+  page: ServerPage,
+  head: HeadConfig[]
+): HeadConfig[] {
+  const pageTitle: string =
+    head.find((tag) => tag[0] === 'title')?.[2] ?? site.title;
+
+  const pageDescription: string =
+    (head.find(
+      (tag) => tag[0] === 'meta' && tag[1]?.name === 'description'
+    )?.[1]?.content as string) ?? site.description;
+
+  const tags: HeadConfig[] = [
+    ['og:site_name', { content: site.title }],
+    ['og:title', { content: pageTitle }],
+    ['og:description', { content: pageDescription }],
+    ['twitter:title', { content: pageTitle }],
+    ['twitter:description', { content: pageDescription }]
+  ];
+
+  head.push(
+    ...tags.filter((tag) => !head.some((headTag) => tag[0] === headTag[0]))
+  );
+
+  return head;
 }
