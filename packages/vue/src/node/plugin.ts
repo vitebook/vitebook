@@ -63,7 +63,7 @@ export function vuePlugin(options: VuePluginOptions = {}): Plugin[] {
           files.add(filePath);
           const type = path.extname(filePath).slice(1);
           return {
-            id: '@vitebook/vue/VueAdapter.svelte',
+            id: '@vitebook/vue/VuePageView.svelte',
             type: type === 'vue' ? 'vue' : `vue:${type}`,
             context: {
               loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`

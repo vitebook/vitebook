@@ -79,7 +79,7 @@ export function vueMarkdownPlugin(
       if (filter(filePath)) {
         files.add(filePath);
         return {
-          id: '@vitebook/vue/VueAdapter.svelte',
+          id: '@vitebook/vue/VuePageView.svelte',
           type: 'vue:md',
           context: {
             loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`

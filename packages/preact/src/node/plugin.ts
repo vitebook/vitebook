@@ -69,7 +69,7 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
       }): ResolvedPreactServerPage | null {
         if (filter(filePath)) {
           return {
-            id: '@vitebook/preact/PreactAdapter.svelte',
+            id: '@vitebook/preact/PreactPageView.svelte',
             type: `preact:${path.extname(filePath).slice(1) as 'jsx' | 'tsx'}`,
             context: {
               loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`

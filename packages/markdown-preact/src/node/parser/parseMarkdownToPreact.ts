@@ -90,7 +90,7 @@ function Markdown() {
   ${componentCode ? `${componentCode}\n` : ''}
   return (
     <Fragment>
-      <div>${html.replace(/<br>/g, '<br />')}</div>
+      <div>${html.replace(/<br(.*?)(\/)?>/g, (_, m) => `<br${m}/>`)}</div>
     </Fragment>
   )
 }
