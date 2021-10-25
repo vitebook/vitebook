@@ -8,8 +8,8 @@
   import { useAppContext } from '../context/useAppContext';
 
   let target;
-  let currentComponent;
   let component;
+  let currentComponent;
 
   export { component as this };
 

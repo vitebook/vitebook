@@ -1,6 +1,5 @@
 <script>
   import { inBrowser } from '@vitebook/core/shared';
-  import PageView from './components/PageView.svelte';
   import { useUpdateHead } from './composables/useUpdateHead';
   import { siteLang } from './stores/siteLang';
   import { theme } from './stores/theme';

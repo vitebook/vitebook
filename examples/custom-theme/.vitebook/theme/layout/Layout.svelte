@@ -1,7 +1,7 @@
 <script>
-  import { Component, currentRoute } from '@vitebook/client';
+  import { PageView } from '@vitebook/client';
 </script>
 
 <main>
-  <Component this={$currentRoute?.component} />
+  <PageView />
 </main>

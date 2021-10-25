@@ -204,7 +204,7 @@ a.__vbk__ {
   }
 }
 
-.page.__vbk__ a {
+.page.__vbk__ a.__vbk__ {
   transition: var(--vbk--color-transition);
 }
 
@@ -244,7 +244,7 @@ a.__vbk__.header-anchor:focus {
   }
 }
 
-.header-anchor:focus-visible {
+.header-anchor.__vbk__:focus-visible {
   opacity: 1;
 }
 

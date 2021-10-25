@@ -145,6 +145,9 @@ export function clientPlugin(
           options.themeScope?.exclude
         );
 
+        app.context.themeScopeClass =
+          options.themeScope?.scopeClass ?? DEFAULT_THEME_SCOPE_CLASS;
+
         const sveltePlugin = svelte({
           ...options.svelte,
           preprocess: [

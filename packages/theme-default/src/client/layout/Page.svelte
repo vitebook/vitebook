@@ -3,7 +3,6 @@
   import { localizedThemeConfig } from '../stores/localizedThemeConfig';
 
   $: noNavbar = $localizedThemeConfig.navbar === false;
-
   $: isMarkdownPage = $currentPage?.type?.endsWith('md');
 </script>
 

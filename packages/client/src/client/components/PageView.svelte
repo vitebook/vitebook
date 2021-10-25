@@ -1,5 +1,6 @@
 <script>
   import { currentRoute } from '../stores/currentRoute';
+  import Component from './Component.svelte';
 </script>
 
-<svelte:component this={$currentRoute?.component} />
+<Component this={$currentRoute?.component} />

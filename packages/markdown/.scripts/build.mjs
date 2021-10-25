@@ -37,7 +37,7 @@ async function main() {
     watch: process.argv.includes('--watch'),
     outfile,
     logLevel: 'info',
-    external: ['@vitebook/core', '@vitebook/client']
+    external: ['@vitebook/core', '@vitebook/client', 'node-html-parser']
   });
 }
 

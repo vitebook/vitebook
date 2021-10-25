@@ -43,6 +43,7 @@ export function parseMarkdown(
   };
 
   let html = parser.render(content, parserEnv);
+
   const excerptHtml = parser.render(excerpt ?? '');
 
   if (options.escapeConstants) {

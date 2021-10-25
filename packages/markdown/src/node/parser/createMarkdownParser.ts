@@ -21,6 +21,7 @@ import {
 } from './plugins';
 import type { MarkdownParser, MarkdownParserOptions } from './types';
 import { slugify } from './utils';
+import { withThemeScope } from './withThemeScope';
 
 export async function createMarkdownParser({
   anchor,
@@ -111,6 +112,13 @@ export async function createMarkdownParser({
   if (importCode !== false) {
     parser.use<ImportCodePluginOptions>(importCodePlugin, importCode);
   }
+
+  const render = parser.renderer.render;
+  parser.renderer.render = function (...args) {
+    const html = render.call(this, ...args);
+    const { app } = args[2]; // args[2] = env
+    return withThemeScope(html, app?.context?.themeScopeClass ?? '__vbk__');
+  };
 
   await configureParser?.(parser);
 
