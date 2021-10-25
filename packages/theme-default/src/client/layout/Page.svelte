@@ -1,5 +1,5 @@
 <script>
-  import { Component, currentPage, currentRoute } from '@vitebook/client';
+  import { PageView, currentPage } from '@vitebook/client';
   import { localizedThemeConfig } from '../stores/localizedThemeConfig';
 
   $: noNavbar = $localizedThemeConfig.navbar === false;
@@ -12,7 +12,7 @@
 >
   <div class="page__container">
     <slot name="start" />
-    <Component this={$currentRoute?.component} />
+    <PageView />
     {#if isMarkdownPage}
       {#await import('../components/Markdown/MarkdownFooter.svelte') then c}
         <svelte:component this={c.default} />

@@ -9,4 +9,11 @@
   $: if (inBrowser) document.documentElement.lang = $siteLang;
 </script>
 
-<svelte:component this={$theme.Layout} />
+{#if 'adapter' in $theme.Layout}
+  <svelte:component
+    this={$theme.Layout.adapter}
+    component={$theme.Layout.component}
+  />
+{:else}
+  <svelte:component this={$theme.Layout} />
+{/if}

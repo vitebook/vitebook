@@ -24,7 +24,7 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    ".": "./src/client/index.js",
+    ".": "./src/client/index.ts",
     "./*": "./src/client/*",
     "./node": "./dist/index.js",
     "./shared": "./src/shared/index.ts",
@@ -32,17 +32,14 @@
   },
   "typesVersions": {
     "*": {
-      "client": [
-        "src/client/index.ts"
-      ],
-      "client/*": [
-        "src/client/*"
-      ],
       "node": [
         "src/node/index.ts"
       ],
       "shared": [
         "src/shared/index.ts"
+      ],
+      "*": [
+        "src/client/*"
       ]
     }
   },

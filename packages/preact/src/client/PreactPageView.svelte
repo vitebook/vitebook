@@ -16,9 +16,9 @@
 <script>
   import { isFunction } from '@vitebook/core/shared';
   import { currentRoute } from '@vitebook/client';
-  import PreactComponent from './PreactComponent.svelte';
+  import PreactAdapter from './PreactAdapter.svelte';
 
   $: component = cache.get($currentRoute.decodedPath);
 </script>
 
-<PreactComponent this={component} />
+<PreactAdapter {component} />

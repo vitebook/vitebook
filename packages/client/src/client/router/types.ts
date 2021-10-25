@@ -2,11 +2,22 @@ import type { SvelteConstructor, SvelteModule } from '../../shared';
 
 export type RoutePrefetch = (location: RouteLocation) => void | Promise<void>;
 
+export type RouteComponent =
+  | SvelteConstructor
+  | {
+      adapter: SvelteConstructor;
+      component: unknown;
+    };
+
 export type RouteLoaderComponent = SvelteConstructor | SvelteModule;
 
 export type RouteLoader = (
   location: RouteLocation
-) => RouteLoaderComponent | Promise<RouteLoaderComponent>;
+) =>
+  | RouteComponent
+  | Promise<RouteComponent>
+  | RouteLoaderComponent
+  | Promise<RouteLoaderComponent>;
 
 export type Route = {
   path: string;
@@ -31,7 +42,7 @@ export type RouteLocation = {
 };
 
 export type LoadedRouteLocation = RouteLocation & {
-  component: SvelteConstructor;
+  component: RouteComponent;
 };
 
 export type NavigationOptions = {

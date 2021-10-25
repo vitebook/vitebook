@@ -4,14 +4,15 @@
     useAppContext,
     SSR_CTX_KEY
   } from '@vitebook/client';
-  import { onDestroy } from 'svelte';
+  import { getAllContexts, onDestroy } from 'svelte';
   import { createApp, createSSRApp, h } from 'vue';
 
   let target;
   let app;
-  let component;
 
-  export { component as this };
+  export let component;
+
+  const context = getAllContexts();
 
   onDestroy(() => {
     destroy();

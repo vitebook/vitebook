@@ -1,6 +1,12 @@
 <script>
   import { currentRoute } from '../stores/currentRoute';
-  import Component from './Component.svelte';
 </script>
 
-<Component this={$currentRoute?.component} />
+{#if 'adapter' in $currentRoute.component}
+  <svelte:component
+    this={$currentRoute.component.adapter}
+    component={$currentRoute.component.component}
+  />
+{:else}
+  <svelte:component this={$currentRoute.component} />
+{/if}

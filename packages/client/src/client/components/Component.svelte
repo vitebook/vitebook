@@ -20,6 +20,7 @@
     currentComponent = new component({
       target,
       context,
+      props: $$restProps,
       hydrate: import.meta.env.PROD && !hasHydrated
     });
     hasHydrated = true;
@@ -33,7 +34,7 @@
   if (import.meta.env.SSR) {
     if (component) {
       // @ts-expect-error - no server side types
-      ssr = component.render({}, { context });
+      ssr = component.render($$restProps, { context });
       const ssrContext = useAppContext(COMPONENT_SSR_CTX_KEY);
       ssrContext[ssrId] = ssr;
     }

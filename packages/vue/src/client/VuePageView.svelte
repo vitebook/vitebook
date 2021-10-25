@@ -16,9 +16,9 @@
 <script>
   import { isFunction } from '@vitebook/core/shared';
   import { currentRoute } from '@vitebook/client';
-  import VueComponent from './VueComponent.svelte';
+  import VueAdapter from './VueAdapter.svelte';
 
   $: component = cache.get($currentRoute.decodedPath);
 </script>
 
-<VueComponent this={component} />
+<VueAdapter {component} />

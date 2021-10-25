@@ -4,9 +4,8 @@
   import { onDestroy } from 'svelte';
 
   let target;
-  let component;
 
-  export { component as this };
+  export let component;
 
   onDestroy(() => {
     destroy();
