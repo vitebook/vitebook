@@ -7,6 +7,7 @@ export * from './types/MarkdownPageMeta';
 export * from './types/Page';
 export * from './types/PageMeta';
 export * from './types/SiteOptions';
+export * from './types/StoryMeta';
 export * from './types/Theme';
 export * from './types/utils';
 // utils

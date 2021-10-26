@@ -3,6 +3,7 @@ export { default as ClientOnly } from './components/ClientOnly.svelte';
 export { default as Component } from './components/Component.svelte';
 export { default as OutboundLink } from './components/OutboundLink.svelte';
 export { default as PageView } from './components/PageView.svelte';
+export { default as Variant } from './components/Variant.svelte';
 // router
 export * from './router/router';
 export * from './router/types';
@@ -26,6 +27,7 @@ export * from './stores/pages';
 export * from './stores/siteLang';
 export * from './stores/siteOptions';
 export * from './stores/theme';
+export * from './stores/variants';
 export * from './stores/withBaseUrl';
 // shared
 export * from '../shared';

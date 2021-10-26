@@ -16,8 +16,6 @@ const theme: ClientTheme = {
   Layout,
   NotFound,
   configureRouter(router) {
-    let prevRedirect: string;
-
     if (!router.hasRoute('/')) {
       const setHomePage = () => {
         const theme = get(localizedThemeConfig);
@@ -36,15 +34,9 @@ const theme: ClientTheme = {
 
         if (import.meta.env.DEV) {
           const currentPath = get(currentRoute)?.path;
-
-          if (
-            (prevRedirect && currentPath === prevRedirect) ||
-            currentPath === '/'
-          ) {
+          if (currentPath === '/') {
             router.go('/', { replace: true });
           }
-
-          prevRedirect = redirect;
         }
       };
 

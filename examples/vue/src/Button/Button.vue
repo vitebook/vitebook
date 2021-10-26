@@ -1,12 +1,9 @@
-<script lang="ts">
-import type { PageMeta } from '@vitebook/client';
-
-export const __pageMeta: PageMeta = {
-  title: 'Button',
-  description: 'My awesome button.'
-};
+<script setup lang="ts">
+const props = defineProps<{
+  disabled?: boolean;
+}>();
 </script>
 
 <template>
-  <button>Click Me</button>
+  <button :disabled="disabled">Click Me</button>
 </template>

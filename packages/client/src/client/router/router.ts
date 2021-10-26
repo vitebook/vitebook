@@ -180,6 +180,7 @@ export class Router {
     const routeLocation = this.parse(url);
 
     if (routeLocation?.route.redirect) {
+      // TODO: this doesn't forward hash or query string
       await this.go(routeLocation.route.redirect, { replace: true });
       return;
     }

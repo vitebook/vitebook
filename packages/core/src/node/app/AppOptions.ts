@@ -109,6 +109,17 @@ export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
    * @default '<configDir>/.temp'
    */
   tmpDir: string;
+
+  /**
+   * Function to map file paths to client routes such as `/button/button.story.ts` ->
+   * `/button/button.html`.
+   *
+   * The route must resolve to a path ending with `.html`.
+   */
+  resolveRoute?: (path: {
+    filePath: string;
+    relativeFilePath: string;
+  }) => string | null | undefined;
 };
 
 export type AppConfig<Theme extends ThemeConfig = ThemeConfig> = Partial<

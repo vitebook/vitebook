@@ -113,12 +113,9 @@ async function loadPage(
   }
 
   const mod = await page.loader();
-
   const component = mod.default;
-
-  const meta = isFunction(mod.__pageMeta)
-    ? await mod.__pageMeta(page, mod)
-    : mod.__pageMeta;
+  const pageMeta = mod.__storyMeta ?? mod.__pageMeta ?? {};
+  const meta = isFunction(pageMeta) ? await pageMeta(page, mod) : pageMeta;
 
   const loadedPage = {
     ...page,

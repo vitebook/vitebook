@@ -8,7 +8,7 @@ import {
 import sveltePreprocess from 'svelte-preprocess';
 
 export default defineConfig<DefaultThemeConfig>({
-  include: ['src/**/*.{md,svelte}'],
+  include: ['src/**/*.md', 'src/**/*.story.svelte'],
   plugins: [
     shikiMarkdownPlugin(),
     svelteMarkdownPlugin({

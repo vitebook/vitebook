@@ -8,7 +8,7 @@ import {
 } from '@vitebook/theme-default/node';
 
 export default defineConfig<DefaultThemeConfig>({
-  include: ['src/**/*.{md,tsx}'],
+  include: ['src/**/*.md', 'src/**/*.story.tsx'],
   plugins: [
     shikiMarkdownPlugin(),
     preactMarkdownPlugin(),

@@ -8,7 +8,7 @@ import {
 } from '@vitebook/theme-default/node';
 
 export default defineConfig<DefaultThemeConfig>({
-  include: ['src/**/*.{md,vue}'],
+  include: ['src/**/*.md', 'src/**/*.story.vue'],
   plugins: [
     shikiMarkdownPlugin(),
     vueMarkdownPlugin({

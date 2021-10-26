@@ -83,7 +83,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: -1.5rem;
+    margin-left: -0.2rem;
   }
 
   .not-found__actions > div + div {

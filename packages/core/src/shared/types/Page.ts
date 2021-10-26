@@ -33,6 +33,10 @@ export type DefaultLoadedPage<
 export type Pages<PageModule extends DefaultPageModule = DefaultPageModule> =
   Page<PageModule>[];
 
+export type PageMetaBuilder<PageMeta> =
+  | PageMeta
+  | ((page: Page, mod: DefaultPageModule) => PageMeta | Promise<PageMeta>);
+
 export type DefaultPageModule<
   DefaultExport = unknown,
   PageMetaExport = PageMeta
@@ -40,12 +44,9 @@ export type DefaultPageModule<
   /** type def (doesn't actually exist). */
   __type?: PageMetaExport;
   default: DefaultExport;
-  __pageMeta:
-    | PageMetaExport
-    | ((
-        page: Page,
-        mod: DefaultPageModule
-      ) => PageMetaExport | Promise<PageMetaExport>);
+  __pageMeta?: PageMetaBuilder<PageMetaExport>;
+  /** Alias for `__pageMeta` */
+  __storyMeta?: PageMetaBuilder<PageMetaExport>;
 };
 
 export type VirtualPagesModule = {

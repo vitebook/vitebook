@@ -70,7 +70,9 @@ async function resolvePage(app: App, filePath: string): Promise<void> {
 
     const id = ensureLeadingSlash(path.relative(app.dirs.root.path, filePath));
     const relativeFilePath = app.dirs.root.relative(filePath);
-    const route = filePathToRoute(app, filePath);
+    const route =
+      app.options.resolveRoute?.({ filePath, relativeFilePath }) ??
+      filePathToRoute(app, filePath);
 
     const page = await plugin.resolvePage?.({
       id,
@@ -131,7 +133,10 @@ export function filePathToRoute(app: App, filePath: string): string {
   const relativePath = path.relative(app.dirs.src.path, filePath);
   const url = new URL(relativePath.toLowerCase(), FAKE_HOST).pathname;
   return url
-    .replace(new RegExp(`(${path.extname(filePath)})($|\\?)`, 'i'), '.html')
+    .replace(
+      new RegExp(`(.story)?(${path.extname(filePath)})($|\\?)`, 'i'),
+      '.html'
+    )
     .replace(/\/(README|index).html($|\?)/i, '/');
 }
 

@@ -1,3 +1,7 @@
+<script context="module">
+  let hasHydrated = false;
+</script>
+
 <script>
   import {
     COMPONENT_SSR_CTX_KEY,
@@ -5,7 +9,7 @@
     SSR_CTX_KEY
   } from '@vitebook/client';
   import { getAllContexts, onDestroy } from 'svelte';
-  import { createApp, createSSRApp, h } from 'vue';
+  import { createApp, h } from 'vue';
 
   let target;
   let app;
@@ -25,8 +29,9 @@
   function mount(component) {
     destroy();
     if (!component) return;
-    app = import.meta.env.PROD ? createSSRApp(component) : createApp(component);
-    app.mount(target, import.meta.env.PROD);
+    app = createApp(component);
+    app.mount(target, import.meta.env.PROD && !hasHydrated);
+    hasHydrated = true;
   }
 
   function destroy() {

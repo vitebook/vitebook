@@ -1,14 +1,7 @@
-import type { PageMeta } from '@vitebook/client';
-
-function Button() {
-  return <button>Click Me</button>;
+function Button({ disabled = false }) {
+  return <button disabled={disabled}>Click Me</button>;
 }
 
 Button.displayName = 'Button';
-
-export const __pageMeta: PageMeta = {
-  title: 'Button',
-  description: 'My awesome button.'
-};
 
 export default Button;

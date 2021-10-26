@@ -1,5 +1,6 @@
 import { send, ViteDevServer } from 'vite';
 
+import { cleanUrl } from '../../../../../shared';
 import { fs } from '../../../../utils/fs';
 import type { App } from '../../../App';
 
@@ -9,7 +10,8 @@ import type { App } from '../../../App';
 export const indexHtmlMiddleware =
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   (app: App, server: ViteDevServer) => async (req, res, next) => {
-    if (req.url?.endsWith('.html')) {
+    const url = req.url && cleanUrl(req.url);
+    if (url?.endsWith('.html')) {
       try {
         let html = readIndexHtmlFile(app);
         html = await server.transformIndexHtml(req.url, html, req.originalUrl);
