@@ -58,11 +58,9 @@
     "kleur": "^4.1.4"
   },
   "devDependencies": {
-    "@iconify/json": "^1.1.406",
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
     "svelte": "^3.43.2",
-    "unplugin-icons": "^0.11.4",
     "vite": "^2.5.3"
   },
   "peerDependencies": {

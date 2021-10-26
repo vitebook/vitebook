@@ -31,7 +31,7 @@ export type IconsResolver = (
 
 export type DefaultThemeIconsOptions = false | IconsRecord | IconsResolver;
 
-const RAW_VUE_ID_RE = /(\?raw&vue|&raw&vue)/;
+const RAW_ID_RE = /(\?|&)raw/;
 
 export function iconsPlugin(resolver?: DefaultThemeIconsOptions): Plugin {
   return {
@@ -63,8 +63,8 @@ export function iconsPlugin(resolver?: DefaultThemeIconsOptions): Plugin {
     },
     async load(id) {
       if (id.startsWith(VIRTUAL_EMPTY_ICON_MODULE_ID)) {
-        if (RAW_VUE_ID_RE.test(id)) {
-          return "export default () => ''";
+        if (RAW_ID_RE.test(id)) {
+          return "export default ''";
         } else {
           return '';
         }
