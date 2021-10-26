@@ -4,7 +4,7 @@ import {
   PreprocessorGroup,
   svelte
 } from '@sveltejs/vite-plugin-svelte';
-import { ClientPlugin, isArray, Plugin } from '@vitebook/core/node';
+import { App, ClientPlugin, isArray, Plugin } from '@vitebook/core/node';
 import { path } from '@vitebook/core/node/utils';
 import MagicString from 'magic-string';
 import {
@@ -95,6 +95,10 @@ try {
   //  ...
 }
 
+const PNG_RE = /\.png($|\?)/;
+const JPEG_RE = /\.jpeg($|\?)/;
+const MP3_RE = /\.mp3($|\?)/;
+const MP4_RE = /\.mp4($|\?)/;
 const SVG_ID_RE = /\.svg($|\?)/;
 const RAW_ID_RE = /(\?|&)raw/;
 const RAW_SVELTE_ID_RE = /(\?|&)raw&svelte/;
@@ -102,6 +106,8 @@ const RAW_SVELTE_ID_RE = /(\?|&)raw&svelte/;
 export function clientPlugin(
   options: ClientPluginOptions = {}
 ): [ClientPlugin, ...Plugin[]] {
+  let app: App;
+
   const filter = createFilter(
     options.include ?? DEFAULT_INCLUDE_RE,
     options.exclude
@@ -137,7 +143,9 @@ export function clientPlugin(
         client: require.resolve(`${PLUGIN_NAME}/entry-client.ts`),
         server: require.resolve(`${PLUGIN_NAME}/entry-server.ts`)
       },
-      configureApp(app) {
+      configureApp(_app) {
+        app = _app;
+
         DEFAULT_THEME_SCOPE_INCLUDE.push(new RegExp(app.dirs.theme.path));
 
         themeScopeFilter = createFilter(
@@ -173,8 +181,9 @@ export function clientPlugin(
       },
       resolvePage({ filePath }) {
         if (filter(filePath)) {
+          const type = path.extname(filePath).slice(1);
           return {
-            type: 'svelte'
+            type: type === 'svelte' ? 'svelte' : `svelte:${type}`
           };
         }
 
@@ -211,6 +220,23 @@ export function clientPlugin(
             }"`
           );
           return `export default ${JSON.stringify(content)}`;
+        }
+
+        if ((PNG_RE.test(id) || JPEG_RE.test(id)) && filter(id)) {
+          return svelteCompile(`<img src="${app.dirs.root.relative(id)}" />`)
+            .js;
+        }
+
+        if (MP3_RE.test(id) && filter(id)) {
+          return svelteCompile(
+            `<audio controls src="${app.dirs.root.relative(id)}" />`
+          ).js;
+        }
+
+        if (MP4_RE.test(id) && filter(id)) {
+          return svelteCompile(
+            `<video controls src="${app.dirs.root.relative(id)}" />`
+          ).js;
         }
 
         return null;

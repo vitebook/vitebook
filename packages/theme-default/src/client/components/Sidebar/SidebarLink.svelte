@@ -155,14 +155,14 @@
   .sidebar-link__icon.color[class*=':png'],
   .sidebar-link__icon.active[class~='type-png'],
   .sidebar-link__icon.active[class*=':png'] {
-    color: var(--vbk--color-indigo);
+    color: var(--vbk--color-pink);
   }
 
   .sidebar-link__icon.color[class~='type-jpeg'],
   .sidebar-link__icon.color[class*=':jpeg'],
   .sidebar-link__icon.active[class~='type-jpeg'],
   .sidebar-link__icon.active[class*=':jpeg'] {
-    color: var(--vbk--color-indigo);
+    color: var(--vbk--color-pink);
   }
 
   .sidebar-link__icon.color[class~='type-mp4'],
