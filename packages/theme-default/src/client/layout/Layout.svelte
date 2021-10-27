@@ -1,11 +1,12 @@
 <script>
-  import { currentPage } from '@vitebook/client';
+  import { currentPage, variants } from '@vitebook/client';
 
   import { onMount } from 'svelte';
 
   import { isMarkdownFloatingTocEnabled } from '../components/Markdown/isMarkdownFloatingTocEnabled';
   import NavbarTitle from '../components/Navbar/NavbarTitle.svelte';
   import Scrim from '../components/Scrim.svelte';
+  import VariantsMenu from '../components/VariantsMenu.svelte';
   import { hasSidebarItems } from '../components/Sidebar/hasSidebarItems';
   import Sidebar from '../components/Sidebar/Sidebar.svelte';
   import SidebarToggle from '../components/Sidebar/SidebarToggle.svelte';
@@ -21,8 +22,9 @@
   let hasMounted = false;
 
   $: noNavbar = $localizedThemeConfig.navbar === false;
-
   $: isMarkdownPage = $currentPage?.type?.endsWith('md');
+  $: hasVariants = Object.values($variants).length > 0;
+  $: showPreviewTopBar = hasVariants;
 
   onMount(() => {
     let scrollbarWidth = window.innerWidth - document.body.clientWidth + 'px';
@@ -103,17 +105,37 @@
     </Sidebar>
   </slot>
 
-  <slot name="page">
-    <Page>
-      <svelte:fragment slot="start">
-        <slot name="page-end" />
-      </svelte:fragment>
+  <div class="preview">
+    <slot name="preview-top-bar-start" />
 
-      <svelte:fragment slot="end">
-        <slot name="page-end" />
-      </svelte:fragment>
-    </Page>
-  </slot>
+    {#if showPreviewTopBar}
+      <div class="preview__top-bar">
+        {#if noNavbar}
+          <div style="flex-grow: 1;" />
+        {/if}
+        <VariantsMenu />
+        <div style="flex-grow: 1;" />
+      </div>
+    {/if}
+
+    <slot name="preview-top-bar-end" />
+
+    <div class="preview__content">
+      <slot name="page">
+        <Page>
+          <svelte:fragment slot="start">
+            <slot name="page-start" />
+          </svelte:fragment>
+
+          <svelte:fragment slot="end">
+            <slot name="page-end" />
+          </svelte:fragment>
+        </Page>
+      </slot>
+    </div>
+
+    <slot name="preview-end" />
+  </div>
 
   <slot name="root" />
 
@@ -188,6 +210,34 @@
     display: none;
   }
 
+  .preview {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 0;
+    min-height: 100vh;
+    padding-top: var(--vbk--navbar-height);
+    flex: none;
+    width: 100%;
+  }
+
+  .preview__top-bar {
+    position: sticky;
+    display: flex;
+    padding: 1rem;
+    top: 0;
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin: 0;
+    width: 100%;
+    background-color: var(--vbk--body-bg-color);
+    z-index: calc(var(--vbk--navbar-z-index) - 10);
+  }
+
+  .preview__content {
+    flex: 1 0 0;
+  }
+
   @media (min-width: 992px) {
     .theme.no-navbar.sidebar-open {
       --vbk--navbar-height: 0px;
@@ -206,6 +256,11 @@
       align-items: center;
       justify-content: center;
       margin-left: 0.2rem;
+    }
+
+    .preview {
+      flex: 1 0 0;
+      width: auto;
     }
 
     .scrim {

@@ -213,7 +213,7 @@
   }
 
   .variants__menu-item__tooltip {
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: flex-start;
     position: absolute;
@@ -247,6 +247,12 @@
 
     .variants__menu-item:not(.active):hover {
       color: var(--vbk--menu-item-hover-color);
+    }
+  }
+
+  @media (min-width: 576px) {
+    .variants__menu-item__tooltip {
+      display: flex;
     }
   }
 </style>
