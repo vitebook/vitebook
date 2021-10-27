@@ -7,11 +7,6 @@
 
 Not available yet.
 
-## Changelog
-
-The changelog is automatically updated using [semantic-release][semantic-release]. You can see it
-on the [releases page](../../releases).
-
 ## Contributing
 
 Not available yet.

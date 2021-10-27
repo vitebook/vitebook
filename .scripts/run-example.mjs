@@ -7,8 +7,8 @@ import { fileURLToPath } from 'url';
 const { prompts } = Prompts;
 
 // @ts-expect-error
-const currentDir = path.dirname(fileURLToPath(import.meta.url));
-const examplesDir = path.resolve(currentDir, '../examples');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const examplesDir = path.resolve(__dirname, '../examples');
 
 const examples = readdirSync(examplesDir).filter(
   (dirName) => !dirName.startsWith('.')
