@@ -29,6 +29,10 @@ const packages = fs
   .readdirSync(path.resolve(__dirname, '../packages'))
   .filter((p) => !p.startsWith('.'));
 
+const examples = fs
+  .readdirSync(path.resolve(__dirname, '../examples'))
+  .filter((p) => !p.startsWith('.') && !p.startsWith('react'));
+
 const preId =
   args.preid ||
   (semver.prerelease(currentVersion) && semver.prerelease(currentVersion)[0]);
@@ -56,6 +60,10 @@ const runIfNotDry = isDryRun ? dryRun : run;
 
 function getPkgRoot(pkgName) {
   return path.resolve(__dirname, '../packages/' + pkgName);
+}
+
+function getExampleRoot(pkgName) {
+  return path.resolve(__dirname, '../examples/' + pkgName);
 }
 
 function step(msg) {
@@ -160,14 +168,19 @@ function updateVersions(version) {
   updatePackageVersion(path.resolve(__dirname, '..'), version);
   // 2. update all packages
   packages.forEach((p) => updatePackageVersion(getPkgRoot(p), version));
+  // 3. update examples
+  examples.forEach((p) =>
+    updatePackageVersion(getExampleRoot(p), version, true)
+  );
 }
 
-function updatePackageVersion(pkgRoot, version) {
+function updatePackageVersion(pkgRoot, version, includeDevDeps = false) {
   const pkgPath = path.resolve(pkgRoot, 'package.json');
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
   pkg.version = version;
   updatePackageDeps(pkg, 'dependencies', version);
   updatePackageDeps(pkg, 'peerDependencies', version);
+  if (includeDevDeps) updatePackageDeps(pkg, 'devDependencies', version);
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
 }
 
