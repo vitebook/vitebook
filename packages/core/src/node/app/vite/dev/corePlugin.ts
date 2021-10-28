@@ -19,6 +19,20 @@ import { indexHtmlMiddleware } from './middlewares/indexHtml';
 
 let pageChangesPending: Promise<void> | undefined;
 
+const clientPackages = [
+  '@vitebook/core',
+  '@vitebook/client',
+  '@vitebook/theme-default',
+  '@vitebook/markdown',
+  '@vitebook/markdown-preact',
+  '@vitebook/markdown-prismjs',
+  '@vitebook/markdown-shiki',
+  '@vitebook/markdown-svelte',
+  '@vitebook/markdown-vue',
+  '@vitebook/preact',
+  '@vitebook/vue'
+];
+
 export function corePlugin(): Plugin {
   let app: App;
   let server: ViteDevServer;
@@ -42,7 +56,10 @@ export function corePlugin(): Plugin {
             [virtualModuleId.clientEntry]: virtualModuleRequestPath.clientEntry,
             [virtualModuleId.pages]: virtualModuleRequestPath.pages
           }
-        }
+        },
+        optimizeDeps: { exclude: clientPackages },
+        // @ts-expect-error - not typed.
+        ssr: { noExternal: clientPackages }
       };
 
       return config;

@@ -27,20 +27,6 @@ export async function bundle(app: App): Promise<BundleResult> {
   return [client as RollupOutput, server as RollupOutput];
 }
 
-const clientPackages = [
-  '@vitebook/client',
-  '@vitebook/core',
-  '@vitebook/markdown',
-  '@vitebook/markdown-preact',
-  '@vitebook/markdown-prismjs',
-  '@vitebook/markdown-shiki',
-  '@vitebook/markdown-svelte',
-  '@vitebook/markdown-vue',
-  '@vitebook/preact',
-  '@vitebook/svelte',
-  '@vitebook/theme-default'
-];
-
 type BundleOptions = {
   config?: ViteConfig;
   ssr: boolean;
@@ -53,15 +39,6 @@ function resolveBundleConfig(
   const baseBundleConfig: ViteConfig = {
     logLevel: 'warn',
     publicDir: ssr ? false : undefined,
-    // @ts-expect-error - not typed.
-    ssr: ssr
-      ? {
-          noExternal: clientPackages
-        }
-      : undefined,
-    optimizeDeps: {
-      exclude: clientPackages
-    },
     esbuild: { treeShaking: !ssr },
     build: {
       emptyOutDir: true,
@@ -96,7 +73,14 @@ function resolveBundleConfig(
     plugins: [buildPlugin(app, { ssr })]
   };
 
-  return mergeConfig(app.options.vite, mergeConfig(baseBundleConfig, config));
+  const mergedConfig = mergeConfig(
+    app.options.vite,
+    mergeConfig(baseBundleConfig, config)
+  );
+
+  if (!ssr) mergedConfig.ssr = undefined;
+
+  return mergedConfig;
 }
 
 function buildPlugin(app: App, { ssr = false }: BundleOptions): Plugin {
