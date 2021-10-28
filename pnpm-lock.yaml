@@ -62,8 +62,8 @@ importers:
 
   examples/custom-theme:
     specifiers:
-      '@vitebook/client': workspace:*
-      '@vitebook/core': workspace:*
+      '@vitebook/client': 0.0.1
+      '@vitebook/core': 0.0.1
       svelte: ^3.44.0
     devDependencies:
       '@vitebook/client': link:../../packages/client
@@ -72,12 +72,12 @@ importers:
 
   examples/preact:
     specifiers:
-      '@vitebook/client': workspace:*
-      '@vitebook/core': workspace:*
-      '@vitebook/markdown-preact': workspace:*
-      '@vitebook/markdown-shiki': workspace:*
-      '@vitebook/preact': workspace:*
-      '@vitebook/theme-default': workspace:*
+      '@vitebook/client': 0.0.1
+      '@vitebook/core': 0.0.1
+      '@vitebook/markdown-preact': 0.0.1
+      '@vitebook/markdown-shiki': 0.0.1
+      '@vitebook/preact': 0.0.1
+      '@vitebook/theme-default': 0.0.1
       preact: ^10.5.14
       preact-render-to-string: ^5.1.19
       svelte: ^3.44.0
@@ -95,11 +95,11 @@ importers:
 
   examples/svelte:
     specifiers:
-      '@vitebook/client': workspace:*
-      '@vitebook/core': workspace:*
-      '@vitebook/markdown-shiki': workspace:*
-      '@vitebook/markdown-svelte': workspace:*
-      '@vitebook/theme-default': workspace:*
+      '@vitebook/client': 0.0.1
+      '@vitebook/core': 0.0.1
+      '@vitebook/markdown-shiki': 0.0.1
+      '@vitebook/markdown-svelte': 0.0.1
+      '@vitebook/theme-default': 0.0.1
       svelte: ^3.43.1
       svelte-preprocess: ^4.9.8
       typescript: ^4.4.3
@@ -115,12 +115,12 @@ importers:
 
   examples/vue:
     specifiers:
-      '@vitebook/client': workspace:*
-      '@vitebook/core': workspace:*
-      '@vitebook/markdown-shiki': workspace:*
-      '@vitebook/markdown-vue': workspace:*
-      '@vitebook/theme-default': workspace:*
-      '@vitebook/vue': workspace:*
+      '@vitebook/client': 0.0.1
+      '@vitebook/core': 0.0.1
+      '@vitebook/markdown-shiki': 0.0.1
+      '@vitebook/markdown-vue': 0.0.1
+      '@vitebook/theme-default': 0.0.1
+      '@vitebook/vue': 0.0.1
       svelte: ^3.44.0
       vue: ^3.0.0
     dependencies:
@@ -138,7 +138,7 @@ importers:
     specifiers:
       '@rollup/pluginutils': ^4.1.1
       '@sveltejs/vite-plugin-svelte': ^1.0.0-next.26
-      '@vitebook/core': workspace:*
+      '@vitebook/core': 0.0.1
       esbuild: ^0.12.24
       kleur: ^4.1.4
       magic-string: ^0.25.7
@@ -241,7 +241,7 @@ importers:
       '@types/lru-cache': ^5.1.1
       '@vitebook/client': workspace:*
       '@vitebook/core': workspace:*
-      '@vitebook/markdown': workspace:*
+      '@vitebook/markdown': 0.0.1
       '@vitebook/preact': workspace:*
       kleur: ^4.1.4
       lru-cache: ^6.0.0
@@ -260,7 +260,7 @@ importers:
     specifiers:
       '@types/prismjs': ^1.16.6
       '@vitebook/core': workspace:*
-      '@vitebook/markdown': workspace:*
+      '@vitebook/markdown': 0.0.1
       prismjs: ^1.25.0
     dependencies:
       '@vitebook/markdown': link:../markdown
@@ -272,7 +272,7 @@ importers:
   packages/markdown-shiki:
     specifiers:
       '@vitebook/core': workspace:*
-      '@vitebook/markdown': workspace:*
+      '@vitebook/markdown': 0.0.1
       shiki: ^0.9.11
     dependencies:
       '@vitebook/markdown': link:../markdown
@@ -286,7 +286,7 @@ importers:
       '@types/lru-cache': ^5.1.1
       '@vitebook/client': workspace:*
       '@vitebook/core': workspace:*
-      '@vitebook/markdown': workspace:*
+      '@vitebook/markdown': 0.0.1
       kleur: ^4.1.4
       lru-cache: ^6.0.0
       svelte: ^3.43.0
@@ -306,7 +306,7 @@ importers:
       '@rollup/pluginutils': ^4.1.1
       '@types/lru-cache': ^5.1.1
       '@vitebook/core': workspace:*
-      '@vitebook/markdown': workspace:*
+      '@vitebook/markdown': 0.0.1
       '@vitebook/vue': workspace:*
       kleur: ^4.1.4
       lru-cache: ^6.0.0
