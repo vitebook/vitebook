@@ -1,7 +1,11 @@
 import { watch } from 'chokidar';
 import debounce from 'just-debounce-it';
 import kleur from 'kleur';
-import { UserConfig as ViteConfig, ViteDevServer } from 'vite';
+import {
+  DepOptimizationMetadata,
+  UserConfig as ViteConfig,
+  ViteDevServer
+} from 'vite';
 
 import { isArray, prettyJsonStr } from '../../../../shared';
 import { globby } from '../../../utils';
@@ -35,7 +39,10 @@ const clientPackages = [
 
 export function corePlugin(): Plugin {
   let app: App;
-  let server: ViteDevServer;
+
+  let server: ViteDevServer & {
+    _optimizeDepsMetadata?: DepOptimizationMetadata;
+  };
 
   const virtualModuleRequestPaths = new Set<string>(
     Object.values(virtualModuleRequestPath)
@@ -90,6 +97,13 @@ export function corePlugin(): Plugin {
       };
     },
     resolveId(id) {
+      // Vite will inject version hash into file queries, which does not work well with Vitebook.
+      // As a workaround we remove the version hash to avoid the injection.
+      // Thanks: https://github.com/vuepress/vuepress-next
+      if (server?._optimizeDepsMetadata?.browserHash) {
+        server._optimizeDepsMetadata.browserHash = '';
+      }
+
       if (id === virtualModuleRequestPath.clientEntry) {
         return { id: app.client.entry.client };
       }
