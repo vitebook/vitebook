@@ -21,9 +21,9 @@ to provide the same capabilities but in a more laxed, lighter, faster and config
 
 The Vitebook core is simply a [static site generator][what-is-ssg] with a file-system based routing
 scheme (similar-ish to [Next.js][nextjs-routing]), and a uber-fast development environment thanks
-to Vite. At it's core that's all it is, bunch of files that are resolved into pages which are
+to Vite. At its core that's all it is, bunch of files that are resolved into pages which are
 used to build up a site. Ultimately, Vitebooks aims to be a natural extension of Vite/Rollup
-whilst offering a minimal layer on top to make it easier for you to build, document, and test
+whilst offering a minimal layer on top, making it easier for you to build, document, and test
 your components.
 
 Here's some of our overall design goals:
@@ -34,18 +34,18 @@ Here's some of our overall design goals:
   to Storybook. The base default theme starts at ~40KB minzipped, and if you decide to
   build a custom theme, the client itself comes in at ~10KB minzipped. All thanks to
   [Svelte][svelte-gh] 👏.
-- **Fast.** Speed is critical to a good developer experience. Getting up and running quickly,
-  instant feedback via hot module reloading (HMR) whilst preserving component state, fast typescript
-  compilation via [ESBuild][esbuild], and fast production builds is how we focus on speed. All
+- **Fast.** Speed is critical for a good developer's experience (DX). Getting up and running quickly,
+  instant feedback via hot module reloading (HMR) whilst preserving component state, fast TypeScript
+  compilation via [ESBuild][esbuild], and fast production builds are how we focus on speed. All
   thanks to Vite/ESBuild 👏.
-- **Simple.** No complex iframes or shadow roots, simple CSS scoping is used to style Vitebook
+- **Simple.** No complex iframes or shadow roots. Simple CSS scoping is used to style Vitebook
   themes and leave your components untouched. This also means your components feel part of an
   application as they would in the real world, rather than unnaturally isolated.
-- **Idiomatic.** Build, play, test and document your components the way you would naturally use
+- **Idiomatic.** Build, play, test, and document your components the way you would naturally use
   them. No funky `.story.{js,ts}` files and templates/args. Import and use your components in `.jsx`,
   `.tsx`, `.vue`, `.svelte` files and interact with them as you normally would.
 - **Themeable.** You should control how you want to display your component library. Easily swap
-  out the default theme and build your own. You'll find it baked right into configuration
+  out the default theme and build your own. You'll find it baked right into the configuration
   folder (`.vitebook/theme`).
 - **Extendable.** As mentioned, we aim to extend Vite/Rollup without losing any of their
   configurability or power. Vitebook plugins are an extension of Vite plugins, which are an
@@ -56,7 +56,7 @@ Here's some of our overall design goals:
 
 The missing features below could be dealbreakers for some. If so, feel free to keep using
 [Storybook][storybook] in the meantime, and reguarly check-in (tap the watch button above) to see
-how we're going with bringing these features to you. Also, feel free to chime in on the issues
+how we're doing with bringing these features to you. Also, feel free to chime in on the issues
 and share your thoughts!
 
 - Addons
