@@ -26,7 +26,6 @@ export * from './stores/pageAddons';
 export * from './stores/pages';
 export * from './stores/siteLang';
 export * from './stores/siteOptions';
-export * from './stores/theme';
 export * from './stores/variants';
 export * from './stores/withBaseUrl';
 // shared
