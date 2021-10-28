@@ -20,7 +20,7 @@ export async function build(app: App): Promise<void> {
   const startTime = Date.now();
   const spinner = ora();
 
-  logger.info(kleur.bold('~~~ Vitebook ~~~\n'));
+  logger.info(kleur.bold(kleur.cyan(`vitebook@${app.version}\n`)));
 
   // Resolve pages
   spinner.start(kleur.bold('Resolving pages...'));

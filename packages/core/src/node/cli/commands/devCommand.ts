@@ -7,7 +7,7 @@ import type { DevCommandArgs } from '../args';
 export async function devCommand(args: DevCommandArgs): Promise<ViteDevServer> {
   const app = await resolveApp(args);
   const server = await app.dev();
-  console.log(kleur.cyan(`vitebook@${app.version}\n`));
+  console.log(kleur.bold(kleur.cyan(`vitebook@${app.version}\n`)));
   return server.listen().then((server) => {
     server.printUrls();
     console.log();
