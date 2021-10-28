@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/client",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "keywords": [
     "client",
     "esm",
@@ -59,7 +59,7 @@
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.26",
-    "@vitebook/core": "0.0.2",
+    "@vitebook/core": "0.0.3",
     "esbuild": "^0.12.24",
     "kleur": "^4.1.4",
     "magic-string": "^0.25.7",

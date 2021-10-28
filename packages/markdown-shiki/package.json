@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/markdown-shiki",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "keywords": [
     "esm",
     "markdown",
@@ -44,14 +44,14 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@vitebook/markdown": "0.0.2",
+    "@vitebook/markdown": "0.0.3",
     "shiki": "^0.9.11"
   },
   "devDependencies": {
     "@vitebook/core": "workspace:*"
   },
   "peerDependencies": {
-    "@vitebook/core": "0.0.2"
+    "@vitebook/core": "0.0.3"
   },
   "publishConfig": {
     "access": "public"
