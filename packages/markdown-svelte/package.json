@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/markdown-svelte",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "keywords": [
     "esm",
     "markdown",
@@ -49,7 +49,7 @@
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
     "@types/lru-cache": "^5.1.1",
-    "@vitebook/markdown": "0.0.1",
+    "@vitebook/markdown": "0.0.2",
     "kleur": "^4.1.4",
     "lru-cache": "^6.0.0",
     "svelte": "^3.43.0"
@@ -59,8 +59,8 @@
     "@vitebook/core": "workspace:*"
   },
   "peerDependencies": {
-    "@vitebook/client": "0.0.1",
-    "@vitebook/core": "0.0.1"
+    "@vitebook/client": "0.0.2",
+    "@vitebook/core": "0.0.2"
   },
   "publishConfig": {
     "access": "public"
