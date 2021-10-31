@@ -1,5 +1,4 @@
-import type { Server } from 'net';
-import type { ViteDevServer } from 'vite';
+import type { PreviewServer, ViteDevServer } from 'vite';
 
 import type { ServerPage, SiteOptions } from '../../shared';
 import type { loadModule } from '../utils/module';
@@ -24,7 +23,7 @@ export type App = {
   disposal: DisposalBin;
   dev: () => Promise<ViteDevServer>;
   build: () => Promise<void>;
-  preview: () => Promise<Server>;
+  preview: () => Promise<PreviewServer>;
   close: () => Promise<void>;
 };
 
