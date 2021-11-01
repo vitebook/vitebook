@@ -1,5 +1,5 @@
 <script>
-  import { inBrowser } from '@vitebook/core/shared';
+  import { inBrowser } from '@vitebook/core';
 
   import { onMount, onDestroy } from 'svelte';
   import { activeVariant, variants } from '../stores/variants';

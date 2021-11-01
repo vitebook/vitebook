@@ -1,4 +1,4 @@
-import type { VitebookSSRContext } from '@vitebook/core/shared';
+import type { VitebookSSRContext } from '@vitebook/core';
 import { getContext } from 'svelte';
 
 import type { Router } from '../router/router';

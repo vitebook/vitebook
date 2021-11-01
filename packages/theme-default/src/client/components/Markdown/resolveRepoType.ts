@@ -1,4 +1,4 @@
-import { isLinkHttp } from '@vitebook/core/shared';
+import { isLinkHttp } from '@vitebook/core';
 
 export type RepoType = 'GitHub' | 'GitLab' | 'Bitbucket' | null;
 

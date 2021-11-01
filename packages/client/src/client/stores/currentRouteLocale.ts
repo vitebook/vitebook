@@ -1,4 +1,4 @@
-import { resolveLocalePath } from '@vitebook/core/shared';
+import { resolveLocalePath } from '@vitebook/core';
 import { derived } from 'svelte/store';
 
 import { currentRoute } from './currentRoute';

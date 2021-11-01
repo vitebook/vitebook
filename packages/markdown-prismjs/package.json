@@ -25,13 +25,14 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    "./node": "./dist/index.js",
+    "./node": "./dist/node/index.js",
+    "./src/*": "./src/*",
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
       "node": [
-        "src/node/index.ts"
+        "dist/types/node/index.d.ts"
       ]
     }
   },
@@ -40,9 +41,13 @@
     "dist/"
   ],
   "scripts": {
-    "build": "npm run clean && node .scripts/build.mjs",
-    "build:watch": "npm run build -- --watch",
-    "clean": "rimraf dist"
+    "build": "run-s clean build:node build:types",
+    "build:node": "node ../../.scripts/build-node.mjs",
+    "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
+    "clean": "rimraf dist",
+    "dev": "pnpm clean && run-p watch:node watch:types",
+    "watch:node": "pnpm build:node -- --watch",
+    "watch:types": "pnpm build:types -- --watch"
   },
   "dependencies": {
     "@vitebook/markdown": "0.0.3",

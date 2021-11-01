@@ -1,4 +1,4 @@
-import { isString } from '@vitebook/core/shared';
+import { isString } from '@vitebook/core';
 
 /**
  * Used server-side.

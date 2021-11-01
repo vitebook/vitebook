@@ -3,7 +3,7 @@ import type {
   DefaultPageModule,
   MarkdownPageMeta,
   Page
-} from '@vitebook/core/shared';
+} from '@vitebook/core';
 
 import type { SvelteConstructor } from './SveltePage';
 

@@ -71,7 +71,7 @@ export async function resolveApp(
       }
     },
     {
-      command: args.command as 'dev' | 'build' | 'serve',
+      command: args.command as 'dev' | 'build' | 'preview',
       mode: args.mode ?? config.vite?.mode,
       isDev: args.mode ? args.mode === 'development' : args.command === 'dev'
     }

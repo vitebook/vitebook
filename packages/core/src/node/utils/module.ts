@@ -67,7 +67,10 @@ export const loadModule = async <T>(
   if (!tmpDir) {
     tmpDir =
       options.outdir ??
-      path.join(path.dirname(esmRequire.resolve('@vitebook/core')), '.temp');
+      path.join(
+        path.dirname(esmRequire.resolve('@vitebook/core/node')),
+        '.temp'
+      );
 
     if (fs.existsSync(tmpDir)) {
       // If greater than 5MB let's empty it.

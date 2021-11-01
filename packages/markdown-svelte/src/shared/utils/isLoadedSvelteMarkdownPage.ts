@@ -1,4 +1,4 @@
-import type { Page } from '@vitebook/core/shared';
+import type { Page } from '@vitebook/core';
 
 import type { LoadedSvelteMarkdownPage } from '../types/SvelteMarkdownPage';
 

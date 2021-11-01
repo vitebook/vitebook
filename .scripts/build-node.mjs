@@ -1,6 +1,6 @@
 import { build } from 'esbuild';
 import path from 'upath';
-import { fileURLToPath } from 'url';
+import minimist from 'minimist';
 
 const requireShim = [
   "import __vitebook__path from 'path';",
@@ -14,30 +14,39 @@ const requireShim = [
   '\n'
 ].join('\n');
 
+const args = minimist(process.argv.slice(2));
+
 async function main() {
-  const entry = path.resolve(
-    // @ts-expect-error - target is set but error?
-    path.dirname(fileURLToPath(import.meta.url)),
-    '../src/node/index.ts'
+  const entryArg = args.entry ?? 'src/node/index.ts';
+
+  const entry = (entryArg.includes(',') ? entryArg.split(',') : [entryArg]).map(
+    (p) => path.resolve(process.cwd(), p)
   );
 
-  const outfile = path.resolve(
-    // @ts-expect-error - target is set but error?
-    path.dirname(fileURLToPath(import.meta.url)),
-    '../dist/index.js'
-  );
+  const outdir = path.resolve(process.cwd(), args.outdir ?? 'dist/node');
 
   await build({
     banner: { js: requireShim },
-    entryPoints: [entry],
+    entryPoints: entry,
+    outdir,
     platform: 'node',
     format: 'esm',
     target: 'es2020',
+    watch: args.watch || args.w,
     bundle: true,
-    watch: process.argv.includes('--watch'),
-    outfile,
     logLevel: 'info',
-    external: ['@vitebook/core', '@vitebook/client', 'node-html-parser']
+    external: [
+      '@vitebook/core',
+      '@vitebook/client',
+      '@vitebook/markdown',
+      '@vue/compiler-sfc',
+      'esbuild',
+      'fsevents',
+      'svelte',
+      'vue',
+      'vite',
+      ...(args.external?.split(',') ?? [])
+    ]
   });
 }
 

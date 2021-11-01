@@ -3,8 +3,7 @@
   "version": "0.0.3",
   "private": true,
   "workspaces": [
-    "packages/*",
-    "examples/*"
+    "packages/*"
   ],
   "scripts": {
     "preinstall": "node .scripts/preinstall.mjs",
@@ -42,6 +41,7 @@
     "conventional-changelog-cli": "^2.1.1",
     "enquirer": "^2.3.6",
     "esbuild": "^0.12.29",
+    "esbuild-svelte": "^0.5.7",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-import-resolver-typescript": "^2.5.0",

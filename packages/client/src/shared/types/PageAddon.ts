@@ -1,4 +1,4 @@
-import type { LocaleConfig } from '@vitebook/core/shared';
+import type { LocaleConfig } from '@vitebook/core';
 
 import type { SvelteConstructor } from './SveltePage';
 

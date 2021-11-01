@@ -1,4 +1,4 @@
-import { ensureLeadingSlash, inBrowser, isString } from '@vitebook/core/shared';
+import { ensureLeadingSlash, inBrowser, isString } from '@vitebook/core';
 import { tick } from 'svelte';
 import { get } from 'svelte/store';
 

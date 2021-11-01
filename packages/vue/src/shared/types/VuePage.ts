@@ -3,7 +3,7 @@ import type {
   DefaultPageModule,
   Page,
   ServerPage
-} from '@vitebook/core/shared';
+} from '@vitebook/core';
 import type { Component as VueComponent } from 'vue';
 
 export type VuePageType = 'vue' | 'vue:svg' | 'vue:html';

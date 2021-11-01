@@ -1,4 +1,4 @@
-import { inBrowser, isFunction } from '@vitebook/core/shared';
+import { inBrowser, isFunction } from '@vitebook/core';
 import { tick } from 'svelte';
 import { get } from 'svelte/store';
 

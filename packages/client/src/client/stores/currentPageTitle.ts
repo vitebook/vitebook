@@ -1,4 +1,4 @@
-import { SiteLocaleData, toTitleCase } from '@vitebook/core/shared';
+import { SiteLocaleData, toTitleCase } from '@vitebook/core';
 import { derived } from 'svelte/store';
 
 import type { LoadedClientPage } from '../../shared';

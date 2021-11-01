@@ -1,4 +1,4 @@
-import type { Page } from '@vitebook/core/shared';
+import type { Page } from '@vitebook/core';
 
 import type { LoadedPreactPage } from '../types/PreactPage';
 import { isPreactPage } from './isPreactPage';

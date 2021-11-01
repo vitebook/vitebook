@@ -1,4 +1,4 @@
-import { HeadConfig, isObject, isString } from '@vitebook/core/shared';
+import { HeadConfig, isObject, isString } from '@vitebook/core';
 import { onMount } from 'svelte';
 import { get } from 'svelte/store';
 

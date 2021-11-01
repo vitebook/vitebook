@@ -1,4 +1,4 @@
-import { inBrowser } from '@vitebook/core/shared';
+import { inBrowser } from '@vitebook/core';
 import { derived, writable } from 'svelte/store';
 
 function updateVariantSearchParam(variantId) {

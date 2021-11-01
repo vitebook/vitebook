@@ -1,9 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist",
-    "module": "es2020",
     "paths": {
       ":virtual/vitebook/site": ["./src/virtual/site.d.ts"],
       ":virtual/vitebook/theme": ["./src/virtual/theme.d.ts"],

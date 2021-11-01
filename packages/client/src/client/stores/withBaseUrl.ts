@@ -1,4 +1,4 @@
-import { EXTERNAL_URL_RE } from '@vitebook/core/shared';
+import { EXTERNAL_URL_RE } from '@vitebook/core';
 import { derived, get } from 'svelte/store';
 
 import { siteOptions } from './siteOptions';

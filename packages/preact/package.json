@@ -24,35 +24,36 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    ".": "./src/client/index.ts",
-    "./*": "./src/client/*",
-    "./node": "./dist/index.js",
-    "./shared": "./src/shared/index.ts",
+    ".": "./dist/client/index.js",
+    "./*": "./dist/client/*",
+    "./node": "./dist/node/index.js",
+    "./src/*": "./src/*",
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
       "node": [
-        "src/node/index.ts"
-      ],
-      "shared": [
-        "src/shared/index.ts"
+        "dist/types/node/index.d.ts"
       ],
       "*": [
-        "src/client/*"
+        "dist/types/client/*"
       ]
     }
   },
   "files": [
     "src/",
-    "dist/",
-    ".scripts/patch-prefresh.mjs"
+    "dist/"
   ],
   "scripts": {
-    "build": "npm run clean && node .scripts/build.mjs",
-    "build:watch": "npm run build -- --watch",
+    "build": "run-s clean build:client build:node build:types",
+    "build:client": "node ../../.scripts/build-client.mjs",
+    "build:node": "node ../../.scripts/build-node.mjs --external @prefresh/vite",
+    "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
     "clean": "rimraf dist",
-    "postinstall": "node .scripts/patch-prefresh.mjs"
+    "dev": "pnpm clean && run-p watch:client watch:node watch:types",
+    "watch:client": "pnpm build:client -- --watch",
+    "watch:node": "pnpm build:node -- --watch",
+    "watch:types": "pnpm build:types -- --watch"
   },
   "dependencies": {
     "@prefresh/core": "^1.3.1",

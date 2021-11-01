@@ -4,7 +4,7 @@ import type {
   DefaultPageModule,
   Page,
   ServerPage
-} from '@vitebook/core/shared';
+} from '@vitebook/core';
 import type { FunctionComponent as PreactComponent } from 'preact';
 
 export type PreactPageType = 'preact:jsx' | 'preact:tsx';

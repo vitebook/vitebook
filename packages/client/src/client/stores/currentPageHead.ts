@@ -1,4 +1,4 @@
-import { dedupeHead, HeadConfig, SiteLocaleData } from '@vitebook/core/shared';
+import { dedupeHead, HeadConfig, SiteLocaleData } from '@vitebook/core';
 import { derived } from 'svelte/store';
 
 import type { LoadedClientPage } from '../../shared';

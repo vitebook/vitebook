@@ -30,4 +30,4 @@ export * from './stores/variants';
 export * from './stores/withBaseUrl';
 // shared
 export * from '../shared';
-export * from '@vitebook/core/shared';
+export * from '@vitebook/core';

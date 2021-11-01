@@ -1,4 +1,4 @@
-import { toTitleCase } from '@vitebook/core/shared';
+import { toTitleCase } from '@vitebook/core';
 import { derived } from 'svelte/store';
 
 import { pages } from '../../stores/pages';

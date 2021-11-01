@@ -1,4 +1,4 @@
-import type { Theme as DefaultTheme } from '@vitebook/core/shared';
+import type { Theme as DefaultTheme } from '@vitebook/core';
 
 import type { Router } from '../../client/router/router';
 import type { SvelteConstructor } from './SveltePage';

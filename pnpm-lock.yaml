@@ -12,6 +12,7 @@ importers:
       conventional-changelog-cli: ^2.1.1
       enquirer: ^2.3.6
       esbuild: ^0.12.29
+      esbuild-svelte: ^0.5.7
       eslint: ^7.32.0
       eslint-config-prettier: ^8.3.0
       eslint-import-resolver-typescript: ^2.5.0
@@ -40,6 +41,7 @@ importers:
       conventional-changelog-cli: 2.1.1
       enquirer: 2.3.6
       esbuild: 0.12.29
+      esbuild-svelte: 0.5.7_esbuild@0.12.29
       eslint: 7.32.0
       eslint-config-prettier: 8.3.0_eslint@7.32.0
       eslint-import-resolver-typescript: 2.5.0_560ef94424f7023f0ab025f67f79aa67
@@ -1964,6 +1966,15 @@ packages:
     os: [sunos]
     requiresBuild: true
     optional: true
+
+  /esbuild-svelte/0.5.7_esbuild@0.12.29:
+    resolution: {integrity: sha512-6z8bRFy3hWar8cCT7uDXrrQLtJPS9SgOT6BOOgm2+P4FbFS5qidFDz4EP01hdax5Grmr1LGteRnSM4DbXPR2Og==}
+    peerDependencies:
+      esbuild: '>=0.9.6'
+    dependencies:
+      esbuild: 0.12.29
+      svelte: 3.44.0
+    dev: true
 
   /esbuild-windows-32/0.13.12:
     resolution: {integrity: sha512-L9m4lLFQrFeR7F+eLZXG82SbXZfUhyfu6CexZEil6vm+lc7GDCE0Q8DiNutkpzjv1+RAbIGVva9muItQ7HVTkQ==}

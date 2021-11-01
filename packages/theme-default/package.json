@@ -23,24 +23,19 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    ".": "./src/client/index.ts",
-    "./*": "./src/client/*",
-    "./node": "./dist/index.js",
-    "./node/*": "./src/node/*",
-    "./shim": "./src/shim.d.ts",
-    "./shim.d.ts": "./src/shim.d.ts",
+    ".": "./dist/client/index.js",
+    "./*": "./dist/client/*",
+    "./node": "./dist/node/index.js",
+    "./src/*": "./src/*",
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
       "node": [
-        "src/node/index.ts"
-      ],
-      "shim": [
-        "src/shim.d.ts"
+        "dist/types/node/index.d.ts"
       ],
       "*": [
-        "src/client/*"
+        "dist/types/client/*"
       ]
     }
   },
@@ -49,10 +44,16 @@
     "dist/"
   ],
   "scripts": {
-    "build": "npm run clean && node .scripts/build.mjs && npm run copy:icons",
-    "build:watch": "npm run build -- --watch",
+    "build": "run-s clean build:client build:node build:types copy:icons",
+    "build:client": "node ../../.scripts/build-client.mjs",
+    "build:node": "node ../../.scripts/build-node.mjs",
+    "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
     "clean": "rimraf dist",
-    "copy:icons": "node .scripts/copy-icons.mjs"
+    "copy:icons": "node .scripts/copy-icons.mjs",
+    "dev": "run-s clean copy:icons && run-p watch:client watch:node watch:types",
+    "watch:client": "pnpm build:client -- --watch",
+    "watch:node": "pnpm build:node -- --watch",
+    "watch:types": "pnpm build:types -- --watch"
   },
   "dependencies": {
     "kleur": "^4.1.4"

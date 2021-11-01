@@ -1,4 +1,4 @@
-import type { SiteOptions, VirtualSiteDataModule } from '@vitebook/core/shared';
+import type { SiteOptions, VirtualSiteDataModule } from '@vitebook/core';
 import { readable } from 'svelte/store';
 
 import options from ':virtual/vitebook/site';

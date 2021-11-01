@@ -14,7 +14,7 @@
 </script>
 
 <script>
-  import { isFunction } from '@vitebook/core/shared';
+  import { isFunction } from '@vitebook/core';
   import { currentRoute } from '@vitebook/client';
   import VueAdapter from './VueAdapter.svelte';
 

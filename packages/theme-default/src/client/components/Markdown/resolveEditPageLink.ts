@@ -2,7 +2,7 @@ import {
   isLinkHttp,
   removeEndingSlash,
   removeLeadingSlash
-} from '@vitebook/core/shared';
+} from '@vitebook/core';
 
 import { RepoType, resolveRepoType } from './resolveRepoType';
 

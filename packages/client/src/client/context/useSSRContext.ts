@@ -1,4 +1,4 @@
-import type { VitebookSSRContext } from '@vitebook/core/shared';
+import type { VitebookSSRContext } from '@vitebook/core';
 import { getContext } from 'svelte';
 
 import { SSR_CTX_KEY } from './context-keys';

@@ -1,5 +1,5 @@
 <script>
-  import { inBrowser } from '@vitebook/core/shared';
+  import { inBrowser } from '@vitebook/core';
   import { useUpdateHead } from './composables/useUpdateHead';
   import { siteLang } from './stores/siteLang';
   import { theme } from './stores/theme';

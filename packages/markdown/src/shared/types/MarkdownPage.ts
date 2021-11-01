@@ -4,7 +4,7 @@ import type {
   DefaultPageModule,
   MarkdownPageMeta,
   Page
-} from '@vitebook/core/shared';
+} from '@vitebook/core';
 
 export type MarkdownPage = Page<MarkdownPageModule> & {
   type: 'md';
@@ -22,4 +22,4 @@ export type {
   MarkdownHeader,
   MarkdownLinks,
   MarkdownPageMeta
-} from '@vitebook/core/shared';
+} from '@vitebook/core';

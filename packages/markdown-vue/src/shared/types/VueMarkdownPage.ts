@@ -3,7 +3,7 @@ import type {
   DefaultPageModule,
   MarkdownPageMeta,
   Page
-} from '@vitebook/core/shared';
+} from '@vitebook/core';
 import type { Component } from 'vue';
 
 export type VueMarkdownPage = Page<VueMarkdownPageModule> & {
@@ -22,4 +22,4 @@ export type {
   MarkdownHeader,
   MarkdownLinks,
   MarkdownPageMeta
-} from '@vitebook/core/shared';
+} from '@vitebook/core';

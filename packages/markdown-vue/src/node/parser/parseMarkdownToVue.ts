@@ -1,6 +1,6 @@
 import type { App } from '@vitebook/core/node';
 import { prettyJsonStr } from '@vitebook/core/node';
-import type { MarkdownPageMeta } from '@vitebook/markdown';
+import type { MarkdownPageMeta } from '@vitebook/markdown/node';
 import {
   MarkdownParser,
   parseMarkdown,

@@ -1,4 +1,4 @@
-import type { VirtualSiteDataModule } from '@vitebook/core/shared';
+import type { VirtualSiteDataModule } from '@vitebook/core';
 
 declare module ':virtual/vitebook/site' {
   declare const options: VirtualSiteDataModule['default'];

@@ -2,7 +2,7 @@ import type {
   DefaultLoadedPage,
   DefaultPageModule,
   Page as DefaultPage
-} from '@vitebook/core/shared';
+} from '@vitebook/core';
 import type { SvelteComponent } from 'svelte';
 
 export type SveltePage = DefaultPage<SveltePageModule> & {
