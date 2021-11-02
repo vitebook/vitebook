@@ -74,7 +74,37 @@ and share your thoughts!
 
 ## Quickstart
 
-Not available yet (coming soon).
+```bash
+# npm
+$: npm init vitebook@next
+
+# yarn
+$: yarn create vitebook@next
+
+# pnpm
+$: pnpm create vitebook@next
+```
+
+### Extra Options
+
+- `{TEMPLATE}`: replace with either `vue`, `svelte`, `preact` or `react`.
+- `{THEME}`: replace with `blank` or `default`.
+- `{FEATURES}`: replace with comma separated array such as `markdown,typescript`. Valid features
+  are `markdown`, `typescript`, `eslint`, `prettier`, and `lint-staged`.
+
+```bash
+# npm 6.x
+npm init vitebook@next my-app --template {TEMPLATE} --theme {THEME} --features {FEATURES}
+
+# npm 7+, extra double-dash is needed:
+npm init vitebook@next my-app -- --template vue
+
+# yarn
+yarn create vitebook@next my-app --template vue
+
+# pnpm
+pnpm create vitebook@next my-app -- --template vue
+```
 
 ## Documentation
 
