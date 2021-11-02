@@ -74,6 +74,8 @@ and share your thoughts!
 
 ## Quickstart
 
+> ⚠️ Packages are currently not working as we're resolving a prebuild issue.
+
 ```bash
 # npm
 $: npm init vitebook@next
