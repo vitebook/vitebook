@@ -25,8 +25,6 @@ async function main() {
     target: 'es2020',
     watch: args.watch || args.w,
     bundle: true,
-    treeShaking: true,
-    minify: true,
     logLevel: 'info',
     plugins: [sveltePlugin(), markVirtualModulesAsExternal()],
     external: [
