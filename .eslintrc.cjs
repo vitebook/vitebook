@@ -10,6 +10,7 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
+  ignorePatterns: ['packages/create/template-*/**'],
   plugins: ['@typescript-eslint', 'simple-import-sort'],
   extends: [
     'eslint:recommended',

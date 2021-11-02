@@ -37,6 +37,12 @@
     "bin/",
     "template-*"
   ],
+  "dependencies": {
+    "enquirer": "^2.3.6",
+    "kleur": "^4.1.4",
+    "minimist": "^1.2.5",
+    "upath": "^2.0.1"
+  },
   "devDependencies": {
     "@types/node": "^16.0.1"
   },

@@ -1,7 +1,6 @@
 import { path, fs } from '@vitebook/core/node/utils';
 import { fileURLToPath } from 'url';
 
-// @ts-expect-error
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const iconsDir = path.resolve(currentDir, '../src/node/icons');
 

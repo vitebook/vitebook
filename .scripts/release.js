@@ -72,17 +72,19 @@ async function main() {
   let targetVersion = args._[0];
 
   if (!targetVersion) {
-    const { release } = await prompt.prompt({
-      type: 'select',
-      name: 'release',
-      message: 'Select release type',
-      choices: versionIncrements
-        .map((i) => `${i} (${inc(i)})`)
-        .concat(['custom']),
-    });
+    const { release } = /** @type {{ release: string }} */ (
+      await prompt.prompt({
+        type: 'select',
+        name: 'release',
+        message: 'Select release type',
+        choices: versionIncrements
+          .map((i) => `${i} (${inc(i)})`)
+          .concat(['custom']),
+      })
+    );
 
     if (release === 'custom') {
-      targetVersion = (
+      targetVersion = /** @type {{ version: string }} */ (
         await prompt.prompt({
           type: 'input',
           name: 'version',
@@ -91,7 +93,7 @@ async function main() {
         })
       ).version;
     } else {
-      targetVersion = release.match(/\((.*)\)/)[1];
+      targetVersion = /** @type {string[]} */ (release.match(/\((.*)\)/))[1];
     }
   }
 
@@ -99,11 +101,13 @@ async function main() {
     throw new Error(kleur.red(`🚨 invalid target version: ${targetVersion}`));
   }
 
-  const { yes } = await prompt.prompt({
-    type: 'confirm',
-    name: 'yes',
-    message: `Releasing v${targetVersion}. Confirm?`,
-  });
+  const { yes } = /** @type {{ yes: boolean }} */ (
+    await prompt.prompt({
+      type: 'confirm',
+      name: 'yes',
+      message: `Releasing v${targetVersion}. Confirm?`,
+    })
+  );
 
   if (!yes) {
     return;
@@ -250,7 +254,7 @@ async function publishPackage(pkgName, version, runIfNotDry) {
     );
     console.log(kleur.green(`✅ Successfully published ${pkgName}@${version}`));
   } catch (e) {
-    if (e.stderr.match(/previously published/)) {
+    if (/** @type {any} */ (e).stderr.match(/previously published/)) {
       console.log(kleur.red(`🚫 Skipping already published: ${pkgName}`));
     } else {
       throw e;
