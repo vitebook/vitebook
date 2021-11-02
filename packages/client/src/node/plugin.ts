@@ -140,8 +140,8 @@ export function clientPlugin(
       name: PLUGIN_NAME,
       enforce: 'pre',
       entry: {
-        client: require.resolve(`${PLUGIN_NAME}/entry-client.ts`),
-        server: require.resolve(`${PLUGIN_NAME}/entry-server.ts`),
+        client: require.resolve(`${PLUGIN_NAME}/entry-client.js`),
+        server: require.resolve(`${PLUGIN_NAME}/entry-server.js`),
       },
       configureApp(_app) {
         app = _app;
