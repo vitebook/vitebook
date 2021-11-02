@@ -4,7 +4,7 @@ import kleur from 'kleur';
 import {
   DepOptimizationMetadata,
   UserConfig as ViteConfig,
-  ViteDevServer
+  ViteDevServer,
 } from 'vite';
 
 import { isArray, prettyJsonStr } from '../../../../shared';
@@ -14,7 +14,7 @@ import { isSubpath, resolveRelativePath } from '../../../utils/path';
 import type { App } from '../../App';
 import {
   loadPagesVirtualModule,
-  resolvePages
+  resolvePages,
 } from '../../create/resolvePages';
 import type { Plugin } from '../../plugin/Plugin';
 import { resolveApp } from '../../resolveApp';
@@ -34,7 +34,7 @@ const clientPackages = [
   '@vitebook/markdown-svelte',
   '@vitebook/markdown-vue',
   '@vitebook/preact',
-  '@vitebook/vue'
+  '@vitebook/vue',
 ];
 
 export function corePlugin(): Plugin {
@@ -45,7 +45,7 @@ export function corePlugin(): Plugin {
   };
 
   const virtualModuleRequestPaths = new Set<string>(
-    Object.values(virtualModuleRequestPath)
+    Object.values(virtualModuleRequestPath),
   );
 
   return {
@@ -61,12 +61,12 @@ export function corePlugin(): Plugin {
             [virtualModuleId.siteOptions]: virtualModuleRequestPath.siteOptions,
             [virtualModuleId.themeEntry]: virtualModuleRequestPath.themeEntry,
             [virtualModuleId.clientEntry]: virtualModuleRequestPath.clientEntry,
-            [virtualModuleId.pages]: virtualModuleRequestPath.pages
-          }
+            [virtualModuleId.pages]: virtualModuleRequestPath.pages,
+          },
         },
         optimizeDeps: { exclude: clientPackages },
         // @ts-expect-error - not typed.
-        ssr: { noExternal: clientPackages }
+        ssr: { noExternal: clientPackages },
       };
 
       return config;
@@ -112,9 +112,9 @@ export function corePlugin(): Plugin {
         return {
           id: app.dirs.theme.resolve(
             globby.sync('index.{js,ts,jsx,tsx}', {
-              cwd: app.dirs.theme.path
-            })[0]
-          )
+              cwd: app.dirs.theme.path,
+            })[0],
+          ),
         };
       }
 
@@ -147,20 +147,20 @@ export function corePlugin(): Plugin {
         await resolveNewSiteData(app);
         return [
           server.moduleGraph.getModuleById(
-            virtualModuleRequestPath.siteOptions
-          )!
+            virtualModuleRequestPath.siteOptions,
+          )!,
         ];
       }
 
       return undefined;
-    }
+    },
   };
 }
 
 function startWatchingPages(app: App, server: ViteDevServer) {
   const watcher = watch(app.options.include, {
     cwd: app.dirs.root.path,
-    ignoreInitial: true
+    ignoreInitial: true,
   });
 
   server.watcher.add(virtualModuleRequestPath.pages);
@@ -181,7 +181,7 @@ function startWatchingPages(app: App, server: ViteDevServer) {
 
     for (const { filePaths, action } of pendingChanges) {
       const absPaths = (filePaths as string[]).map((filePath) =>
-        resolveRelativePath(app.dirs.root.path, filePath)
+        resolveRelativePath(app.dirs.root.path, filePath),
       );
 
       await resolvePages(app, action, absPaths);
@@ -214,13 +214,13 @@ function startWatchingPages(app: App, server: ViteDevServer) {
 
   watcher
     .on('add', (filePath) =>
-      handleChange({ filePaths: filePath, action: 'add' })
+      handleChange({ filePaths: filePath, action: 'add' }),
     )
     .on('change', (filePath) =>
-      handleChange({ filePaths: filePath, action: 'change' })
+      handleChange({ filePaths: filePath, action: 'change' }),
     )
     .on('unlink', (filePath) =>
-      handleChange({ filePaths: filePath, action: 'unlink' })
+      handleChange({ filePaths: filePath, action: 'unlink' }),
     );
 
   server.watcher.on('unlinkDir', (dir) => {
@@ -235,7 +235,7 @@ function startWatchingPages(app: App, server: ViteDevServer) {
     if (filePaths.length > 0) {
       handleChange({
         filePaths,
-        action: 'unlink'
+        action: 'unlink',
       });
     }
   });
@@ -292,9 +292,9 @@ async function resolveNewSiteData(app: App) {
     logger.warn(
       logger.formatWarnMsg(
         `Config property ${kleur.bold(
-          '`site.baseUrl`'
-        )} was changed. Please restart the dev server.`
-      )
+          '`site.baseUrl`',
+        )} was changed. Please restart the dev server.`,
+      ),
     );
   }
 

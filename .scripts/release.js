@@ -12,9 +12,7 @@ import path from 'path';
 import prompt from 'enquirer';
 import semver from 'semver';
 
-// @ts-expect-error
 const require = createRequire(import.meta.url);
-// @ts-expect-error
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const args = minimist(process.argv.slice(2));
@@ -41,7 +39,7 @@ const versionIncrements = [
   'patch',
   'minor',
   'major',
-  ...(preId ? ['prepatch', 'preminor', 'premajor', 'prerelease'] : [])
+  ...(preId ? ['prepatch', 'preminor', 'premajor', 'prerelease'] : []),
 ];
 
 function inc(i) {
@@ -80,7 +78,7 @@ async function main() {
       message: 'Select release type',
       choices: versionIncrements
         .map((i) => `${i} (${inc(i)})`)
-        .concat(['custom'])
+        .concat(['custom']),
     });
 
     if (release === 'custom') {
@@ -89,7 +87,7 @@ async function main() {
           type: 'input',
           name: 'version',
           message: 'Input custom version',
-          initial: currentVersion
+          initial: currentVersion,
         })
       ).version;
     } else {
@@ -104,7 +102,7 @@ async function main() {
   const { yes } = await prompt.prompt({
     type: 'confirm',
     name: 'yes',
-    message: `Releasing v${targetVersion}. Confirm?`
+    message: `Releasing v${targetVersion}. Confirm?`,
   });
 
   if (!yes) {
@@ -134,7 +132,7 @@ async function main() {
     await runIfNotDry('git', [
       'commit',
       '-m',
-      `chore(release): v${targetVersion}`
+      `chore(release): v${targetVersion}`,
     ]);
   } else {
     console.log('No changes to commit.');
@@ -159,9 +157,9 @@ async function main() {
     console.log(
       kleur.yellow(
         `The following packages are skipped and NOT published:\n- ${skippedPackages.join(
-          '\n- '
-        )}`
-      )
+          '\n- ',
+        )}`,
+      ),
     );
   }
   console.log();
@@ -174,7 +172,7 @@ function updateVersions(version) {
   packages.forEach((p) => updatePackageVersion(getPkgRoot(p), version));
   // 3. update examples
   examples.forEach((p) =>
-    updatePackageVersion(getExampleRoot(p), version, true)
+    updatePackageVersion(getExampleRoot(p), version, true),
   );
 }
 
@@ -197,7 +195,7 @@ function updatePackageDeps(pkg, depType, version) {
       packages.includes(dep.replace(/^@vitebook\//, ''))
     ) {
       console.log(
-        kleur.yellow(`🦠 ${pkg.name} -> ${depType} -> ${dep}@${version}`)
+        kleur.yellow(`🦠 ${pkg.name} -> ${depType} -> ${dep}@${version}`),
       );
       deps[dep] = version;
     }
@@ -243,12 +241,12 @@ async function publishPackage(pkgName, version, runIfNotDry) {
         version,
         ...(releaseTag ? ['--tag', releaseTag] : []),
         '--access',
-        'public'
+        'public',
       ],
       {
         cwd: pkgRoot,
-        stdio: 'pipe'
-      }
+        stdio: 'pipe',
+      },
     );
     console.log(kleur.green(`✅ Successfully published ${pkgName}@${version}`));
   } catch (e) {
@@ -262,4 +260,5 @@ async function publishPackage(pkgName, version, runIfNotDry) {
 
 main().catch((err) => {
   console.error(err);
+  process.exit(1);
 });

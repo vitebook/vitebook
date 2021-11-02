@@ -9,7 +9,7 @@ async function main() {
   const entryArg = args.entry ?? 'src/client/index.ts';
 
   const entry = (entryArg.includes(',') ? entryArg.split(',') : [entryArg]).map(
-    (p) => path.resolve(process.cwd(), p)
+    (p) => path.resolve(process.cwd(), p),
   );
 
   const outdir = path.resolve(process.cwd(), args.outdir ?? 'dist/client');
@@ -18,7 +18,7 @@ async function main() {
     entryPoints: entry,
     outdir,
     loader: {
-      '.svg': 'file'
+      '.svg': 'file',
     },
     platform: 'browser',
     format: 'esm',
@@ -39,8 +39,8 @@ async function main() {
       'vue',
       'vite',
       ':virtual',
-      ...(args.external?.split(',') ?? [])
-    ]
+      ...(args.external?.split(',') ?? []),
+    ],
   });
 }
 
@@ -51,10 +51,13 @@ function markVirtualModulesAsExternal() {
       let filter = /:virtual/;
       build.onResolve({ filter }, (args) => ({
         path: args.path,
-        external: true
+        external: true,
       }));
-    }
+    },
   };
 }
 
-main();
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

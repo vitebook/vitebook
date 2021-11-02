@@ -1,7 +1,7 @@
 import { fs } from '../../utils/fs';
 import {
   loadModule as loadModuleUtil,
-  LoadModuleOptions
+  LoadModuleOptions,
 } from '../../utils/module';
 import { path } from '../../utils/path';
 import type { AppDirs, AppDirUtils } from '../App';
@@ -9,7 +9,7 @@ import type { AppOptions } from '../AppOptions';
 
 export const createAppDirUtil = (
   baseDir: string,
-  tmpDir?: string
+  tmpDir?: string,
 ): AppDirUtils => {
   const resolve = (...args: string[]) =>
     args.length === 1 && path.isAbsolute(args[0])
@@ -27,7 +27,7 @@ export const createAppDirUtil = (
 
   const loadModule = async <T>(
     filePath: string,
-    options?: LoadModuleOptions
+    options?: LoadModuleOptions,
   ): Promise<T> => {
     const path = resolve(filePath);
     return loadModuleUtil<T>(path, { outdir: tmpDir, ...options });
@@ -39,7 +39,7 @@ export const createAppDirUtil = (
     relative,
     read,
     write,
-    loadModule
+    loadModule,
   };
 };
 
@@ -61,6 +61,6 @@ export const createAppDirs = (options: AppOptions): AppDirs => {
     tmp,
     out,
     theme,
-    public: publicDir
+    public: publicDir,
   };
 };

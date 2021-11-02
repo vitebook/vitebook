@@ -4,7 +4,7 @@ import App from './App.svelte';
 import {
   COMPONENT_SSR_CTX_KEY,
   ROUTER_CTX_KEY,
-  SSR_CTX_KEY
+  SSR_CTX_KEY,
 } from './context/context-keys';
 import { AppContextMap } from './context/useAppContext';
 import { createRouter } from './createRouter';
@@ -13,7 +13,7 @@ export const render: ServerRenderFn = async (page) => {
   const ssrContext: AppContextMap[typeof SSR_CTX_KEY] = {
     lang: 'en',
     head: [],
-    modules: new Set()
+    modules: new Set(),
   };
 
   const componentsSsrContext: AppContextMap[typeof COMPONENT_SSR_CTX_KEY] = {};

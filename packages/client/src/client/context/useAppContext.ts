@@ -5,7 +5,7 @@ import type { Router } from '../router/router';
 import type {
   COMPONENT_SSR_CTX_KEY,
   ROUTER_CTX_KEY,
-  SSR_CTX_KEY
+  SSR_CTX_KEY,
 } from './context-keys';
 
 export type ComponentSSRContext = {
@@ -31,7 +31,7 @@ export type AppContextKey =
 export function useAppContext<T extends AppContextKey>(
   key: T,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context?: Map<any, any>
+  context?: Map<any, any>,
 ): AppContextMap[T] {
   return context?.get(key) ?? getContext(key);
 }

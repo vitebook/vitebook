@@ -15,5 +15,5 @@ export const sidebarItems = derived(
     }
 
     return config;
-  }
+  },
 );

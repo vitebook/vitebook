@@ -3,7 +3,7 @@ import type { PluginWithOptions } from 'markdown-it';
 import type { MarkdownHeader } from '../../../../shared';
 import {
   resolveHeadersFromTokens,
-  slugify as slugifyDefault
+  slugify as slugifyDefault,
 } from '../../utils';
 import { createRenderHeaders } from './createRenderHeader';
 import { createTocBlockRule } from './createTocBlockRule';
@@ -114,8 +114,8 @@ export const tocPlugin: PluginWithOptions<TocPluginOptions> = (
     listClass = '',
     itemClass = '',
     linkTag = 'a',
-    linkClass = ''
-  }: TocPluginOptions = {}
+    linkClass = '',
+  }: TocPluginOptions = {},
 ): void => {
   let headers: MarkdownHeader[];
 
@@ -126,7 +126,7 @@ export const tocPlugin: PluginWithOptions<TocPluginOptions> = (
       allowHtml: true,
       escapeText: true,
       slugify,
-      format
+      format,
     });
     return true;
   });
@@ -138,11 +138,11 @@ export const tocPlugin: PluginWithOptions<TocPluginOptions> = (
     createTocBlockRule({
       pattern,
       containerTag,
-      containerClass
+      containerClass,
     }),
     {
-      alt: ['paragraph', 'reference', 'blockquote']
-    }
+      alt: ['paragraph', 'reference', 'blockquote'],
+    },
   );
 
   const renderHeaders = createRenderHeaders({
@@ -150,7 +150,7 @@ export const tocPlugin: PluginWithOptions<TocPluginOptions> = (
     listClass,
     itemClass,
     linkTag,
-    linkClass
+    linkClass,
   });
 
   // Custom toc_body render rule.

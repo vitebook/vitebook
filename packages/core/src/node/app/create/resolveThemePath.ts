@@ -6,7 +6,7 @@ export function resolveThemePath(themeDir: string): string | undefined {
   const [themePath] = globby.sync('index.{js,jsx,mjs,ts,tsx}', {
     absolute: true,
     cwd: themeDir,
-    deep: 1
+    deep: 1,
   });
 
   return themePath;

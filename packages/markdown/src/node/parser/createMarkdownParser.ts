@@ -17,7 +17,7 @@ import {
   linksPlugin,
   LinksPluginOptions,
   tocPlugin,
-  TocPluginOptions
+  TocPluginOptions,
 } from './plugins';
 import type { MarkdownParser, MarkdownParserOptions } from './types';
 import { slugify } from './utils';
@@ -40,7 +40,7 @@ export async function createMarkdownParser({
   const parser = MarkdownIt({
     ...markdownItOptions,
     // Should always enable html option.
-    html: true
+    html: true,
   });
 
   // =====================================================
@@ -60,9 +60,9 @@ export async function createMarkdownParser({
         class: 'header-anchor',
         symbol: '#',
         space: true,
-        placement: 'before'
+        placement: 'before',
       }),
-      ...anchor
+      ...anchor,
     });
   }
 
@@ -75,7 +75,7 @@ export async function createMarkdownParser({
   if (extractHeaders !== false) {
     parser.use<ExtractHeadersPluginOptions>(
       extractHeadersPlugin,
-      extractHeaders
+      extractHeaders,
     );
   }
 

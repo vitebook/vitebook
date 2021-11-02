@@ -16,7 +16,7 @@ function Variant({ name, description, children }: VariantProps) {
   const hasAddedVariant = useRef(false);
 
   const searchParams = useRef(
-    inBrowser ? new URL(location.href).searchParams : undefined
+    inBrowser ? new URL(location.href).searchParams : undefined,
   );
 
   // Only used to trigger re-renders - updates too slow for our needs.
@@ -30,10 +30,10 @@ function Variant({ name, description, children }: VariantProps) {
       active: import.meta.env.SSR
         ? Object.values(get(variants)).length === 0 ||
           Object.values(get(variants)).findIndex(
-            (v) => v.id === variantId.current
+            (v) => v.id === variantId.current,
           ) === 0
         : searchParams.current?.get('variant')?.toLowerCase() ===
-          variantId.current
+          variantId.current,
     };
 
     variants.add(variant);

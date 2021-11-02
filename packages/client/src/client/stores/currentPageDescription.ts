@@ -7,12 +7,12 @@ import { localizedSiteOptions } from './localizedSiteOptions';
 
 export const currentPageDescription = derived(
   [localizedSiteOptions, currentPage],
-  ([site, page]) => resolvePageDescription(site, page)
+  ([site, page]) => resolvePageDescription(site, page),
 );
 
 const resolvePageDescription = (
   siteLocale: SiteLocaleData,
-  page?: LoadedClientPage
+  page?: LoadedClientPage,
 ): string => {
   const description = page?.meta.description;
   return description ? description : siteLocale.description;

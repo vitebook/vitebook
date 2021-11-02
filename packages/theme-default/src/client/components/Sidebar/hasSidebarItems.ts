@@ -4,5 +4,5 @@ import { sidebarItems } from './sidebarItems';
 
 export const hasSidebarItems = derived(
   sidebarItems,
-  (items) => items.length > 0
+  (items) => items.length > 0,
 );

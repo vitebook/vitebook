@@ -27,9 +27,9 @@ export default defineComponent<VariantProps>({
       active: import.meta.env.SSR
         ? Object.values($variants.value).length === 0 ||
           Object.values($variants.value).findIndex(
-            (v) => v.id === variantId
+            (v) => v.id === variantId,
           ) === 0
-        : searchParams?.get('variant')?.toLowerCase() === variantId
+        : searchParams?.get('variant')?.toLowerCase() === variantId,
     };
 
     variants.add(variant);
@@ -52,5 +52,5 @@ export default defineComponent<VariantProps>({
   },
   render({ $variants, variantId }) {
     return $variants[variantId].active ? this.$slots.default?.() : null;
-  }
+  },
 });

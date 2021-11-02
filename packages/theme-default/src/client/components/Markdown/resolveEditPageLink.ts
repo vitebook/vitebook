@@ -1,7 +1,7 @@
 import {
   isLinkHttp,
   removeEndingSlash,
-  removeLeadingSlash
+  removeLeadingSlash,
 } from '@vitebook/core';
 
 import { RepoType, resolveRepoType } from './resolveRepoType';
@@ -10,7 +10,7 @@ export const editPageLinkPatterns: Record<Exclude<RepoType, null>, string> = {
   GitHub: ':repo/edit/:branch/:path',
   GitLab: ':repo/-/edit/:branch/:path',
   Bitbucket:
-    ':repo/src/:branch/:path?mode=edit&spa=0&at=:branch&fileviewer=file-view-default'
+    ':repo/src/:branch/:path?mode=edit&spa=0&at=:branch&fileviewer=file-view-default',
 };
 
 export const resolveEditPageLink = ({
@@ -18,7 +18,7 @@ export const resolveEditPageLink = ({
   branch = 'main',
   dir = '',
   relativeFilePath,
-  editLinkPattern
+  editLinkPattern,
 }: {
   repo: string;
   branch?: string;
@@ -44,7 +44,7 @@ export const resolveEditPageLink = ({
     .replace(
       /:path/,
       removeLeadingSlash(
-        `${removeEndingSlash(dir)}/${removeLeadingSlash(relativeFilePath)}`
-      )
+        `${removeEndingSlash(dir)}/${removeLeadingSlash(relativeFilePath)}`,
+      ),
     );
 };

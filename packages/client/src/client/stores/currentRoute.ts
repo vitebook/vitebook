@@ -9,5 +9,5 @@ export const currentRoute = {
   set: undefined,
   update: undefined,
   __update: store.update,
-  __set: store.set
+  __set: store.set,
 };

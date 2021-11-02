@@ -8,7 +8,7 @@ const { languages, highlight } = prism;
 
 const languageNameMap = {
   html: 'markup',
-  vue: 'markup'
+  vue: 'markup',
 };
 
 const docLangMap = {
@@ -17,7 +17,7 @@ const docLangMap = {
   java: 'javadoc',
   javascript: 'jsdoc',
   php: 'phpdoc',
-  typescript: 'jsdoc'
+  typescript: 'jsdoc',
 };
 
 export type Highlighter = (code: string) => string;

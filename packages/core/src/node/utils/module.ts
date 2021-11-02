@@ -11,7 +11,7 @@ import { path } from './path';
  * Check if a given module is an esm module with a default export.
  */
 export const hasDefaultExport = <T = unknown>(
-  mod: unknown
+  mod: unknown,
 ): mod is { default: T } =>
   isObject(mod) &&
   !!mod.__esModule &&
@@ -54,13 +54,13 @@ const requireShim = [
   '__require.__proto__.resolve = require.resolve;',
   'const __filename = __vitebook__fileURLToPath(import.meta.url);',
   'const __dirname = __vitebook__path.dirname(__filename);',
-  '\n'
+  '\n',
 ].join('\n');
 
 /** Bundle with ESBuild and import as an ESM module. */
 export const loadModule = async <T>(
   filePath: string,
-  options: LoadModuleOptions = {}
+  options: LoadModuleOptions = {},
 ): Promise<T> => {
   const { ...buildOptions } = options;
 
@@ -69,7 +69,7 @@ export const loadModule = async <T>(
       options.outdir ??
       path.join(
         path.dirname(esmRequire.resolve('@vitebook/core/node')),
-        '.temp'
+        '.temp',
       );
 
     if (fs.existsSync(tmpDir)) {
@@ -82,7 +82,7 @@ export const loadModule = async <T>(
   }
 
   const fileHash = await checksumFile('sha1', filePath);
-  const outputPath = path.resolve(tmpDir, `${fileHash}.mjs`);
+  const outputPath = path.resolve(tmpDir, `${fileHash}.js`);
 
   const fileComment = `// FILE: ${filePath}\n\n`;
   const code = await bundle(filePath, buildOptions);
@@ -94,13 +94,13 @@ export const loadModule = async <T>(
 
 export async function bundle(
   filePath: string,
-  options: BuildOptions
+  options: BuildOptions,
 ): Promise<string | undefined> {
   const { outputFiles } = await esbuild({
     ...options,
     entryPoints: [filePath],
     loader: options.loader ?? {
-      '.svg': 'base64'
+      '.svg': 'base64',
     },
     platform: options.platform ?? 'node',
     format: options.format ?? 'esm',
@@ -119,9 +119,9 @@ export async function bundle(
           // eslint-disable-next-line no-useless-escape
           const filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/;
           build.onResolve({ filter }, async () => ({ external: true }));
-        }
-      }
-    ]
+        },
+      },
+    ],
   });
 
   return outputFiles[0]?.text;

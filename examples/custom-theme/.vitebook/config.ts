@@ -6,12 +6,12 @@ export default defineConfig({
     clientPlugin({
       include: /\.(svelte)/,
       svelte: {
-        extensions: ['.svelte']
-      }
-    })
+        extensions: ['.svelte'],
+      },
+    }),
   ],
   site: {
     title: 'Vitebook',
-    description: 'Blazing fast Storybook alternative.'
-  }
+    description: 'Blazing fast Storybook alternative.',
+  },
 });

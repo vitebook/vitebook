@@ -10,14 +10,14 @@ import { localizedSiteOptions } from './localizedSiteOptions';
 export const currentPageHead = derived(
   [currentPageTitle, currentPageDescription, localizedSiteOptions, currentPage],
   ([title, description, site, page]) =>
-    resolvePageHead(title, description, site, page)
+    resolvePageHead(title, description, site, page),
 );
 
 const resolvePageHead = (
   title: string,
   description: string,
   siteLocale: SiteLocaleData,
-  page?: LoadedClientPage
+  page?: LoadedClientPage,
 ): HeadConfig[] => {
   const head: HeadConfig[] = [];
   head.push(...(page?.meta.head ?? []));

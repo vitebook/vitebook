@@ -8,7 +8,7 @@ import {
   removeLeadingSlash,
   ServerEntryModule,
   ServerPage,
-  SiteOptions
+  SiteOptions,
 } from '../../../../shared';
 import { fs, path } from '../../../utils';
 import { logger, LoggerIcon } from '../../../utils/logger';
@@ -37,22 +37,22 @@ export async function build(app: App): Promise<void> {
   // Render pages
   spinner.start(
     kleur.bold(
-      `Rendering ${app.pages.length + (includesHomePage() ? 0 : 1)} pages...`
-    )
+      `Rendering ${app.pages.length + (includesHomePage() ? 0 : 1)} pages...`,
+    ),
   );
 
   try {
     const [clientBundle] = await bundle(app);
 
     const APP_CHUNK = clientBundle.output.find(
-      (chunk) => chunk.type === 'chunk' && chunk.isEntry
+      (chunk) => chunk.type === 'chunk' && chunk.isEntry,
     ) as OutputChunk;
 
     const CSS_CHUNK = clientBundle.output.find(
       (chunk) =>
         chunk.type === 'asset' &&
         chunk.fileName.startsWith(`assets/${APP_CHUNK.name}`) &&
-        chunk.fileName.endsWith('.css')
+        chunk.fileName.endsWith('.css'),
     ) as OutputAsset;
 
     const HTML_TEMPLATE = (
@@ -68,15 +68,15 @@ export async function build(app: App): Promise<void> {
     await fs.rename(
       app.dirs.out.resolve(
         'server',
-        path.changeExt(path.basename(app.client.entry.server), 'js')
+        path.changeExt(path.basename(app.client.entry.server), 'js'),
       ),
-      serverEntryPath
+      serverEntryPath,
     );
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { render } = require(app.dirs.out.resolve(
       'server',
-      serverEntryPath
+      serverEntryPath,
     )) as ServerEntryModule;
 
     // Include home page so it's rendered (if not included).
@@ -97,7 +97,7 @@ export async function build(app: App): Promise<void> {
         app,
         page,
         clientBundle,
-        APP_CHUNK
+        APP_CHUNK,
       );
 
       const preloadLinks = [...pageImports.imports, APP_CHUNK.fileName]
@@ -115,7 +115,7 @@ export async function build(app: App): Promise<void> {
         head,
         stylesheetLinks,
         preloadLinks,
-        prefetchLinks
+        prefetchLinks,
       ]
         .filter((t) => t.length > 0)
         .join('\n    ');
@@ -140,7 +140,7 @@ export async function build(app: App): Promise<void> {
     }
   } catch (e) {
     spinner.stopAndPersist({
-      symbol: LoggerIcon.Error
+      symbol: LoggerIcon.Error,
     });
     throw e;
   } finally {
@@ -149,7 +149,7 @@ export async function build(app: App): Promise<void> {
 
   spinner.stopAndPersist({
     symbol: LoggerIcon.Success,
-    text: kleur.bold(`Rendered ${kleur.underline(app.pages.length)} pages`)
+    text: kleur.bold(`Rendered ${kleur.underline(app.pages.length)} pages`),
   });
 
   logRoutes(app);
@@ -161,15 +161,15 @@ export async function build(app: App): Promise<void> {
     4: '🏎️',
     6: '🏃',
     10: '🐌',
-    Infinity: '⚰️'
+    Infinity: '⚰️',
   };
 
   logger.success(
     kleur.bold(
       `${LoggerIcon.Success} Build complete in ${kleur.bold(
-        kleur.underline(`${endTime}s`)
-      )} ${speedIcon[Object.keys(speedIcon).find((t) => endTime <= t)!]}`
-    )
+        kleur.underline(`${endTime}s`),
+      )} ${speedIcon[Object.keys(speedIcon).find((t) => endTime <= t)!]}`,
+    ),
   );
 
   const pkgManager = guessPackageManager(app);
@@ -182,8 +182,8 @@ export async function build(app: App): Promise<void> {
               pkgManager === 'npm' ? 'npm run' : pkgManager
             } ${previewCommand}\` to serve production build`
           : 'Ready for preview'
-      }\n`
-    )
+      }\n`,
+    ),
   );
 }
 
@@ -194,11 +194,11 @@ function logRoutes(app: App) {
     logs.push(
       kleur.white(
         `- ${removeLeadingSlash(
-          page.route === '/' ? 'index.html' : decodeURI(page.route)
+          page.route === '/' ? 'index.html' : decodeURI(page.route),
         )} ${kleur.dim(
-          page.rootPath ? `(${removeLeadingSlash(page.rootPath)})` : ''
-        )}`
-      )
+          page.rootPath ? `(${removeLeadingSlash(page.rootPath)})` : '',
+        )}`,
+      ),
     );
   });
 
@@ -246,25 +246,25 @@ function resolvePageImports(
   app: App,
   page: ServerPage,
   clientBundle: RollupOutput,
-  appChunk: OutputChunk
+  appChunk: OutputChunk,
 ) {
   const srcPath = fs.realpathSync(app.dirs.root.relative(page.rootPath ?? ''));
 
   const pageChunk = clientBundle.output.find(
-    (chunk) => chunk.type === 'chunk' && chunk.facadeModuleId === srcPath
+    (chunk) => chunk.type === 'chunk' && chunk.facadeModuleId === srcPath,
   ) as OutputChunk;
 
   return {
     imports: Array.from(
-      new Set([...appChunk.imports, ...(pageChunk?.imports ?? [])])
+      new Set([...appChunk.imports, ...(pageChunk?.imports ?? [])]),
     ),
     dynamicImports: Array.from(
       new Set([
         // Needs to be filtered.
         // ...appChunk.dynamicImports,
-        ...(pageChunk?.dynamicImports ?? [])
-      ])
-    )
+        ...(pageChunk?.dynamicImports ?? []),
+      ]),
+    ),
   };
 }
 
@@ -280,7 +280,7 @@ function renderHeadAttrs(attrs: HeadAttrsConfig): string {
   return Object.entries(attrs)
     .filter((item): item is [string, string | true] => item[1] !== false)
     .map(([key, value]) =>
-      value === true ? ` ${key}` : ` ${key}="${attrs[key]}"`
+      value === true ? ` ${key}` : ` ${key}="${attrs[key]}"`,
     )
     .join('');
 }
@@ -288,14 +288,14 @@ function renderHeadAttrs(attrs: HeadAttrsConfig): string {
 function addSocialTags(
   site: SiteOptions,
   page: ServerPage,
-  head: HeadConfig[]
+  head: HeadConfig[],
 ): HeadConfig[] {
   const pageTitle: string =
     head.find((tag) => tag[0] === 'title')?.[2] ?? site.title;
 
   const pageDescription: string =
     (head.find(
-      (tag) => tag[0] === 'meta' && tag[1]?.name === 'description'
+      (tag) => tag[0] === 'meta' && tag[1]?.name === 'description',
     )?.[1]?.content as string) ?? site.description;
 
   const tags: HeadConfig[] = [
@@ -303,11 +303,11 @@ function addSocialTags(
     ['og:title', { content: pageTitle }],
     ['og:description', { content: pageDescription }],
     ['twitter:title', { content: pageTitle }],
-    ['twitter:description', { content: pageDescription }]
+    ['twitter:description', { content: pageDescription }],
   ];
 
   head.push(
-    ...tags.filter((tag) => !head.some((headTag) => tag[0] === headTag[0]))
+    ...tags.filter((tag) => !head.some((headTag) => tag[0] === headTag[0])),
   );
 
   return head;

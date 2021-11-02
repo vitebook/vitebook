@@ -21,26 +21,26 @@ const HTML_SEQUENCES: HTMLBlockSequence[] = [
   // MODIFIED HERE: Treat unknown tags as block tags (custom components), excluding known inline tags
   [
     new RegExp(
-      '^</?(?!(' + inlineTags.join('|') + ')(?![\\w-]))\\w[\\w-]*[\\s/>]'
+      '^</?(?!(' + inlineTags.join('|') + ')(?![\\w-]))\\w[\\w-]*[\\s/>]',
     ),
     /^$/,
-    true
+    true,
   ],
   [
     // eslint-disable-next-line import/namespace
     new RegExp('^</?(' + blockNames.join('|') + ')(?=(\\s|/?>|$))', 'i'),
     /^$/,
-    true
+    true,
   ],
-  [new RegExp(HTML_OPEN_CLOSE_TAG_RE.source + '\\s*$'), /^$/, false]
+  [new RegExp(HTML_OPEN_CLOSE_TAG_RE.source + '\\s*$'), /^$/, false],
 ];
 
 export const htmlBlockRule = (
-  customSequences: HTMLBlockSequence[] = []
+  customSequences: HTMLBlockSequence[] = [],
 ): RuleBlock => {
   const sequences: HTMLBlockSequence[] = [
     ...HTML_SEQUENCES,
-    ...customSequences
+    ...customSequences,
   ];
 
   return (state, startLine, endLine, silent): boolean => {

@@ -10,7 +10,7 @@ export const localizedSiteOptions = derived(
     ...site.locales?.[routeLocale],
     theme: {
       ...site.theme,
-      ...site.theme.locales?.[routeLocale]
-    }
-  })
+      ...site.theme.locales?.[routeLocale],
+    },
+  }),
 );

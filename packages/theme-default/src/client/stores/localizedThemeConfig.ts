@@ -5,5 +5,5 @@ import { DefaultThemeConfig, defaultThemeLocaleOptions } from '../../shared';
 
 export const localizedThemeConfig = derived(localizedSiteOptions, (site) => ({
   ...defaultThemeLocaleOptions,
-  ...(site.theme as DefaultThemeConfig)
+  ...(site.theme as DefaultThemeConfig),
 }));

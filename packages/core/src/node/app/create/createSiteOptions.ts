@@ -8,7 +8,7 @@ export const createSiteOptions = ({
   description = '',
   head = [],
   locales = {},
-  theme = {}
+  theme = {},
 }: SiteConfig): SiteOptions => ({
   baseUrl,
   lang,
@@ -17,5 +17,5 @@ export const createSiteOptions = ({
   description,
   head,
   locales,
-  theme
+  theme,
 });

@@ -20,7 +20,7 @@ import { resolveConfigPath } from './resolveConfigPath';
 
 export const createApp = async (
   config: AppConfig,
-  envConfig?: Partial<AppEnv>
+  envConfig?: Partial<AppEnv>,
 ): Promise<App> => {
   const version = getAppVersion();
   const options = createAppOptions(config);
@@ -28,11 +28,11 @@ export const createApp = async (
 
   const env = createAppEnv({
     ...envConfig,
-    isDebug: options.debug ?? envConfig?.isDebug
+    isDebug: options.debug ?? envConfig?.isDebug,
   });
 
   const site = {
-    options: createSiteOptions(config.site ?? {})
+    options: createSiteOptions(config.site ?? {}),
   };
 
   const client = options.plugins
@@ -48,7 +48,7 @@ export const createApp = async (
   const plugins = [
     corePlugin(),
     ...options.plugins.flat(),
-    ...(options.vite.plugins ?? []).flat()
+    ...(options.vite.plugins ?? []).flat(),
   ].filter((plugin) => !!plugin) as FilteredPlugins;
 
   const app: App = {
@@ -67,13 +67,13 @@ export const createApp = async (
       createServer(app, {
         build: {
           rollupOptions: {
-            input: app.dirs.config.resolve('index.html')
-          }
-        }
+            input: app.dirs.config.resolve('index.html'),
+          },
+        },
       }),
     build: () => build(app),
     preview: () => preview(app),
-    close: () => app.disposal.empty()
+    close: () => app.disposal.empty(),
   };
 
   for (const plugin of plugins) {

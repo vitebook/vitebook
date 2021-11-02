@@ -2,7 +2,7 @@ import type {
   DefaultLoadedPage,
   DefaultPageModule,
   MarkdownPageMeta,
-  Page
+  Page,
 } from '@vitebook/core';
 import type { Component } from 'vue';
 
@@ -21,5 +21,5 @@ export type {
   MarkdownFrontmatter,
   MarkdownHeader,
   MarkdownLinks,
-  MarkdownPageMeta
+  MarkdownPageMeta,
 } from '@vitebook/core';

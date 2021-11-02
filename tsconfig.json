@@ -1,20 +1,5 @@
 {
   "extends": "./tsconfig.base.json",
-  "compilerOptions": {
-    "composite": true
-  },
   "files": [],
-  "references": [
-    { "path": "./packages/client" },
-    { "path": "./packages/core" },
-    { "path": "./packages/markdown" },
-    { "path": "./packages/markdown-preact" },
-    { "path": "./packages/markdown-prismjs" },
-    { "path": "./packages/markdown-shiki" },
-    { "path": "./packages/markdown-svelte" },
-    { "path": "./packages/markdown-vue" },
-    { "path": "./packages/preact" },
-    { "path": "./packages/theme-default" },
-    { "path": "./packages/vue" }
-  ]
+  "include": ["./packages/**/*", "./examples/**/*", "./.scripts/*"]
 }

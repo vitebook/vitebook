@@ -2,35 +2,30 @@
   "name": "vitebook-workspace",
   "version": "0.0.3",
   "private": true,
+  "type": "module",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "preinstall": "node .scripts/preinstall.mjs",
+    "preinstall": "node .scripts/preinstall.js",
     "lint": "run-s lint:*",
-    "lint:eslint": "eslint --ext .js,.ts,.tsx . --ignore-path .gitignore",
+    "lint:eslint": "eslint --ext .js,.jsx,.ts,.tsx . --ignore-path .gitignore",
     "lint:prettier": "prettier . --check --ignore-path .gitignore --loglevel warn",
     "format": "run-s format:*",
     "format:eslint": "npm run lint:eslint -- --fix",
     "format:prettier": "npm run lint:prettier -- --write",
-    "build": "node .scripts/run-build.mjs",
+    "build": "node .scripts/run-build.js",
     "build:all": "pnpm build --filter ./packages",
-    "test:node-esm": "node .scripts/test-node-esm.mjs",
-    "example": "node .scripts/run-example.mjs",
+    "test:node-esm": "node .scripts/test-node-esm.js",
+    "example": "node .scripts/run-example.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "release": "pnpm test:node-esm && node .scripts/release.mjs",
+    "release": "pnpm test:node-esm && node .scripts/release.js",
     "prepare": "husky install"
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": "eslint --cache --fix",
-    "*.{js,ts,tsx,vue,md,json}": "prettier --write",
+    "*.{js,jsx,ts,tsx}": "eslint --cache --fix",
+    "*.{js,jsx,ts,tsx,svelte,vue,md,json}": "prettier --write",
     "package.json": "sort-package-json"
-  },
-  "prettier": {
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "none",
-    "useTabs": false
   },
   "devDependencies": {
     "@commitlint/cli": "^13.2.1",
@@ -55,11 +50,12 @@
     "minimist": "^1.2.5",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.4.1",
+    "prettier-plugin-svelte": "^2.4.0",
     "prompts": "^2.4.2",
     "rimraf": "^3.0.2",
     "semver": "^7.3.5",
     "sort-package-json": "^1.52.0",
-    "typescript": "^4.4.4",
+    "typescript": "^4.4.0",
     "upath": "^2.0.1"
   },
   "engines": {

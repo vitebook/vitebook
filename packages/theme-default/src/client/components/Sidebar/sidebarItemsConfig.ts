@@ -3,18 +3,18 @@ import {
   ensureLeadingSlash,
   isArray,
   removeEndingSlash,
-  withBaseUrl
+  withBaseUrl,
 } from '@vitebook/client';
 import { derived } from 'svelte/store';
 
 import type {
   MultiSidebarItemsConfig,
-  SidebarItemsConfig
+  SidebarItemsConfig,
 } from '../../../shared';
 import { localizedThemeConfig } from '../../stores/localizedThemeConfig';
 
 export function isSidebarItemsConfig(
-  config: SidebarItemsConfig | MultiSidebarItemsConfig
+  config: SidebarItemsConfig | MultiSidebarItemsConfig,
 ): config is SidebarItemsConfig {
   return config === false || config === 'auto' || isArray(config);
 }
@@ -33,13 +33,13 @@ export const sidebarItemsConfig = derived(
     }
 
     const route = removeEndingSlash(
-      ensureLeadingSlash(currentRoute.route.path)
+      ensureLeadingSlash(currentRoute.route.path),
     );
 
     for (const path in config) {
       if (
         route.startsWith(
-          withBaseUrl(removeEndingSlash(ensureLeadingSlash(path)))
+          withBaseUrl(removeEndingSlash(ensureLeadingSlash(path))),
         )
       ) {
         return config[path];
@@ -47,5 +47,5 @@ export const sidebarItemsConfig = derived(
     }
 
     return 'auto';
-  }
+  },
 );

@@ -29,7 +29,7 @@ const theme: ClientTheme = {
           loader: () =>
             theme.homePage === false
               ? import('./layout/Blank.svelte')
-              : import('./components/Home/Home.svelte')
+              : import('./components/Home/Home.svelte'),
         });
 
         if (import.meta.env.DEV) {
@@ -58,9 +58,9 @@ const theme: ClientTheme = {
     router.scrollOffset = () => ({
       top:
         document.querySelector('.navbar')?.getBoundingClientRect().height ?? 0,
-      left: 0
+      left: 0,
     });
-  }
+  },
 };
 
 export default theme;

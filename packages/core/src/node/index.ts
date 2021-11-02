@@ -7,7 +7,7 @@ export * from './app/plugin/ClientPlugin';
 export * from './app/plugin/Plugin';
 
 export function defineConfig<Theme extends ThemeConfig = ThemeConfig>(
-  config: AppConfig<Theme>
+  config: AppConfig<Theme>,
 ): AppConfig<Theme> {
   return config;
 }

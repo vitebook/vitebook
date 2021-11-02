@@ -2,7 +2,7 @@ import type {
   DefaultLoadedPage,
   DefaultPageModule,
   Page,
-  ServerPage
+  ServerPage,
 } from '@vitebook/core';
 import type { Component as VueComponent } from 'vue';
 

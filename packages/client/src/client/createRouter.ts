@@ -5,7 +5,7 @@ import { get } from 'svelte/store';
 import type {
   ClientPage,
   LoadedClientPage,
-  SvelteConstructor
+  SvelteConstructor,
 } from '../shared';
 import DefaultNotFound from './components/DefaultNotFound.svelte';
 import { createMemoryHistory } from './router/history/memory';
@@ -19,7 +19,7 @@ import { theme } from './stores/theme';
 export async function createRouter() {
   const router = new Router({
     baseUrl: get(siteOptions).baseUrl,
-    history: import.meta.env.SSR ? createMemoryHistory() : window.history
+    history: import.meta.env.SSR ? createMemoryHistory() : window.history,
   });
 
   addRoutes(router, get(pages));
@@ -30,7 +30,7 @@ export async function createRouter() {
   if (!router.hasRoute('/404.html')) {
     router.addRoute({
       path: '/404.html',
-      loader: async () => get(theme).NotFound ?? DefaultNotFound
+      loader: async () => get(theme).NotFound ?? DefaultNotFound,
     });
   }
 
@@ -38,7 +38,7 @@ export async function createRouter() {
     router.addRoute({
       path: '/',
       loader: async () =>
-        (await import('./components/Explorer/Explorer.svelte')).default
+        (await import('./components/Explorer/Explorer.svelte')).default,
     });
   }
 
@@ -59,7 +59,7 @@ function addRoutes(router: Router, pages: Readonly<ClientPage[]>) {
       loader: () => loadPage(page),
       prefetch: async () => {
         await loadPage(page, { prefetch: true });
-      }
+      },
     });
 
     routes.push(page.route);
@@ -102,7 +102,7 @@ const loadedPageCache = new WeakMap<ClientPage, LoadedClientPage>();
 
 async function loadPage(
   page: ClientPage,
-  { prefetch = false } = {}
+  { prefetch = false } = {},
 ): Promise<SvelteConstructor> {
   if (import.meta.env.PROD) {
     if (loadedPageCache.has(page)) {
@@ -120,7 +120,7 @@ async function loadPage(
   const loadedPage = {
     ...page,
     module: mod,
-    meta: meta ?? {}
+    meta: meta ?? {},
   } as LoadedClientPage;
 
   if (import.meta.env.PROD) {

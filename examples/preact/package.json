@@ -18,7 +18,6 @@
     "@vitebook/markdown-shiki": "0.0.3",
     "@vitebook/preact": "0.0.3",
     "@vitebook/theme-default": "0.0.3",
-    "preact-render-to-string": "^5.1.19",
-    "svelte": "^3.44.0"
+    "typescript": "^4.4.3"
   }
 }

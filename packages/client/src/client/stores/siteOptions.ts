@@ -9,7 +9,7 @@ export const siteOptions = readable<SiteOptions>(options, (set) => {
       '/:virtual/vitebook/site',
       (mod: VirtualSiteDataModule) => {
         set(mod.default);
-      }
+      },
     );
   }
 });

@@ -3,7 +3,7 @@ import {
   currentRouteLocale,
   joinPath,
   siteOptions,
-  withBaseUrl
+  withBaseUrl,
 } from '@vitebook/client';
 import { derived } from 'svelte/store';
 
@@ -32,13 +32,13 @@ export const languageLinks = derived(
         languageMenu.selectLanguageName ??
         locales[localePath].langLabel ??
         'Unknown',
-      link: joinPath(withBaseUrl(localePath), currentPath)
+      link: joinPath(withBaseUrl(localePath), currentPath),
     }));
 
     return {
       text: languageMenu.selectLanguageText ?? 'Languages',
       ariaLabel: languageMenu.selectLanguageAriaLabel,
-      menu
+      menu,
     };
-  }
+  },
 );

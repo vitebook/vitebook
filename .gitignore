@@ -1,7 +1,6 @@
 dist/
 server-dist/
 packages/*/temp
-_old
 sandbox/*
 !sandbox/.gitkeep
 

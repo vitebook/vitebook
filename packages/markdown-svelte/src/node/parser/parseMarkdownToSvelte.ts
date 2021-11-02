@@ -4,7 +4,7 @@ import type { MarkdownPageMeta } from '@vitebook/markdown/node';
 import {
   MarkdownParser,
   parseMarkdown,
-  ParseMarkdownOptions
+  ParseMarkdownOptions,
 } from '@vitebook/markdown/node';
 import LRUCache from 'lru-cache';
 
@@ -24,7 +24,7 @@ export function parseMarkdownToSvelte(
   parser: MarkdownParser,
   source: string,
   filePath: string,
-  options: ParseMarkdownToSvelteOptions = {}
+  options: ParseMarkdownToSvelteOptions = {},
 ): ParsedMarkdownToSvelteResult {
   const cachedResult = cache.get(source);
   if (cachedResult) return cachedResult;
@@ -32,9 +32,9 @@ export function parseMarkdownToSvelte(
   const {
     html,
     meta,
-    env: parserEnv
+    env: parserEnv,
   } = parseMarkdown(app, parser, commentOutTemplateTags(source), filePath, {
-    ...options
+    ...options,
   });
 
   const { hoistedTags } = parserEnv as SvelteMarkdownParserEnv;
@@ -45,7 +45,7 @@ export function parseMarkdownToSvelte(
 
   const result: ParsedMarkdownToSvelteResult = {
     component,
-    meta
+    meta,
   };
 
   cache.set(source, result);
@@ -64,18 +64,18 @@ function buildMetaExport(tags: string[], meta: MarkdownPageMeta): string[] {
   const code = `\nexport const __pageMeta = ${prettyJsonStr(meta)};\n`;
 
   const scriptModuleIndex = tags.findIndex((tag) =>
-    OPENING_SCRIPT_MODULE_TAG_RE.test(tag)
+    OPENING_SCRIPT_MODULE_TAG_RE.test(tag),
   );
 
   if (scriptModuleIndex > -1) {
     const tagSrc = tags[scriptModuleIndex];
     tags[scriptModuleIndex] = tagSrc.replace(
       CLOSING_SCRIPT_TAG_RE,
-      IMPORT_GLOBALS_CODE + code + `</script>`
+      IMPORT_GLOBALS_CODE + code + `</script>`,
     );
   } else {
     tags.unshift(
-      `<script context="module">${IMPORT_GLOBALS_CODE}${code}</script>`
+      `<script context="module">${IMPORT_GLOBALS_CODE}${code}</script>`,
     );
   }
 
@@ -104,7 +104,7 @@ function dedupeHoistedTags(tags: string[] = []): string[] {
     key: string,
     tag: string,
     openingTagRe: RegExp,
-    closingTagRE: RegExp
+    closingTagRE: RegExp,
   ) => {
     if (!deduped.has(key)) {
       deduped.set(key, tag);
@@ -114,7 +114,7 @@ function dedupeHoistedTags(tags: string[] = []): string[] {
     const block = deduped.get(key)!;
     deduped.set(
       key,
-      block.replace(closingTagRE, tag.replace(openingTagRe, ''))
+      block.replace(closingTagRE, tag.replace(openingTagRe, '')),
     );
   };
 

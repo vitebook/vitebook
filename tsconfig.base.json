@@ -19,6 +19,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+    "outDir": "dist",
     "preserveWatchOutput": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
@@ -29,5 +30,5 @@
     "useDefineForClassFields": false,
     "types": ["node"]
   },
-  "exclude": ["node_modules/**", "**/bin/**", "**/dist/**", "**/_old/**"]
+  "exclude": ["node_modules/**", "**/dist/**"]
 }

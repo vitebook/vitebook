@@ -61,5 +61,5 @@ export function isFunction(value: unknown): value is Function {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isObject = <T extends Record<any, any> = Record<any, any>>(
-  val: unknown
+  val: unknown,
 ): val is T => Object.prototype.toString.call(val) === '[object Object]';

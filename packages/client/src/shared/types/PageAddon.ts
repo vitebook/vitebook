@@ -4,7 +4,7 @@ import type { SvelteConstructor } from './SveltePage';
 
 export type PageAddon<
   AddonMeta = unknown,
-  Component = SvelteConstructor
+  Component = SvelteConstructor,
 > = PageAddonLocaleData & {
   /** Page addon name. */
   name?: string;
@@ -27,13 +27,13 @@ export type PageAddonLocaleConfig = LocaleConfig<PageAddonLocaleData>;
 
 export type PageAddonModule<
   AddonMeta = unknown,
-  Component = SvelteConstructor
+  Component = SvelteConstructor,
 > = {
   default: PageAddon<AddonMeta, Component>;
 };
 
 export type VirtualPageAddonsModule<
-  Module extends PageAddonModule = PageAddonModule
+  Module extends PageAddonModule = PageAddonModule,
 > = {
   default: { loader: () => Promise<Module> }[];
 };

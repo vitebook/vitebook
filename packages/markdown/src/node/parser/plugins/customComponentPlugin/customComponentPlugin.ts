@@ -20,7 +20,7 @@ export const customComponentPlugin: PluginWithOptions<CustomComponentPluginOptio
   (parser, { customSequences }: CustomComponentPluginOptions = {}): void => {
     // Override default html block ruler.
     parser.block.ruler.at('html_block', htmlBlockRule(customSequences), {
-      alt: ['paragraph', 'reference', 'blockquote']
+      alt: ['paragraph', 'reference', 'blockquote'],
     });
 
     // Override default html inline ruler.

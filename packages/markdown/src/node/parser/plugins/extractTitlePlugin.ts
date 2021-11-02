@@ -15,7 +15,7 @@ export const extractTitlePlugin: PluginSimple = (parser): void => {
     if (tokenIdx > -1) {
       title = resolveTitleFromToken(state.tokens[tokenIdx + 1], {
         escapeText: false,
-        allowHtml: false
+        allowHtml: false,
       });
     } else {
       title = '';

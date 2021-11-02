@@ -5,7 +5,7 @@ import type { MarkdownPageMeta } from '@vitebook/markdown/node';
 import {
   MarkdownParser,
   parseMarkdown,
-  ParseMarkdownOptions
+  ParseMarkdownOptions,
 } from '@vitebook/markdown/node';
 import { transformSync } from 'esbuild';
 import LRUCache from 'lru-cache';
@@ -31,7 +31,7 @@ export function parseMarkdownToPreact(
   parser: MarkdownParser,
   source: string,
   filePath: string,
-  options: ParseMarkdownToPreactOptions = {}
+  options: ParseMarkdownToPreactOptions = {},
 ): ParsedMarkdownToPreactResult {
   const cachedResult = cache.get(source);
   if (cachedResult) return cachedResult;
@@ -39,9 +39,9 @@ export function parseMarkdownToPreact(
   const {
     html,
     meta,
-    env: parserEnv
+    env: parserEnv,
   } = parseMarkdown(app, parser, source, filePath, {
-    ...options
+    ...options,
   });
 
   const { hoistedTags } = parserEnv as PreactMarkdownParserEnv;
@@ -50,12 +50,12 @@ export function parseMarkdownToPreact(
     path.basename(filePath),
     dedupeHoistedTags(hoistedTags),
     html,
-    meta
+    meta,
   );
 
   const result: ParsedMarkdownToPreactResult = {
     component,
-    meta
+    meta,
   };
 
   cache.set(source, result);
@@ -66,7 +66,7 @@ function buildReactComponentModule(
   displayName: string,
   tags: string[],
   html: string,
-  meta: MarkdownPageMeta
+  meta: MarkdownPageMeta,
 ): string {
   const moduleCode = tags
     .find((tag) => OPENING_SCRIPT_MODULE_TAG_RE.test(tag))
@@ -77,7 +77,7 @@ function buildReactComponentModule(
     .find(
       (tag) =>
         !OPENING_SCRIPT_MODULE_TAG_RE.test(tag) &&
-        OPENING_SCRIPT_TAG_RE.test(tag)
+        OPENING_SCRIPT_TAG_RE.test(tag),
     )
     ?.replace(OPENING_SCRIPT_TAG_RE, '')
     ?.replace(CLOSING_SCRIPT_TAG_RE, '');
@@ -106,7 +106,7 @@ export default Markdown;
     target: 'esnext',
     loader: 'tsx',
     jsxFactory: 'h',
-    jsxFragment: 'Fragment'
+    jsxFragment: 'Fragment',
   }).code;
 }
 
@@ -117,7 +117,7 @@ function dedupeHoistedTags(tags: string[] = []): string[] {
     key: string,
     tag: string,
     openingTagRe: RegExp,
-    closingTagRE: RegExp
+    closingTagRE: RegExp,
   ) => {
     if (!deduped.has(key)) {
       deduped.set(key, tag);
@@ -127,7 +127,7 @@ function dedupeHoistedTags(tags: string[] = []): string[] {
     const block = deduped.get(key)!;
     deduped.set(
       key,
-      block.replace(closingTagRE, tag.replace(openingTagRe, ''))
+      block.replace(closingTagRE, tag.replace(openingTagRe, '')),
     );
   };
 

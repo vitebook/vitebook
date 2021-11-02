@@ -7,7 +7,7 @@ import {
   pages,
   resolveLocalePath,
   toTitleCase,
-  withBaseUrl
+  withBaseUrl,
 } from '@vitebook/client';
 import { derived } from 'svelte/store';
 
@@ -36,7 +36,7 @@ export const autoSidebarItems = derived(
       const pageLocale = resolveLocalePath(
         site.baseUrl,
         site.locales,
-        page.route
+        page.route,
       );
 
       if (routeLocale !== pageLocale) {
@@ -54,7 +54,7 @@ export const autoSidebarItems = derived(
           items.push({
             text: title,
             type: page.type,
-            link: withBaseUrl(page.route)
+            link: withBaseUrl(page.route),
           });
           return;
         }
@@ -67,7 +67,7 @@ export const autoSidebarItems = derived(
           group = {
             text: title,
             collapsible: true,
-            children: []
+            children: [],
           };
 
           items.push(group);
@@ -80,5 +80,5 @@ export const autoSidebarItems = derived(
     }
 
     return sidebarItems;
-  }
+  },
 );

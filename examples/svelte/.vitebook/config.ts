@@ -3,7 +3,7 @@ import { svelteMarkdownPlugin } from '@vitebook/markdown-svelte/node';
 import { shikiMarkdownPlugin } from '@vitebook/markdown-shiki/node';
 import {
   DefaultThemeConfig,
-  defaultThemePlugin
+  defaultThemePlugin,
 } from '@vitebook/theme-default/node';
 import sveltePreprocess from 'svelte-preprocess';
 
@@ -12,7 +12,7 @@ export default defineConfig<DefaultThemeConfig>({
   plugins: [
     shikiMarkdownPlugin(),
     svelteMarkdownPlugin({
-      include: /\.md/
+      include: /\.md/,
     }),
     clientPlugin({
       include: /\.(md|svelte)/,
@@ -21,20 +21,20 @@ export default defineConfig<DefaultThemeConfig>({
         preprocess: [
           sveltePreprocess({
             // Vitebook internally handles preprocessing typescript with `esbuild`.
-            typescript: false
-          })
-        ]
-      }
+            typescript: false,
+          }),
+        ],
+      },
     }),
-    defaultThemePlugin()
+    defaultThemePlugin(),
   ],
   site: {
     title: 'Vitebook',
     description: 'Blazing fast Storybook alternative.',
     theme: {
       remoteGitRepo: {
-        url: 'vitebook/vitebook'
-      }
-    }
-  }
+        url: 'vitebook/vitebook',
+      },
+    },
+  },
 });

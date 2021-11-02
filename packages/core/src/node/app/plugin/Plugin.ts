@@ -23,7 +23,7 @@ export type Plugin = VitePlugin & {
    */
   siteData?: <T extends SiteOptions>(
     options: T,
-    env: AppEnv
+    env: AppEnv,
   ) => Partial<T> | null | void | Promise<Partial<T> | null | void>;
 
   /**
@@ -32,7 +32,7 @@ export type Plugin = VitePlugin & {
    * This hook may be called more than once if the user changes the config file.
    */
   siteDataResolved?: <T extends SiteOptions>(
-    options: T
+    options: T,
   ) => void | Promise<void>;
 
   /**
@@ -50,7 +50,7 @@ export type Plugin = VitePlugin & {
    * Note: this hook will be called more than once as the user makes changes to files.
    */
   resolvePage?(
-    ctx: ResolvePageContext
+    ctx: ResolvePageContext,
   ):
     | ResolvedPage
     | null

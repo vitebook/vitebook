@@ -7,7 +7,7 @@ import kleur from 'kleur';
 import {
   createMarkdownParser,
   MarkdownParserOptions,
-  parseMarkdownToVue
+  parseMarkdownToVue,
 } from './parser';
 
 export const PLUGIN_NAME = '@vitebook/markdown-vue' as const;
@@ -31,7 +31,7 @@ export type VueMarkdownPluginOptions = MarkdownParserOptions & {
 const DEFAULT_INCLUDE_RE = /\.md($|\?)/;
 
 export function vueMarkdownPlugin(
-  options: VueMarkdownPluginOptions = {}
+  options: VueMarkdownPluginOptions = {},
 ): Plugin {
   let app: App;
   let parser: MarkdownParser;
@@ -59,14 +59,14 @@ export function vueMarkdownPlugin(
       parser = await createMarkdownParser(parserOptions);
 
       vuePlugin = _app.plugins.find(
-        (plugin) => plugin.name === 'vite:vue'
+        (plugin) => plugin.name === 'vite:vue',
       ) as Plugin;
 
       if (!vuePlugin) {
         throw logger.createError(
           `${kleur.bold('@vitebook/markdown-vue')} requires the ${kleur.bold(
-            '@vitebook/vue'
-          )} plugin.`
+            '@vitebook/vue',
+          )} plugin.`,
         );
       }
 
@@ -82,8 +82,8 @@ export function vueMarkdownPlugin(
           id: '@vitebook/vue/VuePageView.svelte',
           type: 'vue:md',
           context: {
-            loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`
-          }
+            loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`,
+          },
         };
       }
 
@@ -98,7 +98,7 @@ export function vueMarkdownPlugin(
       if (files.has(id)) {
         const { component } = parseMarkdownToVue(app, parser, code, id, {
           escapeConstants: isBuild,
-          define
+          define,
         });
 
         return component;
@@ -115,14 +115,14 @@ export function vueMarkdownPlugin(
 
         const { component } = parseMarkdownToVue(app, parser, content, file, {
           escapeConstants: isBuild,
-          define
+          define,
         });
 
         return vuePlugin.handleHotUpdate?.({
           ...ctx,
-          read: () => component
+          read: () => component,
         });
       }
-    }
+    },
   };
 }

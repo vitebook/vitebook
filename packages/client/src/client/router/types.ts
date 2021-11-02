@@ -12,7 +12,7 @@ export type RouteComponent =
 export type RouteLoaderComponent = SvelteConstructor | SvelteModule;
 
 export type RouteLoader = (
-  location: RouteLocation
+  location: RouteLocation,
 ) =>
   | RouteComponent
   | Promise<RouteComponent>

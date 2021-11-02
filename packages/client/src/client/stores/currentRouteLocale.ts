@@ -9,5 +9,5 @@ export const currentRouteLocale = derived(
   ([site, route]) =>
     route?.path
       ? resolveLocalePath(site.baseUrl, site.locales, route.path)
-      : '/'
+      : '/',
 );

@@ -11,8 +11,8 @@ export const navbarHeight = readable(0, (set) => {
         parseFloat(
           window
             .getComputedStyle(document.querySelector('.theme.__vbk__')!)
-            .getPropertyValue('--vbk--navbar-height')
-        ) * 16
+            .getPropertyValue('--vbk--navbar-height'),
+        ) * 16,
       );
     });
   };

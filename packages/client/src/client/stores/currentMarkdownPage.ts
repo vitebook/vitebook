@@ -4,5 +4,5 @@ import { isLoadedMarkdownPage } from '../../shared';
 import { currentPage } from './currentPage';
 
 export const currentMarkdownPage = derived(currentPage, (page) =>
-  isLoadedMarkdownPage(page) ? page : undefined
+  isLoadedMarkdownPage(page) ? page : undefined,
 );

@@ -5,7 +5,7 @@ import type { MarkdownParser, MarkdownPlugin } from '@vitebook/markdown/node';
 import {
   createMarkdownParser,
   MarkdownParserOptions,
-  parseMarkdownToSvelte
+  parseMarkdownToSvelte,
 } from './parser';
 
 export const PLUGIN_NAME = '@vitebook/markdown-svelte' as const;
@@ -29,7 +29,7 @@ export type SvelteMarkdownPluginOptions = MarkdownParserOptions & {
 const DEFAULT_INCLUDE_RE = /\.md($|\?)/;
 
 export function svelteMarkdownPlugin(
-  options: SvelteMarkdownPluginOptions = {}
+  options: SvelteMarkdownPluginOptions = {},
 ): Plugin {
   let app: App;
   let parser: MarkdownParser;
@@ -57,7 +57,7 @@ export function svelteMarkdownPlugin(
       parser = await createMarkdownParser(parserOptions);
 
       sveltePlugin = _app.plugins.find(
-        (plugin) => plugin.name === 'vite-plugin-svelte'
+        (plugin) => plugin.name === 'vite-plugin-svelte',
       ) as Plugin;
 
       for (const plugin of app.plugins) {
@@ -69,7 +69,7 @@ export function svelteMarkdownPlugin(
       if (filter(filePath)) {
         files.add(filePath);
         return {
-          type: 'svelte:md'
+          type: 'svelte:md',
         };
       }
 
@@ -84,7 +84,7 @@ export function svelteMarkdownPlugin(
       if (files.has(id)) {
         const { component } = parseMarkdownToSvelte(app, parser, code, id, {
           escapeConstants: isBuild,
-          define
+          define,
         });
 
         return component;
@@ -106,15 +106,15 @@ export function svelteMarkdownPlugin(
           file,
           {
             escapeConstants: isBuild,
-            define
-          }
+            define,
+          },
         );
 
         return sveltePlugin?.handleHotUpdate?.({
           ...ctx,
-          read: () => component
+          read: () => component,
         });
       }
-    }
+    },
   };
 }

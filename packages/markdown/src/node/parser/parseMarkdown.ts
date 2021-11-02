@@ -9,7 +9,7 @@ import type {
   MarkdownParser,
   MarkdownParserEnv,
   ParsedMarkdownResult,
-  ParseMarkdownOptions
+  ParseMarkdownOptions,
 } from './types';
 import { preventViteConstantsReplacement } from './utils';
 
@@ -20,7 +20,7 @@ export function parseMarkdown(
   parser: MarkdownParser,
   source: string,
   filePath: string,
-  options: ParseMarkdownOptions = {}
+  options: ParseMarkdownOptions = {},
 ): ParsedMarkdownResult {
   const cachedResult = cache.get(source);
   if (cachedResult) return cachedResult;
@@ -28,18 +28,18 @@ export function parseMarkdown(
   const {
     data: frontmatter,
     content,
-    excerpt
+    excerpt,
   } = matter(source, {
     excerpt_separator: '<!-- more -->',
     engines: {
-      toml: toml.parse.bind(toml)
-    }
+      toml: toml.parse.bind(toml),
+    },
   });
 
   const parserEnv: MarkdownParserEnv = {
     app,
     filePath,
-    frontmatter
+    frontmatter,
   };
 
   let html = parser.render(content, parserEnv);
@@ -54,7 +54,7 @@ export function parseMarkdown(
     headers = [],
     importedFiles = [],
     links = [],
-    title = ''
+    title = '',
   } = parserEnv;
 
   const result: ParsedMarkdownResult = {
@@ -71,8 +71,8 @@ export function parseMarkdown(
       description: frontmatter.description as string,
       locales: frontmatter.locales as LocaleConfig,
       frontmatter,
-      lastUpdated: Math.round(fs.statSync(filePath).mtimeMs)
-    }
+      lastUpdated: Math.round(fs.statSync(filePath).mtimeMs),
+    },
   };
 
   cache.set(source, result);

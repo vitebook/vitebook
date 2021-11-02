@@ -5,8 +5,7 @@ import kleur from 'kleur';
 
 async function main() {
   const mjsFiles = await globby(['../packages/*/dist/**/*.js'], {
-    // @ts-expect-error
-    cwd: dirname(fileURLToPath(import.meta.url))
+    cwd: dirname(fileURLToPath(import.meta.url)),
   });
 
   const ok = [];
@@ -27,7 +26,7 @@ async function main() {
           console.error(color('\n-----\n\n'));
           fail.push(mjsPath);
         });
-    })
+    }),
   );
 
   ok.length && console.log(kleur.dim(`${ok.length} OK:\n- ${ok.join('\n- ')}`));

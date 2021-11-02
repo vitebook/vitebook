@@ -6,12 +6,11 @@ import { fileURLToPath } from 'url';
 
 const { prompts } = Prompts;
 
-// @ts-expect-error
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const packagesDir = path.resolve(__dirname, '../packages');
 
 const packages = readdirSync(packagesDir).filter(
-  (dirName) => !dirName.startsWith('.')
+  (dirName) => !dirName.startsWith('.'),
 );
 
 const pkgArg = packages.includes(process.argv[2]) ? process.argv[2] : undefined;
@@ -24,7 +23,7 @@ const pkgIndex =
       await prompts.select({
         message: 'Pick a package',
         choices: packages,
-        initial: 0
+        initial: 0,
       });
 
 const pkg = packages[pkgIndex];
@@ -34,6 +33,6 @@ spawn(
   'npm',
   ['run', watch ? 'build:watch' : 'build', `--workspace=@vitebook/${pkg}`],
   {
-    stdio: 'inherit'
-  }
+    stdio: 'inherit',
+  },
 );

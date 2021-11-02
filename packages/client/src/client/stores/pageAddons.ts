@@ -10,7 +10,7 @@ export const pageAddons = readable(addons, (set) => {
       '/:virtual/vitebook/addons',
       (mod: VirtualPageAddonsModule) => {
         set(mod.default);
-      }
+      },
     );
   }
 });

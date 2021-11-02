@@ -1,7 +1,7 @@
 import {
   currentMarkdownPageMeta,
   currentPage,
-  isArray
+  isArray,
 } from '@vitebook/client';
 import { derived, Readable } from 'svelte/store';
 
@@ -11,7 +11,7 @@ import { flattenSidebarLinks } from '../Sidebar/flattenSidebarLinks';
 import { sidebarItems } from '../Sidebar/sidebarItems';
 
 const candidates = derived(sidebarItems, (items) =>
-  isArray(items) ? flattenSidebarLinks(items) : []
+  isArray(items) ? flattenSidebarLinks(items) : [],
 );
 
 export function useNextAndPrevLinks(): Readable<{
@@ -26,7 +26,7 @@ export function useNextAndPrevLinks(): Readable<{
         return {
           next: null,
           prev: null,
-          hasLinks: false
+          hasLinks: false,
         };
       }
 
@@ -62,8 +62,8 @@ export function useNextAndPrevLinks(): Readable<{
       return {
         next,
         prev,
-        hasLinks: !!next || !!prev
+        hasLinks: !!next || !!prev,
       };
-    }
+    },
   );
 }

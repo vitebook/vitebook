@@ -8,7 +8,7 @@ import kleur from 'kleur';
 import {
   createMarkdownParser,
   MarkdownParserOptions,
-  parseMarkdownToPreact
+  parseMarkdownToPreact,
 } from './parser';
 
 export const PLUGIN_NAME = '@vitebook/markdown-preact' as const;
@@ -32,7 +32,7 @@ export type PreactMarkdownPluginOptions = MarkdownParserOptions & {
 const DEFAULT_INCLUDE_RE = /\.md($|\?)/;
 
 export function preactMarkdownPlugin(
-  options: PreactMarkdownPluginOptions = {}
+  options: PreactMarkdownPluginOptions = {},
 ): Plugin {
   let app: App;
   let parser: MarkdownParser;
@@ -60,14 +60,14 @@ export function preactMarkdownPlugin(
       parser = await createMarkdownParser(parserOptions);
 
       prefreshPlugin = _app.plugins.find(
-        (plugin) => plugin.name === 'prefresh'
+        (plugin) => plugin.name === 'prefresh',
       ) as Plugin;
 
       if (!prefreshPlugin) {
         throw logger.createError(
           `${kleur.bold('@vitebook/markdown-preact')} requires the ${kleur.bold(
-            '@vitebook/preact'
-          )} plugin.`
+            '@vitebook/preact',
+          )} plugin.`,
         );
       }
 
@@ -83,8 +83,8 @@ export function preactMarkdownPlugin(
           id: '@vitebook/preact/PreactPageView.svelte',
           type: 'preact:md',
           context: {
-            loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`
-          }
+            loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`,
+          },
         };
       }
 
@@ -99,7 +99,7 @@ export function preactMarkdownPlugin(
       if (files.has(id)) {
         const { component } = parseMarkdownToPreact(app, parser, code, id, {
           escapeConstants: isBuild,
-          define
+          define,
         });
 
         return app.env.command === 'dev'
@@ -107,12 +107,12 @@ export function preactMarkdownPlugin(
               this,
               component,
               id.replace(DEFAULT_INCLUDE_RE, '.tsx'),
-              ...args
+              ...args,
             )
           : component;
       }
 
       return null;
-    }
+    },
   };
 }

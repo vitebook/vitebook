@@ -7,7 +7,7 @@ import {
   loadParsedMarkdown,
   MarkdownParser,
   MarkdownParserOptions,
-  parseMarkdown
+  parseMarkdown,
 } from './parser';
 
 export const PLUGIN_NAME = '@vitebook/markdown' as const;
@@ -56,7 +56,7 @@ export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
       if (filter(filePath)) {
         files.add(filePath);
         return {
-          type: 'md'
+          type: 'md',
         };
       }
 
@@ -74,6 +74,6 @@ export function markdownPlugin(options: MarkdownPluginOptions = {}): Plugin {
       }
 
       return null;
-    }
+    },
   };
 }

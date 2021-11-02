@@ -6,12 +6,11 @@ import { fileURLToPath } from 'url';
 
 const { prompts } = Prompts;
 
-// @ts-expect-error
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const examplesDir = path.resolve(__dirname, '../examples');
 
 const examples = readdirSync(examplesDir).filter(
-  (dirName) => !dirName.startsWith('.')
+  (dirName) => !dirName.startsWith('.'),
 );
 
 const exampleArg = examples.includes(process.argv[2])
@@ -27,7 +26,7 @@ const exampleIndex =
       await prompts.select({
         message: 'Pick an example',
         choices: examples,
-        initial: 0
+        initial: 0,
       });
 
 const example = examples[exampleIndex];
@@ -51,11 +50,11 @@ const scriptIndex =
       await prompts.select({
         message: 'Pick a script',
         choices: scripts,
-        initial: 0
+        initial: 0,
       });
 
 const script = scripts[scriptIndex];
 
 spawn('npm', ['run', script, `--workspace=${examplePkgName}`], {
-  stdio: 'inherit'
+  stdio: 'inherit',
 });

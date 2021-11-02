@@ -6,7 +6,7 @@ export const LoggerColor = Object.freeze({
   Tip: kleur.magenta,
   Success: kleur.green,
   Warn: kleur.yellow,
-  Error: kleur.red
+  Error: kleur.red,
 });
 
 export const LoggerIcon = Object.freeze({
@@ -14,7 +14,7 @@ export const LoggerIcon = Object.freeze({
   Tip: '💡',
   Success: '✅',
   Warn: '⚠️ ',
-  Error: '🚨'
+  Error: '🚨',
 });
 
 export const formatInfoMsg = (message: string): string =>
@@ -50,13 +50,13 @@ export const withSpinner =
       const result = await target();
       spinner.stopAndPersist({
         symbol: '',
-        text: formatSuccessMsg(message)
+        text: formatSuccessMsg(message),
       });
       return result;
     } catch (e) {
       spinner.stopAndPersist({
         symbol: '',
-        text: formatErrorMsg(message)
+        text: formatErrorMsg(message),
       });
       throw e;
     }
@@ -74,5 +74,5 @@ export const logger = {
   formatSuccessMsg,
   formatInfoMsg,
   formatErrorMsg,
-  withSpinner
+  withSpinner,
 };

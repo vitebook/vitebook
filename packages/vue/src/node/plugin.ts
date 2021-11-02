@@ -38,7 +38,7 @@ export const PLUGIN_NAME = '@vitebook/client' as const;
 export function vuePlugin(options: VuePluginOptions = {}): Plugin[] {
   const filter = createFilter(
     options.include ?? DEFAULT_INCLUDE_RE,
-    options.exclude
+    options.exclude,
   );
 
   /** Page system file paths. */
@@ -54,8 +54,8 @@ export function vuePlugin(options: VuePluginOptions = {}): Plugin[] {
         return {
           optimizeDeps: {
             // Force include `vue` to avoid duplicated copies when linked + optimized.
-            include: ['vue']
-          }
+            include: ['vue'],
+          },
         };
       },
       async resolvePage({ filePath, relativeFilePath }) {
@@ -66,8 +66,8 @@ export function vuePlugin(options: VuePluginOptions = {}): Plugin[] {
             id: '@vitebook/vue/VuePageView.svelte',
             type: type === 'vue' ? 'vue' : `vue:${type}`,
             context: {
-              loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`
-            }
+              loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`,
+            },
           };
         }
 
@@ -100,12 +100,12 @@ export function vuePlugin(options: VuePluginOptions = {}): Plugin[] {
           const content = await read();
           return vuePlugin.handleHotUpdate?.({
             ...ctx,
-            read: () => svgToVue(content)
+            read: () => svgToVue(content),
           });
         }
-      }
+      },
     },
-    vuePlugin
+    vuePlugin,
   ];
 }
 

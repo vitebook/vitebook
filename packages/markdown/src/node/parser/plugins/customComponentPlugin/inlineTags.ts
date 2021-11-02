@@ -69,5 +69,5 @@ export const inlineTags = [
   'tt',
   'var',
   'video',
-  'wbr'
+  'wbr',
 ];

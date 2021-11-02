@@ -57,8 +57,8 @@
   ],
   "scripts": {
     "build": "run-s clean build:client build:node build:types",
-    "build:client": "node ../../.scripts/build-client.mjs",
-    "build:node": "node ../../.scripts/build-node.mjs --entry src/node/index.ts,src/node/utils/index.ts,src/node/cli/run.ts",
+    "build:client": "node ../../.scripts/build-client.js",
+    "build:node": "node ../../.scripts/build-node.js --entry src/node/index.ts,src/node/utils/index.ts,src/node/cli/run.ts",
     "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
     "clean": "rimraf dist",
     "dev": "pnpm clean && run-p watch:client watch:node watch:types",

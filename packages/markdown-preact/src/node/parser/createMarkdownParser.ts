@@ -1,7 +1,7 @@
 import {
   createMarkdownParser as createDefaultMarkdownParser,
   MarkdownParser,
-  MarkdownParserOptions as DefaultMarkdownParserOptions
+  MarkdownParserOptions as DefaultMarkdownParserOptions,
 } from '@vitebook/markdown/node';
 
 import {
@@ -9,7 +9,7 @@ import {
   CustomComponentPluginOptions,
   escapeCodePlugin,
   hoistTagsPlugin,
-  HoistTagsPluginOptions
+  HoistTagsPluginOptions,
 } from './plugins';
 
 export type MarkdownParserOptions = DefaultMarkdownParserOptions & {
@@ -39,6 +39,6 @@ export function createMarkdownParser({
       }
 
       parser.use(escapeCodePlugin);
-    }
+    },
   });
 }

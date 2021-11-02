@@ -15,7 +15,7 @@ async function mount() {
     new App({
       target: document.getElementById('app')!,
       hydrate: import.meta.env.PROD,
-      context
+      context,
     });
   });
 }

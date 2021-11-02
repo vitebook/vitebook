@@ -12,13 +12,13 @@ export type HoistTagsPluginOptions = {
  */
 export const hoistTagsPlugin: PluginWithOptions<HoistTagsPluginOptions> = (
   md,
-  { customBlocks = [] }: HoistTagsPluginOptions = {}
+  { customBlocks = [] }: HoistTagsPluginOptions = {},
 ): void => {
   // Hoist `<script>` and other user defined tags.
   const hoistTags = Array.from(new Set(['script', ...customBlocks]));
   const hoistTagsRegexp = new RegExp(
     `^<(${hoistTags.join('|')})(?=(\\s|>|$))`,
-    'i'
+    'i',
   );
 
   const rawRule = md.renderer.rules.html_block!;
@@ -28,7 +28,7 @@ export const hoistTagsPlugin: PluginWithOptions<HoistTagsPluginOptions> = (
     idx,
     options,
     env: PreactMarkdownParserEnv,
-    self
+    self,
   ) => {
     const content = tokens[idx].content;
     const hoistedTags = env.hoistedTags || (env.hoistedTags = []);

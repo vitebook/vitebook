@@ -1,7 +1,7 @@
 import type { NavbarItemsConfig } from './NavbarItemsConfig';
 import type {
   MultiSidebarItemsConfig,
-  SidebarItemsConfig
+  SidebarItemsConfig,
 } from './SidebarItemsConfig';
 
 export type DefaultThemeConfig = DefaultThemeLocaleData & {
@@ -315,7 +315,7 @@ export type DefaultThemeLocaleConfig = Record<string, DefaultThemeLocaleData>;
 
 export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
   a11y: {
-    openInNewWindow: 'open in new window'
+    openInNewWindow: 'open in new window',
   },
 
   remoteGitRepo: {
@@ -325,7 +325,7 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
 
   darkMode: {
     enabled: true,
-    buttonAriaLabel: 'Toggle dark mode'
+    buttonAriaLabel: 'Toggle dark mode',
   },
 
   navbar: false,
@@ -334,7 +334,7 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
     items: 'auto',
     iconColors: false,
     backToMainMenuText: 'Back to main menu',
-    toggleAriaLabel: 'Toggle sidebar menu'
+    toggleAriaLabel: 'Toggle sidebar menu',
   },
 
   markdown: {
@@ -352,7 +352,7 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
       // url: undefined,
       // branch: undefined,
       // dir: undefined,
-    }
+    },
   },
 
   homePage: false,
@@ -360,6 +360,6 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
   notFoundPage: {
     message: 'Oops, something went wrong.',
     goHomeText: 'Take me home',
-    goBackText: 'Go back'
-  }
+    goBackText: 'Go back',
+  },
 };

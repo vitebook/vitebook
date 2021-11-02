@@ -44,8 +44,8 @@
   ],
   "scripts": {
     "build": "run-s clean build:client build:node build:types",
-    "build:client": "node ../../.scripts/build-client.mjs",
-    "build:node": "node ../../.scripts/build-node.mjs --external node-html-parser",
+    "build:client": "node ../../.scripts/build-client.js",
+    "build:node": "node ../../.scripts/build-node.js --external node-html-parser",
     "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
     "clean": "rimraf dist",
     "dev": "pnpm clean && run-p watch:client watch:node watch:types",

@@ -3,7 +3,7 @@ import type { StoryMeta } from '@vitebook/client';
 
 export const __storyMeta: StoryMeta = {
   title: 'Button',
-  description: 'My awesome button.'
+  description: 'My awesome button.',
 };
 </script>
 

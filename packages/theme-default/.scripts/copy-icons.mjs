@@ -12,4 +12,7 @@ async function main() {
   await fs.copy(iconsDir, dest);
 }
 
-main();
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

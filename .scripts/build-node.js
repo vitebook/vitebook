@@ -11,7 +11,7 @@ const requireShim = [
   '__require.__proto__.resolve = require.resolve;',
   'const __filename = __vitebook__fileURLToPath(import.meta.url);',
   'const __dirname = __vitebook__path.dirname(__filename);',
-  '\n'
+  '\n',
 ].join('\n');
 
 const args = minimist(process.argv.slice(2));
@@ -20,7 +20,7 @@ async function main() {
   const entryArg = args.entry ?? 'src/node/index.ts';
 
   const entry = (entryArg.includes(',') ? entryArg.split(',') : [entryArg]).map(
-    (p) => path.resolve(process.cwd(), p)
+    (p) => path.resolve(process.cwd(), p),
   );
 
   const outdir = path.resolve(process.cwd(), args.outdir ?? 'dist/node');
@@ -45,9 +45,12 @@ async function main() {
       'svelte',
       'vue',
       'vite',
-      ...(args.external?.split(',') ?? [])
-    ]
+      ...(args.external?.split(',') ?? []),
+    ],
   });
 }
 
-main();
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

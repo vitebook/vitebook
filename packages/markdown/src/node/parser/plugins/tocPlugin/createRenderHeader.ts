@@ -10,7 +10,7 @@ export const createRenderHeaders = ({
   listClass,
   itemClass,
   linkTag,
-  linkClass
+  linkClass,
 }: Pick<
   Required<TocPluginOptions>,
   'listTag' | 'listClass' | 'itemClass' | 'linkTag' | 'linkClass'
@@ -35,7 +35,7 @@ ${header.title}\
 </${linkTagString}>\
 ${header.children.length > 0 ? renderHeaders(header.children) : ''}\
 </${itemTagString}>\
-`
+`,
   )
   .join('')}\
 </${listTagString}>`;

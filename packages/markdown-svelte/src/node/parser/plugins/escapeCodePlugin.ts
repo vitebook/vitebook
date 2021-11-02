@@ -28,7 +28,7 @@ const SPACES_RE = /\s*/g;
 const ENTITIES = {
   '{': '&#123;',
   '}': '&#125;',
-  ' ': '&nbsp;'
+  ' ': '&nbsp;',
 };
 
 function escapeChars(html: string) {

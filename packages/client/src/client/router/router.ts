@@ -11,7 +11,7 @@ import type {
   NavigationOptions,
   Route,
   RouteLocation,
-  RouterOptions
+  RouterOptions,
 } from './types';
 
 /**
@@ -74,7 +74,7 @@ export class Router {
   parse(url: URL): RouteLocation | undefined {
     if (this.owns(url)) {
       const path = ensureLeadingSlash(
-        url.pathname.slice(this.baseUrl.length) || '/'
+        url.pathname.slice(this.baseUrl.length) || '/',
       );
       const decodedPath = decodeURI(path);
       const route =
@@ -98,14 +98,14 @@ export class Router {
       scroll = undefined,
       replace = false,
       keepfocus = false,
-      state = {}
-    }: GoToRouteOptions = {}
+      state = {},
+    }: GoToRouteOptions = {},
   ) {
     const url = new URL(
       href,
       href.startsWith('#')
         ? /(.*?)(#|$)/.exec(location.href)![1]
-        : getBaseUri(this.baseUrl)
+        : getBaseUri(this.baseUrl),
     );
 
     await this.beforeNavigate?.(url);
@@ -124,7 +124,7 @@ export class Router {
         window.requestAnimationFrame(() => {
           currentRoute.__update((route) => ({
             ...route,
-            hash: href
+            hash: href,
           }));
         });
 
@@ -135,7 +135,7 @@ export class Router {
         url,
         scroll,
         keepfocus,
-        hash: url.hash
+        hash: url.hash,
       });
 
       if (this.resolveReady) {
@@ -157,14 +157,14 @@ export class Router {
 
     if (routeLocation?.route.redirect) {
       await this.prefetch(
-        new URL(routeLocation.route.redirect, getBaseUri(this.baseUrl))
+        new URL(routeLocation.route.redirect, getBaseUri(this.baseUrl)),
       );
       return;
     }
 
     if (!routeLocation) {
       throw new Error(
-        'Attempted to prefetch a URL that does not belong to this app'
+        'Attempted to prefetch a URL that does not belong to this app',
       );
     }
 
@@ -175,7 +175,7 @@ export class Router {
     url,
     keepfocus,
     scroll,
-    hash
+    hash,
   }: NavigationOptions) {
     const routeLocation = this.parse(url);
 
@@ -187,7 +187,7 @@ export class Router {
 
     if (!routeLocation) {
       throw new Error(
-        'Attempted to navigate to a URL that does not belong to this app'
+        'Attempted to navigate to a URL that does not belong to this app',
       );
     }
 
@@ -199,7 +199,7 @@ export class Router {
 
     currentRoute.__set({
       ...routeLocation,
-      component: (component as SvelteModule).default ?? component
+      component: (component as SvelteModule).default ?? component,
     });
 
     await tick();
@@ -219,7 +219,7 @@ export class Router {
 
   protected scrollToPosition({
     scroll,
-    hash
+    hash,
   }: Pick<NavigationOptions, 'scroll' | 'hash'>) {
     if (!inBrowser) return;
 
@@ -238,7 +238,7 @@ export class Router {
         scrollTo({
           left: scroll.x,
           top: scroll.y,
-          behavior: this.scrollBehaviour
+          behavior: this.scrollBehaviour,
         });
       } else if (deepLinked) {
         const docRect = document.documentElement.getBoundingClientRect();
@@ -282,12 +282,12 @@ export class Router {
         // This will persist even if we navigate away from the site and come back
         const newState = {
           ...(this.history.state || {}),
-          'vitebook:scroll': scrollState()
+          'vitebook:scroll': scrollState(),
         };
         this.history.replaceState(
           newState,
           document.title,
-          window.location.href
+          window.location.href,
         );
       }, 50);
     });
@@ -376,7 +376,7 @@ export class Router {
         const url = new URL(location.href);
         this.navigate({
           url,
-          scroll: event.state['vitebook:scroll']
+          scroll: event.state['vitebook:scroll'],
         });
       }
     });
@@ -386,7 +386,7 @@ export class Router {
 function scrollState() {
   return {
     x: scrollX,
-    y: scrollY
+    y: scrollY,
   };
 }
 

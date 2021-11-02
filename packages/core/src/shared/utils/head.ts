@@ -6,7 +6,7 @@ import type { HeadAttrsConfig, HeadConfig } from '../types/HeadConfig';
 export const resolveHeadIdentifier = ([
   tag,
   attrs,
-  content
+  content,
 ]: HeadConfig): string => {
   // avoid duplicated `<meta>` with same `name`
   if (tag === 'meta' && attrs.name) {
@@ -51,7 +51,7 @@ export const renderHeadAttrs = (attrs: HeadAttrsConfig): string =>
   Object.entries(attrs)
     .filter((item): item is [string, string | true] => item[1] !== false)
     .map(([key, value]) =>
-      value === true ? ` ${key}` : ` ${key}="${attrs[key]}"`
+      value === true ? ` ${key}` : ` ${key}="${attrs[key]}"`,
     )
     .join('');
 
@@ -61,7 +61,7 @@ export const renderHeadAttrs = (attrs: HeadAttrsConfig): string =>
 export const renderHead = ([
   tag,
   attrs,
-  innerHTML = ''
+  innerHTML = '',
 ]: HeadConfig): string => {
   const openTag = `<${tag}${renderHeadAttrs(attrs)}>`;
   if (tag === 'link' || tag === 'meta' || tag === 'base') {

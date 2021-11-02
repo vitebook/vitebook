@@ -1,6 +1,6 @@
 import {
   customComponentPlugin as defaultCustomComponentPlugin,
-  CustomComponentPluginOptions
+  CustomComponentPluginOptions,
 } from '@vitebook/markdown/node';
 import type { PluginWithOptions } from 'markdown-it';
 
@@ -18,7 +18,7 @@ export const vueReservedTags = [
   'transition-group',
   'keep-alive',
   'slot',
-  'teleport'
+  'teleport',
 ];
 
 /**
@@ -27,7 +27,7 @@ export const vueReservedTags = [
 export const customComponentPlugin: PluginWithOptions<CustomComponentPluginOptions> =
   (
     parser,
-    { customSequences = [], ...options }: CustomComponentPluginOptions = {}
+    { customSequences = [], ...options }: CustomComponentPluginOptions = {},
   ) => {
     defaultCustomComponentPlugin(parser, {
       ...options,
@@ -37,11 +37,11 @@ export const customComponentPlugin: PluginWithOptions<CustomComponentPluginOptio
           // Treat Vue reserved tags as block tags.
           new RegExp(
             '^</?(' + vueReservedTags.join('|') + ')(?=(\\s|/?>|$))',
-            'i'
+            'i',
           ),
           /^$/,
-          true
-        ]
-      ]
+          true,
+        ],
+      ],
     });
   };

@@ -2,7 +2,7 @@ import type {
   DefaultLoadedPage,
   DefaultPageModule,
   MarkdownPageMeta,
-  Page
+  Page,
 } from '@vitebook/core';
 
 import type { SvelteConstructor } from './SveltePage';

@@ -13,7 +13,7 @@ export const variants = {
   add(variant: Variation) {
     variants.update((v) => ({
       ...v,
-      [variant.id]: variant
+      [variant.id]: variant,
     }));
   },
   delete(variantId: string) {
@@ -34,7 +34,7 @@ export const variants = {
 
       return variants;
     });
-  }
+  },
 };
 
 export const activeVariant = derived([variants], ([variants]) => {

@@ -16,7 +16,7 @@ const Theme: ClientTheme = {
   NotFound,
   configureRouter(router) {
     // ...
-  }
+  },
 };
 
 export default Theme;

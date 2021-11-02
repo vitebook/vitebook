@@ -5,7 +5,7 @@ import { removeEndingSlash } from './url';
 export const resolveLocalePath = (
   baseUrl: string,
   locales: LocaleConfig,
-  routePath: string
+  routePath: string,
 ): string => {
   const localePaths = Object.keys(locales).sort((a, b) => {
     const levelDelta = b.split('/').length - a.split('/').length;
@@ -28,7 +28,7 @@ export const resolveLocalePath = (
 
 export function stripBaseUrlFromRoute(
   baseUrl: string,
-  routePath: string
+  routePath: string,
 ): string {
   if (!inBrowser) {
     return routePath;

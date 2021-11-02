@@ -6,18 +6,18 @@ export const PLUGIN_NAME = '@vitebook/markdown-shiki' as const;
 export type ShikiPluginOptions = Pick<HighlighterOptions, 'theme' | 'langs'>;
 
 export function shikiMarkdownPlugin(
-  options: ShikiPluginOptions = {}
+  options: ShikiPluginOptions = {},
 ): MarkdownPlugin {
   return {
     name: PLUGIN_NAME,
     async configureMarkdownParser(parser) {
       const highlighter = await getHighlighter({
         theme: options.theme ?? 'nord',
-        langs: options.langs ?? []
+        langs: options.langs ?? [],
       });
 
       parser.options.highlight = (code, lang) =>
         highlighter.codeToHtml(code, lang);
-    }
+    },
   };
 }

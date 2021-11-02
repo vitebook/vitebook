@@ -5,7 +5,7 @@ import type { App } from '../../App';
 
 export type BundleResult = [
   clientBundle: RollupOutput,
-  serverBundle: RollupOutput
+  serverBundle: RollupOutput,
 ];
 
 export async function bundle(app: App): Promise<BundleResult> {
@@ -13,15 +13,15 @@ export async function bundle(app: App): Promise<BundleResult> {
     // Build SSR manifest.
     await build(
       resolveBundleConfig(app, {
-        ssr: false
-      })
+        ssr: false,
+      }),
     ),
     // Build server entry.
     await build(
       resolveBundleConfig(app, {
-        ssr: true
-      })
-    )
+        ssr: true,
+      }),
+    ),
   ]);
 
   return [client as RollupOutput, server as RollupOutput];
@@ -34,7 +34,7 @@ type BundleOptions = {
 
 function resolveBundleConfig(
   app: App,
-  { config = {}, ssr }: BundleOptions
+  { config = {}, ssr }: BundleOptions,
 ): ViteConfig {
   const baseBundleConfig: ViteConfig = {
     logLevel: 'warn',
@@ -66,16 +66,16 @@ function resolveBundleConfig(
                 }
 
                 return 'assets/[name].[hash].js';
-              }
-            }
-      }
+              },
+            },
+      },
     },
-    plugins: [buildPlugin(app, { ssr })]
+    plugins: [buildPlugin(app, { ssr })],
   };
 
   const mergedConfig = mergeConfig(
     app.options.vite,
-    mergeConfig(baseBundleConfig, config)
+    mergeConfig(baseBundleConfig, config),
   );
 
   if (!ssr) mergedConfig.ssr = undefined;
@@ -95,6 +95,6 @@ function buildPlugin(app: App, { ssr = false }: BundleOptions): Plugin {
           }
         }
       }
-    }
+    },
   };
 }

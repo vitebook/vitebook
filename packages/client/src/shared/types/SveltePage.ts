@@ -1,7 +1,7 @@
 import type {
   DefaultLoadedPage,
   DefaultPageModule,
-  Page as DefaultPage
+  Page as DefaultPage,
 } from '@vitebook/core';
 import type { SvelteComponent } from 'svelte';
 

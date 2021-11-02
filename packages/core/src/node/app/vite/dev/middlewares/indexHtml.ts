@@ -31,7 +31,7 @@ export function readIndexHtmlFile(app: App): string {
 
   html = html.replace(
     '<!--@vitebook/head-->',
-    '<script type="module" src="/:virtual/vitebook/client"></script>\n\t<!--@vitebook/head-->'
+    '<script type="module" src="/:virtual/vitebook/client"></script>\n\t<!--@vitebook/head-->',
   );
 
   return html.replace('{{ version }}', app.version);

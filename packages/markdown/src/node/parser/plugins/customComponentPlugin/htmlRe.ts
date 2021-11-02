@@ -35,9 +35,9 @@ export const HTML_TAG_RE = new RegExp(
     declaration +
     '|' +
     cdata +
-    ')'
+    ')',
 );
 
 export const HTML_OPEN_CLOSE_TAG_RE = new RegExp(
-  '^(?:' + open_tag + '|' + close_tag + ')'
+  '^(?:' + open_tag + '|' + close_tag + ')',
 );

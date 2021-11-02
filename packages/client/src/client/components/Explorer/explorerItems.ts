@@ -42,7 +42,7 @@ export const explorerItems = derived(pages, (pages) => {
         items.push({
           text: title,
           type: page.type,
-          link: withBaseUrl(page.route)
+          link: withBaseUrl(page.route),
         });
 
         return;
@@ -55,7 +55,7 @@ export const explorerItems = derived(pages, (pages) => {
       if (!group) {
         group = {
           text: title,
-          children: []
+          children: [],
         };
 
         items.push(group);

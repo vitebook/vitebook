@@ -15,7 +15,7 @@ export type ImportCodePluginOptions = {
 
 export const importCodePlugin: PluginWithOptions<ImportCodePluginOptions> = (
   parser,
-  options = {}
+  options = {},
 ): void => {
   // Add `import_code` block rule.
   parser.block.ruler.before(
@@ -23,8 +23,8 @@ export const importCodePlugin: PluginWithOptions<ImportCodePluginOptions> = (
     'import_code',
     createImportCodeBlockRule(options),
     {
-      alt: ['paragraph', 'reference', 'blockquote', 'list']
-    }
+      alt: ['paragraph', 'reference', 'blockquote', 'list'],
+    },
   );
 
   // Add `import_code` renderer rule.
@@ -33,7 +33,7 @@ export const importCodePlugin: PluginWithOptions<ImportCodePluginOptions> = (
     idx,
     options,
     env: MarkdownParserEnv,
-    slf
+    slf,
   ) => {
     const token = tokens[idx];
 

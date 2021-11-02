@@ -1,6 +1,6 @@
 import {
   customComponentPlugin as defaultCustomComponentPlugin,
-  CustomComponentPluginOptions
+  CustomComponentPluginOptions,
 } from '@vitebook/markdown/node';
 import type { PluginWithOptions } from 'markdown-it';
 
@@ -12,10 +12,10 @@ export type { CustomComponentPluginOptions };
 export const customComponentPlugin: PluginWithOptions<CustomComponentPluginOptions> =
   (
     parser,
-    { customSequences = [], ...options }: CustomComponentPluginOptions = {}
+    { customSequences = [], ...options }: CustomComponentPluginOptions = {},
   ) => {
     defaultCustomComponentPlugin(parser, {
       ...options,
-      customSequences: [...customSequences]
+      customSequences: [...customSequences],
     });
   };

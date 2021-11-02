@@ -2,7 +2,7 @@ import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import {
   Options as SvelteOptions,
   PreprocessorGroup,
-  svelte
+  svelte,
 } from '@sveltejs/vite-plugin-svelte';
 import { App, ClientPlugin, isArray, Plugin } from '@vitebook/core/node';
 import { path } from '@vitebook/core/node/utils';
@@ -11,18 +11,18 @@ import {
   compile as svelteCompile,
   parse,
   preprocess,
-  walk
+  walk,
 } from 'svelte/compiler';
 import {
   Options as TypescriptOptions,
-  typescript
+  typescript,
 } from 'svelte-preprocess-esbuild';
 
 import type { PageAddonPlugin, PageAddons } from '../shared';
 import {
   loadAddonsVirtualModule,
   VIRTUAL_ADDONS_MODULE_ID,
-  VIRTUAL_ADDONS_MODULE_REQUEST_PATH
+  VIRTUAL_ADDONS_MODULE_REQUEST_PATH,
 } from './addon';
 
 export const PLUGIN_NAME = '@vitebook/client' as const;
@@ -75,21 +75,21 @@ const DEFAULT_THEME_SCOPE_INCLUDE = [
   /@vitebook\/client/,
   /@vitebook\/theme-default/,
   // The following regex's are for monorepo environments due to packages being linked.
-  new RegExp(path.dirname(require.resolve('@vitebook/client')))
+  new RegExp(path.dirname(require.resolve('@vitebook/client'))),
 ];
 
 try {
   DEFAULT_THEME_SCOPE_INCLUDE.push(
-    new RegExp(path.dirname(require.resolve('@vitebook/theme-default')))
+    new RegExp(path.dirname(require.resolve('@vitebook/theme-default'))),
   );
 
   DEFAULT_THEME_SCOPE_INCLUDE.push(
     new RegExp(
       path.resolve(
         path.dirname(require.resolve('@vitebook/theme-default')),
-        '../../dist/icons'
-      )
-    )
+        '../../dist/icons',
+      ),
+    ),
   );
 } catch (e) {
   //  ...
@@ -104,13 +104,13 @@ const RAW_ID_RE = /(\?|&)raw/;
 const RAW_SVELTE_ID_RE = /(\?|&)raw&svelte/;
 
 export function clientPlugin(
-  options: ClientPluginOptions = {}
+  options: ClientPluginOptions = {},
 ): [ClientPlugin, ...Plugin[]] {
   let app: App;
 
   const filter = createFilter(
     options.include ?? DEFAULT_INCLUDE_RE,
-    options.exclude
+    options.exclude,
   );
 
   let themeScopeFilter: (id: unknown) => boolean;
@@ -130,9 +130,9 @@ export function clientPlugin(
         !options.typescript?.tsconfig && !options.typescript?.tsconfigRaw
           ? { compilerOptions: {} }
           : options.typescript?.tsconfigRaw,
-      ...options.typescript
+      ...options.typescript,
     }),
-    ...userPreprocessors
+    ...userPreprocessors,
   ];
 
   return [
@@ -141,7 +141,7 @@ export function clientPlugin(
       enforce: 'pre',
       entry: {
         client: require.resolve(`${PLUGIN_NAME}/entry-client.ts`),
-        server: require.resolve(`${PLUGIN_NAME}/entry-server.ts`)
+        server: require.resolve(`${PLUGIN_NAME}/entry-server.ts`),
       },
       configureApp(_app) {
         app = _app;
@@ -150,7 +150,7 @@ export function clientPlugin(
 
         themeScopeFilter = createFilter(
           options.themeScope?.include ?? DEFAULT_THEME_SCOPE_INCLUDE,
-          options.themeScope?.exclude
+          options.themeScope?.exclude,
         );
 
         app.context.themeScopeClass =
@@ -160,12 +160,12 @@ export function clientPlugin(
           ...options.svelte,
           preprocess: [
             ...preprocessors,
-            themeScope({ ...options.themeScope, preprocessors })
+            themeScope({ ...options.themeScope, preprocessors }),
           ],
           compilerOptions: {
             ...options.svelte?.compilerOptions,
-            hydratable: app.env.isProd
-          }
+            hydratable: app.env.isProd,
+          },
         });
 
         app.plugins.push(sveltePlugin);
@@ -174,16 +174,16 @@ export function clientPlugin(
         return {
           resolve: {
             alias: {
-              [VIRTUAL_ADDONS_MODULE_ID]: VIRTUAL_ADDONS_MODULE_REQUEST_PATH
-            }
-          }
+              [VIRTUAL_ADDONS_MODULE_ID]: VIRTUAL_ADDONS_MODULE_REQUEST_PATH,
+            },
+          },
         };
       },
       resolvePage({ filePath }) {
         if (filter(filePath)) {
           const type = path.extname(filePath).slice(1);
           return {
-            type: type === 'svelte' ? 'svelte' : `svelte:${type}`
+            type: type === 'svelte' ? 'svelte' : `svelte:${type}`,
           };
         }
 
@@ -217,7 +217,7 @@ export function clientPlugin(
             /<svg/g,
             `<svg class="${
               options.themeScope?.scopeClass ?? DEFAULT_THEME_SCOPE_CLASS
-            }"`
+            }"`,
           );
           return `export default ${JSON.stringify(content)}`;
         }
@@ -229,20 +229,20 @@ export function clientPlugin(
 
         if (MP3_RE.test(id) && filter(id)) {
           return svelteCompile(
-            `<audio controls src="${app.dirs.root.relative(id)}" />`
+            `<audio controls src="${app.dirs.root.relative(id)}" />`,
           ).js;
         }
 
         if (MP4_RE.test(id) && filter(id)) {
           return svelteCompile(
-            `<video controls src="${app.dirs.root.relative(id)}" />`
+            `<video controls src="${app.dirs.root.relative(id)}" />`,
           ).js;
         }
 
         return null;
-      }
+      },
     },
-    ...filteredAddons
+    ...filteredAddons,
   ];
 }
 
@@ -280,7 +280,7 @@ export type AddThemeScopeOptions = {
 function addThemeScope({
   content,
   filename,
-  scopeClass = DEFAULT_THEME_SCOPE_CLASS
+  scopeClass = DEFAULT_THEME_SCOPE_CLASS,
 }: AddThemeScopeOptions) {
   const mcs = new MagicString(content);
   const ast = parse(content, { filename });
@@ -291,15 +291,15 @@ function addThemeScope({
         mcs.overwrite(
           node.start,
           node.start + node.name.length + 1,
-          `<${node.name} class:${scopeClass}={true} `
+          `<${node.name} class:${scopeClass}={true} `,
         );
       }
-    }
+    },
   });
 
   return {
     code: mcs.toString(),
-    map: mcs.generateMap({ source: filename }).toString()
+    map: mcs.generateMap({ source: filename }).toString(),
   };
 }
 
@@ -307,7 +307,7 @@ function themeScope({
   scopeClass,
   include = DEFAULT_THEME_SCOPE_INCLUDE,
   exclude,
-  preprocessors = []
+  preprocessors = [],
 }: ThemeScopeOptions = {}): PreprocessorGroup {
   const filter = createFilter(include, exclude);
 
@@ -318,15 +318,15 @@ function themeScope({
         // TODO: inefficiently running `preprocess` twice each time changes are made, need to
         // run them sequentially and once. Not a priority at the moment.
         const processedContent = await preprocess(content, preprocessors, {
-          filename
+          filename,
         });
 
         return addThemeScope({
           filename,
           content: processedContent.code,
-          scopeClass
+          scopeClass,
         });
       }
-    }
+    },
   };
 }

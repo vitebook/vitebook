@@ -10,7 +10,7 @@ export const theme = readable(clientTheme, (set) => {
       '/:virtual/vitebook/theme',
       (mod: VirtualClientThemeModule) => {
         set(mod.default);
-      }
+      },
     );
   }
 });

@@ -17,7 +17,7 @@ export type PrismjsPluginOptions = {
 };
 
 export function prismjsMarkdownPlugin(
-  options: PrismjsPluginOptions = {}
+  options: PrismjsPluginOptions = {},
 ): MarkdownPlugin {
   return {
     name: PLUGIN_NAME,
@@ -25,7 +25,7 @@ export function prismjsMarkdownPlugin(
       const preloadLanguages = options.preloadLanguages ?? [
         'markdown',
         'jsdoc',
-        'yaml'
+        'yaml',
       ];
 
       if (preloadLanguages?.length !== 0) {
@@ -36,6 +36,6 @@ export function prismjsMarkdownPlugin(
         const highlighter = resolveHighlighter(lang);
         return highlighter?.(code) || '';
       };
-    }
+    },
   };
 }

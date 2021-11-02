@@ -63,7 +63,7 @@ export function useUpdateHead(): () => void {
 const queryHeadTag = ([
   tagName,
   attrs,
-  content = ''
+  content = '',
 ]: HeadConfig): HTMLElement | null => {
   const attrsSelector = Object.entries(attrs)
     .map(([key, value]) => {
@@ -88,7 +88,7 @@ const queryHeadTag = ([
 const createHeadTag = ([
   tagName,
   attrs,
-  content
+  content,
 ]: HeadConfig): HTMLElement | null => {
   if (!isString(tagName)) {
     return null;

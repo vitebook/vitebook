@@ -5,7 +5,7 @@ import {
   MarkdownFrontmatter,
   MarkdownHeader,
   MarkdownLinks,
-  MarkdownPageMeta
+  MarkdownPageMeta,
 } from '../../shared';
 import type {
   AnchorPluginOptions,
@@ -15,7 +15,7 @@ import type {
   ExtractHeadersPluginOptions,
   ImportCodePluginOptions,
   LinksPluginOptions,
-  TocPluginOptions
+  TocPluginOptions,
 } from './plugins';
 
 export type MarkdownParser = MarkdownIt;
@@ -40,7 +40,7 @@ export type ParseMarkdownOptions = {
 };
 
 export type ParsedMarkdownResult<
-  Meta extends MarkdownPageMeta = MarkdownPageMeta
+  Meta extends MarkdownPageMeta = MarkdownPageMeta,
 > = {
   content: string;
   meta: Meta;

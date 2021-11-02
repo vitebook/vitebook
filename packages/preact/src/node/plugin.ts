@@ -36,7 +36,7 @@ const DEFAULT_INCLUDE_RE = /\.(jsx|tsx)($|\?)/;
 export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
   const filter = createFilter(
     options.include ?? DEFAULT_INCLUDE_RE,
-    options.exclude
+    options.exclude,
   );
 
   return [
@@ -48,38 +48,38 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
           esbuild: {
             jsxFactory: 'h',
             jsxFragment: 'Fragment',
-            jsxInject: `import { h, Fragment } from 'preact'`
+            jsxInject: `import { h, Fragment } from 'preact'`,
           },
           resolve: {
             alias: {
               'react-dom': 'preact/compat',
               'react-dom/test-utils': 'preact/test-utils',
-              react: 'preact/compat'
-            }
+              react: 'preact/compat',
+            },
           },
           optimizeDeps: {
             // Force include `preact` to avoid duplicated copies when linked + optimized.
-            include: ['preact']
-          }
+            include: ['preact'],
+          },
         };
       },
       resolvePage({
         filePath,
-        relativeFilePath
+        relativeFilePath,
       }): ResolvedPreactServerPage | null {
         if (filter(filePath)) {
           return {
             id: '@vitebook/preact/PreactPageView.svelte',
             type: `preact:${path.extname(filePath).slice(1) as 'jsx' | 'tsx'}`,
             context: {
-              loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`
-            }
+              loader: `() => import('${ensureLeadingSlash(relativeFilePath)}')`,
+            },
           };
         }
 
         return null;
-      }
+      },
     },
-    prefresh(options.prefresh)
+    prefresh(options.prefresh),
   ];
 }

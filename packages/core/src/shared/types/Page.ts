@@ -4,7 +4,7 @@ import type { PageMeta } from './PageMeta';
 
 export type Page<
   PageModule = DefaultPageModule,
-  Context extends DefaultPageContext = DefaultPageContext
+  Context extends DefaultPageContext = DefaultPageContext,
 > = {
   /** Optional page type declared by a plugin to help identify specific pages client-side. */
   type?: string;
@@ -24,7 +24,7 @@ export type DefaultPageContext = Record<string, unknown>;
 
 export type DefaultLoadedPage<
   PageModule extends DefaultPageModule = DefaultPageModule,
-  Context extends DefaultPageContext = DefaultPageContext
+  Context extends DefaultPageContext = DefaultPageContext,
 > = Page<PageModule, Context> & {
   meta: NonNullable<PageModule['__type']>;
   module: PageModule;
@@ -39,7 +39,7 @@ export type PageMetaBuilder<PageMeta> =
 
 export type DefaultPageModule<
   DefaultExport = unknown,
-  PageMetaExport = PageMeta
+  PageMetaExport = PageMeta,
 > = {
   /** type def (doesn't actually exist). */
   __type?: PageMetaExport;
@@ -56,7 +56,7 @@ export type VirtualPagesModule = {
 // Server
 
 export type ServerPage<
-  Context extends DefaultPageContext = DefaultPageContext
+  Context extends DefaultPageContext = DefaultPageContext,
 > = Omit<Page, 'loader'> & {
   /**
    * Page module id used by the client-side router to dynamically load this page module. If not

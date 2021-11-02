@@ -21,23 +21,23 @@ program
   .option('--base <baseUrl>', '[string] Set public base path (default: /)')
   .option(
     '--srcDir <srcDir>',
-    '[string] Set path to source code directory (default: src)'
+    '[string] Set path to source code directory (default: src)',
   )
   .option(
     '--publicDir <publicDir>',
-    '[string] Set path to public directory (default: .vitebook/public)'
+    '[string] Set path to public directory (default: .vitebook/public)',
   )
   .option(
     '--cacheDir <cacheDir>',
-    '[string] Set path to cache directory (default: .vitebook/.cache)'
+    '[string] Set path to cache directory (default: .vitebook/.cache)',
   )
   .option(
     '-c, --configDir <configDir>',
-    '[string] Set path to config directory (default: .vitebook)'
+    '[string] Set path to config directory (default: .vitebook)',
   )
   .option(
     '--include <globs>',
-    '[string] Specify globs to filter files to be included (example: "**/*.md,**/*.vue")'
+    '[string] Specify globs to filter files to be included (example: "**/*.md,**/*.vue")',
   )
   .option('--https', '[boolean] Use TLS + HTTP/2')
   .option('--host [host]', '[string] Use specified host (default: 0.0.0.0)')
@@ -58,7 +58,7 @@ program
     options.mode = options.mode ?? options.m;
     devCommand({
       command: 'dev',
-      ...options
+      ...options,
     }).catch((err) => {
       logger.error('\n', err, '\n');
       process.exit(1);
@@ -72,44 +72,44 @@ program
   .option('--base <baseUrl>', '[string] Set public base path (default: /)')
   .option(
     '--srcDir <srcDir>',
-    '[string] Set path to source code directory (default: src)'
+    '[string] Set path to source code directory (default: src)',
   )
   .option(
     '--publicDir <publicDir>',
-    '[string] Set path to public directory (default: .vitebook/public)'
+    '[string] Set path to public directory (default: .vitebook/public)',
   )
   .option(
     '--cacheDir <cacheDir>',
-    '[string] Set path to cache directory (default: .vitebook/.cache)'
+    '[string] Set path to cache directory (default: .vitebook/.cache)',
   )
   .option(
     '-c, --configDir <configDir>',
-    '[string] Set path to config directory (default: .vitebook)'
+    '[string] Set path to config directory (default: .vitebook)',
   )
   .option('--outDir <dir>', '[string] Output directory (default: dist)')
   .option(
     '--emptyOutDir',
-    "[boolean] Force empty `outDir` when it's outside of root"
+    "[boolean] Force empty `outDir` when it's outside of root",
   )
   .option(
     '--assetsDir <dir>',
-    '[string] Directory under outDir to place assets in (default: _assets)'
+    '[string] Directory under outDir to place assets in (default: _assets)',
   )
   .option(
     'assetsInlineLimit',
-    '[number] Static asset `base64` inline threshold in bytes (default: 4096)'
+    '[number] Static asset `base64` inline threshold in bytes (default: 4096)',
   )
   .option(
     '--include <globs>',
-    '[string] Specify globs to filter files to be included (example: "**/*.md,**/*.vue")'
+    '[string] Specify globs to filter files to be included (example: "**/*.md,**/*.vue")',
   )
   .option(
     '--sourcemap',
-    '[boolean] Output source maps for build (default: false)'
+    '[boolean] Output source maps for build (default: false)',
   )
   .option(
     '--minify [minifier]',
-    '[boolean | "terser" | "esbuild"] Enable/disable minification, or specify minifier to use (default: terser)'
+    '[boolean | "terser" | "esbuild"] Enable/disable minification, or specify minifier to use (default: terser)',
   )
   .option('-m, --mode', '[string] Set env mode')
   .option('-w, --watch', '[boolean] Rebuilds when modules have changed on disk')
@@ -124,7 +124,7 @@ program
     options.debug = options.debug ?? options.d;
     buildCommand({
       command: 'build',
-      ...options
+      ...options,
     }).catch((err) => {
       logger.error('\n', err, '\n');
       process.exit(1);
@@ -137,7 +137,7 @@ program
   .option('--base <baseUrl>', '[string] Set public base path (default: /)')
   .option(
     '-c, --configDir <configDir>',
-    '[string] Set path to config directory (default: .vitebook)'
+    '[string] Set path to config directory (default: .vitebook)',
   )
   .option('--https', '[boolean] Use TLS + HTTP/2')
   .option('--host [host]', '[string] Use specified host (default: 0.0.0.0)')
@@ -155,7 +155,7 @@ program
     options.debug = options.debug ?? options.d;
     previewCommand({
       command: 'preview',
-      ...options
+      ...options,
     }).catch((err) => {
       logger.error('\n', err, '\n');
       process.exit(1);

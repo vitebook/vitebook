@@ -13,7 +13,7 @@ import type { TocPluginOptions } from './tocPlugin';
 export const createTocBlockRule = ({
   pattern,
   containerTag,
-  containerClass
+  containerClass,
 }: Pick<
   Required<TocPluginOptions>,
   'pattern' | 'containerTag' | 'containerClass'

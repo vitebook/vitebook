@@ -13,5 +13,5 @@ export const isMarkdownFloatingTocEnabled = derived(
         theme.markdown?.toc !== false ??
         defaultThemeLocaleOptions.markdown.toc !== false)
     );
-  }
+  },
 );

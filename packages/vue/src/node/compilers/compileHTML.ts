@@ -8,7 +8,7 @@ export async function compileHTML(source: string, id: string): Promise<string> {
   let { code } = compileTemplate({
     source,
     id,
-    filename: id
+    filename: id,
   });
 
   code = code.replace(/^export /g, '');

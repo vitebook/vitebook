@@ -13,7 +13,7 @@ export const createAppOptions = ({
   vite = {},
   debug = false,
   include = ['!.vitebook', '!node_modules'],
-  plugins = []
+  plugins = [],
 }: AppConfig): AppOptions => {
   const _root = resolveRelativePath(process.cwd(), root);
   const _srcDir = resolveRelativePath(root, srcDir);
@@ -39,10 +39,10 @@ export const createAppOptions = ({
       publicDir: vite.publicDir ?? _publicDir,
       build: {
         ...vite.build,
-        outDir: vite.build?.outDir ?? outDir
-      }
+        outDir: vite.build?.outDir ?? outDir,
+      },
     },
     include,
-    plugins
+    plugins,
   };
 };

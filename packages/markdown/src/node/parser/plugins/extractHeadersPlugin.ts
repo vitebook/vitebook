@@ -36,8 +36,8 @@ export const extractHeadersPlugin: PluginWithOptions<ExtractHeadersPluginOptions
     {
       level = [2, 3],
       slugify = slugifyDefault,
-      format
-    }: ExtractHeadersPluginOptions = {}
+      format,
+    }: ExtractHeadersPluginOptions = {},
   ): void => {
     let headers: MarkdownHeader[];
 
@@ -48,7 +48,7 @@ export const extractHeadersPlugin: PluginWithOptions<ExtractHeadersPluginOptions
         allowHtml: false,
         escapeText: false,
         slugify,
-        format
+        format,
       });
       return true;
     });

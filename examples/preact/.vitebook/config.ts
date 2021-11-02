@@ -4,7 +4,7 @@ import { preactMarkdownPlugin } from '@vitebook/markdown-preact/node';
 import { shikiMarkdownPlugin } from '@vitebook/markdown-shiki/node';
 import {
   DefaultThemeConfig,
-  defaultThemePlugin
+  defaultThemePlugin,
 } from '@vitebook/theme-default/node';
 
 export default defineConfig<DefaultThemeConfig>({
@@ -13,18 +13,18 @@ export default defineConfig<DefaultThemeConfig>({
     shikiMarkdownPlugin(),
     preactMarkdownPlugin(),
     preactPlugin({
-      include: /\.(tsx)/
+      include: /\.(tsx)/,
     }),
     clientPlugin(),
-    defaultThemePlugin()
+    defaultThemePlugin(),
   ],
   site: {
     title: 'Vitebook',
     description: 'Blazing fast Storybook alternative.',
     theme: {
       remoteGitRepo: {
-        url: 'vitebook/vitebook'
-      }
-    }
-  }
+        url: 'vitebook/vitebook',
+      },
+    },
+  },
 });

@@ -4,7 +4,7 @@ import { vueMarkdownPlugin } from '@vitebook/markdown-vue/node';
 import { shikiMarkdownPlugin } from '@vitebook/markdown-shiki/node';
 import {
   DefaultThemeConfig,
-  defaultThemePlugin
+  defaultThemePlugin,
 } from '@vitebook/theme-default/node';
 
 export default defineConfig<DefaultThemeConfig>({
@@ -12,24 +12,24 @@ export default defineConfig<DefaultThemeConfig>({
   plugins: [
     shikiMarkdownPlugin(),
     vueMarkdownPlugin({
-      include: /\.md/
+      include: /\.md/,
     }),
     vuePlugin({
       include: /\.(md|vue)/,
       vue: {
-        include: /\.(md|vue)/
-      }
+        include: /\.(md|vue)/,
+      },
     }),
     clientPlugin(),
-    defaultThemePlugin()
+    defaultThemePlugin(),
   ],
   site: {
     title: 'Vitebook',
     description: 'Blazing fast Storybook alternative.',
     theme: {
       remoteGitRepo: {
-        url: 'vitebook/vitebook'
-      }
-    }
-  }
+        url: 'vitebook/vitebook',
+      },
+    },
+  },
 });

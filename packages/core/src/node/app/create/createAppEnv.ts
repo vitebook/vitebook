@@ -5,11 +5,11 @@ export const createAppEnv = ({
   isDebug = false,
   isDev = process.env.NODE_ENV === 'development',
   isProd = !isDev,
-  mode
+  mode,
 }: Partial<AppEnv>): AppEnv => ({
   command,
   isProd,
   isDev,
   isDebug,
-  mode
+  mode,
 });

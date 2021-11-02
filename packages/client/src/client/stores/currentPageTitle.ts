@@ -7,12 +7,12 @@ import { localizedSiteOptions } from './localizedSiteOptions';
 
 export const currentPageTitle = derived(
   [localizedSiteOptions, currentPage],
-  ([site, page]) => resolvePageTitle(site, page)
+  ([site, page]) => resolvePageTitle(site, page),
 );
 
 const resolvePageTitle = (
   siteLocale: SiteLocaleData,
-  page?: LoadedClientPage
+  page?: LoadedClientPage,
 ): string => {
   const title = page?.meta.title ?? inferPageTitle(page);
   return title ? `${title} | ${siteLocale.title}` : siteLocale.title;

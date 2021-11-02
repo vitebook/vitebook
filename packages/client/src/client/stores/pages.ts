@@ -10,7 +10,7 @@ export const pages = readable(allPages, (set) => {
       '/:virtual/vitebook/pages',
       (mod: VirtualClientPagesModule) => {
         set(mod.default);
-      }
+      },
     );
   }
 });

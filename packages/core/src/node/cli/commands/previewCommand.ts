@@ -5,7 +5,7 @@ import { resolveApp } from '../../app/resolveApp';
 import type { PreviewCommandArgs } from '../args';
 
 export async function previewCommand(
-  args: PreviewCommandArgs
+  args: PreviewCommandArgs,
 ): Promise<PreviewServer> {
   process.env.NODE_ENV = 'production';
   const app = await resolveApp(args);

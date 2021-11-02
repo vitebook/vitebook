@@ -4,7 +4,7 @@ import type { MarkdownPageMeta } from '@vitebook/markdown/node';
 import {
   MarkdownParser,
   parseMarkdown,
-  ParseMarkdownOptions
+  ParseMarkdownOptions,
 } from '@vitebook/markdown/node';
 import LRUCache from 'lru-cache';
 
@@ -24,7 +24,7 @@ export function parseMarkdownToVue(
   parser: MarkdownParser,
   source: string,
   filePath: string,
-  options: ParseMarkdownToVueOptions = {}
+  options: ParseMarkdownToVueOptions = {},
 ): ParsedMarkdownToVueResult {
   const cachedResult = cache.get(source);
   if (cachedResult) return cachedResult;
@@ -32,9 +32,9 @@ export function parseMarkdownToVue(
   const {
     html,
     meta,
-    env: parserEnv
+    env: parserEnv,
   } = parseMarkdown(app, parser, source, filePath, {
-    ...options
+    ...options,
   });
 
   const { hoistedTags } = parserEnv as VueMarkdownParserEnv;
@@ -45,7 +45,7 @@ export function parseMarkdownToVue(
 
   const result: ParsedMarkdownToVueResult = {
     component,
-    meta
+    meta,
   };
 
   cache.set(source, result);
@@ -61,7 +61,7 @@ const GLOBAL_IMPORTS_CODE = "\nimport { OutboundLink } from '@vitebook/vue';\n";
 
 function buildMetaExport(tags: string[], meta: MarkdownPageMeta): string[] {
   const PAGE_META_CODE = `\nexport const __pageMeta = ${prettyJsonStr(
-    meta
+    meta,
   )};\n`;
 
   const existingScriptIndex = tags.findIndex((tag) => {
@@ -80,11 +80,11 @@ function buildMetaExport(tags: string[], meta: MarkdownPageMeta): string[] {
       GLOBAL_IMPORTS_CODE +
         PAGE_META_CODE +
         (hasDefaultExport ? `` : `\nexport default{}\n`) +
-        `</script>`
+        `</script>`,
     );
   } else {
     tags.unshift(
-      `<script>${GLOBAL_IMPORTS_CODE}\n${PAGE_META_CODE}\nexport default {}</script>`
+      `<script>${GLOBAL_IMPORTS_CODE}\n${PAGE_META_CODE}\nexport default {}</script>`,
     );
   }
 

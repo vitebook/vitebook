@@ -3,7 +3,7 @@ import type {
   DefaultLoadedPage,
   DefaultPageModule,
   MarkdownPageMeta,
-  Page
+  Page,
 } from '@vitebook/core';
 
 export type MarkdownPage = Page<MarkdownPageModule> & {
@@ -21,5 +21,5 @@ export type {
   MarkdownFrontmatter,
   MarkdownHeader,
   MarkdownLinks,
-  MarkdownPageMeta
+  MarkdownPageMeta,
 } from '@vitebook/core';

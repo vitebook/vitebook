@@ -1,6 +1,6 @@
 import {
   customComponentPlugin as defaultCustomComponentPlugin,
-  CustomComponentPluginOptions
+  CustomComponentPluginOptions,
 } from '@vitebook/markdown/node';
 import type { PluginWithOptions } from 'markdown-it';
 
@@ -19,7 +19,7 @@ export const svelteReservedTags = [
   'svelte:head',
   'svelte:options',
   'svelte:fragment',
-  'slot'
+  'slot',
 ];
 
 /**
@@ -28,7 +28,7 @@ export const svelteReservedTags = [
 export const customComponentPlugin: PluginWithOptions<CustomComponentPluginOptions> =
   (
     parser,
-    { customSequences = [], ...options }: CustomComponentPluginOptions = {}
+    { customSequences = [], ...options }: CustomComponentPluginOptions = {},
   ) => {
     defaultCustomComponentPlugin(parser, {
       ...options,
@@ -38,11 +38,11 @@ export const customComponentPlugin: PluginWithOptions<CustomComponentPluginOptio
           // Treat Svelte reserved tags as block tags.
           new RegExp(
             '^</?(' + svelteReservedTags.join('|') + ')(?=(\\s|/?>|$))',
-            'i'
+            'i',
           ),
           /^$/,
-          true
-        ]
-      ]
+          true,
+        ],
+      ],
     });
   };

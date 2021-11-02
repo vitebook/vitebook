@@ -1,9 +1,9 @@
 export const SSR_CTX_KEY = Symbol(import.meta.env.DEV ? 'VITEBOOK_SSR' : '');
 
 export const ROUTER_CTX_KEY = Symbol(
-  import.meta.env.DEV ? 'VITEBOOK_ROUTER' : ''
+  import.meta.env.DEV ? 'VITEBOOK_ROUTER' : '',
 );
 
 export const COMPONENT_SSR_CTX_KEY = Symbol(
-  import.meta.env.DEV ? 'COMPONENT_SSR' : ''
+  import.meta.env.DEV ? 'COMPONENT_SSR' : '',
 );

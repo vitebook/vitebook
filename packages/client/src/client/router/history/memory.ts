@@ -29,7 +29,7 @@ class MemoryHistory implements History {
   go(delta: number): void {
     this.position = Math.max(
       0,
-      Math.min(this.position + delta, this.history.length - 1)
+      Math.min(this.position + delta, this.history.length - 1),
     );
   }
 

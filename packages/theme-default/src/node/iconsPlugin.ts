@@ -6,12 +6,12 @@ import { fileURLToPath } from 'url';
 import {
   VIRTUAL_EMPTY_ICON_MODULE_ID,
   VIRTUAL_VITEBOOK_ICONS_RE,
-  VitebookIcon
+  VitebookIcon,
 } from './icons';
 
 const ICONS_DIR = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
-  'icons'
+  'icons',
 );
 
 const SIDEBAR_ICONS_DIR = path.resolve(ICONS_DIR, './sidebar-file');
@@ -20,7 +20,7 @@ const FILE_ICON_PATH = path.resolve(ICONS_DIR, './sidebar-file/file.svg');
 export type IconsRecord = Partial<Record<VitebookIcon, string>>;
 
 export type IconsResolver = (
-  icon: VitebookIcon
+  icon: VitebookIcon,
 ) =>
   | void
   | null
@@ -71,7 +71,7 @@ export function iconsPlugin(resolver?: DefaultThemeIconsOptions): Plugin {
       }
 
       return null;
-    }
+    },
   };
 }
 

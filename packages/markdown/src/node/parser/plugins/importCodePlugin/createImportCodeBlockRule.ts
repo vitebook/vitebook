@@ -47,7 +47,7 @@ export const createImportCodeBlockRule =
     const meta: ImportCodeTokenMeta = {
       importPath: handleImportPath(importPath),
       lineStart: lineStart ? Number.parseInt(lineStart, 10) : 0,
-      lineEnd: lineEnd ? Number.parseInt(lineEnd, 10) : undefined
+      lineEnd: lineEnd ? Number.parseInt(lineEnd, 10) : undefined,
     };
 
     // Create a import_code token.

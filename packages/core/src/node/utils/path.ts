@@ -9,7 +9,7 @@ export const resolveRelativePath = (base: string, filePath: string): string =>
     ? filePath
     : path.resolve(
         fs.lstatSync(base).isDirectory() ? base : path.dirname(base),
-        filePath
+        filePath,
       );
 
 export const isSubpath = (parent: string, filePath: string): boolean => {

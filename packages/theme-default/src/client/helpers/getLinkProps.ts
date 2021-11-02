@@ -2,7 +2,7 @@ import {
   isLinkExternal,
   RouteLocation,
   SiteOptions,
-  withBaseUrl
+  withBaseUrl,
 } from '@vitebook/client';
 
 import type { NavLink, SidebarLink } from '../../shared';
@@ -10,7 +10,7 @@ import type { NavLink, SidebarLink } from '../../shared';
 export function getLinkProps(
   link: NavLink | SidebarLink,
   site: SiteOptions,
-  currentRoute: RouteLocation
+  currentRoute: RouteLocation,
 ) {
   const isExternal = isLinkExternal(link.link, site.baseUrl);
   const routePath = currentRoute.path;
@@ -33,6 +33,6 @@ export function getLinkProps(
     href: !isExternal ? withBaseUrl(link.link) : link.link,
     target: link.target ?? (isExternal ? `_blank` : undefined),
     rel: link.rel ?? (isExternal ? `noopener noreferrer` : undefined),
-    'aria-label': link.ariaLabel
+    'aria-label': link.ariaLabel,
   };
 }

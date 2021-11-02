@@ -1,7 +1,7 @@
 import {
   prettyJsonStr,
   stripImportQuotesFromJson,
-  VM_PREFIX
+  VM_PREFIX,
 } from '@vitebook/core/node';
 
 import type { PageAddonPlugin } from '../shared';
@@ -15,8 +15,8 @@ export function loadAddonsVirtualModule(addons: PageAddonPlugin[]): string {
   return `export default ${stripImportQuotesFromJson(
     prettyJsonStr(
       addons.map(({ addon }) => ({
-        loader: `() => import('${addon}')`
-      }))
-    )
+        loader: `() => import('${addon}')`,
+      })),
+    ),
   )}`;
 }

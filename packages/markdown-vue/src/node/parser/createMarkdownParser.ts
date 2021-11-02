@@ -1,7 +1,7 @@
 import {
   createMarkdownParser as createDefaultMarkdownParser,
   MarkdownParser,
-  MarkdownParserOptions as DefaultMarkdownParserOptions
+  MarkdownParserOptions as DefaultMarkdownParserOptions,
 } from '@vitebook/markdown/node';
 
 import {
@@ -10,7 +10,7 @@ import {
   customComponentPlugin,
   CustomComponentPluginOptions,
   hoistTagsPlugin,
-  HoistTagsPluginOptions
+  HoistTagsPluginOptions,
 } from './plugins';
 
 export type MarkdownParserOptions = DefaultMarkdownParserOptions & {
@@ -47,6 +47,6 @@ export function createMarkdownParser({
       if (code !== false) {
         parser.use<CodePluginOptions>(codePlugin, code);
       }
-    }
+    },
   });
 }

@@ -1,7 +1,7 @@
 import {
   currentMarkdownPageMeta,
   currentRoute,
-  useRouter
+  useRouter,
 } from '@vitebook/client';
 import { onMount, tick } from 'svelte';
 import { get, Readable } from 'svelte/store';
@@ -23,7 +23,7 @@ export function useActiveHeaderLinks({
   headerLinkSelector,
   headerAnchorSelector,
   delay,
-  offset: offsetStore
+  offset: offsetStore,
 }: UseActiveHeaderLinksOptions) {
   const router = useRouter();
 
@@ -31,22 +31,22 @@ export function useActiveHeaderLinks({
     const offset = get(offsetStore);
 
     const headerLinks: HTMLAnchorElement[] = Array.from(
-      document.querySelectorAll(headerLinkSelector)
+      document.querySelectorAll(headerLinkSelector),
     );
 
     const headerAnchors: HTMLAnchorElement[] = Array.from(
-      document.querySelectorAll(headerAnchorSelector)
+      document.querySelectorAll(headerAnchorSelector),
     );
 
     // Filter anchors that do not have corresponding links.
     const validAnchors = headerAnchors.filter((anchor) =>
-      headerLinks.some((link) => link.hash === anchor.hash)
+      headerLinks.some((link) => link.hash === anchor.hash),
     );
 
     const scrollTop = Math.max(
       window.pageYOffset,
       document.documentElement.scrollTop,
-      document.body.scrollTop
+      document.body.scrollTop,
     );
 
     const scrollBottom = window.innerHeight + scrollTop;
@@ -54,7 +54,7 @@ export function useActiveHeaderLinks({
     // Get the total scroll length of current page.
     const scrollHeight = Math.max(
       document.documentElement.scrollHeight,
-      document.body.scrollHeight
+      document.body.scrollHeight,
     );
 
     // Check if we have reached page bottom.
@@ -102,7 +102,7 @@ export function useActiveHeaderLinks({
 
       router.go(anchorHash, {
         scroll: false,
-        replace: true
+        replace: true,
       });
 
       return;
@@ -111,7 +111,7 @@ export function useActiveHeaderLinks({
 
   const onScroll = throttleAndDebounce(
     () => tick().then(setActiveRouteHash),
-    delay
+    delay,
   );
 
   onMount(() => {

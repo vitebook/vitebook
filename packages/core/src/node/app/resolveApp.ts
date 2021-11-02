@@ -8,7 +8,7 @@ import { resolveConfigPath } from './create/resolveConfigPath';
 
 export async function resolveApp(
   args: CLIArgs = { '--': [], command: 'dev' },
-  appConfig?: AppConfig
+  appConfig?: AppConfig,
 ): Promise<App> {
   const config = appConfig ?? (await resolveUserAppConfig(args));
   return createApp(
@@ -25,7 +25,7 @@ export async function resolveApp(
       ...{
         site: {
           ...(config.site ?? {}),
-          baseUrl: args.baseUrl ?? config.site?.baseUrl ?? config.vite?.base
+          baseUrl: args.baseUrl ?? config.site?.baseUrl ?? config.vite?.base,
         },
         vite: {
           ...(config.vite ?? {}),
@@ -40,8 +40,8 @@ export async function resolveApp(
             ...(config.vite?.resolve ?? {}),
             alias: {
               ...config.alias,
-              ...(config.vite?.resolve?.alias ?? {})
-            }
+              ...(config.vite?.resolve?.alias ?? {}),
+            },
           },
           server: {
             ...(config.vite?.server ?? {}),
@@ -53,8 +53,8 @@ export async function resolveApp(
             open: args.open ?? config.vite?.server?.open,
             fs: {
               // TODO: remove this and replace with `allow`.
-              strict: false
-            }
+              strict: false,
+            },
           },
           build: {
             ...(config.vite?.build ?? {}),
@@ -65,16 +65,16 @@ export async function resolveApp(
             assetsInlineLimit:
               args.assetsInlineLimit ?? config.vite?.build?.assetsInlineLimit,
             sourcemap: args.sourcemap ?? config.vite?.build?.sourcemap,
-            minify: args.minify ?? config.vite?.build?.minify
-          }
-        }
-      }
+            minify: args.minify ?? config.vite?.build?.minify,
+          },
+        },
+      },
     },
     {
       command: args.command as 'dev' | 'build' | 'preview',
       mode: args.mode ?? config.vite?.mode,
-      isDev: args.mode ? args.mode === 'development' : args.command === 'dev'
-    }
+      isDev: args.mode ? args.mode === 'development' : args.command === 'dev',
+    },
   );
 }
 

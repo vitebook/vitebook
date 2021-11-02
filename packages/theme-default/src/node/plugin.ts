@@ -16,7 +16,7 @@ const virtual404Illustration = `${VM_PREFIX}/404.svg` as const;
 const virtual404IllustrationRequestPath = '/' + virtual404Illustration;
 
 export function defaultThemePlugin(
-  options: DefaultThemePluginOptions = {}
+  options: DefaultThemePluginOptions = {},
 ): Plugin {
   let app: App;
 
@@ -28,9 +28,9 @@ export function defaultThemePlugin(
         resolve: {
           alias: {
             [virtualLogo]: virtualLogoRequestPath,
-            [virtual404Illustration]: virtual404IllustrationRequestPath
-          }
-        }
+            [virtual404Illustration]: virtual404IllustrationRequestPath,
+          },
+        },
       };
     },
     async configureApp(_app) {
@@ -45,7 +45,7 @@ export function defaultThemePlugin(
       }
 
       return null;
-    }
+    },
   };
 }
 

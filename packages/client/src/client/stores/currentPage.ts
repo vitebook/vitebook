@@ -10,5 +10,5 @@ export const currentPage: Readable<LoadedClientPage | undefined> & {
 } = {
   subscribe: store.subscribe,
   __update: store.update,
-  __set: store.set
+  __set: store.set,
 };

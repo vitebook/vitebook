@@ -4,7 +4,7 @@ import type Token from 'markdown-it/lib/token';
 import type { MarkdownParser } from '../../types';
 import {
   isHighlightLine,
-  resolveHighlightLines
+  resolveHighlightLines,
 } from './resolveHighlightLines';
 import { resolveLanguage } from './resolveLanguage';
 import { resolveLineNumbers } from './resolveLineNumbers';
@@ -47,7 +47,7 @@ export type CodePluginOptions = {
   transformBeforeWrapper?(
     parser: MarkdownParser,
     token: Token,
-    html: string
+    html: string,
   ): string;
 
   /**
@@ -68,8 +68,8 @@ export const codePlugin: PluginWithOptions<CodePluginOptions> = (
     lineNumbers = true,
     preWrapper = true,
     transformBeforeWrapper,
-    transformFinal
-  }: CodePluginOptions = {}
+    transformFinal,
+  }: CodePluginOptions = {},
 ): void => {
   // Override default fence renderer.
   parser.renderer.rules.fence = (tokens, idx, options) => {

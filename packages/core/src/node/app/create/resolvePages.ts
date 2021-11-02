@@ -4,7 +4,7 @@ import type { ServerPage } from '../../../shared';
 import {
   ensureLeadingSlash,
   prettyJsonStr,
-  stripImportQuotesFromJson
+  stripImportQuotesFromJson,
 } from '../../../shared';
 import { globby, readRecentlyChangedFile } from '../../utils/fs';
 import { logger } from '../../utils/logger';
@@ -19,14 +19,14 @@ const pageResolvedBy = new Map<string, Plugin>();
 export function resolvePageFilePaths(app: App): string[] {
   return globby.sync(app.options.include, {
     absolute: true,
-    cwd: app.dirs.root.path
+    cwd: app.dirs.root.path,
   });
 }
 
 export async function resolvePages(
   app: App,
   action: 'add' | 'change' | 'unlink',
-  changed?: string[]
+  changed?: string[],
 ): Promise<void> {
   const filePaths = changed ?? resolvePageFilePaths(app);
 
@@ -80,7 +80,7 @@ async function resolvePage(app: App, filePath: string): Promise<void> {
       relativeFilePath,
       route,
       read: () => readRecentlyChangedFile(filePath),
-      env: app.env
+      env: app.env,
     });
 
     if (page) {
@@ -99,7 +99,7 @@ async function resolvePage(app: App, filePath: string): Promise<void> {
         filePath,
         id: page.id ?? id,
         route: page.route ?? route,
-        rootPath: app.dirs.root.relative(filePath)
+        rootPath: app.dirs.root.relative(filePath),
       });
 
       pageResolvedBy.set(filePath, plugin);
@@ -120,9 +120,9 @@ function pageCouldNotBeResolved(app: App, filePath: string) {
       `No plugin could resolve page: ${kleur.bold(
         path.basename(app.dirs.root.path) +
           '/' +
-          path.relative(app.dirs.root.path, filePath)
-      )}\n`
-    )
+          path.relative(app.dirs.root.path, filePath),
+      )}\n`,
+    ),
   );
 
   unresolvedPages.add(filePath);
@@ -135,7 +135,7 @@ export function filePathToRoute(app: App, filePath: string): string {
   return url
     .replace(
       new RegExp(`(.story)?(${path.extname(filePath)})($|\\?)`, 'i'),
-      '.html'
+      '.html',
     )
     .replace(/\/(README|index).html($|\?)/i, '/');
 }
@@ -148,9 +148,9 @@ export function loadPagesVirtualModule(app: App): string {
         loader: `() => import('${page.id}')`,
         // Not included client-side.
         id: undefined,
-        filePath: undefined
-      }))
-    )
+        filePath: undefined,
+      })),
+    ),
   )}`;
 }
 

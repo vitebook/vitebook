@@ -38,7 +38,7 @@ export type LinksPluginOptions = {
  */
 export const linksPlugin: PluginWithOptions<LinksPluginOptions> = (
   parser,
-  linkOptions: LinksPluginOptions = {}
+  linkOptions: LinksPluginOptions = {},
 ): void => {
   let hasOpenInternalLink = false;
   let hasOpenExternalLink = false;
@@ -50,7 +50,7 @@ export const linksPlugin: PluginWithOptions<LinksPluginOptions> = (
   const externalAttrs = {
     target: '_blank',
     rel: 'noopener noreferrer',
-    ...linkOptions.externalAttrs
+    ...linkOptions.externalAttrs,
   };
 
   parser.renderer.rules.link_open = (tokens, idx, options, env, self) => {
@@ -64,7 +64,7 @@ export const linksPlugin: PluginWithOptions<LinksPluginOptions> = (
       const hrefLink = hrefAttr[1];
 
       const internalLinkMatch = hrefLink.match(
-        /^((?:.*)(?:\/|\.md|\.html))(#.*)?$/
+        /^((?:.*)(?:\/|\.md|\.html))(#.*)?$/,
       );
 
       const withRouterLink = () => {

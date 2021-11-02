@@ -1,6 +1,6 @@
 import {
   codePlugin as defaultCodePlugin,
-  CodePluginOptions as DefaultCodePluginOptions
+  CodePluginOptions as DefaultCodePluginOptions,
 } from '@vitebook/markdown/node';
 import type { PluginWithOptions } from 'markdown-it';
 
@@ -16,7 +16,7 @@ export type CodePluginOptions = DefaultCodePluginOptions & {
  */
 export const codePlugin: PluginWithOptions<CodePluginOptions> = (
   parser,
-  { vPre = true, ...options }: CodePluginOptions = {}
+  { vPre = true, ...options }: CodePluginOptions = {},
 ) => {
   defaultCodePlugin(parser, {
     ...options,
@@ -35,7 +35,7 @@ export const codePlugin: PluginWithOptions<CodePluginOptions> = (
       html = options.transformBeforeWrapper?.(parser, token, html) ?? html;
 
       return html;
-    }
+    },
   });
 };
 
