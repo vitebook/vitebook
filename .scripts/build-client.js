@@ -2,6 +2,8 @@ import { build } from 'esbuild';
 import path from 'upath';
 import minimist from 'minimist';
 import sveltePlugin from 'esbuild-svelte';
+import { walk, parse } from 'svelte/compiler';
+import MagicString from 'magic-string';
 
 const args = minimist(process.argv.slice(2));
 
@@ -26,7 +28,12 @@ async function main() {
     watch: args.watch || args.w,
     bundle: true,
     logLevel: 'info',
-    plugins: [sveltePlugin(), markVirtualModulesAsExternal()],
+    plugins: [
+      sveltePlugin({
+        preprocess: [themeScope()],
+      }),
+      markVirtualModulesAsExternal(),
+    ],
     external: [
       '@vitebook/core',
       '@vitebook/client',
@@ -52,6 +59,36 @@ function markVirtualModulesAsExternal() {
         external: true,
       }));
     },
+  };
+}
+
+function themeScope() {
+  return {
+    async markup({ content, filename }) {
+      return addThemeScope({ filename, content });
+    },
+  };
+}
+
+function addThemeScope({ content, filename }) {
+  const mcs = new MagicString(content);
+  const ast = parse(content, { filename });
+
+  walk(ast, {
+    enter(node) {
+      if (node.type === 'Element') {
+        mcs.overwrite(
+          node.start,
+          node.start + node.name.length + 1,
+          `<${node.name} class:__vbk__={true} `,
+        );
+      }
+    },
+  });
+
+  return {
+    code: mcs.toString(),
+    map: mcs.generateMap({ source: filename }).toString(),
   };
 }
 
