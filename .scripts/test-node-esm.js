@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import kleur from 'kleur';
 
 async function main() {
-  const mjsFiles = await globby(['../packages/*/dist/**/*.js'], {
+  const mjsFiles = await globby(['../packages/*/dist/node/**/*.js'], {
     cwd: dirname(fileURLToPath(import.meta.url)),
   });
 
