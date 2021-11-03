@@ -773,7 +773,7 @@ function getRawTSConfig(compilerOptions = {}) {
       forceConsistentCasingInFileNames: true,
       jsx: 'preserve',
       jsxImportSource: 'preact',
-      lib: ['dom', 'dom.iterable', 'es2017'],
+      lib: ['dom', 'dom.iterable', 'esnext'],
       module: 'esnext',
       moduleResolution: 'node',
       newLine: 'lf',
