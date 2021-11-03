@@ -1,6 +1,8 @@
 <script>
+  import MenuCaretIcon from ':virtual/vitebook/icons/menu-caret?raw';
   import FolderClosedIcon from ':virtual/vitebook/icons/sidebar-folder-closed?raw';
   import FolderOpenIcon from ':virtual/vitebook/icons/sidebar-folder-open?raw';
+  import { localizedThemeConfig } from '../../stores/localizedThemeConfig';
   import { tick } from 'svelte';
   import { afterUpdate, onMount } from 'svelte';
   import SidebarButton from './SidebarButton.svelte';
@@ -13,24 +15,40 @@
   let active = false;
   let open = false;
 
+  $: sidebarStyle = $localizedThemeConfig.sidebar?.style;
+  $: hasExplorerStyle = sidebarStyle === 'explorer';
+  $: hasDocsStyle = sidebarStyle === 'docs';
+  $: isCategory =
+    ($localizedThemeConfig.sidebar?.categories ?? false) && depth === 0;
+
+  $: if (isCategory) {
+    active = true;
+    open = true;
+  }
+
   function checkHasActiveItem() {
     active = !!sidebarItemRef?.querySelector('a.active');
   }
 
   onMount(() => {
-    tick()
-      .then(tick)
-      .then(() => {
-        checkHasActiveItem();
-        open = active;
-      });
+    if (!isCategory) {
+      tick()
+        .then(tick)
+        .then(() => {
+          checkHasActiveItem();
+          open = active;
+        });
+    }
   });
 
   afterUpdate(() => {
-    window.requestAnimationFrame(checkHasActiveItem);
+    if (!isCategory) {
+      window.requestAnimationFrame(checkHasActiveItem);
+    }
   });
 
   function onToggle() {
+    if (isCategory) return;
     open = !open;
   }
 </script>
@@ -39,25 +57,44 @@
   class="sidebar-item with-menu"
   class:active
   class:open
+  class:category={isCategory}
+  class:style-docs={hasDocsStyle}
+  class:style-explorer={hasExplorerStyle}
   bind:this={sidebarItemRef}
 >
-  <SidebarButton
-    id={`sidebar-menu-button-${depth}`}
-    aria-controls={`sidebar-menu-${depth}`}
-    aria-haspopup="true"
-    class="sidebar-item__menu-button"
-    on:pointerdown={onToggle}
-    on:keydown={(e) => e.key === 'Enter' && onToggle()}
-  >
-    <span class="sidebar-item__menu-button__icon" class:active>
-      {#if open}
-        {@html FolderOpenIcon}
-      {:else}
-        {@html FolderClosedIcon}
+  <span>
+    <SidebarButton
+      id={`sidebar-menu-button-${depth}`}
+      aria-controls={`sidebar-menu-${depth}`}
+      aria-haspopup="true"
+      class="sidebar-item__menu-button"
+      on:pointerdown={onToggle}
+      on:keydown={(e) => e.key === 'Enter' && onToggle()}
+    >
+      {#if hasExplorerStyle && !isCategory}
+        <span class="sidebar-item__menu-button__icon" class:active>
+          {#if open}
+            {@html FolderOpenIcon}
+          {:else}
+            {@html FolderClosedIcon}
+          {/if}
+        </span>
       {/if}
-    </span>
-    {item.text}
-  </SidebarButton>
+      <span
+        class="sidebar-item__menu-button__text"
+        class:category={isCategory}
+        class:style-docs={hasDocsStyle}
+        class:style-explorer={hasExplorerStyle}
+      >
+        {item.text}
+      </span>
+      <span class="sidebar-item__menu-button__caret" class:active class:open>
+        {#if hasDocsStyle && !isCategory}
+          {@html MenuCaretIcon}
+        {/if}
+      </span>
+    </SidebarButton>
+  </span>
 
   <ul
     id={`sidebar-menu-${depth}`}
@@ -77,12 +114,40 @@
     white-space: nowrap;
   }
 
-  .sidebar-item__menu-button__icon {
-    margin-right: 0.5rem;
+  .sidebar-item.category > span {
+    --vbk--sidebar-item-cursor: default;
+    --vbk--sidebar-item-hover-bg-color: transparent;
+    --vbk--sidebar-item-padding: 0;
+    --vbk--sidebar-item-font-size: 1.1rem;
+
+    display: inline-block;
+    margin: 0.75rem 0;
+    margin-left: 0.125rem;
+    width: 100%;
   }
 
-  .sidebar-item__menu-button__icon.active {
+  .sidebar-item__menu-button__text.style-docs {
+    font-weight: 500;
+  }
+
+  .sidebar-item__menu-button__text.category {
+    font-weight: bold;
+  }
+
+  .sidebar-item__menu-button__icon {
+    margin-right: 0.5rem;
     color: var(--vbk--color-primary);
+  }
+
+  .sidebar-item__menu-button__caret {
+    margin-left: auto;
+    transform: rotate(270deg) translateX(-0.05rem) translateZ(0);
+    transform-origin: center;
+    transition: transform 150ms ease-out;
+  }
+
+  .sidebar-item__menu-button__caret.open {
+    transform: translateZ(0);
   }
 
   .sidebar-item__menu {
@@ -95,7 +160,7 @@
 
   .sidebar-item__menu {
     display: none !important;
-    margin-left: 1rem !important;
+    margin-left: 0.5rem !important;
   }
 
   .sidebar-item.open > .sidebar-item__menu {

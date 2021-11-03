@@ -2,7 +2,7 @@
   import {
     currentRoute,
     localizedSiteOptions,
-    OutboundLink
+    OutboundLink,
   } from '@vitebook/client';
   import { getLinkProps } from '../../helpers/getLinkProps';
   import { darkMode } from '../../stores/darkMode';
@@ -15,6 +15,9 @@
 
   $: linkProps = getLinkProps(item, $localizedSiteOptions, $currentRoute);
   $: iconColors = $localizedThemeConfig.sidebar?.iconColors;
+  $: sidebarStyle = $localizedThemeConfig.sidebar?.style;
+  $: hasDocsStyle = sidebarStyle === 'docs';
+  $: hasExplorerStyle = sidebarStyle === 'explorer';
 
   function getIcon() {
     const type = item.type.replace(/^\w+:/, '');
@@ -52,7 +55,11 @@
   $: loadIcon(item.type);
 </script>
 
-<li class="sidebar-item">
+<li
+  class="sidebar-item"
+  class:style-explorer={hasExplorerStyle}
+  class:style-docs={hasDocsStyle}
+>
   <SidebarButton
     href={linkProps.href}
     target={linkProps.target}
@@ -67,14 +74,16 @@
       class:active={linkProps.active}
       class:external={linkProps.external}
     >
-      <span
-        class={'sidebar-link__icon' + (item.type ? ` type-${item.type}` : '')}
-        class:dark={$darkMode}
-        class:active={linkProps.active}
-        class:color={iconColors}
-      >
-        {@html icon?.default ?? ''}
-      </span>
+      {#if hasExplorerStyle}
+        <span
+          class={'sidebar-link__icon' + (item.type ? ` type-${item.type}` : '')}
+          class:dark={$darkMode}
+          class:active={linkProps.active}
+          class:color={iconColors}
+        >
+          {@html icon?.default ?? ''}
+        </span>
+      {/if}
       {item.text}
       {#if linkProps.external}
         <OutboundLink />

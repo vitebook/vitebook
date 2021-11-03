@@ -1,8 +1,14 @@
 <script>
+  import { localizedThemeConfig } from '../../stores/localizedThemeConfig';
+
   export let ref = undefined;
   export let href = undefined;
   export let active = false;
   export let external = false;
+
+  $: sidebarStyle = $localizedThemeConfig.sidebar?.style;
+  $: hasExplorerStyle = sidebarStyle === 'explorer';
+  $: hasDocsStyle = sidebarStyle === 'docs';
 </script>
 
 {#if href}
@@ -11,6 +17,8 @@
     {...$$restProps}
     class:active
     class:external
+    class:style-explorer={hasExplorerStyle}
+    class:style-docs={hasDocsStyle}
     on:pointerenter
     on:pointerdown
     on:pointerleave
@@ -22,6 +30,8 @@
 {:else}
   <button
     {...$$restProps}
+    class:style-explorer={hasExplorerStyle}
+    class:style-docs={hasDocsStyle}
     on:pointerenter
     on:pointerdown
     on:pointerleave
@@ -49,13 +59,17 @@
     text-decoration: none;
     background-color: var(--vbk--sidebar-item-bg-color);
     text-align: left;
-    cursor: pointer;
+    cursor: var(--vbk--sidebar-item-cursor, pointer);
     line-height: var(--vbk--sidebar-item-line-height);
   }
 
   a.active {
     color: var(--vbk--sidebar-item-active-color);
     background-color: var(--vbk--sidebar-item-active-bg-color);
+  }
+
+  a.style-docs.active {
+    color: var(--vbk--color-primary);
   }
 
   @media (min-width: 992px) {

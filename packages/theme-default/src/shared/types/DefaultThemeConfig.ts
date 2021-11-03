@@ -133,6 +133,15 @@ export type DefaultThemeSidebarLocaleConfig = {
    */
   items?: SidebarItemsConfig | MultiSidebarItemsConfig;
   /**
+   * Specify the style of the sidebar.
+   */
+  style?: 'explorer' | 'docs';
+  /**
+   * Whether root folders in `<srcDir>` should be treated as categories. This will simply
+   * create sections in the sidebar.
+   */
+  categories?: boolean;
+  /**
    * Specify the text to be displayed inside the back to main menu button in the sidebar.
    *
    * @default 'Back to main menu'
@@ -332,6 +341,8 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
 
   sidebar: {
     items: 'auto',
+    style: 'explorer',
+    categories: false,
     iconColors: false,
     backToMainMenuText: 'Back to main menu',
     toggleAriaLabel: 'Toggle sidebar menu',
