@@ -12,6 +12,9 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const argv = minimist(process.argv.slice(2), { string: ['_'] });
 
+const PKG_INFO = pkgInfoFromUserAgent(process.env.npm_config_user_agent);
+const PKG_MANAGER = PKG_INFO ? PKG_INFO.name : 'npm';
+
 const VITEBOOK_VERSION = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, '../package.json')).toString(),
 ).version;
@@ -38,7 +41,8 @@ async function main() {
   let theme = argv.theme;
   let features = argv.features?.split(',');
   let workspace = argv.workspace ?? false;
-  let local = argv.local ? removeEndingSlash(argv.local) : false;
+  let link =
+    typeof argv.link === 'string' ? removeEndingSlash(argv.link) : false;
   let projectName = projectDirName ? toTitleCase(projectDirName) : null;
 
   const isTargetDirEmpty = isDirEmpty(targetDir);
@@ -183,16 +187,32 @@ async function main() {
         description: userInput.projectDescription ?? '',
         version: '0.0.0',
         type: 'module',
-        scripts: {
-          'vitebook:build': 'vitebook build',
-          'vitebook:dev': 'vitebook dev',
-          'vitebook:preview': 'vitebook preview',
-        },
       };
 
   pkg.scripts ??= {};
   pkg.dependenices ??= {};
   pkg.devDependencies ??= {};
+
+  const scriptsIncludes = (regex) =>
+    Object.values(pkg.scripts).find((script) => regex.test(script));
+
+  if (!scriptsIncludes(/vitebook(\.js)? dev/)) {
+    pkg.scripts['vitebook:dev'] = link
+      ? 'node node_modules/@vitebook/core/bin/vitebook.js dev'
+      : 'vitebook dev';
+  }
+
+  if (!scriptsIncludes(/vitebook(\.js)? build/)) {
+    pkg.scripts['vitebook:build'] = link
+      ? 'node node_modules/@vitebook/core/bin/vitebook.js build'
+      : 'vitebook build';
+  }
+
+  if (!scriptsIncludes(/vitebook(\.js)? preview/)) {
+    pkg.scripts['vitebook:preview'] = link
+      ? 'node node_modules/@vitebook/core/bin/vitebook.js preview'
+      : 'vitebook preview';
+  }
 
   if (hasTypescriptFeature) {
     pkg.devDependencies.typescript = '^4.4.4';
@@ -365,8 +385,8 @@ async function main() {
   const vitebookVersion = workspace ? 'workspace:*' : `^${VITEBOOK_VERSION}`;
 
   const addVitebookDependency = (pkgName) => {
-    pkg.devDependencies[`@vitebook/${pkgName}`] = local
-      ? `${local}/${pkgName}`
+    pkg.devDependencies[`@vitebook/${pkgName}`] = link
+      ? `${PKG_MANAGER === 'yarn' ? 'link:' : ''}${link}/${pkgName}`
       : vitebookVersion;
   };
 
@@ -566,16 +586,13 @@ async function main() {
 
   // COMPLETE
 
-  const pkgInfo = pkgInfoFromUserAgent(process.env.npm_config_user_agent);
-  const pkgManager = pkgInfo ? pkgInfo.name : 'npm';
-
   console.log(kleur.bold(kleur.green(`✅ Done. Now run:\n`)));
 
   if (targetDir !== process.cwd()) {
     console.log(kleur.bold(`  cd ${path.relative(process.cwd(), targetDir)}`));
   }
 
-  switch (pkgManager) {
+  switch (PKG_MANAGER) {
     case 'yarn':
       console.log(kleur.bold('  yarn'));
       console.log(kleur.bold('  yarn vitebook:dev'));
@@ -585,10 +602,10 @@ async function main() {
       console.log(kleur.bold('  pnpm vitebook:dev'));
       break;
     default:
-      console.log(kleur.bold(`  ${workspace ? 'pnpm' : pkgManager} install`));
+      console.log(kleur.bold(`  ${workspace ? 'pnpm' : PKG_MANAGER} install`));
       console.log(
         kleur.bold(
-          `  ${workspace ? 'pnpm' : `${pkgManager} run`} vitebook:dev`,
+          `  ${workspace ? 'pnpm' : `${PKG_MANAGER} run`} vitebook:dev`,
         ),
       );
       break;
