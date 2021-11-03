@@ -20,7 +20,7 @@
     active: import.meta.env.SSR
       ? Object.values($variants).length === 0 ||
         Object.values($variants).findIndex((v) => v.id === variantId) === 0
-      : searchParams?.get('variant')?.toLowerCase() === variantId
+      : searchParams?.get('variant')?.toLowerCase() === variantId,
   };
 
   variants.add(variant);

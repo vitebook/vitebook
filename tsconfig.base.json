@@ -12,7 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "jsx": "preserve",
     "lib": ["dom", "dom.iterable", "es2017"],
-    "module": "es2020",
+    "module": "esnext",
     "moduleResolution": "node",
     "newLine": "lf",
     "noImplicitAny": false,
@@ -26,7 +26,7 @@
     "sourceMap": true,
     "strict": true,
     "strictNullChecks": true,
-    "target": "es2020",
+    "target": "esnext",
     "useDefineForClassFields": false,
     "types": ["node"]
   },

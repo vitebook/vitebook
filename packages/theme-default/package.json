@@ -44,16 +44,19 @@
     "dist/"
   ],
   "scripts": {
-    "build": "run-s clean build:client build:node build:types copy:icons",
-    "build:client": "node ../../.scripts/build-client.js",
+    "build": "run-s clean build:client build:node build:types copy",
+    "build:client": "tsc -p src/client/tsconfig.json",
     "build:node": "node ../../.scripts/build-node.js",
     "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
     "clean": "rimraf dist",
-    "copy:icons": "node .scripts/copy-icons.js",
-    "dev": "run-s clean copy:icons && run-p watch:client watch:node watch:types",
+    "copy": "run-s copy:*",
+    "copy:client": "node ../../.scripts/copy-non-ts-files.js",
+    "copy:node": "node .scripts/copy-icons.js",
+    "dev": "run-s clean copy && run-p watch:client watch:copy watch:node watch:types",
     "watch:client": "pnpm build:client -- --watch",
     "watch:node": "pnpm build:node -- --watch",
-    "watch:types": "pnpm build:types -- --watch"
+    "watch:types": "pnpm build:types -- --watch",
+    "watch:copy": "pnpm copy:client -- --watch"
   },
   "dependencies": {
     "kleur": "^4.1.4"
@@ -61,6 +64,7 @@
   "devDependencies": {
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
+    "npm-run-all": "^4.1.5",
     "svelte": "^3.43.2",
     "vite": "2.7.0-beta.0"
   },

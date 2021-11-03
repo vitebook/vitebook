@@ -45,13 +45,15 @@
     "src/"
   ],
   "scripts": {
-    "build": "run-s clean build:client build:node build:types",
-    "build:client": "node ../../.scripts/build-client.js --entry src/client/index.ts,src/client/entry-client.ts,src/client/entry-server.ts",
+    "build": "run-s clean build:client build:node build:types copy",
+    "build:client": "tsc -p src/client/tsconfig.json",
     "build:node": "node ../../.scripts/build-node.js --external @sveltejs/vite-plugin-svelte,magic-string,svelte-preprocess-esbuild",
     "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
     "clean": "rimraf dist",
-    "dev": "pnpm clean && run-p watch:client watch:node watch:types",
+    "copy": "node ../../.scripts/copy-non-ts-files.js",
+    "dev": "pnpm clean && run-p watch:client watch:copy watch:node watch:types",
     "watch:client": "pnpm build:client -- --watch",
+    "watch:copy": "pnpm copy -- --watch",
     "watch:node": "pnpm build:node -- --watch",
     "watch:types": "pnpm build:types -- --watch"
   },

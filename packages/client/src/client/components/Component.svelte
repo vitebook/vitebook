@@ -11,6 +11,8 @@
   let component;
   let currentComponent;
 
+  const isSSR = import.meta.env.SSR;
+
   export { component as this };
 
   const context = getAllContexts();
@@ -21,7 +23,7 @@
       target,
       context,
       props: $$restProps,
-      hydrate: import.meta.env.PROD && !hasHydrated
+      hydrate: import.meta.env.PROD && !hasHydrated,
     });
     hasHydrated = true;
   } else {
@@ -42,7 +44,7 @@
 </script>
 
 <div bind:this={target}>
-  {#if import.meta.env.SSR}
+  {#if isSSR}
     {@html ssr.html}
   {/if}
 </div>

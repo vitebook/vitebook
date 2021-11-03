@@ -74,9 +74,30 @@ const DEFAULT_THEME_SCOPE_CLASS = '__vbk__';
 const DEFAULT_THEME_SCOPE_INCLUDE = [
   /@vitebook\/client/,
   /@vitebook\/theme-default/,
+  /@vitebook\/preact/,
+  /@vitebook\/vue/,
   // The following regex's are for monorepo environments due to packages being linked.
-  new RegExp(path.dirname(require.resolve('@vitebook/client'))),
+  /vitebook\/packages\/client/,
+  /vitebook\/packages\/preact/,
+  /vitebook\/packages\/vue/,
+  /vitebook\/packages\/theme-default/,
 ];
+
+try {
+  DEFAULT_THEME_SCOPE_INCLUDE.push(
+    new RegExp(path.dirname(require.resolve('@vitebook/preact'))),
+  );
+} catch (e) {
+  //
+}
+
+try {
+  DEFAULT_THEME_SCOPE_INCLUDE.push(
+    new RegExp(path.dirname(require.resolve('@vitebook/vue'))),
+  );
+} catch (e) {
+  //
+}
 
 try {
   DEFAULT_THEME_SCOPE_INCLUDE.push(

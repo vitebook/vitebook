@@ -3,6 +3,8 @@
   import { h, hydrate as preactHydrate, render as preactRender } from 'preact';
   import { onDestroy } from 'svelte';
 
+  const isSSR = import.meta.env.SSR;
+
   let target;
 
   export let component;
@@ -45,7 +47,7 @@
 </script>
 
 <div bind:this={target}>
-  {#if import.meta.env.SSR}
+  {#if isSSR}
     {@html ssr}
   {/if}
 </div>

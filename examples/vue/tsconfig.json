@@ -3,7 +3,7 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "module": "es2020"
+    "module": "esnext"
   },
   "include": ["src"]
 }

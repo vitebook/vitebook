@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "../../dist",
+    "declaration": false,
+    "declarationMap": false,
+    "paths": {
+      ":virtual/vitebook/site": ["../virtual/site.d.ts"],
+      ":virtual/vitebook/theme": ["../virtual/theme.d.ts"],
+      ":virtual/vitebook/pages": ["../virtual/pages.d.ts"],
+      ":virtual/vitebook/addons": ["../virtual/addons.d.ts"]
+    }
+  },
+  "include": ["."]
+}

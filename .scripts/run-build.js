@@ -27,12 +27,8 @@ const pkgIndex =
       });
 
 const pkg = packages[pkgIndex];
-const watch = process.argv.includes('-w');
+const watch = process.argv.includes('-w') || process.argv.includes('--watch');
 
-spawn(
-  'npm',
-  ['run', watch ? 'build:watch' : 'build', `--workspace=@vitebook/${pkg}`],
-  {
-    stdio: 'inherit',
-  },
-);
+spawn('npm', ['run', watch ? 'dev' : 'build', `--workspace=@vitebook/${pkg}`], {
+  stdio: 'inherit',
+});

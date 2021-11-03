@@ -44,7 +44,7 @@
   ],
   "scripts": {
     "build": "run-s clean build:client build:node build:types",
-    "build:client": "node ../../.scripts/build-client.js",
+    "build:client": "tsc -p src/client/tsconfig.json",
     "build:node": "node ../../.scripts/build-node.js --external node-html-parser",
     "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
     "clean": "rimraf dist",

@@ -6,10 +6,12 @@
   import {
     COMPONENT_SSR_CTX_KEY,
     useAppContext,
-    SSR_CTX_KEY
+    SSR_CTX_KEY,
   } from '@vitebook/client';
   import { getAllContexts, onDestroy } from 'svelte';
   import { createApp, h } from 'vue';
+
+  const isSSR = import.meta.env.SSR;
 
   let target;
   let app;
@@ -55,17 +57,17 @@
             // Passing in app SSR context as Vue will automatically add component module id's
             // to the `module` set on it.
             h(component),
-            appSSrContext
+            appSSrContext,
           );
           return [ssrMarker, html];
-        }
+        },
       };
     }
   }
 </script>
 
 <div bind:this={target}>
-  {#if import.meta.env.SSR}
+  {#if isSSR}
     {@html ssrMarker}
   {/if}
 </div>

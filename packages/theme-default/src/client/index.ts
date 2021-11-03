@@ -63,4 +63,6 @@ const theme: ClientTheme = {
   },
 };
 
+export * from '../shared';
+
 export default theme;
