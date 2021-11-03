@@ -38,6 +38,7 @@ async function main() {
   let theme = argv.theme;
   let features = argv.features?.split(',');
   let workspace = argv.workspace ?? false;
+  let local = argv.local ? removeEndingSlash(argv.local) : false;
   let projectName = projectDirName ? toTitleCase(projectDirName) : null;
 
   const isTargetDirEmpty = isDirEmpty(targetDir);
@@ -46,6 +47,22 @@ async function main() {
 
   const configDir = path.resolve(targetDir, '.vitebook');
   const configDirExists = fs.existsSync(configDir);
+
+  if (targetDir !== process.cwd() && fs.existsSync(targetDir)) {
+    /** @type {{ overwrite: boolean }} */
+    const { overwrite } = await enquirer.prompt({
+      type: 'confirm',
+      name: 'overwrite',
+      message: `Directory exists. Overwrite?`,
+      initial: false,
+    });
+
+    if (!overwrite) {
+      return;
+    }
+
+    await emptyDir(targetDir);
+  }
 
   /**
    * @type {{
@@ -347,24 +364,30 @@ async function main() {
 
   const vitebookVersion = workspace ? 'workspace:*' : `^${VITEBOOK_VERSION}`;
 
-  pkg.devDependencies['@vitebook/client'] = vitebookVersion;
-  pkg.devDependencies['@vitebook/core'] = vitebookVersion;
+  const addVitebookDependency = (pkgName) => {
+    pkg.devDependencies[`@vitebook/${pkgName}`] = local
+      ? `${local}/${pkgName}`
+      : vitebookVersion;
+  };
+
+  addVitebookDependency('client');
+  addVitebookDependency('core');
 
   if (isVueTemplate) {
     pkg.dependenices.vue = '^3.0.0';
-    pkg.devDependencies['@vitebook/vue'] = vitebookVersion;
+    addVitebookDependency('vue');
 
     if (hasMarkdownFeature) {
-      pkg.devDependencies['@vitebook/markdown-vue'] = vitebookVersion;
+      addVitebookDependency('markdown-vue');
     }
   }
 
   if (isPreactTemplate) {
     pkg.dependenices.preact = '^10.5.14';
-    pkg.devDependencies['@vitebook/preact'] = vitebookVersion;
+    addVitebookDependency('preact');
 
     if (hasMarkdownFeature) {
-      pkg.devDependencies['@vitebook/markdown-preact'] = vitebookVersion;
+      addVitebookDependency('markdown-preact');
     }
   }
 
@@ -373,12 +396,12 @@ async function main() {
     pkg.devDependencies['svelte-preprocess'] = '^4.9.8';
 
     if (hasMarkdownFeature) {
-      pkg.devDependencies['@vitebook/markdown-svelte'] = vitebookVersion;
+      addVitebookDependency('markdown-svelte');
     }
   }
 
   if (hasDefaultTheme) {
-    pkg.devDependencies['@vitebook/theme-default'] = vitebookVersion;
+    addVitebookDependency('theme-default');
   }
 
   pkg.scripts = sortObjectKeys(pkg.scripts);
@@ -555,6 +578,10 @@ async function main() {
       console.log(kleur.bold('  yarn'));
       console.log(kleur.bold('  yarn vitebook:dev'));
       break;
+    case 'pnpm':
+      console.log(kleur.bold('  pnpm install'));
+      console.log(kleur.bold('  pnpm vitebook:dev'));
+      break;
     default:
       console.log(kleur.bold(`  ${workspace ? 'pnpm' : pkgManager} install`));
       console.log(
@@ -633,6 +660,8 @@ function emptyDir(dir) {
     }
   }
 }
+
+export const removeEndingSlash = (str) => str.replace(/\/$/, '');
 
 function pkgInfoFromUserAgent(userAgent) {
   if (!userAgent) return undefined;
