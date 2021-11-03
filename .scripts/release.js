@@ -117,6 +117,10 @@ async function main() {
   step('Updating cross dependencies...');
   updateVersions(targetVersion);
 
+  // update lockfile
+  step('Updating lockfile...');
+  await run(`pnpm`, ['install']);
+
   // build all packages
   step('Building all packages...');
   if (!skipBuild && !isDryRun) {
