@@ -76,13 +76,13 @@ and share your thoughts!
 
 ```bash
 # npm
-$: npm init vitebook@next my-app
+$: npm init vitebook my-app
 
 # yarn
-$: yarn create vitebook@next my-app
+$: yarn create vitebook my-app
 
 # pnpm
-$: pnpm create vitebook@next my-app
+$: pnpm create vitebook my-app
 ```
 
 ### Extra Options
@@ -94,16 +94,16 @@ $: pnpm create vitebook@next my-app
 
 ```bash
 # npm 6.x
-npm init vitebook@next my-app --template {TEMPLATE} --theme {THEME} --features {FEATURES}
+npm init vitebook my-app --template {TEMPLATE} --theme {THEME} --features {FEATURES}
 
 # npm 7+, extra double-dash is needed:
-npm init vitebook@next my-app -- --template vue
+npm init vitebook my-app -- --template vue
 
 # yarn
-yarn create vitebook@next my-app --template vue
+yarn create vitebook my-app --template vue
 
 # pnpm
-pnpm create vitebook@next my-app -- --template vue
+pnpm create vitebook my-app -- --template vue
 ```
 
 ## Documentation
@@ -122,7 +122,7 @@ Copyright (c) 2021-present, Rahim Alwer
 
 [esbuild]: https://esbuild.github.io
 [package]: https://www.npmjs.com/package/@vitebook/core
-[package-badge]: https://img.shields.io/npm/v/@vitebook/core/next
+[package-badge]: https://img.shields.io/npm/v/@vitebook/core
 [semantic-release]: https://github.com/semantic-release/semantic-release
 [storybook]: https://storybook.js.org
 [storybook-theming]: https://storybook.js.org/docs/react/configure/theming
