@@ -141,9 +141,9 @@ async function main() {
 
   template =
     template && FRAMEWORKS.includes(template) ? template : userInput.template;
-  const isVueTemplate = userInput.template === 'vue';
-  const isSvelteTemplate = userInput.template === 'svelte';
-  const isPreactTemplate = /(preact|react)/.test(userInput.template);
+  const isVueTemplate = template === 'vue';
+  const isSvelteTemplate = template === 'svelte';
+  const isPreactTemplate = /(preact|react)/.test(template);
 
   features = (features ?? userInput.features ?? []).filter(
     (feature) => !FEATURES.includes(feature),
