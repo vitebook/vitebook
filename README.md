@@ -78,13 +78,13 @@ and share your thoughts!
 
 ```bash
 # npm
-$: npm init vitebook@next
+$: npm init vitebook@next my-app
 
 # yarn
-$: yarn create vitebook@next
+$: yarn create vitebook@next my-app
 
 # pnpm
-$: pnpm create vitebook@next
+$: pnpm create vitebook@next my-app
 ```
 
 ### Extra Options
