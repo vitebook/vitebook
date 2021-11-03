@@ -49,7 +49,7 @@ export function corePlugin(): Plugin {
   );
 
   return {
-    name: 'vitebook/core',
+    name: '@vitebook/core',
     enforce: 'pre',
     config() {
       const config: ViteConfig = {

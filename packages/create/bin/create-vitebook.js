@@ -501,7 +501,7 @@ async function main() {
       }),
       isSvelteTemplate
         ? `clientPlugin({
-      include: /\\.${hasMarkdownFeature ? '(md|svelte)' : 'svelte'}/,
+      include: /\\.svelte/,
       svelte: {
         extensions: ['.svelte'${hasMarkdownFeature ? ", '.md'" : ''}],
         preprocess: [
@@ -831,9 +831,7 @@ function getFrameworkPlugins({
     case 'vue':
       return [
         hasMarkdownFeature && 'vueMarkdownPlugin({ include: /\\.md/, })',
-        `vuePlugin({ include: /\\.${
-          hasMarkdownFeature ? '(md|vue)' : 'vue'
-        }/, vue: { include: /\\.${
+        `vuePlugin({ include: /\\.vue/, vue: { include: /\\.${
           hasMarkdownFeature ? '(md|vue)' : 'vue'
         }/ }})`,
       ];
