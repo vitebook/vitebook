@@ -42,7 +42,8 @@
   },
   "files": [
     "src/",
-    "dist/"
+    "dist/",
+    ".scripts/patch-prefresh.js"
   ],
   "scripts": {
     "build": "run-s clean build:client build:node build:types copy",
@@ -52,6 +53,7 @@
     "clean": "rimraf dist",
     "copy": "node ../../.scripts/copy-non-ts-files.js",
     "dev": "pnpm clean && run-p watch:client watch:copy watch:node watch:types",
+    "postinstall": "node .scripts/patch-prefresh.js",
     "watch:client": "pnpm build:client -- --watch",
     "watch:copy": "pnpm copy -- --watch",
     "watch:node": "pnpm build:node -- --watch",
