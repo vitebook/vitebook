@@ -308,14 +308,14 @@ importers:
       '@rollup/pluginutils': ^4.1.1
       '@vitebook/client': workspace:*
       '@vitebook/core': workspace:*
-      '@vitejs/plugin-vue': ^1.8.0
+      '@vitejs/plugin-vue': 1.10.0-beta.0
       '@vue/compiler-sfc': ^3.2.19
       svelte: ^3.44.0
       vite: 2.7.0-beta.1
       vue: ^3.2.6
     dependencies:
       '@rollup/pluginutils': 4.1.1
-      '@vitejs/plugin-vue': 1.9.3_vite@2.7.0-beta.1
+      '@vitejs/plugin-vue': 1.10.0-beta.0_vite@2.7.0-beta.1
       '@vue/compiler-sfc': 3.2.20
       vue: 3.2.20
     devDependencies:
@@ -1016,8 +1016,8 @@ packages:
       eslint-visitor-keys: 2.1.0
     dev: true
 
-  /@vitejs/plugin-vue/1.9.3_vite@2.7.0-beta.1:
-    resolution: {integrity: sha512-yW6H/q+4Mc2PcVjSOelcsMrg/k15DnMUz8jyCFsI04emc3aLwo4AoofUfGnjHUkgirrDxSJLVqQVGhonQ3yykA==}
+  /@vitejs/plugin-vue/1.10.0-beta.0_vite@2.7.0-beta.1:
+    resolution: {integrity: sha512-HVdqMh9Bi9Wdk9YN5ho+VlBTxmZFWO2LCM/856pSlRK2qN2i7O2mFHFVAjTCRLtZjBpOwwB6W9RkKem4Q7oiwg==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
       vite: ^2.5.10
