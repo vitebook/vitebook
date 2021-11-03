@@ -88,9 +88,6 @@
   "devDependencies": {
     "rollup": "^2.58.0"
   },
-  "peerDependencies": {
-    "rollup": "^2.58.0"
-  },
   "engines": {
     "node": ">=15"
   },

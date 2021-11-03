@@ -70,9 +70,6 @@
   "devDependencies": {
     "vite": "2.7.0-beta.0"
   },
-  "peerDependencies": {
-    "vite": "^2.5.3"
-  },
   "publishConfig": {
     "access": "public"
   }

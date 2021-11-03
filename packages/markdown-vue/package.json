@@ -68,8 +68,7 @@
   },
   "peerDependencies": {
     "@vitebook/core": "0.2.1",
-    "@vitebook/vue": "0.2.1",
-    "vue": "^3.2.1"
+    "@vitebook/vue": "0.2.1"
   },
   "publishConfig": {
     "access": "public"
