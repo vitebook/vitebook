@@ -843,7 +843,7 @@ function getFrameworkPlugins({
         `preactMarkdownPlugin({ include: /\\.md/ })`,
         `preactPlugin({ include: /\\.${
           hasTypescriptFeature ? 'tsx' : 'jsx'
-        })/ })`,
+        }/ })`,
       ];
     default:
       return [];
