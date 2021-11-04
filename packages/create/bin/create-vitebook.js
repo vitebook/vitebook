@@ -821,14 +821,14 @@ function getFrameworkIncludes({
 }) {
   switch (framework) {
     case 'svelte':
-      return [hasMarkdownFeature && "'src/**/*.md'", `'src/**/*.story.svelte'`];
+      return [hasMarkdownFeature && "'src/**/*.md'", `'src/**/*.svelte'`];
     case 'vue':
-      return [hasMarkdownFeature && "'src/**/*.md'", `'src/**/*.story.vue'`];
+      return [hasMarkdownFeature && "'src/**/*.md'", `'src/**/*.vue'`];
     case 'preact':
     case 'react':
       return [
         hasMarkdownFeature && "'src/**/*.md'",
-        `'src/**/*.story.${hasTypescriptFeature ? 'tsx' : 'jsx'}'`,
+        `'src/**/*.${hasTypescriptFeature ? 'tsx' : 'jsx'}'`,
       ];
     default:
       return [];
