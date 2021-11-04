@@ -45,8 +45,6 @@ export type DefaultPageModule<
   __type?: PageMetaExport;
   default: DefaultExport;
   __pageMeta?: PageMetaBuilder<PageMetaExport>;
-  /** Alias for `__pageMeta` */
-  __storyMeta?: PageMetaBuilder<PageMetaExport>;
 };
 
 export type VirtualPagesModule = {

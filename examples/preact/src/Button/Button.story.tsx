@@ -1,9 +1,9 @@
-import type { StoryMeta } from '@vitebook/client';
+import type { PageMeta } from '@vitebook/client';
 import { Variant } from '@vitebook/preact';
 
 import Button from './Button';
 
-export const __storyMeta: StoryMeta = {
+export const __pageMeta: PageMeta = {
   title: 'Button',
   description: 'My awesome button.',
 };

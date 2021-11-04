@@ -1,9 +1,9 @@
 <script lang="ts" context="module">
-  import type { StoryMeta } from '@vitebook/client';
+  import type { PageMeta } from '@vitebook/client';
 
-  export const __storyMeta: StoryMeta = {
+  export const __pageMeta: PageMeta = {
     title: 'Button',
-    description: 'My awesome button.'
+    description: 'My awesome button.',
   };
 </script>
 
