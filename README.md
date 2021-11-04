@@ -69,8 +69,6 @@ and share your thoughts!
 - Algolia Plugin
 - Component Search
 - Keyboard Shortcuts
-- Bundle Library for Production
-- Custom Themes with React/Preact/Vue
 
 ## Quickstart
 

@@ -18,6 +18,7 @@
     "build:all": "pnpm build --filter ./packages",
     "test:node-esm": "node .scripts/test-node-esm.js",
     "example": "node .scripts/run-example.js",
+    "sandbox": "node .scripts/run-sandbox.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "release": "pnpm test:node-esm && node .scripts/release.js",
     "prepare": "husky install"

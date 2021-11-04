@@ -19,8 +19,7 @@ const pkgArgIndex = packages.findIndex((pkg) => pkg === pkgArg);
 const pkgIndex =
   pkgArgIndex >= 0
     ? pkgArgIndex
-    : // @ts-expect-error
-      await prompts.select({
+    : await prompts.select({
         message: 'Pick a package',
         choices: packages,
         initial: 0,
