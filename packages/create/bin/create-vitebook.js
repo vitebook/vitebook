@@ -413,7 +413,6 @@ async function main() {
 
   if (isSvelteTemplate) {
     pkg.devDependencies.svelte = '^3.43.1';
-    pkg.devDependencies['svelte-preprocess'] = '^4.9.8';
 
     if (hasMarkdownFeature) {
       addVitebookDependency('markdown-svelte');
@@ -524,12 +523,6 @@ async function main() {
       include: /\\.svelte/,
       svelte: {
         extensions: ['.svelte'${hasMarkdownFeature ? ", '.md'" : ''}],
-        preprocess: [
-          sveltePreprocess({
-            // Vitebook internally handles preprocessing typescript with \`esbuild\`.
-            typescript: false,
-          }),
-        ],
       },
     })`
         : 'clientPlugin()',
@@ -871,7 +864,6 @@ function getFrameworkPluginImports({ framework, hasMarkdownFeature = false }) {
       return [
         hasMarkdownFeature &&
           "import { svelteMarkdownPlugin } from '@vitebook/markdown-svelte/node';",
-        "import sveltePreprocess from 'svelte-preprocess';",
       ];
     case 'vue':
       return [
