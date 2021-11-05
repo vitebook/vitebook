@@ -1,0 +1,20 @@
+{
+  "name": "@vitebook/docs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Blazing fast static-site generator and alternative to Storybook.",
+  "type": "module",
+  "scripts": {
+    "vitebook:build": "vitebook build",
+    "vitebook:dev": "vitebook dev",
+    "vitebook:preview": "vitebook preview"
+  },
+  "devDependencies": {
+    "@vitebook/client": "^0.4.0",
+    "@vitebook/core": "^0.4.0",
+    "@vitebook/markdown-svelte": "^0.4.0",
+    "@vitebook/theme-default": "^0.4.0",
+    "svelte": "^3.43.1"
+  },
+  "dependenices": {}
+}

@@ -64,6 +64,20 @@ importers:
       typescript: 4.4.4
       upath: 2.0.1
 
+  docs:
+    specifiers:
+      '@vitebook/client': ^0.4.0
+      '@vitebook/core': ^0.4.0
+      '@vitebook/markdown-svelte': ^0.4.0
+      '@vitebook/theme-default': ^0.4.0
+      svelte: ^3.43.1
+    devDependencies:
+      '@vitebook/client': link:../packages/client
+      '@vitebook/core': link:../packages/core
+      '@vitebook/markdown-svelte': link:../packages/markdown-svelte
+      '@vitebook/theme-default': link:../packages/theme-default
+      svelte: 3.44.0
+
   packages/client:
     specifiers:
       '@rollup/pluginutils': ^4.1.1
