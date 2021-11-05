@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/markdown-prismjs",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "keywords": [
     "esm",
     "markdown",
@@ -50,7 +50,7 @@
     "watch:types": "pnpm build:types -- --watch"
   },
   "dependencies": {
-    "@vitebook/markdown": "0.4.1",
+    "@vitebook/markdown": "0.5.0",
     "prismjs": "^1.25.0"
   },
   "devDependencies": {
@@ -58,7 +58,7 @@
     "@vitebook/core": "workspace:*"
   },
   "peerDependencies": {
-    "@vitebook/core": "0.4.1"
+    "@vitebook/core": "0.5.0"
   },
   "publishConfig": {
     "access": "public"

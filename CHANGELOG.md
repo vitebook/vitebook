@@ -1,3 +1,9 @@
+# [0.5.0](https://github.com/vitebook/vitebook/compare/v0.4.1...v0.5.0) (2021-11-05)
+
+### Features
+
+- **create:** new `custom` theme which replaces old `blank` theme ([0807098](https://github.com/vitebook/vitebook/commit/08070980ab822daeeecab1751a3d967c65216414))
+
 ## [0.4.1](https://github.com/vitebook/vitebook/compare/v0.4.0...v0.4.1) (2021-11-05)
 
 ### Bug Fixes
