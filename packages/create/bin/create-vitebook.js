@@ -22,7 +22,7 @@ const VITEBOOK_VERSION = JSON.parse(
 console.log(kleur.bold(kleur.cyan(`\nvitebook@${VITEBOOK_VERSION}\n`)));
 
 const FRAMEWORKS = ['vue', 'svelte', 'preact', 'react'];
-const THEMES = ['blank', 'default'];
+const THEMES = ['blank', 'custom', 'default'];
 const GIT_IGNORE = ['.DS_STORE', '.cache', '.temp', 'node_modules/', 'dist/'];
 
 const FEATURES = [
@@ -141,6 +141,7 @@ async function main() {
 
   theme = theme ?? userInput.theme;
   const hasBlankTheme = theme === 'blank';
+  const hasCustomTheme = theme === 'custom';
   const hasDefaultTheme = theme === 'default';
 
   template =
@@ -478,6 +479,21 @@ async function main() {
     fs.mkdirSync(themeConfigPath);
 
     if (hasBlankTheme) {
+      const blankThemeTemplateDir = path.resolve(
+        __dirname,
+        '../template-theme-blank',
+      );
+
+      copyDir(blankThemeTemplateDir, themeConfigPath);
+
+      // Delete invalid theme index file.
+      fs.unlinkSync(
+        path.resolve(
+          themeConfigPath,
+          `index.${hasTypescriptFeature ? 'js' : 'ts'}`,
+        ),
+      );
+    } else if (hasCustomTheme) {
       const customThemeTemplateDir = path.resolve(
         __dirname,
         '../template-theme-custom',

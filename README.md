@@ -85,8 +85,8 @@ $: pnpm create vitebook my-app
 
 ### Extra Options
 
-- `{TEMPLATE}`: replace with either `vue`, `svelte`, `preact` or `react`.
-- `{THEME}`: replace with `blank` or `default`.
+- `{TEMPLATE}`: replace with either `vue`, `svelte`, `preact`, or `react`.
+- `{THEME}`: replace with `blank`, `custom`, or `default`.
 - `{FEATURES}`: replace with comma separated list such as `markdown,typescript`. Valid features
   are `markdown`, `typescript`, `eslint`, `prettier`, and `lint-staged`.
 
