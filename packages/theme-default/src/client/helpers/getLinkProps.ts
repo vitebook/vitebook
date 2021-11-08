@@ -17,10 +17,14 @@ export function getLinkProps(
 
   let active = link.link === routePath;
 
+  const normalizedLink = isExternal
+    ? link.link
+    : link.link.replace(/\..*$/, '.html');
+
   if (link.activeMatch) {
     active = new RegExp(link.activeMatch).test(currentRoute.decodedPath);
   } else {
-    const itemPath = withBaseUrl(link.link);
+    const itemPath = withBaseUrl(normalizedLink);
     active =
       itemPath === '/'
         ? itemPath === routePath
@@ -30,7 +34,7 @@ export function getLinkProps(
   return {
     active,
     external: isExternal,
-    href: !isExternal ? withBaseUrl(link.link) : link.link,
+    href: !isExternal ? withBaseUrl(normalizedLink) : normalizedLink,
     target: link.target ?? (isExternal ? `_blank` : undefined),
     rel: link.rel ?? (isExternal ? `noopener noreferrer` : undefined),
     'aria-label': link.ariaLabel,
