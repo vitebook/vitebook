@@ -70,6 +70,7 @@
       aria-controls={`sidebar-menu-${depth}`}
       aria-haspopup="true"
       class="sidebar-item__menu-button"
+      tabindex={isCategory ? -1 : undefined}
       on:pointerdown={onToggle}
       on:keydown={(e) => e.key === 'Enter' && onToggle()}
     >
