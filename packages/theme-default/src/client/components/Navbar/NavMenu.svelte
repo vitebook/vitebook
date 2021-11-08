@@ -197,6 +197,7 @@
       margin: 0;
       opacity: 0;
       visibility: hidden;
+      list-style: none;
       z-index: calc(var(--vbk--navbar-z-index) + 1);
       border-radius: 0.15rem;
       box-shadow: var(--vbk--elevation-medium);

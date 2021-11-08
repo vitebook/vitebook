@@ -254,6 +254,7 @@ a.__vbk__.header-anchor:focus {
 
 ul.__vbk__,
 ol.__vbk__ {
+  list-style: square;
   margin: 1.15rem 0;
   line-height: 1.8;
 }
@@ -272,6 +273,16 @@ ul.__vbk__ p.__vbk__,
 ol.__vbk__ p.__vbk__ {
   margin: 0;
   padding: 0;
+}
+
+ul.__vbk__ > li.__vbk__,
+ol.__vbk__ > li.__vbk__ {
+  margin-top: 0.375rem;
+}
+
+ul.__vbk__ > li.__vbk__:first-child,
+ol.__vbk__ > li.__vbk__:first-child {
+  margin-top: 0;
 }
 
 /**-------------------------------------------------------------------------------------------

@@ -51,6 +51,7 @@
   .navbar__links__list {
     margin: 0;
     padding: 0;
+    list-style: none;
   }
 
   @media (min-width: 992px) {
