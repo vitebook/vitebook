@@ -55,6 +55,7 @@
     border-radius: 0.15rem;
     min-width: 2.649375rem;
     min-height: 2.649375rem;
+    margin-left: var(--vbk-brand-link-spacing, 0);
     cursor: pointer;
     color: var(--vbk--toggle-color);
     background-color: var(--vbk--toggle-bg-color);

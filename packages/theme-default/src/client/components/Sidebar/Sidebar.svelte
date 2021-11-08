@@ -8,6 +8,9 @@
   import { hasNavbarItems } from '../Navbar/hasNavbarItems';
   import NavbarTitle from '../Navbar/NavbarTitle.svelte';
   import ThemeSwitch from '../ThemeSwitch.svelte';
+  import DiscordLink from '../Links/DiscordLink.svelte';
+  import RepoLink from '../Links/RepoLink.svelte';
+  import TwitterLink from '../Links/TwitterLink.svelte';
   import { hasSidebarItems } from './hasSidebarItems';
   import { multiSidebarStyleConfig } from './multiSidebarStyleConfig';
   import SidebarButton from './SidebarButton.svelte';
@@ -71,7 +74,10 @@
     <div class="sidebar__header">
       <div class="sidebar__header-wrapper">
         <NavbarTitle />
-        <div style="flex-grow: 1;" />
+        <div style="flex-grow: 1; margin-left: 2rem;" />
+        <TwitterLink />
+        <DiscordLink />
+        <RepoLink />
         <ThemeSwitch />
       </div>
     </div>

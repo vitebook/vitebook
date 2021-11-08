@@ -11,6 +11,9 @@
   import Sidebar from '../components/Sidebar/Sidebar.svelte';
   import SidebarToggle from '../components/Sidebar/SidebarToggle.svelte';
   import ThemeSwitch from '../components/ThemeSwitch.svelte';
+  import DiscordLink from '../components/Links/DiscordLink.svelte';
+  import RepoLink from '../components/Links/RepoLink.svelte';
+  import TwitterLink from '../components/Links/TwitterLink.svelte';
   import { darkMode, useDarkMode } from '../stores/darkMode';
   import { isLargeScreen } from '../stores/isLargeScreen';
   import { localizedThemeConfig } from '../stores/localizedThemeConfig';
@@ -30,7 +33,7 @@
     let scrollbarWidth = window.innerWidth - document.body.clientWidth + 'px';
     document.documentElement.style.setProperty(
       '--vbk--scrollbar-width',
-      scrollbarWidth
+      scrollbarWidth,
     );
 
     hasMounted = true;
@@ -66,6 +69,9 @@
           <svelte:fragment slot="end">
             <slot name="navbar-end">
               {#if $isLargeScreen}
+                <TwitterLink />
+                <DiscordLink />
+                <RepoLink />
                 <ThemeSwitch class="navbar__theme-switch" />
               {/if}
 

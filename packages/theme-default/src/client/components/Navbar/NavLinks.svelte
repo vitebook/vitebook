@@ -1,15 +1,23 @@
 <script>
+  import { localizedThemeConfig } from '../../stores/localizedThemeConfig';
+
   import { languageLinks } from '../../stores/languageLinks';
-  import { repoLink } from '../../stores/repoLink';
   import { hasNavbarItems } from './hasNavbarItems';
   import { navbarConfig } from './navbarConfig';
   import NavLink from './NavLink.svelte';
   import NavMenu from './NavMenu.svelte';
+  import { repoLink } from '../../stores/repoLink';
 
   export let active = undefined;
+
+  $: visible =
+    $hasNavbarItems ||
+    $localizedThemeConfig.socials.discord ||
+    $localizedThemeConfig.socials.twitter ||
+    $repoLink;
 </script>
 
-{#if $hasNavbarItems}
+{#if visible}
   <nav class="navbar__links" class:active>
     <ul class="navbar__links__list">
       {#each $navbarConfig?.items ?? [] as item (item)}
@@ -25,12 +33,6 @@
       {#if $languageLinks}
         <li class="navbar__links__list-item">
           <NavMenu item={$languageLinks} />
-        </li>
-      {/if}
-
-      {#if $repoLink}
-        <li class="navbar__links__list-item">
-          <NavLink item={$repoLink} />
         </li>
       {/if}
     </ul>

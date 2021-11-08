@@ -15,6 +15,7 @@ export type VitebookIcon =
   | 'theme-switch-light'
   | 'theme-switch-dark'
   | `home-feature-${number}`
+  | `brand-${string}`
   | `sidebar-file-${string}`
   | `sidebar-folder-open`
   | `sidebar-folder-closed`;

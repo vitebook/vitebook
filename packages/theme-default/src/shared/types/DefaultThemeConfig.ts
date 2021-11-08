@@ -36,38 +36,57 @@ export type DefaultThemeLocaleData = {
   /**
    * Dark mode configuration.
    */
-  darkMode?: DarkModeLocaleConfig;
+  darkMode?: DarkModeConfig;
   /**
    * Remote Git repository configuration.
    */
-  remoteGitRepo?: DefaultThemeRemoteGitRepoLocaleConfig;
+  remoteGitRepo?: RemoteGitRepoConfig;
+  /**
+   * Social platform configurations.
+   */
+  socials?: SocialsConfig;
   /**
    * Navbar configuration.
    *
    * @default false
    */
-  navbar?: false | DefaultThemeNavbarLocaleConfig;
+  navbar?: false | NavbarConfig;
   /**
    * Sidebar configuration.
    */
-  sidebar?: DefaultThemeSidebarLocaleConfig;
+  sidebar?: SidebarConfig;
   /**
    * Markdown documentation configuration.
    */
-  markdown?: DefaultThemeMarkdownLocaleConfig;
+  markdown?: MarkdownConfig;
   /**
    * Home page configuration.
    *
    * @default false
    */
-  homePage?: DefaultThemeHomePageLocaleConfig | false;
+  homePage?: HomePageConfig | false;
   /**
    * Not found page (404) configuration.
    */
-  notFoundPage?: DefaultThemeNotFoundPageLocaleConfig;
+  notFoundPage?: NotFoundPageConfig;
 };
 
-export type DefaultThemeRemoteGitRepoLocaleConfig = {
+export type SocialsConfig = {
+  discord?:
+    | string
+    | {
+        label?: string;
+        link: string;
+      };
+  twitter?:
+    | string
+    | {
+        label?: string;
+        link: string;
+      };
+};
+
+export type RemoteGitRepoConfig = {
   /**
    * Specify the repository URL of your project. This will be used as the link of the repository
    * link, which will be displayed as the last item of the navbar.
@@ -80,7 +99,7 @@ export type DefaultThemeRemoteGitRepoLocaleConfig = {
   label?: string;
 };
 
-export type DefaultThemeNavbarLocaleConfig = {
+export type NavbarConfig = {
   /**
    * Navbar items.
    *
@@ -109,7 +128,7 @@ export type DefaultThemeNavbarLocaleConfig = {
   };
 };
 
-export type DarkModeLocaleConfig = {
+export type DarkModeConfig = {
   /**
    * If set to `true`, a button to switch dark mode will be displayed in the navbar, and the initial
    * mode will be automatically set according to [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme).
@@ -126,10 +145,10 @@ export type DarkModeLocaleConfig = {
 };
 
 export type MultiSidebarStyleConfig = Partial<
-  Pick<DefaultThemeSidebarLocaleConfig, 'style' | 'iconColors'>
+  Pick<SidebarConfig, 'style' | 'iconColors'>
 >;
 
-export type DefaultThemeSidebarLocaleConfig = {
+export type SidebarConfig = {
   /**
    * Sidebar items.
    *
@@ -166,7 +185,7 @@ export type DefaultThemeSidebarLocaleConfig = {
   toggleAriaLabel?: string;
 };
 
-export type DefaultThemeMarkdownLocaleConfig = {
+export type MarkdownConfig = {
   /**
    * Whether the floating table of contents to the right of markdown pages should be enabled by
    * default. This can be configured on a page-by-page basis via the `toc` frontmatter property.
@@ -267,7 +286,7 @@ export type DefaultThemeMarkdownLocaleConfig = {
   };
 };
 
-export type DefaultThemeHomePageLocaleConfig = {
+export type HomePageConfig = {
   /**
    * Large text displayed at the top of the page in the hero.
    */
@@ -303,7 +322,7 @@ export type DefaultThemeHomePageFeature = {
   body?: string;
 };
 
-export type DefaultThemeNotFoundPageLocaleConfig = {
+export type NotFoundPageConfig = {
   /**
    * Displayed message.
    *
@@ -334,6 +353,11 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
   remoteGitRepo: {
     // url: undefined,
     // label: undefined,
+  },
+
+  socials: {
+    // discord: undefined,
+    // twitter: undefined
   },
 
   darkMode: {

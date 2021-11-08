@@ -15,6 +15,7 @@ const ICONS_DIR = path.resolve(
 );
 
 const SIDEBAR_ICONS_DIR = path.resolve(ICONS_DIR, './sidebar-file');
+const BRAND_ICONS_DIR = path.resolve(ICONS_DIR, './brand');
 const FILE_ICON_PATH = path.resolve(ICONS_DIR, './sidebar-file/file.svg');
 
 export type IconsRecord = Partial<Record<VitebookIcon, string>>;
@@ -97,6 +98,12 @@ function getIconFilePath(icon: VitebookIcon): string | false {
 
     const iconPath = path.resolve(SIDEBAR_ICONS_DIR, `${type}.svg`);
     return fs.existsSync(iconPath) ? iconPath : FILE_ICON_PATH;
+  }
+
+  if (icon.startsWith('brand-')) {
+    const brand = icon.replace('brand-', '');
+    const iconPath = path.resolve(BRAND_ICONS_DIR, `${brand}.svg`);
+    if (fs.existsSync(iconPath)) return iconPath;
   }
 
   const iconPath = path.resolve(ICONS_DIR, `${icon}.svg`);
