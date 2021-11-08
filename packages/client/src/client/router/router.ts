@@ -362,7 +362,7 @@ export class Router {
       const u2 = i2 >= 0 ? location.href.substring(0, i2) : location.href;
 
       if (u1 === u2) {
-        this.go(url.hash, { replace: true });
+        this.go(decodeURI(url.hash), { replace: true });
         return;
       }
 
