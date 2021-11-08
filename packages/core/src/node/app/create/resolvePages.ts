@@ -130,7 +130,10 @@ function pageCouldNotBeResolved(app: App, filePath: string) {
 
 const FAKE_HOST = 'http://a.com';
 export function filePathToRoute(app: App, filePath: string): string {
-  const relativePath = path.relative(app.dirs.src.path, filePath);
+  const relativePath = path
+    .relative(app.dirs.src.path, filePath)
+    .replace(/\[\d*\]/g, '');
+
   const url = new URL(relativePath.toLowerCase(), FAKE_HOST).pathname;
   return url
     .replace(
@@ -160,8 +163,8 @@ const splitRoute = (route: string) => route.split(splitRouteRE).slice(3);
 
 export function sortPages(pages: ServerPage[]): ServerPage[] {
   return Object.values(pages).sort((pageA, pageB) => {
-    const tokensA = splitRoute(pageA.route);
-    const tokensB = splitRoute(pageB.route);
+    const tokensA = splitRoute(pageA.rootPath);
+    const tokensB = splitRoute(pageB.rootPath);
     const len = Math.max(tokensA.length, tokensB.length);
 
     for (let i = 0; i < len; i++) {
