@@ -76,6 +76,7 @@
 
   li {
     padding: 0.25rem 0;
+    margin-top: 0;
   }
 
   a {

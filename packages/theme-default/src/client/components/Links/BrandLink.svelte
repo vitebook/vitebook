@@ -6,7 +6,12 @@
 </script>
 
 {#if !hidden}
-  <a class={`brand-link ${platform}`} {href} aria-label={label} target="_blank">
+  <a
+    class={`brand-link ${platform.toLowerCase()}`}
+    {href}
+    aria-label={label}
+    target="_blank"
+  >
     <span class="brand-link__icon">
       <slot name="icon" />
     </span>

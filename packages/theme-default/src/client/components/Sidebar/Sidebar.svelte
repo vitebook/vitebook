@@ -16,9 +16,11 @@
   import SidebarButton from './SidebarButton.svelte';
   import { sidebarItems } from './sidebarItems';
   import SidebarTree from './SidebarTree.svelte';
+  import { tick } from 'svelte';
 
   export let open = false;
 
+  let sidebarBodyRef;
   let isMainMenuShowing = false;
 
   $: backToMainMenuText =
@@ -59,6 +61,18 @@
   function onShowMainMenu() {
     isMainMenuShowing = true;
   }
+
+  $: hasHeader = !$isLargeScreen || $localizedThemeConfig.navbar === false;
+
+  let headerHasShadow = false;
+  async function checkIfSidebarHeaderHasShadow(_) {
+    await tick();
+    const bodyRect = sidebarBodyRef.getBoundingClientRect();
+    headerHasShadow = bodyRect.top + bodyRect.height >= window.innerHeight;
+  }
+
+  $: if (hasHeader && sidebarBodyRef)
+    checkIfSidebarHeaderHasShadow($sidebarItems);
 </script>
 
 <aside
@@ -70,11 +84,11 @@
 >
   <slot name="start" />
 
-  {#if !$isLargeScreen || $localizedThemeConfig.navbar === false}
-    <div class="sidebar__header">
+  {#if hasHeader}
+    <div class="sidebar__header" class:shadow={headerHasShadow}>
       <div class="sidebar__header-wrapper">
         <NavbarTitle />
-        <div style="flex-grow: 1; margin-left: 2rem;" />
+        <div style="flex-grow: 1; margin-left: 2.5rem;" />
         <TwitterLink />
         <DiscordLink />
         <RepoLink />
@@ -83,7 +97,7 @@
     </div>
   {/if}
 
-  <div class="sidebar__body">
+  <div class="sidebar__body" bind:this={sidebarBodyRef}>
     {#if hasMainMenuItems && !$isLargeScreen && !isMainMenuShowing}
       <SidebarButton
         class="sidebar__back-button"
@@ -127,6 +141,8 @@
     --vbk--nav-item-hover-bg-color: var(--vbk--sidebar-item-hover-bg-color);
     --vbk--nav-link-active-bg-color: transparent;
 
+    display: flex;
+    flex-direction: column;
     position: fixed;
     top: 0;
     bottom: 0;
@@ -148,7 +164,15 @@
   }
 
   .sidebar__header {
+    position: sticky;
+    top: 0;
+    left: 0;
     padding-top: 0.25rem;
+    background-color: var(--vbk--sidebar-bg-color);
+  }
+
+  .sidebar__header.shadow {
+    box-shadow: var(--vbk--elevation-small);
   }
 
   .sidebar__header-wrapper {
@@ -161,8 +185,9 @@
   }
 
   .sidebar__body {
+    flex: 1 0 0;
     padding: 0 1rem;
-    margin-top: 0.375rem;
+    padding-bottom: 2.5rem;
   }
 
   .sidebar__main-menu {

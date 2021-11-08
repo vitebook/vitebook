@@ -40,6 +40,7 @@
   .md-floating-toc__list-item {
     line-height: 1.08rem;
     padding: 0.375rem 0;
+    margin-top: 0;
   }
 
   .md-floating-toc__list:not(:first-child) li:last-child {
