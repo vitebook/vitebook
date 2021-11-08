@@ -4,6 +4,9 @@ packages/*/temp
 sandbox/*
 !sandbox/.gitkeep
 
+.cache
+.temp
+
 examples/*/package-lock.json
 examples/*/yarn.lock
 examples/*/pnpm-lock.yaml

@@ -70,6 +70,22 @@ $: pnpm up vite@2.6.13 --filter @vitebook/core
 $: pnpm up vite@2.6.13 -r
 ```
 
+## 📝 Documentation Site
+
+The documentation site can be found in the `docs/` directory at the root of the project. It's
+simply a Vitebook application, refer to the docs itself if you need any guidance.
+
+```bash
+# run development environment
+$: pnpm docs:dev
+
+# build for production
+$: pnpm docs:build
+
+# preview production site
+$: pnpm docs:preview
+```
+
 ## 🏗️ Project Structure
 
 Vitebook maintains, builds, and distributes multiple [NPM][npm] packages so it's organized as
