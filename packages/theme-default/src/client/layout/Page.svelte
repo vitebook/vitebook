@@ -55,6 +55,13 @@
     padding-top: 1rem;
   }
 
+  @media (min-width: 1400px) {
+    .page[class*='md'] > .page__container {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
   .page[class*='type-']:not([class*='md']) > .page__container {
     display: flex;
     align-items: center;
