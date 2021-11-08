@@ -36,7 +36,17 @@ export const sidebarItemsConfig = derived(
       ensureLeadingSlash(currentRoute.route.path),
     );
 
-    for (const path in config) {
+    const configPaths = Object.keys(config).sort((a, b) => {
+      const levelDelta = b.split('/').length - a.split('/').length;
+
+      if (levelDelta !== 0) {
+        return levelDelta;
+      }
+
+      return b.length - a.length;
+    });
+
+    for (const path of configPaths) {
       if (
         route.startsWith(
           withBaseUrl(removeEndingSlash(ensureLeadingSlash(path))),
