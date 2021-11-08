@@ -7,6 +7,7 @@
   import { getLinkProps } from '../../helpers/getLinkProps';
   import { darkMode } from '../../stores/darkMode';
   import { localizedThemeConfig } from '../../stores/localizedThemeConfig';
+  import { multiSidebarStyleConfig } from './multiSidebarStyleConfig';
   import SidebarButton from './SidebarButton.svelte';
 
   export let item;
@@ -14,13 +15,19 @@
   let icon = null;
 
   $: linkProps = getLinkProps(item, $localizedSiteOptions, $currentRoute);
-  $: iconColors = $localizedThemeConfig.sidebar?.iconColors;
-  $: sidebarStyle = $localizedThemeConfig.sidebar?.style;
+  $: iconColors =
+    $multiSidebarStyleConfig.iconColors ??
+    $localizedThemeConfig.sidebar?.iconColors;
+  $: sidebarStyle =
+    $multiSidebarStyleConfig?.style ?? $localizedThemeConfig.sidebar?.style;
   $: hasDocsStyle = sidebarStyle === 'docs';
   $: hasExplorerStyle = sidebarStyle === 'explorer';
 
+  $: type = item.type
+    ? item.type.replace(/^\w+:/, '')
+    : item.link.match(/\.(\w+)$/)?.[1] ?? '';
+
   function getIcon() {
-    const type = item.type.replace(/^\w+:/, '');
     switch (type) {
       case 'js':
       case 'jsx':
@@ -49,10 +56,10 @@
   }
 
   async function loadIcon(_ = '') {
-    icon = item.type ? await getIcon() : null;
+    icon = await getIcon();
   }
 
-  $: loadIcon(item.type);
+  $: loadIcon(type);
 </script>
 
 <li
@@ -76,7 +83,8 @@
     >
       {#if hasExplorerStyle}
         <span
-          class={'sidebar-link__icon' + (item.type ? ` type-${item.type}` : '')}
+          class={'sidebar-link__icon' +
+            (type.length > 0 ? ` type-${type}` : '')}
           class:dark={$darkMode}
           class:active={linkProps.active}
           class:color={iconColors}

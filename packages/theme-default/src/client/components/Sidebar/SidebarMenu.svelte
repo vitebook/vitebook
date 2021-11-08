@@ -6,6 +6,7 @@
   import { tick } from 'svelte';
   import { afterUpdate, onMount } from 'svelte';
   import SidebarButton from './SidebarButton.svelte';
+  import { multiSidebarStyleConfig } from './multiSidebarStyleConfig';
 
   export let item;
   export let depth;
@@ -15,7 +16,8 @@
   let active = false;
   let open = false;
 
-  $: sidebarStyle = $localizedThemeConfig.sidebar?.style;
+  $: sidebarStyle =
+    $multiSidebarStyleConfig.style ?? $localizedThemeConfig.sidebar?.style;
   $: hasExplorerStyle = sidebarStyle === 'explorer';
   $: hasDocsStyle = sidebarStyle === 'docs';
   $: isCategory =

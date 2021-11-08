@@ -9,6 +9,7 @@
   import NavbarTitle from '../Navbar/NavbarTitle.svelte';
   import ThemeSwitch from '../ThemeSwitch.svelte';
   import { hasSidebarItems } from './hasSidebarItems';
+  import { multiSidebarStyleConfig } from './multiSidebarStyleConfig';
   import SidebarButton from './SidebarButton.svelte';
   import { sidebarItems } from './sidebarItems';
   import SidebarTree from './SidebarTree.svelte';
@@ -20,6 +21,10 @@
   $: backToMainMenuText =
     $localizedThemeConfig.sidebar?.backToMainMenuText ??
     defaultThemeLocaleOptions.sidebar.backToMainMenuText;
+
+  $: iconColors =
+    $multiSidebarStyleConfig.iconColors ??
+    $localizedThemeConfig.sidebar?.iconColors;
 
   $: hasMainMenuItems = !$isLargeScreen ? $hasNavbarItems : false;
 
@@ -57,7 +62,7 @@
   class="sidebar"
   class:dark={$darkMode}
   class:open
-  class:icon-colors={$localizedThemeConfig.sidebar?.iconColors}
+  class:icon-colors={iconColors}
   aria-hidden={!open}
 >
   <slot name="start" />

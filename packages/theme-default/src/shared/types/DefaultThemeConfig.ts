@@ -125,13 +125,17 @@ export type DarkModeLocaleConfig = {
   buttonAriaLabel?: string;
 };
 
+export type MultiSidebarStyleConfig = Partial<
+  Pick<DefaultThemeSidebarLocaleConfig, 'style' | 'iconColors'>
+>;
+
 export type DefaultThemeSidebarLocaleConfig = {
   /**
    * Sidebar items.
    *
    * @default {}
    */
-  items?: SidebarItemsConfig | MultiSidebarItemsConfig;
+  items?: SidebarItemsConfig | MultiSidebarItemsConfig<MultiSidebarStyleConfig>;
   /**
    * Specify the style of the sidebar.
    */

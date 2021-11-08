@@ -1,12 +1,14 @@
 <script>
   import { localizedThemeConfig } from '../../stores/localizedThemeConfig';
+  import { multiSidebarStyleConfig } from './multiSidebarStyleConfig';
 
   export let ref = undefined;
   export let href = undefined;
   export let active = false;
   export let external = false;
 
-  $: sidebarStyle = $localizedThemeConfig.sidebar?.style;
+  $: sidebarStyle =
+    $multiSidebarStyleConfig.style ?? $localizedThemeConfig.sidebar?.style;
   $: hasExplorerStyle = sidebarStyle === 'explorer';
   $: hasDocsStyle = sidebarStyle === 'docs';
 </script>

@@ -1,7 +1,9 @@
 export type SidebarItemsConfig = SidebarItem[] | 'auto' | false;
 
-export type MultiSidebarItemsConfig = {
-  [path: string]: SidebarItemsConfig;
+export type MultiSidebarItemsConfig<SidebarConfig = unknown> = {
+  [path: string]:
+    | SidebarItemsConfig
+    | ({ items: SidebarItemsConfig } & SidebarConfig);
 };
 
 export type SidebarItem = SidebarLink | SidebarMenu;
