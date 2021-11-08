@@ -60,7 +60,7 @@
     "@vitebook/markdown": "0.5.0",
     "kleur": "^4.1.4",
     "lru-cache": "^6.0.0",
-    "svelte": "^3.43.0"
+    "svelte": "^3.44.1"
   },
   "devDependencies": {
     "@vitebook/client": "workspace:*",

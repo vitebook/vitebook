@@ -64,7 +64,7 @@
     "esbuild": "^0.12.24",
     "kleur": "^4.1.4",
     "magic-string": "^0.25.7",
-    "svelte": "^3.43.2",
+    "svelte": "^3.44.1",
     "svelte-preprocess-esbuild": "^2.0.0"
   },
   "devDependencies": {
