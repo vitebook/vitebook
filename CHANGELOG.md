@@ -1,3 +1,24 @@
+# [0.6.0](https://github.com/vitebook/vitebook/compare/v0.5.0...v0.6.0) (2021-11-09)
+
+### Bug Fixes
+
+- **client:** emoji in url hash not working ([8ea7021](https://github.com/vitebook/vitebook/commit/8ea702101530f071882483b051de1c4f8c85bfb3))
+- hmr not working with vue/svelte markdown ([41d5751](https://github.com/vitebook/vitebook/commit/41d5751e278ecbd7676cdab0cdcffbc9ac834317))
+- **markdown:** comments are stripped out breaking svelte templates ([5c96b08](https://github.com/vitebook/vitebook/commit/5c96b08346f322da24234a252e283ff178871ccb))
+- **theme-default:** add default list style ([c06f15e](https://github.com/vitebook/vitebook/commit/c06f15ef8ca8724a1fec84284ca80ca4cf10cc17))
+- **theme-default:** multi-sidebar config not resolving paths correctly ([066663b](https://github.com/vitebook/vitebook/commit/066663baa285a05d72c372d3169640bdb283d998))
+- **theme-default:** remove padding on markdown container above `1400px` ([701b9d4](https://github.com/vitebook/vitebook/commit/701b9d4c88f3ade7e1866ea2140d4278df23c100))
+- **theme-default:** sidebar body should scroll under header ([b1f71f2](https://github.com/vitebook/vitebook/commit/b1f71f2d8ee4e8110285ec0d7bc4ca726bb022b4))
+- **theme-default:** sidebar category item should not be focusable ([e50abfd](https://github.com/vitebook/vitebook/commit/e50abfdd0e7e8869691b62fc99e1f05b6de576e2))
+
+### Features
+
+- bump `svelte` to `3.44.1` ([2fc5990](https://github.com/vitebook/vitebook/commit/2fc5990e5d9728a59019ec4d95956edf5af2f54b))
+- **core:** allow pages to be sorted via `[\d]` file name prefix ([7882313](https://github.com/vitebook/vitebook/commit/7882313bf988ca311d84c5f5f2caa5cfd2708638))
+- **theme-default:** add links for repo and socials in navbar/sidebar ([5d8d8bc](https://github.com/vitebook/vitebook/commit/5d8d8bc6618c0a1f4a677a68b0944af7f82fbb0c))
+- **theme-default:** enable different sidebar styles based on path ([2d43b90](https://github.com/vitebook/vitebook/commit/2d43b90f9cdf6f276823fce564cd54f076ac446e))
+- **theme-default:** normalize internal link extensions to `.html` ([0142045](https://github.com/vitebook/vitebook/commit/0142045bea49331384c876da587fe4b10a84559c))
+
 # [0.5.0](https://github.com/vitebook/vitebook/compare/v0.4.1...v0.5.0) (2021-11-05)
 
 ### Features
