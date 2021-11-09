@@ -41,7 +41,7 @@ export function parseMarkdownToSvelte(
 
   const component =
     buildMetaExport(dedupeHoistedTags(hoistedTags), meta).join('\n') +
-    `\n\n${uncommentTemplateTags(html)}`;
+    `\n\n<div>${uncommentTemplateTags(html)}</div>`;
 
   const result: ParsedMarkdownToSvelteResult = {
     component,

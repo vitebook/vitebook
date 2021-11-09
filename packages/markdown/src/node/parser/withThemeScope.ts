@@ -12,7 +12,7 @@ function walk(node: HTMLElement, scopeClass: string) {
 }
 
 export function withThemeScope(html: string, scopeClass: string): string {
-  const root = parse(html);
+  const root = parse(html, { comment: true });
   walk(root, scopeClass);
   return root.toString();
 }

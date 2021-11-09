@@ -309,11 +309,34 @@ function addThemeScope({
   walk(ast, {
     enter(node) {
       if (node.type === 'Element') {
-        mcs.overwrite(
-          node.start,
-          node.start + node.name.length + 1,
-          `<${node.name} class:${scopeClass}={true} `,
+        const classAttr = node.attributes.find(
+          (attr) =>
+            attr.type === 'Attribute' &&
+            attr.name === 'class' &&
+            !attr.type.raw?.includes(scopeClass),
         );
+
+        if (classAttr) {
+          const hasMustacheTag = classAttr.value.find(
+            (v) => v.type === 'MustacheTag',
+          );
+
+          if (hasMustacheTag) {
+            mcs.overwrite(
+              node.start,
+              node.start + node.name.length + 1,
+              `<${node.name} class:${scopeClass}={true} `,
+            );
+          } else {
+            mcs.prependLeft(classAttr.end - 1, ` ${scopeClass}`);
+          }
+        } else {
+          mcs.overwrite(
+            node.start,
+            node.start + node.name.length + 1,
+            `<${node.name} class="${scopeClass}"`,
+          );
+        }
       }
     },
   });
