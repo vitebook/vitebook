@@ -11,11 +11,9 @@ export default defineConfig<DefaultThemeConfig>({
   include: ['src/**/*.md', 'src/**/*.story.svelte'],
   plugins: [
     shikiMarkdownPlugin(),
-    svelteMarkdownPlugin({
-      include: /\.md/,
-    }),
+    svelteMarkdownPlugin(),
     clientPlugin({
-      include: /\.(md|svelte)/,
+      include: /\.svelte/,
       svelte: {
         extensions: ['.svelte', '.md'],
         preprocess: [

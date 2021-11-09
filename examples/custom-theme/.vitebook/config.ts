@@ -4,10 +4,7 @@ export default defineConfig({
   include: ['src/**/*.svelte'],
   plugins: [
     clientPlugin({
-      include: /\.(svelte)/,
-      svelte: {
-        extensions: ['.svelte'],
-      },
+      include: /\.svelte/,
     }),
   ],
   site: {

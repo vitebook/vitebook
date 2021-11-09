@@ -11,9 +11,7 @@ export default defineConfig<DefaultThemeConfig>({
   include: ['src/**/*.md', 'src/**/*.story.tsx'],
   plugins: [
     shikiMarkdownPlugin(),
-    preactMarkdownPlugin({
-      include: /\.md/,
-    }),
+    preactMarkdownPlugin(),
     preactPlugin({
       include: /\.tsx/,
     }),

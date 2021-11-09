@@ -11,11 +11,9 @@ export default defineConfig<DefaultThemeConfig>({
   include: ['src/**/*.md', 'src/**/*.story.vue'],
   plugins: [
     shikiMarkdownPlugin(),
-    vueMarkdownPlugin({
-      include: /\.md/,
-    }),
+    vueMarkdownPlugin(),
     vuePlugin({
-      include: /\.(md|vue)/,
+      include: /\.vue/,
       vue: {
         include: /\.(md|vue)/,
       },
