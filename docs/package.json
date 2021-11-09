@@ -16,5 +16,8 @@
     "@vitebook/markdown-svelte": "0.6.0",
     "@vitebook/theme-default": "0.6.0",
     "svelte": "3.44.1"
+  },
+  "engines": {
+    "node": ">=16.10.0"
   }
 }

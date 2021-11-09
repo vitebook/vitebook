@@ -6,7 +6,7 @@ import { shikiMarkdownPlugin } from '@vitebook/markdown-shiki/node';
 export default defineConfig({
   include: ['src/**/*.md', 'src/**/*.svelte'],
   plugins: [
-    svelteMarkdownPlugin({ include: /\.md/ }),
+    svelteMarkdownPlugin(),
     shikiMarkdownPlugin(),
     clientPlugin({
       include: /\.svelte/,
@@ -25,9 +25,6 @@ export default defineConfig({
       sidebar: {
         style: 'docs',
         categories: true,
-        items: {
-          '/': getMainSidebar(),
-        },
       },
       markdown: {
         toc: true,
@@ -40,105 +37,12 @@ export default defineConfig({
           dir: 'docs',
         },
       },
+      socials: {
+        discord: 'https://discord.gg/aKu2VwUc6U',
+      },
       remoteGitRepo: {
         url: 'vitebook/vitebook',
       },
     },
   },
 });
-
-/**
- * @returns {import('@vitebook/theme-default').SidebarItemsConfig}
- */
-function getMainSidebar() {
-  return [
-    {
-      text: 'Introduction',
-      children: [
-        {
-          text: 'What is Vitebook?',
-          link: '/introduction/what-is-vitebook.html',
-        },
-        {
-          text: 'Getting Started',
-          link: '/introduction/getting-started.html',
-        },
-        {
-          text: 'Configuration',
-          link: '/introduction/configuration.html',
-        },
-      ],
-    },
-    {
-      text: 'Guides',
-      children: [
-        {
-          text: 'Pages',
-          link: '/guides/pages.html',
-        },
-        {
-          text: 'Stories',
-          link: '/guides/stories.html',
-        },
-        {
-          text: 'Assets',
-          link: '/guides/assets.html',
-        },
-        {
-          text: 'Markdown',
-          link: '/guides/markdown.html',
-        },
-        {
-          text: 'I18n',
-          link: '/guides/i18n.html',
-        },
-        {
-          text: 'Deploying',
-          link: '/guides/deploying.html',
-        },
-      ],
-    },
-    {
-      text: 'Default Theme',
-      children: [
-        {
-          text: 'Installation',
-          link: '/default-theme/installation.html',
-        },
-        {
-          text: 'Configuration',
-          link: '/default-theme/configuration.html',
-        },
-        {
-          text: 'Navbar',
-          link: '/default-theme/navbar.html',
-        },
-        {
-          text: 'Sidebar',
-          link: '/default-theme/sidebar.html',
-        },
-        {
-          text: 'Markdown',
-          link: '/default-theme/markdown.html',
-        },
-        {
-          text: 'Customization',
-          link: '/default-theme/customization.html',
-        },
-      ],
-    },
-    {
-      text: 'Advanced',
-      children: [
-        {
-          text: 'Themes',
-          link: '/advanced/themes.html',
-        },
-        {
-          text: 'Plugins',
-          link: '/advanced/plugins.html',
-        },
-      ],
-    },
-  ];
-}
