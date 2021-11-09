@@ -43,8 +43,6 @@ export function svelteMarkdownPlugin(
   /** Page system file paths. */
   const files = new Set<string>();
 
-  let sveltePlugin: Plugin;
-
   return {
     name: PLUGIN_NAME,
     enforce: 'pre',
@@ -56,9 +54,9 @@ export function svelteMarkdownPlugin(
       app = _app;
       parser = await createMarkdownParser(parserOptions);
 
-      sveltePlugin = _app.plugins.find(
-        (plugin) => plugin.name === 'vite-plugin-svelte',
-      ) as Plugin;
+      // sveltePlugin = _app.plugins.find(
+      //   (plugin) => plugin.name === 'vite-plugin-svelte',
+      // ) as Plugin;
 
       for (const plugin of app.plugins) {
         const mdPlugin = plugin as MarkdownPlugin;
@@ -110,10 +108,7 @@ export function svelteMarkdownPlugin(
           },
         );
 
-        return sveltePlugin?.handleHotUpdate?.({
-          ...ctx,
-          read: () => component,
-        });
+        ctx.read = () => component;
       }
     },
   };

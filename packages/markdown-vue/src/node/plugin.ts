@@ -118,10 +118,7 @@ export function vueMarkdownPlugin(
           define,
         });
 
-        return vuePlugin.handleHotUpdate?.({
-          ...ctx,
-          read: () => component,
-        });
+        ctx.read = () => component;
       }
     },
   };
