@@ -56,16 +56,36 @@ function resolveBundleConfig(
         output: ssr
           ? undefined
           : {
+              assetFileNames(asset) {
+                if (/\.css$/.test(asset.name ?? '')) {
+                  return 'assets/css/[name].[hash].css';
+                }
+
+                return 'assets/[name].[hash][extname]';
+              },
               chunkFileNames(chunk) {
                 if (!chunk.isEntry && /runtime/.test(chunk.name)) {
-                  return `assets/framework.[hash].js`;
+                  return `assets/js/framework.[hash].js`;
                 }
 
-                if (!chunk.isEntry && /vitebook/.test(chunk.name)) {
-                  return `assets/vitebook/[name].[hash].js`;
+                const isVitebookChunk = /@vitebook/.test(
+                  chunk.facadeModuleId ?? '',
+                );
+
+                if (
+                  !chunk.isEntry &&
+                  /\.svg(\?raw)?/.test(chunk.facadeModuleId ?? '')
+                ) {
+                  return `assets/js${
+                    isVitebookChunk ? '/@vitebook' : ''
+                  }/svg/[name].[hash].js`;
                 }
 
-                return 'assets/[name].[hash].js';
+                if (!chunk.isEntry && isVitebookChunk) {
+                  return `assets/js/@vitebook/[name].[hash].js`;
+                }
+
+                return 'assets/js/[name].[hash].js';
               },
             },
       },

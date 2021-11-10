@@ -51,7 +51,7 @@ export async function build(app: App): Promise<void> {
     const CSS_CHUNK = clientBundle.output.find(
       (chunk) =>
         chunk.type === 'asset' &&
-        chunk.fileName.startsWith(`assets/${APP_CHUNK.name}`) &&
+        chunk.fileName.startsWith(`assets/css/${APP_CHUNK.name}`) &&
         chunk.fileName.endsWith('.css'),
     ) as OutputAsset;
 
