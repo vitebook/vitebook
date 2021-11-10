@@ -1,3 +1,9 @@
+## [0.6.1](https://github.com/vitebook/vitebook/compare/v0.6.0...v0.6.1) (2021-11-10)
+
+### Bug Fixes
+
+- **theme-default:** `MarkdownFloatingToc` not found in CI due to casing ([89d1a05](https://github.com/vitebook/vitebook/commit/89d1a05f4562654cb5202186019ac656301fcd04))
+
 # [0.6.0](https://github.com/vitebook/vitebook/compare/v0.5.0...v0.6.0) (2021-11-09)
 
 ### Bug Fixes
