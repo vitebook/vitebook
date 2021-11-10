@@ -21,28 +21,28 @@ function savedValue() {
     : 'auto';
 }
 
-export function useDarkMode(): void {
-  function updateDarkMode(theme: DefaultThemeConfig) {
-    const isEnabled =
-      theme.darkMode?.enabled ?? defaultThemeLocaleOptions.darkMode.enabled;
+export function updateDarkMode(theme: DefaultThemeConfig) {
+  const isEnabled =
+    theme.darkMode?.enabled ?? defaultThemeLocaleOptions.darkMode.enabled;
 
-    // Disable dark mode
-    if (!isEnabled) {
-      darkMode.set(false);
-      return;
-    }
-
-    const darkModePreference = savedValue();
-
-    // Auto detected from prefers-color-scheme
-    if (darkModePreference === 'auto') {
-      darkMode.set(isDarkPreferred());
-      return;
-    }
-
-    darkMode.set(darkModePreference === 'dark');
+  // Disable dark mode
+  if (!isEnabled) {
+    darkMode.set(false);
+    return;
   }
 
+  const darkModePreference = savedValue();
+
+  // Auto detected from prefers-color-scheme
+  if (darkModePreference === 'auto') {
+    darkMode.set(isDarkPreferred());
+    return;
+  }
+
+  darkMode.set(darkModePreference === 'dark');
+}
+
+export function useDarkMode(): void {
   updateDarkMode(get(localizedThemeConfig));
   updateHtmlDarkDataAttr(get(darkMode));
 
