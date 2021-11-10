@@ -38,6 +38,6 @@
   hidden={!$repoLink || !isValidPlatform}
 >
   <svelte:fragment slot="icon">
-    {@html icon?.default}
+    {@html icon?.default ?? ''}
   </svelte:fragment>
 </BrandLink>
