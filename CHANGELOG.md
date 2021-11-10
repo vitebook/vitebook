@@ -1,3 +1,9 @@
+# [0.8.0](https://github.com/vitebook/vitebook/compare/v0.7.1...v0.8.0) (2021-11-10)
+
+### Features
+
+- render preload directives for svelte/vue ssr rendered components ([7a5db2b](https://github.com/vitebook/vitebook/commit/7a5db2b7acd78222f3ba5ee00c6f61f6014a7228))
+
 ## [0.7.1](https://github.com/vitebook/vitebook/compare/v0.7.0...v0.7.1) (2021-11-10)
 
 ### Bug Fixes
