@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "preinstall": "node .scripts/preinstall.js",
+    "postinstall": "npm i --prefix docs",
     "lint": "run-s lint:*",
     "lint:eslint": "eslint --ext .js,.jsx,.ts,.tsx . --ignore-path .gitignore",
     "lint:prettier": "prettier . --check --ignore-path .gitignore --loglevel warn",
