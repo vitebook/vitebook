@@ -1,3 +1,13 @@
+## [0.8.2](https://github.com/vitebook/vitebook/compare/v0.8.1...v0.8.2) (2021-11-10)
+
+### Bug Fixes
+
+- **theme-default:** ensure `header-anchor` is visible on smaller devices ([5883ced](https://github.com/vitebook/vitebook/commit/5883ced89245ce7ba5b7ed203831a3a3d2ab3701))
+- **theme-default:** improve prev/next links on mobile ([cafca73](https://github.com/vitebook/vitebook/commit/cafca735072b6c282d6096dcaf30d8bdcf8ea510))
+- **theme-default:** prevent `undefined` showing while repo icon loading ([081691e](https://github.com/vitebook/vitebook/commit/081691e9e5620d8ad3440e67df1e45cb50c75801))
+- **theme-default:** prevent light/dark theme flash on initial load ([4eb2df8](https://github.com/vitebook/vitebook/commit/4eb2df88bf0f6d79698ecbd583a519a8cf27455e))
+- **theme-default:** set active hashes only after user scrolls ([4e02e19](https://github.com/vitebook/vitebook/commit/4e02e19c821328180170fe9198ab44a7a640dbef))
+
 ## [0.8.1](https://github.com/vitebook/vitebook/compare/v0.8.0...v0.8.1) (2021-11-10)
 
 ### Bug Fixes
