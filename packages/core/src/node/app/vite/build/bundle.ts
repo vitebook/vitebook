@@ -44,7 +44,7 @@ function resolveBundleConfig(
       emptyOutDir: true,
       ssr,
       ssrManifest: !ssr,
-      cssCodeSplit: true,
+      cssCodeSplit: false,
       assetsDir: 'assets',
       minify: ssr ? false : !app.env.isDebug,
       outDir: ssr
