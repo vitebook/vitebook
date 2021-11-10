@@ -56,6 +56,9 @@ function resolveBundleConfig(
         output: ssr
           ? undefined
           : {
+              manualChunks: {
+                framework: ['svelte'],
+              },
               assetFileNames(asset) {
                 if (/\.css$/.test(asset.name ?? '')) {
                   return 'assets/css/[name].[hash].css';
@@ -64,10 +67,6 @@ function resolveBundleConfig(
                 return 'assets/[name].[hash][extname]';
               },
               chunkFileNames(chunk) {
-                if (!chunk.isEntry && /runtime/.test(chunk.name)) {
-                  return `assets/js/framework.[hash].js`;
-                }
-
                 const isVitebookChunk = /@vitebook/.test(
                   chunk.facadeModuleId ?? '',
                 );
