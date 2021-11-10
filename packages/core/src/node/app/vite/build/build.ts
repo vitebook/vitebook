@@ -100,7 +100,7 @@ export async function build(app: App): Promise<void> {
         APP_CHUNK,
       );
 
-      const preloadLinks = [...pageImports.imports, APP_CHUNK.fileName]
+      const preloadLinks = pageImports.imports
         .map((fileName) => createLinkTag(app, 'modulepreload', fileName))
         .join('\n    ');
 
