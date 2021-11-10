@@ -149,7 +149,7 @@
     left: 0;
     flex: 0 0 auto;
     z-index: var(--vbk--sidebar-z-index);
-    width: 80vw;
+    min-width: 80vw;
     background-color: var(--vbk--sidebar-bg-color);
     overflow-y: auto;
     border: var(--vbk--sidebar-border);

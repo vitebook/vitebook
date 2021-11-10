@@ -57,7 +57,6 @@
 <style>
   .md-footer__pagination-nav {
     display: flex;
-    align-items: center;
     width: 100%;
     margin-bottom: 3rem;
   }
@@ -68,7 +67,7 @@
   }
 
   .md-footer__pagination-nav-item.next {
-    margin-left: 1.25rem;
+    margin-left: 0.75rem;
   }
 
   .md-footer__pagination-nav-item.prev .md-footer__pagination-nav-item__link {
@@ -79,10 +78,10 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    justify-content: center;
     border: var(--vbk--menu-border);
     border-radius: 0.15rem;
     padding: 1.25rem;
+    height: 100%;
     box-shadow: var(--vbk--elevation-small) !important;
     transition: transform 150ms ease;
   }
@@ -94,6 +93,7 @@
   .md-footer__pagination-nav-item__title {
     display: block;
     font-size: 0.875rem;
+    margin-bottom: 0.25rem;
     color: var(--vbk--color-text);
   }
 
@@ -101,8 +101,29 @@
     display: flex;
     align-items: center;
     margin-top: 0.75rem;
-    font-size: 1.1rem;
+    font-size: 0.875rem;
     font-weight: 600;
+    word-break: break-word;
+  }
+
+  @media (min-width: 576px) {
+    .md-footer__pagination-nav-item.next {
+      margin-left: 0.875rem;
+    }
+
+    .md-footer__pagination-nav-item__title {
+      font-size: 0.875rem;
+    }
+
+    .md-footer__pagination-nav-item__text {
+      font-size: 1.1rem;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .md-footer__pagination-nav-item.next {
+      margin-left: 1.25rem;
+    }
   }
 
   @media (hover: hover) and (pointer: fine) {

@@ -51,15 +51,8 @@
   .page[class*='md'] > .page__container {
     margin: 0 auto;
     max-width: 48rem;
-    padding: 0 2rem 4rem;
+    padding: 0 1rem 4rem;
     padding-top: 1rem;
-  }
-
-  @media (min-width: 1400px) {
-    .page[class*='md'] > .page__container {
-      padding-left: 0;
-      padding-right: 0;
-    }
   }
 
   .page[class*='type-']:not([class*='md']) > .page__container {
@@ -68,9 +61,22 @@
     justify-content: center;
   }
 
+  @media (min-width: 768px) {
+    .page[class*='md'] > .page__container {
+      padding: 0 1.25rem 4rem;
+    }
+  }
+
   @media (min-width: 992px) {
     .page.no-navbar[class*='md'] > .page__container {
       padding-top: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .page[class*='md'] > .page__container {
+      padding-left: 0;
+      padding-right: 0;
     }
   }
 </style>
