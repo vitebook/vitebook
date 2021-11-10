@@ -74,10 +74,10 @@ importers:
       magic-string: ^0.25.7
       svelte: ^3.44.1
       svelte-preprocess-esbuild: ^2.0.0
-      vite: 2.7.0-beta.3
+      vite: 2.7.0-beta.1
     dependencies:
       '@rollup/pluginutils': 4.1.1
-      '@sveltejs/vite-plugin-svelte': 1.0.0-next.30_svelte@3.44.1+vite@2.7.0-beta.3
+      '@sveltejs/vite-plugin-svelte': 1.0.0-next.30_svelte@3.44.1+vite@2.7.0-beta.1
       '@vitebook/core': link:../core
       esbuild: 0.12.29
       kleur: 4.1.4
@@ -85,7 +85,7 @@ importers:
       svelte: 3.44.1
       svelte-preprocess-esbuild: 2.0.0_esbuild@0.12.29+svelte@3.44.1
     devDependencies:
-      vite: 2.7.0-beta.3
+      vite: 2.7.0-beta.1
 
   packages/core:
     specifiers:
@@ -106,7 +106,7 @@ importers:
       pkg-up: ^2.0.0
       rollup: ^2.58.0
       upath: ^2.0.1
-      vite: 2.7.0-beta.3
+      vite: 2.7.0-beta.1
     dependencies:
       '@types/debug': 4.1.7
       '@types/fs-extra': 9.0.13
@@ -124,7 +124,7 @@ importers:
       ora: 6.0.1
       pkg-up: 2.0.0
       upath: 2.0.1
-      vite: 2.7.0-beta.3
+      vite: 2.7.0-beta.1
     devDependencies:
       rollup: 2.58.0
 
@@ -272,10 +272,10 @@ importers:
       preact: ^10.5.14
       preact-render-to-string: ^5.1.19
       svelte: ^3.44.1
-      vite: 2.7.0-beta.3
+      vite: 2.7.0-beta.1
     dependencies:
       '@prefresh/core': 1.3.2_preact@10.5.14
-      '@prefresh/vite': 2.2.3_preact@10.5.14+vite@2.7.0-beta.3
+      '@prefresh/vite': 2.2.3_preact@10.5.14+vite@2.7.0-beta.1
       kleur: 4.1.4
       preact: 10.5.14
       preact-render-to-string: 5.1.19_preact@10.5.14
@@ -284,7 +284,7 @@ importers:
       '@vitebook/client': link:../client
       '@vitebook/core': link:../core
       svelte: 3.44.1
-      vite: 2.7.0-beta.3
+      vite: 2.7.0-beta.1
 
   packages/theme-default:
     specifiers:
@@ -293,7 +293,7 @@ importers:
       kleur: ^4.1.4
       npm-run-all: ^4.1.5
       svelte: ^3.44.1
-      vite: 2.7.0-beta.3
+      vite: 2.7.0-beta.1
     dependencies:
       kleur: 4.1.4
     devDependencies:
@@ -301,7 +301,7 @@ importers:
       '@vitebook/core': link:../core
       npm-run-all: 4.1.5
       svelte: 3.44.1
-      vite: 2.7.0-beta.3
+      vite: 2.7.0-beta.1
 
   packages/vue:
     specifiers:
@@ -311,18 +311,18 @@ importers:
       '@vitejs/plugin-vue': 1.10.0-beta.0
       '@vue/compiler-sfc': ^3.2.19
       svelte: ^3.44.1
-      vite: 2.7.0-beta.3
+      vite: 2.7.0-beta.1
       vue: ^3.2.6
     dependencies:
       '@rollup/pluginutils': 4.1.1
-      '@vitejs/plugin-vue': 1.10.0-beta.0_vite@2.7.0-beta.3
+      '@vitejs/plugin-vue': 1.10.0-beta.0_vite@2.7.0-beta.1
       '@vue/compiler-sfc': 3.2.20
       vue: 3.2.20
     devDependencies:
       '@vitebook/client': link:../client
       '@vitebook/core': link:../core
       svelte: 3.44.1
-      vite: 2.7.0-beta.3
+      vite: 2.7.0-beta.1
 
 packages:
 
@@ -774,7 +774,7 @@ packages:
     resolution: {integrity: sha512-MUhT5m2XNN5NsZl4GnpuvlzLo6VSTa/+wBfBd3fiWUvHGhv0GF9hnA1pd//v0uJaKwUnVRQ1hYElxCV7DtYsCQ==}
     dev: false
 
-  /@prefresh/vite/2.2.3_preact@10.5.14+vite@2.7.0-beta.3:
+  /@prefresh/vite/2.2.3_preact@10.5.14+vite@2.7.0-beta.1:
     resolution: {integrity: sha512-TlAzVRKAZ3kiUryLzCd3AoqZDK6K7qZDc7C3QPI7hNwDGyZmJaHY+SXNMCCDaBW5xn9YlYqz/5bl3P4tptAcOg==}
     peerDependencies:
       preact: ^10.4.0
@@ -786,7 +786,7 @@ packages:
       '@prefresh/utils': 1.1.1
       '@rollup/pluginutils': 4.1.1
       preact: 10.5.14
-      vite: 2.7.0-beta.3
+      vite: 2.7.0-beta.1
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -798,7 +798,7 @@ packages:
       estree-walker: 2.0.2
       picomatch: 2.3.0
 
-  /@sveltejs/vite-plugin-svelte/1.0.0-next.30_svelte@3.44.1+vite@2.7.0-beta.3:
+  /@sveltejs/vite-plugin-svelte/1.0.0-next.30_svelte@3.44.1+vite@2.7.0-beta.1:
     resolution: {integrity: sha512-YQqdMxjL1VgSFk4/+IY3yLwuRRapPafPiZTiaGEq1psbJYSNYUWx9F1zMm32GMsnogg3zn99mGJOqe3ld3HZSg==}
     engines: {node: ^14.13.1 || >= 16}
     peerDependencies:
@@ -816,7 +816,7 @@ packages:
       require-relative: 0.8.7
       svelte: 3.44.1
       svelte-hmr: 0.14.7_svelte@3.44.1
-      vite: 2.7.0-beta.3
+      vite: 2.7.0-beta.1
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -1004,13 +1004,13 @@ packages:
       eslint-visitor-keys: 2.1.0
     dev: true
 
-  /@vitejs/plugin-vue/1.10.0-beta.0_vite@2.7.0-beta.3:
+  /@vitejs/plugin-vue/1.10.0-beta.0_vite@2.7.0-beta.1:
     resolution: {integrity: sha512-HVdqMh9Bi9Wdk9YN5ho+VlBTxmZFWO2LCM/856pSlRK2qN2i7O2mFHFVAjTCRLtZjBpOwwB6W9RkKem4Q7oiwg==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
       vite: ^2.5.10
     dependencies:
-      vite: 2.7.0-beta.3
+      vite: 2.7.0-beta.1
     dev: false
 
   /@vue/compiler-core/3.2.20:
@@ -4280,8 +4280,8 @@ packages:
       spdx-expression-parse: 3.0.1
     dev: true
 
-  /vite/2.7.0-beta.3:
-    resolution: {integrity: sha512-56BDief1/vPxdwBY3hbYxJPbw0+jevUrRLmnlpXm3VAI5j1iPV6EgOI6B1BDzWpT/jZrmq1bmDPwfijI4KUAEA==}
+  /vite/2.7.0-beta.1:
+    resolution: {integrity: sha512-7rJrmXI87W3/P1QVAkc6x1h6NhHBE9wzUcrLkgGxOCRokRzV0YJLzcda5riNNu+XNTLnzBUWLRVEkoHXr3+Jwg==}
     engines: {node: '>=12.2.0'}
     hasBin: true
     peerDependencies:
