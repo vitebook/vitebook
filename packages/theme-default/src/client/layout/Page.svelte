@@ -16,7 +16,7 @@
     <PageView />
 
     {#if isMarkdownPage}
-      {#await import('../components/Markdown/MarkdownFooter.svelte') then c}
+      {#await import('../components/markdown/MarkdownFooter.svelte') then c}
         <svelte:component this={c.default} />
       {/await}
     {/if}

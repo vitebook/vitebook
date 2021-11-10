@@ -5,12 +5,12 @@
   import { darkMode } from '../../stores/darkMode';
   import { isLargeScreen } from '../../stores/isLargeScreen';
   import { localizedThemeConfig } from '../../stores/localizedThemeConfig';
-  import { hasNavbarItems } from '../Navbar/hasNavbarItems';
-  import NavbarTitle from '../Navbar/NavbarTitle.svelte';
+  import { hasNavbarItems } from '../navbar/hasNavbarItems';
+  import NavbarTitle from '../navbar/NavbarTitle.svelte';
   import ThemeSwitch from '../ThemeSwitch.svelte';
-  import DiscordLink from '../Links/DiscordLink.svelte';
-  import RepoLink from '../Links/RepoLink.svelte';
-  import TwitterLink from '../Links/TwitterLink.svelte';
+  import DiscordLink from '../links/DiscordLink.svelte';
+  import RepoLink from '../links/RepoLink.svelte';
+  import TwitterLink from '../links/TwitterLink.svelte';
   import { hasSidebarItems } from './hasSidebarItems';
   import { multiSidebarStyleConfig } from './multiSidebarStyleConfig';
   import SidebarButton from './SidebarButton.svelte';
@@ -114,7 +114,7 @@
 
     {#if hasMainMenuItems}
       <div class="sidebar__main-menu" aria-hidden={!isMainMenuShowing}>
-        {#await import('../Navbar/NavLinks.svelte') then NavLinks}
+        {#await import('../navbar/NavLinks.svelte') then NavLinks}
           <svelte:component
             this={NavLinks.default}
             active={isMainMenuShowing}

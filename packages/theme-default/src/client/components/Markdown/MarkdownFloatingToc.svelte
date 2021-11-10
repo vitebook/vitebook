@@ -2,7 +2,7 @@
   import { derived } from 'svelte/store';
   import { currentMarkdownPageMeta } from '@vitebook/client';
 
-  import { navbarHeight } from '../Navbar/navbarHeight';
+  import { navbarHeight } from '../navbar/navbarHeight';
   import { localizedThemeConfig } from '../../stores/localizedThemeConfig';
   import MarkdownFloatingTocTree from './MarkdownFloatingTocTree.svelte';
   import { useActiveHeaderLinks } from './useActiveHeaderLinks';
@@ -13,7 +13,7 @@
     headerLinkSelector: '.md-floating-toc__link',
     headerAnchorSelector: 'a.header-anchor',
     delay: 100,
-    offset: derived(navbarHeight, (height) => height + 16)
+    offset: derived(navbarHeight, (height) => height + 16),
   });
 </script>
 

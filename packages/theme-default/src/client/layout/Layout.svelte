@@ -3,17 +3,17 @@
 
   import { onMount } from 'svelte';
 
-  import { isMarkdownFloatingTocEnabled } from '../components/Markdown/isMarkdownFloatingTocEnabled';
-  import NavbarTitle from '../components/Navbar/NavbarTitle.svelte';
+  import { isMarkdownFloatingTocEnabled } from '../components/markdown/isMarkdownFloatingTocEnabled';
+  import NavbarTitle from '../components/navbar/NavbarTitle.svelte';
   import Scrim from '../components/Scrim.svelte';
   import VariantsMenu from '../components/VariantsMenu.svelte';
-  import { hasSidebarItems } from '../components/Sidebar/hasSidebarItems';
-  import Sidebar from '../components/Sidebar/Sidebar.svelte';
-  import SidebarToggle from '../components/Sidebar/SidebarToggle.svelte';
+  import { hasSidebarItems } from '../components/sidebar/hasSidebarItems';
+  import Sidebar from '../components/sidebar/Sidebar.svelte';
+  import SidebarToggle from '../components/sidebar/SidebarToggle.svelte';
   import ThemeSwitch from '../components/ThemeSwitch.svelte';
-  import DiscordLink from '../components/Links/DiscordLink.svelte';
-  import RepoLink from '../components/Links/RepoLink.svelte';
-  import TwitterLink from '../components/Links/TwitterLink.svelte';
+  import DiscordLink from '../components/links/DiscordLink.svelte';
+  import RepoLink from '../components/links/RepoLink.svelte';
+  import TwitterLink from '../components/links/TwitterLink.svelte';
   import { darkMode, useDarkMode } from '../stores/darkMode';
   import { isLargeScreen } from '../stores/isLargeScreen';
   import { localizedThemeConfig } from '../stores/localizedThemeConfig';
@@ -57,7 +57,7 @@
 >
   <slot name="navbar">
     {#if $localizedThemeConfig.navbar !== false}
-      {#await import('../components/Navbar/Navbar.svelte') then Navbar}
+      {#await import('../components/navbar/Navbar.svelte') then Navbar}
         <svelte:component this={Navbar.default}>
           <svelte:fragment slot="start">
             <slot name="navbar-start" />
