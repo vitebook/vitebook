@@ -213,15 +213,10 @@ a.__vbk__ {
  *-------------------------------------------------------------------------------------------*/
 
 a.__vbk__.header-anchor {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  float: left;
   margin-left: -1.05em;
   padding: 0 0.23em;
   font-size: 0.85em;
   opacity: 0;
-  transform: translateY(-50%);
 }
 
 a.__vbk__.header-anchor:hover,
@@ -237,6 +232,7 @@ a.__vbk__.header-anchor:focus {
   h5.__vbk__:hover .header-anchor,
   h6.__vbk__:hover .header-anchor {
     opacity: 1;
+    margin-left: 0;
   }
 
   a.__vbk__.header-anchor:hover {
@@ -246,6 +242,7 @@ a.__vbk__.header-anchor:focus {
 
 .header-anchor.__vbk__:focus-visible {
   opacity: 1;
+  margin-left: 0;
 }
 
 /**-------------------------------------------------------------------------------------------
