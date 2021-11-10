@@ -3,8 +3,10 @@ import ora from 'ora';
 import type { OutputAsset, OutputChunk, RollupOutput } from 'rollup';
 
 import {
+  ensureLeadingSlash,
   HeadAttrsConfig,
   HeadConfig,
+  removeEndingSlash,
   removeLeadingSlash,
   ServerEntryModule,
   ServerPage,
@@ -59,9 +61,9 @@ export async function build(app: App): Promise<void> {
       await fs.readFile(app.dirs.config.resolve('index.html'), 'utf-8')
     ).replace('{{ version }}', app.version);
 
-    // const SSR_MANIFEST = JSON.parse(
-    //   await fs.readFile(app.dirs.out.resolve('ssr-manifest.json'), 'utf-8')
-    // );
+    const SSR_MANIFEST = JSON.parse(
+      await fs.readFile(app.dirs.out.resolve('ssr-manifest.json'), 'utf-8'),
+    );
 
     const serverEntryPath = app.dirs.out.resolve('server', 'entry-server.cjs');
 
@@ -100,8 +102,15 @@ export async function build(app: App): Promise<void> {
         APP_CHUNK,
       );
 
-      const preloadLinks = pageImports.imports
-        .map((fileName) => createLinkTag(app, 'modulepreload', fileName))
+      const manifestImports = resolveImportsFromManifest(
+        context.modules,
+        SSR_MANIFEST,
+      );
+
+      const preloadLinks = Array.from(
+        new Set([...manifestImports, ...pageImports.imports]),
+      )
+        .map((fileName) => createPreloadTag(app, fileName))
         .join('\n    ');
 
       const prefetchLinks = pageImports.dynamicImports
@@ -239,7 +248,49 @@ async function findPreviewScriptName(app: App): Promise<string | undefined> {
 
 function createLinkTag(app: App, rel: string, fileName?: string) {
   if (!fileName) return '';
-  return `<link rel="${rel}" href="${app.site.options.baseUrl}${fileName}">`;
+  const base = removeEndingSlash(app.site.options.baseUrl);
+  const href = `${base}${ensureLeadingSlash(fileName)}`;
+  return `<link rel="${rel}" href="${href}">`;
+}
+
+function createPreloadTag(app: App, fileName?: string) {
+  if (!fileName) return '';
+
+  const base = removeEndingSlash(app.site.options.baseUrl);
+  const href = `${base}${ensureLeadingSlash(fileName)}`;
+
+  if (fileName.endsWith('.js')) {
+    return `<link rel="modulepreload" crossorigin href="${href}">`;
+  } else if (fileName.endsWith('.css')) {
+    return `<link rel="stylesheet" href="${href}">`;
+  } else if (fileName.endsWith('.woff')) {
+    return ` <link rel="preload" href="${href}" as="font" type="font/woff" crossorigin>`;
+  } else if (fileName.endsWith('.woff2')) {
+    return ` <link rel="preload" href="${href}" as="font" type="font/woff2" crossorigin>`;
+  } else if (fileName.endsWith('.gif')) {
+    return ` <link rel="preload" href="${href}" as="image" type="image/gif">`;
+  } else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
+    return ` <link rel="preload" href="${href}" as="image" type="image/jpeg">`;
+  } else if (fileName.endsWith('.png')) {
+    return ` <link rel="preload" href="${href}" as="image" type="image/png">`;
+  }
+
+  return '';
+}
+
+function resolveImportsFromManifest(
+  modules: Set<string>,
+  manifest: Record<string, string[]>,
+) {
+  const imports = new Set<string>();
+
+  for (const filename of modules) {
+    manifest[filename]?.forEach((file) => {
+      imports.add(file);
+    });
+  }
+
+  return Array.from(imports);
 }
 
 function resolvePageImports(

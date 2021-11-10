@@ -264,6 +264,54 @@ export function clientPlugin(
       },
     },
     ...filteredAddons,
+    {
+      name: '@vitebook/client:svelte-ssr-context',
+      enforce: 'post',
+      transform(code, id, { ssr } = {}) {
+        if (
+          ssr &&
+          !id.includes('@vitebook/client') && // Can't self-import.
+          !id.includes('packages/client/dist/client') && // Linked package.
+          id.endsWith('.svelte')
+        ) {
+          const mcs = new MagicString(code);
+          const matchRE = /export\sdefault\s(.*?);/;
+          const match = code.match(matchRE);
+          const componentName = match?.[1];
+
+          if (!match || !componentName) return null;
+
+          const start = code.search(match[0]);
+          const end = start + match[0].length;
+
+          const addModuleCode = `  __vitebook__useSSRContext().modules.add(${JSON.stringify(
+            app.dirs.root.relative(id),
+          )})`;
+
+          mcs.overwrite(
+            start,
+            end,
+            [
+              "import { useSSRContext as __vitebook__useSSRContext } from '@vitebook/client';",
+              `const $$render = ${componentName}.$$render;`,
+              `${componentName}.$$render = function(...args) {`,
+              addModuleCode,
+              '  return $$render(...args)',
+              '}',
+              '',
+              match[0],
+            ].join('\n'),
+          );
+
+          return {
+            code: mcs.toString(),
+            map: mcs.generateMap({ source: id }).toString(),
+          };
+        }
+
+        return null;
+      },
+    },
   ];
 }
 
