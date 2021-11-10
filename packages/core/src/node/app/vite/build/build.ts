@@ -299,15 +299,21 @@ function addSocialTags(
     )?.[1]?.content as string) ?? site.description;
 
   const tags: HeadConfig[] = [
-    ['og:site_name', { content: site.title }],
-    ['og:title', { content: pageTitle }],
-    ['og:description', { content: pageDescription }],
-    ['twitter:title', { content: pageTitle }],
-    ['twitter:description', { content: pageDescription }],
+    ['meta', { property: 'og:site_name', content: site.title }],
+    ['meta', { property: 'og:title', content: pageTitle }],
+    ['meta', { property: 'og:description', content: pageDescription }],
+    ['meta', { property: 'twitter:title', content: pageTitle }],
+    ['meta', { property: 'twitter:description', content: pageDescription }],
   ];
 
   head.push(
-    ...tags.filter((tag) => !head.some((headTag) => tag[0] === headTag[0])),
+    ...tags.filter(
+      (tag) =>
+        !head.some(
+          (headTag) =>
+            headTag[0] === 'meta' && headTag[1]?.property === tag[1].property,
+        ),
+    ),
   );
 
   return head;
