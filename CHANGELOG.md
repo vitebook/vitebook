@@ -1,3 +1,9 @@
+## [0.8.1](https://github.com/vitebook/vitebook/compare/v0.8.0...v0.8.1) (2021-11-10)
+
+### Bug Fixes
+
+- **core:** `cssCodeSplit` breaking prod builds ([6d006cf](https://github.com/vitebook/vitebook/commit/6d006cf617810698569ea73f02f87d4676c05196))
+
 # [0.8.0](https://github.com/vitebook/vitebook/compare/v0.7.1...v0.8.0) (2021-11-10)
 
 ### Features
