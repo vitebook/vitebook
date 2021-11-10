@@ -1,3 +1,9 @@
+## [0.7.1](https://github.com/vitebook/vitebook/compare/v0.7.0...v0.7.1) (2021-11-10)
+
+### Bug Fixes
+
+- downgrade `vite` to `2.7.0-beta.1` ([3a50dd0](https://github.com/vitebook/vitebook/commit/3a50dd0999b9a0073f2db28732622d6ff5225b30))
+
 # [0.7.0](https://github.com/vitebook/vitebook/compare/v0.6.1...v0.7.0) (2021-11-10)
 
 ### Bug Fixes
