@@ -1,3 +1,16 @@
+# [0.7.0](https://github.com/vitebook/vitebook/compare/v0.6.1...v0.7.0) (2021-11-10)
+
+### Bug Fixes
+
+- **core:** duplicate entry chunk preload tags ([96607d3](https://github.com/vitebook/vitebook/commit/96607d32270cf4b7f0fef796a993bda11332cc1d))
+- **core:** social tags being rendered incorrectly ([110dc94](https://github.com/vitebook/vitebook/commit/110dc944dc1c3925c2b66d3b68bd8638484d8deb))
+
+### Features
+
+- bump `vite` to `2.7.0-beta.3` ([b9730d9](https://github.com/vitebook/vitebook/commit/b9730d9d068b988197d048d0af6de8eebccc0a8b))
+- **core:** split `svelte` internals into separate chunk ([4edbd64](https://github.com/vitebook/vitebook/commit/4edbd645d59ea0e309ed8a364262dae0f1a3c1d6))
+- **core:** tidy up css/js chunk file names ([d6af983](https://github.com/vitebook/vitebook/commit/d6af9830d0c46797f82061aa8716e441b0ed3474))
+
 ## [0.6.1](https://github.com/vitebook/vitebook/compare/v0.6.0...v0.6.1) (2021-11-10)
 
 ### Bug Fixes
