@@ -115,13 +115,23 @@ export function useActiveHeaderLinks({
   );
 
   onMount(() => {
-    onScroll();
-    window.addEventListener('scroll', onScroll);
+    let hasScrolled = false;
+
+    window.addEventListener('scroll', () => {
+      onScroll();
+      hasScrolled = true;
+    });
+
+    const onUpdate = () => {
+      if (hasScrolled) {
+        onScroll();
+      }
+    };
 
     const dispose: (() => void)[] = [];
-    dispose.push(currentRoute.subscribe(onScroll));
-    dispose.push(currentMarkdownPageMeta.subscribe(onScroll));
-    dispose.push(offsetStore.subscribe(onScroll));
+    dispose.push(currentRoute.subscribe(onUpdate));
+    dispose.push(currentMarkdownPageMeta.subscribe(onUpdate));
+    dispose.push(offsetStore.subscribe(onUpdate));
     dispose.push(() => {
       window.removeEventListener('scroll', onScroll);
     });
