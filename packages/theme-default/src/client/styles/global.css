@@ -32,6 +32,11 @@ body {
   margin: 0;
   line-height: inherit;
   overflow-x: hidden;
+  background-color: var(--vbk--body-bg-color, hsl(0, 0%, 95%));
+}
+
+html[data-vbk-theme='dark'] body {
+  background-color: var(--vbk--body-bg-color, hsl(0, 0%, 10.2%));
 }
 
 .__vbk__ {

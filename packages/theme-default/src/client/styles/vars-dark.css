@@ -23,7 +23,6 @@ html[data-vbk-theme='dark'] .theme.__vbk__ {
   --vbk--shadow-color: 0deg 0% 1%;
 
   /* Elements */
-  --vbk--body-bg-color: var(--vbk--color-bg-400);
   --vbk--page-md-bg-color: var(--vbk--color-bg-400);
 
   --vbk--navbar-bg-color: var(--vbk--color-bg-400);
