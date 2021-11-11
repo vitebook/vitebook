@@ -1,6 +1,17 @@
 <script>
+  import { useRouter } from '@vitebook/client';
+
+  import { onMount } from 'svelte';
+
   import NavbarTitle from './NavbarTitle.svelte';
   import NavLinks from './NavLinks.svelte';
+
+  const router = useRouter();
+
+  onMount(() => {
+    // Trigger a re-scroll to hash after navbar has mounted.
+    router.go(location.href, { replace: true });
+  });
 </script>
 
 <header class="navbar">

@@ -1,5 +1,6 @@
 import { ensureLeadingSlash, inBrowser, isString } from '@vitebook/core';
 import { tick } from 'svelte';
+import { noop, raf } from 'svelte/internal';
 import { get } from 'svelte/store';
 
 import type { SvelteModule } from '../../shared';
@@ -28,11 +29,22 @@ export class Router {
   beforeNavigate?: (url: URL) => void | Promise<void>;
   afterNavigate?: (url: URL) => void | Promise<void>;
 
-  protected resolveReady?: (value?: unknown) => void;
-  protected _isReady = new Promise((res) => (this.resolveReady = res));
+  protected _isReady = false;
+  protected _resolveReadyPromise?: () => void;
+  protected _isReadyPromise = new Promise(
+    (res) =>
+      (this._resolveReadyPromise = () => {
+        res(void 0);
+        this._isReady = true;
+      }),
+  );
 
   get isReady() {
     return this._isReady;
+  }
+
+  get waitUntilReady() {
+    return this._isReadyPromise;
   }
 
   constructor({ baseUrl, history, routes }: RouterOptions) {
@@ -113,24 +125,6 @@ export class Router {
     if (this.enabled && this.owns(url)) {
       this.history[replace ? 'replaceState' : 'pushState'](state, '', href);
 
-      if (href.startsWith('#')) {
-        if (scroll !== false) {
-          const savedScrollBehaviour = this.scrollBehaviour;
-          this.scrollBehaviour = undefined;
-          this.scrollToPosition({ hash: href });
-          this.scrollBehaviour = savedScrollBehaviour;
-        }
-
-        window.requestAnimationFrame(() => {
-          currentRoute.__update((route) => ({
-            ...route,
-            hash: href,
-          }));
-        });
-
-        return;
-      }
-
       await this.navigate({
         url,
         scroll,
@@ -138,9 +132,9 @@ export class Router {
         hash: url.hash,
       });
 
-      if (this.resolveReady) {
-        this.resolveReady();
-        this.resolveReady = undefined;
+      if (this._resolveReadyPromise) {
+        this._resolveReadyPromise();
+        this._resolveReadyPromise = undefined;
       }
 
       return;
@@ -210,47 +204,48 @@ export class Router {
       }
 
       if (scroll !== false) {
-        this.scrollToPosition({ scroll, hash });
+        await this.scrollToPosition({ scroll, hash });
       }
     }
 
     await this.afterNavigate?.(url);
   }
 
-  protected scrollToPosition({
+  protected async scrollToPosition({
     scroll,
     hash,
   }: Pick<NavigationOptions, 'scroll' | 'hash'>) {
     if (!inBrowser) return;
 
-    const deepLinked = hash && document.getElementById(hash.slice(1));
+    const deepLinked =
+      hash && document.getElementById(decodeURI(hash).slice(1));
 
     const scrollTo = (options: ScrollToOptions) => {
-      if ('scrollBehavior' in document.documentElement.style)
+      if ('scrollBehavior' in document.documentElement.style) {
         window.scrollTo(options);
-      else {
+      } else {
         window.scrollTo(options.left ?? 0, options.top ?? 0);
       }
     };
 
-    window.requestAnimationFrame(() => {
-      if (scroll) {
-        scrollTo({
-          left: scroll.x,
-          top: scroll.y,
-          behavior: this.scrollBehaviour,
-        });
-      } else if (deepLinked) {
-        const docRect = document.documentElement.getBoundingClientRect();
-        const elRect = deepLinked.getBoundingClientRect();
-        const offset = this.scrollOffset();
-        const left = elRect.left - docRect.left - offset.left;
-        const top = elRect.top - docRect.top - offset.top;
-        scrollTo({ left, top, behavior: this.scrollBehaviour });
-      } else {
-        scrollTo({ left: 0, top: 0, behavior: this.scrollBehaviour });
-      }
-    });
+    await raf(noop);
+
+    if (scroll) {
+      scrollTo({
+        left: scroll.x,
+        top: scroll.y,
+        behavior: this.scrollBehaviour,
+      });
+    } else if (deepLinked) {
+      const docRect = document.documentElement.getBoundingClientRect();
+      const elRect = deepLinked.getBoundingClientRect();
+      const offset = this.scrollOffset();
+      const left = elRect.left - docRect.left - offset.left;
+      const top = elRect.top - docRect.top - offset.top;
+      scrollTo({ left, top, behavior: this.scrollBehaviour });
+    } else {
+      scrollTo({ left: 0, top: 0, behavior: this.scrollBehaviour });
+    }
   }
 
   initListeners() {
@@ -338,7 +333,12 @@ export class Router {
       const urlString = url.toString();
 
       if (urlString === location.href) {
-        if (!location.hash) event.preventDefault();
+        event.preventDefault();
+
+        if (location.hash) {
+          this.scrollToPosition({ hash: location.hash });
+        }
+
         return;
       }
 

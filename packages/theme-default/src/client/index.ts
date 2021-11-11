@@ -55,11 +55,19 @@ const theme: ClientTheme = {
       }
     }
 
-    router.scrollOffset = () => ({
-      top:
-        document.querySelector('.navbar')?.getBoundingClientRect().height ?? 0,
-      left: 0,
-    });
+    router.scrollOffset = () => {
+      const navbarHeight =
+        parseFloat(
+          window
+            .getComputedStyle(document.querySelector('.theme.__vbk__')!)
+            .getPropertyValue('--vbk--navbar-height'),
+        ) * 16;
+
+      return {
+        top: navbarHeight,
+        left: 0,
+      };
+    };
   },
 };
 

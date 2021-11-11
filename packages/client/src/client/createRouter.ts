@@ -43,8 +43,8 @@ export async function createRouter() {
   }
 
   if (inBrowser) {
-    await router.go(location.href, { replace: true });
     router.initListeners();
+    await router.go(location.href, { replace: true });
   }
 
   return router;

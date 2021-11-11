@@ -27,7 +27,10 @@ export function useActiveHeaderLinks({
 }: UseActiveHeaderLinksOptions) {
   const router = useRouter();
 
-  const setActiveRouteHash = () => {
+  let isReady = false;
+  const setActiveRouteHash = async () => {
+    if (!isReady) return;
+
     const offset = get(offsetStore);
 
     const headerLinks: HTMLAnchorElement[] = Array.from(
@@ -100,44 +103,55 @@ export function useActiveHeaderLinks({
         }
       }
 
-      router.go(anchorHash, {
+      const scrollBehaviour = router.scrollBehaviour;
+      router.scrollBehaviour = 'auto';
+      await router.go(anchorHash, {
         scroll: false,
         replace: true,
       });
+      router.scrollBehaviour = scrollBehaviour;
 
       return;
     }
   };
 
   const onScroll = throttleAndDebounce(
-    () => tick().then(setActiveRouteHash),
+    () =>
+      tick().then(() => {
+        window.requestAnimationFrame(setActiveRouteHash);
+      }),
     delay,
   );
 
   onMount(() => {
-    let hasScrolled = false;
+    const disposal: (() => void)[] = [];
 
-    window.addEventListener('scroll', () => {
-      onScroll();
-      hasScrolled = true;
-    });
+    window.addEventListener('scroll', onScroll);
 
-    const onUpdate = () => {
-      if (hasScrolled) {
-        onScroll();
-      }
-    };
+    let prevPath;
+    disposal.push(
+      currentRoute.subscribe(({ path }) => {
+        if (path !== prevPath) {
+          isReady = false;
 
-    const dispose: (() => void)[] = [];
-    dispose.push(currentRoute.subscribe(onUpdate));
-    dispose.push(currentMarkdownPageMeta.subscribe(onUpdate));
-    dispose.push(offsetStore.subscribe(onUpdate));
-    dispose.push(() => {
-      window.removeEventListener('scroll', onScroll);
-    });
+          tick().then(() => {
+            setTimeout(() => {
+              isReady = true;
+            }, 500);
+          });
+
+          prevPath = path;
+        }
+      }),
+    );
+
+    disposal.push(currentRoute.subscribe(onScroll));
+    disposal.push(currentMarkdownPageMeta.subscribe(onScroll));
+    disposal.push(offsetStore.subscribe(onScroll));
 
     return () => {
-      dispose.forEach((unsub) => unsub());
+      disposal.forEach((unsub) => unsub());
+      window.removeEventListener('scroll', onScroll);
     };
   });
 }
