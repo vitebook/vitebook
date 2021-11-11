@@ -31,7 +31,6 @@
     position: relative;
     margin: 0;
     width: 100%;
-    min-height: 100%;
   }
 
   .page[class*='md'] {
@@ -42,6 +41,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 100%;
   }
 
   .page__container {
