@@ -24,7 +24,7 @@
     background-color: var(--vbk--scrim-bg-color);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 350ms ease-out;
+    transition: opacity 350ms ease-out, visibility 350ms ease-out;
   }
 
   .scrim.active {
