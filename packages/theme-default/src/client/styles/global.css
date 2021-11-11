@@ -18,13 +18,6 @@ html[data-vbk-sidebar='open'] {
   margin-right: var(--vbk--scrollbar-width);
 }
 
-@media (min-width: 992px) {
-  html[data-vbk-sidebar='open'] {
-    overflow-y: scroll;
-    margin-right: 0;
-  }
-}
-
 body {
   margin: 0;
   width: 100%;
@@ -41,6 +34,17 @@ html[data-vbk-theme='dark'] body {
 
 .__vbk__ {
   font-family: var(--vbk--fony-family);
+}
+
+@media (min-width: 992px) {
+  html[data-vbk-sidebar='open'] {
+    overflow-y: scroll;
+    margin-right: 0;
+  }
+
+  body {
+    overflow-x: visible;
+  }
 }
 
 /**-------------------------------------------------------------------------------------------
