@@ -1,3 +1,15 @@
+## [0.8.3](https://github.com/vitebook/vitebook/compare/v0.8.2...v0.8.3) (2021-11-11)
+
+### Bug Fixes
+
+- **client:** improve hash routing ([84d653e](https://github.com/vitebook/vitebook/commit/84d653ece35bb1d36f7d5ff7b34df6a57302d8b8))
+- **theme-default:** body scrolling broken on larger devices ([ba15d3a](https://github.com/vitebook/vitebook/commit/ba15d3aa77022beb1970ba0b89669e6394630629))
+- **theme-default:** make sure body bg-color matches theme ([3345438](https://github.com/vitebook/vitebook/commit/3345438dbe1c5d371b334f1a31d9253539664773))
+- **theme-default:** prevent light/dark theme flash on initial load (2) ([9987096](https://github.com/vitebook/vitebook/commit/99870961ea98366bd2e49fc90a8b51586e32b440))
+- **theme-default:** prevent page/sidebar sliding left/right on touch ([f12684e](https://github.com/vitebook/vitebook/commit/f12684e22e5820b8d33488fceda662aada66ef15))
+- **theme-default:** prevent sidebar shifting up on short md pages ([e2f0b1c](https://github.com/vitebook/vitebook/commit/e2f0b1ce6223e589b4394414b47bd2c80a1e69cc))
+- **theme-default:** prevent taps on mobile going through scrim ([e5597cf](https://github.com/vitebook/vitebook/commit/e5597cfc457c47f51add511b825f24b44ac6afc8))
+
 ## [0.8.2](https://github.com/vitebook/vitebook/compare/v0.8.1...v0.8.2) (2021-11-10)
 
 ### Bug Fixes

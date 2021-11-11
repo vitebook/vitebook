@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/example-preact",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,12 +12,12 @@
     "preact": "^10.5.14"
   },
   "devDependencies": {
-    "@vitebook/client": "0.8.2",
-    "@vitebook/core": "0.8.2",
-    "@vitebook/markdown-preact": "0.8.2",
-    "@vitebook/markdown-shiki": "0.8.2",
-    "@vitebook/preact": "0.8.2",
-    "@vitebook/theme-default": "0.8.2",
+    "@vitebook/client": "0.8.3",
+    "@vitebook/core": "0.8.3",
+    "@vitebook/markdown-preact": "0.8.3",
+    "@vitebook/markdown-shiki": "0.8.3",
+    "@vitebook/preact": "0.8.3",
+    "@vitebook/theme-default": "0.8.3",
     "typescript": "^4.4.3"
   }
 }
