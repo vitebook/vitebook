@@ -188,6 +188,7 @@
     flex: 1 0 0;
     padding: 0 1rem;
     padding-bottom: 2.5rem;
+    overflow-x: hidden;
   }
 
   .sidebar__main-menu {

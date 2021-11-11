@@ -31,6 +31,7 @@ body {
   min-height: 100vh;
   margin: 0;
   line-height: inherit;
+  overflow-x: hidden;
 }
 
 .__vbk__ {
