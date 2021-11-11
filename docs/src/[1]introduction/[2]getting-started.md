@@ -76,4 +76,4 @@ run `npx vitebook --help` in your project.
 ## Getting Help
 
 This is an open-source project that's community driven, so feel free to jump in our
-[Discord](https://discord.gg/aKu2VwUc6U) channel and head over to the `#help` channel.
+[Discord](https://discord.gg/aKu2VwUc6U) server and head over to the `#help` channel.

@@ -1,5 +1,5 @@
 <script>
-  import { currentPage, variants } from '@vitebook/client';
+  import { currentPage, useSSRContext, variants } from '@vitebook/client';
 
   import { onMount } from 'svelte';
 
@@ -18,6 +18,23 @@
   import { isLargeScreen } from '../stores/isLargeScreen';
   import { localizedThemeConfig } from '../stores/localizedThemeConfig';
   import Page from './Page.svelte';
+
+  if (import.meta.env.SSR) {
+    const ctx = useSSRContext();
+    ctx.head.push([
+      'script',
+      {},
+      `
+  const key = 'vitebook-color-scheme';
+  const saved = window.localStorage.getItem(key) ?? 'auto';
+  const dark = saved === 'auto' ?
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+    : saved === 'dark';
+  const htmlEl = window.document.querySelector('html');
+  htmlEl.setAttribute('data-vbk-theme', dark ? 'dark' : 'light');
+    `,
+    ]);
+  }
 
   useDarkMode();
 

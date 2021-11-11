@@ -4,12 +4,11 @@ import './styles/global.css';
 import './styles/code.css';
 import './styles/admonition.css';
 
-import { ClientTheme, currentRoute, inBrowser, pages } from '@vitebook/client';
+import { ClientTheme, currentRoute, pages } from '@vitebook/client';
 import { get } from 'svelte/store';
 
 import Layout from './layout/Layout.svelte';
 import NotFound from './layout/NotFound.svelte';
-import { updateDarkMode } from './stores/darkMode';
 import { localizedThemeConfig } from './stores/localizedThemeConfig';
 
 const theme: ClientTheme = {
@@ -17,11 +16,6 @@ const theme: ClientTheme = {
   Layout,
   NotFound,
   configureRouter(router) {
-    // Set theme before route loads to avoid flashing wrong theme.
-    if (inBrowser) {
-      updateDarkMode(get(localizedThemeConfig));
-    }
-
     if (!router.hasRoute('/')) {
       const setHomePage = () => {
         const theme = get(localizedThemeConfig);
