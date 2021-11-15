@@ -14,6 +14,7 @@ export default defineConfig<DefaultThemeConfig>({
     preactMarkdownPlugin(),
     preactPlugin({
       include: /\.tsx/,
+      preact: { include: /\.([j|t]sx?|md)$/ },
     }),
     clientPlugin(),
     defaultThemePlugin(),
