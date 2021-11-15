@@ -6,6 +6,7 @@ import {
 import { onMount, tick } from 'svelte';
 import { get, Readable } from 'svelte/store';
 
+import { isLargeScreen } from '../../stores/isLargeScreen';
 import { throttleAndDebounce } from '../../utils/throttleAndDebounce';
 
 /**
@@ -29,7 +30,7 @@ export function useActiveHeaderLinks({
 
   let isReady = false;
   const setActiveRouteHash = async () => {
-    if (!isReady) return;
+    if (!isReady || !get(isLargeScreen)) return;
 
     const offset = get(offsetStore);
 
