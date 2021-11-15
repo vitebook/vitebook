@@ -24,7 +24,7 @@ $: pnpm create vitebook my-app
 ### Extra Options
 
 - `{TEMPLATE}`: replace with either `vue`, `svelte`, `preact`, or `react`.
-- `{THEME}`: replace with `blank`, `custom`, or `default`.
+- `{THEME}`: replace with either `blank`, `custom`, or `default`.
 - `{FEATURES}`: replace with comma separated list such as `markdown,typescript`. Valid features
   are `markdown`, `typescript`, `eslint`, `prettier`, and `lint-staged`.
 
@@ -72,6 +72,28 @@ The following are added to your `package.json` when using the installation metho
 
 You can specify additional CLI options like `--port` or `--https`. For a full list of CLI options,
 run `npx vitebook --help` in your project.
+
+## Concepts
+
+There are some important concepts and features to keep in mind while building with Vitebook that
+are derived directly from Vite. As much as you should probably read through all of the Vite
+documentation, here's some essentials:
+
+- [Vite Project Root](https://vitejs.dev/guide/#index-html-and-project-root)
+- [Vite Features](https://vitejs.dev/guide/features.html)
+- [Static Assets](https://vitejs.dev/guide/assets.html)
+- [Env Variables](https://vitejs.dev/guide/env-and-mode.html)
+
+## Examples
+
+You can find some basic [examples](https://github.com/vitebook/vitebook/tree/main/examples) in the
+Vitebook GitHub repository:
+
+- [Custom Theme](https://github.com/vitebook/vitebook/tree/main/examples/custom-theme)
+- [Preact](https://github.com/vitebook/vitebook/tree/main/examples/preact)
+- [React](https://github.com/vitebook/vitebook/tree/main/examples/react)
+- [Svelte](https://github.com/vitebook/vitebook/tree/main/examples/svelte)
+- [Vue](https://github.com/vitebook/vitebook/tree/main/examples/vue)
 
 ## Getting Help
 
