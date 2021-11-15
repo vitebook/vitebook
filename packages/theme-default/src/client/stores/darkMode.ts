@@ -5,7 +5,9 @@ import { get, writable } from 'svelte/store';
 import { DefaultThemeConfig, defaultThemeLocaleOptions } from '../../shared';
 import { localizedThemeConfig } from './localizedThemeConfig';
 
-export const darkMode = writable(false);
+export const darkMode = writable(
+  inBrowser && import.meta.env.PROD ? htmlHasDarkDataAttr() : false,
+);
 
 const STORAGE_KEY = '@vitebook/color-scheme';
 
@@ -61,6 +63,11 @@ export function useDarkMode(): void {
       }
     });
   });
+}
+
+function htmlHasDarkDataAttr() {
+  const htmlEl = window?.document.querySelector('html');
+  return htmlEl?.getAttribute('data-vbk-theme') === 'dark';
 }
 
 function updateHtmlDarkDataAttr(isDarkMode: boolean): void {
