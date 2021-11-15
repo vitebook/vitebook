@@ -7,7 +7,7 @@ import { localizedThemeConfig } from './localizedThemeConfig';
 
 export const darkMode = writable(false);
 
-const STORAGE_KEY = 'vitebook-color-scheme';
+const STORAGE_KEY = '@vitebook/color-scheme';
 
 function isDarkPreferred() {
   return inBrowser

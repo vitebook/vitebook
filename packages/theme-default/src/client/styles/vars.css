@@ -163,7 +163,7 @@
 
   --vbk--sidebar-bg-color: var(--vbk--color-bg-100);
 
-  --vbk--sidebar-min-width: 20rem;
+  --vbk--sidebar-min-width: 18.5rem;
   --vbk--sidebar-z-index: calc(var(--vbk--scrim-z-index) + 100);
 
   --vbk--sidebar-item-color: var(--vbk--color-text);

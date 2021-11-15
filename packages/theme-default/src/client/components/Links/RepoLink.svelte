@@ -25,7 +25,7 @@
   }
 
   async function loadIcon(repoLink) {
-    icon = await getIcon(repoLink.platform);
+    icon = await getIcon(repoLink?.platform);
   }
 
   $: loadIcon($repoLink);

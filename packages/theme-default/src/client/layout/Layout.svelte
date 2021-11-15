@@ -25,7 +25,7 @@
       'script',
       {},
       `
-  const key = 'vitebook-color-scheme';
+  const key = '@vitebook/color-scheme';
   const saved = window.localStorage.getItem(key) ?? 'auto';
   const dark = saved === 'auto' ?
     window.matchMedia('(prefers-color-scheme: dark)').matches

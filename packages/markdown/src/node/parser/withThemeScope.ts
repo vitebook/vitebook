@@ -2,11 +2,19 @@ import { HTMLElement, parse } from 'node-html-parser';
 
 const COMPONENT_NAME_RE = /^[A-Z]/;
 
-function walk(node: HTMLElement, scopeClass: string) {
-  if (!COMPONENT_NAME_RE.test(node.rawTagName)) {
-    node.classList?.add(scopeClass);
-    for (let i = 0; i < node.childNodes.length; i += 1) {
-      walk(node.childNodes[i] as HTMLElement, scopeClass);
+function walk(node: HTMLElement, scopeClass: string, apply = true) {
+  for (let i = 0; i < node.childNodes.length; i += 1) {
+    if (COMPONENT_NAME_RE.test(node.rawTagName)) {
+      walk(node.childNodes[i] as HTMLElement, scopeClass, false);
+    } else if (/language-/.test(node.classList.toString())) {
+      node.classList?.add(scopeClass);
+      walk(node.childNodes[i] as HTMLElement, scopeClass, true);
+    } else {
+      if (apply) {
+        node.classList?.add(scopeClass);
+      }
+
+      walk(node.childNodes[i] as HTMLElement, scopeClass, apply);
     }
   }
 }

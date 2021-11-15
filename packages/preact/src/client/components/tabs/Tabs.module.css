@@ -1,0 +1,20 @@
+.tabs {
+  width: 100%;
+  border: var(--vbk--menu-border);
+  margin: 1.15rem 0;
+}
+
+.tabs__list {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  list-style: none;
+  padding: 0.2rem;
+  margin: 0;
+  overflow-x: auto;
+  background-color: var(--vbk--color-bg-200);
+}
+
+.tabs__panels {
+  padding: 1.15rem;
+}

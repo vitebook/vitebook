@@ -26,6 +26,11 @@ const CLOSING_SCRIPT_TAG_RE = /<\/script>/;
 const OPENING_SCRIPT_MODULE_TAG_RE =
   /<\s*script[^>]*\scontext="module"\s*[^>]*>/;
 
+const SCRIPT_TAG_CONTENT_RE = /<\s*script[^>]*>([\s\S]*)<\/script>/;
+
+// const SCRIPT_MODULE_TAG_CONTENT_RE =
+//   /<\s*script[^>]*\scontext="module"\s*[^>]*>([\s\S]*)<\/script>/;
+
 export function parseMarkdownToPreact(
   app: App,
   parser: MarkdownParser,
@@ -46,7 +51,7 @@ export function parseMarkdownToPreact(
 
   const { hoistedTags } = parserEnv as PreactMarkdownParserEnv;
 
-  const component = buildReactComponentModule(
+  const component = buildPreactComponentModule(
     path.basename(filePath),
     dedupeHoistedTags(hoistedTags),
     html,
@@ -62,7 +67,7 @@ export function parseMarkdownToPreact(
   return result;
 }
 
-function buildReactComponentModule(
+function buildPreactComponentModule(
   displayName: string,
   tags: string[],
   html: string,
@@ -73,7 +78,7 @@ function buildReactComponentModule(
     ?.replace(OPENING_SCRIPT_MODULE_TAG_RE, '')
     ?.replace(CLOSING_SCRIPT_TAG_RE, '');
 
-  const componentCode = tags
+  const fnCode = tags
     .find(
       (tag) =>
         !OPENING_SCRIPT_MODULE_TAG_RE.test(tag) &&
@@ -82,16 +87,18 @@ function buildReactComponentModule(
     ?.replace(OPENING_SCRIPT_TAG_RE, '')
     ?.replace(CLOSING_SCRIPT_TAG_RE, '');
 
+  const jsxCode = html
+    .replace(new RegExp(SCRIPT_TAG_CONTENT_RE, 'g'), '')
+    .replace(/<br(.*?)(\/)?>/g, (_, m) => `<br${m}/>`);
+
   const jsx = `
-import { h, Fragment } from 'preact';
+import { h } from 'preact';
 import { OutboundLink } from '@vitebook/preact';
 ${moduleCode ? `\n${moduleCode}\n` : ''}
 function Markdown() {
-  ${componentCode ? `${componentCode}\n` : ''}
+  ${fnCode ? `${fnCode}\n` : ''}
   return (
-    <Fragment>
-      <div>${html.replace(/<br(.*?)(\/)?>/g, (_, m) => `<br${m}/>`)}</div>
-    </Fragment>
+    <div>${jsxCode}</div>
   )
 }
 

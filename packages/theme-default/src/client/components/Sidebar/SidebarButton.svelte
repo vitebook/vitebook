@@ -2,6 +2,10 @@
   import { localizedThemeConfig } from '../../stores/localizedThemeConfig';
   import { multiSidebarStyleConfig } from './multiSidebarStyleConfig';
 
+  let classes = '';
+
+  export { classes as class };
+
   export let ref = undefined;
   export let href = undefined;
   export let active = false;
@@ -17,6 +21,7 @@
   <a
     {href}
     {...$$restProps}
+    class={classes}
     class:active
     class:external
     class:style-explorer={hasExplorerStyle}
@@ -32,6 +37,7 @@
 {:else}
   <button
     {...$$restProps}
+    class={classes}
     class:style-explorer={hasExplorerStyle}
     class:style-docs={hasDocsStyle}
     on:pointerenter

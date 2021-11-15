@@ -10,7 +10,7 @@ const watch = args.watch || args.w;
 
 const targetDir = path.resolve(process.cwd(), args.entry ?? 'src/client');
 const destDir = path.resolve(process.cwd(), args.outdir ?? 'dist/client');
-const glob = `${targetDir}/**/!(*.ts|tsconfig.json)`;
+const glob = `${targetDir}/**/!(*.(js|ts)(x)?|tsconfig.json)`;
 
 function resolveDest(file) {
   return path.resolve(destDir, path.relative(targetDir, file));

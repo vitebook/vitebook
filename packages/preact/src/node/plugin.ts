@@ -1,4 +1,6 @@
-import prefresh, { Options as PreactOptions } from '@prefresh/vite';
+import preactPreset, {
+  PreactPluginOptions as PreactPresetOptions,
+} from '@preact/preset-vite';
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import type { Plugin } from '@vitebook/core/node';
 import { ensureLeadingSlash } from '@vitebook/core/node';
@@ -24,11 +26,14 @@ export type PreactPluginOptions = {
   exclude?: FilterPattern;
 
   /**
-   * `@prefresh/vite` plugin options.
+   * `@preact/preset-vite` plugin options.
    *
-   * @link https://github.com/preactjs/prefresh/tree/main/packages/vite
+   * @link https://github.com/preactjs/preset-vite
    */
-  prefresh?: PreactOptions;
+  preact?: PreactPresetOptions & {
+    include?: FilterPattern;
+    exclude?: FilterPattern;
+  };
 };
 
 const DEFAULT_INCLUDE_RE = /\.(jsx|tsx)($|\?)/;
@@ -45,21 +50,25 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
       enforce: 'pre',
       config() {
         return {
+          resolve: {
+            dedupe: [
+              'preact',
+              '@prefresh/core',
+              '@prefresh/vite',
+              '@prefresh/utils',
+            ],
+          },
           esbuild: {
             jsxFactory: 'h',
             jsxFragment: 'Fragment',
-            jsxInject: `import { h, Fragment } from 'preact'`,
-          },
-          resolve: {
-            alias: {
-              'react-dom': 'preact/compat',
-              'react-dom/test-utils': 'preact/test-utils',
-              react: 'preact/compat',
-            },
           },
           optimizeDeps: {
-            // Force include `preact` to avoid duplicated copies when linked + optimized.
-            include: ['preact'],
+            exclude: [
+              'preact',
+              '@prefresh/core',
+              '@prefresh/vite',
+              '@prefresh/utils',
+            ],
           },
         };
       },
@@ -80,6 +89,6 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
         return null;
       },
     },
-    prefresh(options.prefresh),
+    ...preactPreset(options.preact),
   ];
 }

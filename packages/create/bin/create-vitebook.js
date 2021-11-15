@@ -536,7 +536,7 @@ async function main() {
       }),
       isSvelteTemplate
         ? `clientPlugin({
-      include: /\\.svelte/,
+      include: /\\.svelte$/,
       svelte: {
         extensions: ['.svelte'${hasMarkdownFeature ? ", '.md'" : ''}],
       },
@@ -852,22 +852,22 @@ function getFrameworkPlugins({
   switch (framework) {
     case 'svelte':
       return [
-        hasMarkdownFeature && 'svelteMarkdownPlugin({ include: /\\.md/, })',
+        hasMarkdownFeature && 'svelteMarkdownPlugin({ include: /\\.md$/, })',
       ];
     case 'vue':
       return [
-        hasMarkdownFeature && 'vueMarkdownPlugin({ include: /\\.md/, })',
-        `vuePlugin({ include: /\\.vue/, vue: { include: /\\.${
+        hasMarkdownFeature && 'vueMarkdownPlugin({ include: /\\.md$/, })',
+        `vuePlugin({ include: /\\.vue$/, vue: { include: /\\.${
           hasMarkdownFeature ? '(md|vue)' : 'vue'
-        }/ }})`,
+        }$/ }})`,
       ];
     case 'preact':
     case 'react':
       return [
-        `preactMarkdownPlugin({ include: /\\.md/ })`,
-        `preactPlugin({ include: /\\.${
-          hasTypescriptFeature ? 'tsx' : 'jsx'
-        }/ })`,
+        `preactMarkdownPlugin({ include: /\\.md$/ })`,
+        `preactPlugin({ include: /\\.${hasTypescriptFeature ? 'tsx' : 'jsx'}/${
+          hasMarkdownFeature ? `, preact: { include: /\\.([j|t]sx?|md)$/ }` : ''
+        } })`,
       ];
     default:
       return [];

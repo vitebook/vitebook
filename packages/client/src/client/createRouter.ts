@@ -38,7 +38,7 @@ export async function createRouter() {
     router.addRoute({
       path: '/',
       loader: async () =>
-        (await import('./components/Explorer/Explorer.svelte')).default,
+        (await import('./components/explorer/Explorer.svelte')).default,
     });
   }
 
