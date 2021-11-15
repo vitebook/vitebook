@@ -1,3 +1,14 @@
+# [0.9.0](https://github.com/vitebook/vitebook/compare/v0.8.3...v0.9.0) (2021-11-15)
+
+### Bug Fixes
+
+- **theme-default:** initialize dark mode in production correctly ([e14ff6e](https://github.com/vitebook/vitebook/commit/e14ff6ec9f4a171e2c3cc0bc4707cdb6dc50e7f0))
+- **theme-default:** no active header links on mobile ([60612be](https://github.com/vitebook/vitebook/commit/60612be57c5a23a0ebbc37a899e35f0278a8eeac))
+
+### Features
+
+- new `<Tabs />` component ([76e9f2a](https://github.com/vitebook/vitebook/commit/76e9f2a3602bf134e564f1d62a5356fe4812c53d))
+
 ## [0.8.3](https://github.com/vitebook/vitebook/compare/v0.8.2...v0.8.3) (2021-11-11)
 
 ### Bug Fixes
