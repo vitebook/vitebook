@@ -1,4 +1,4 @@
-import { inBrowser, isString } from '@vitebook/core';
+import { isString } from '@vitebook/core';
 import { getContext } from 'svelte';
 import { Writable, writable } from 'svelte/store';
 
@@ -45,15 +45,16 @@ export function createTabsRegistry(
   };
 
   if (groupId) {
-    const shouldSetupStorage = inBrowser && !!groups[groupId];
     const storageKey = getGroupStorageKey(groupId);
     const groupStore = (groups[groupId] ??= writable(null));
 
     currentValue = groupStore;
 
     // Avoid SSR mismatch.
+    let hasInit = false;
     onMount(() => {
-      if (!shouldSetupStorage) return;
+      if (hasInit) return;
+      hasInit = true;
 
       currentValue.set(
         window.localStorage.getItem(storageKey) ?? initialValue(),
