@@ -146,7 +146,7 @@ The `theme` configuration object depends on the specific theme being used. Viteb
 default theme out of the box, see the [documentation](../default-theme/configuration.md) on it
 for more information.
 
-<Tabs values={jsLangs}>
+<Tabs values={jsLangs} groupId="jsLang">
 <TabPanel value="JavaScript">
 
 ```js:no-line-numbers {5-8}

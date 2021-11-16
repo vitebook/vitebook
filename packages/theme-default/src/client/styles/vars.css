@@ -193,7 +193,7 @@
   --vbk--code-font-family: var(--vbk--font-family-mono);
   --vbk--code-font-size: 0.875rem;
   --vbk--code-bg-color: #282c34;
-  --vbk--code-hl-bg-color: hsl(0, 0%, 15%);
+  --vbk--code-hl-bg-color: hsl(220deg, 13%, 25%);
   --vbk--code-hl-ln-height: 1.4;
   --vbk--code-ln-color: #9e9e9e;
   --vbk--code-ln-wrapper-width: 3.5rem;

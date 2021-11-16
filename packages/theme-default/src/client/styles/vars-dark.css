@@ -34,6 +34,8 @@ html[data-vbk-theme='dark'] .theme.__vbk__ {
 
   --vbk--toggle-hover-bg-color: var(--vbk--color-bg-100);
 
+  --vbk--code-hl-bg-color: hsl(0, 0%, 15%);
+
   --vbk--menu-bg-color: var(--vbk--color-bg-200);
   --vbk--menu-border: 0.12rem solid var(--vbk--color-bg-100);
   --vbk--menu-item-hover-bg-color: var(--vbk--color-bg-100);
