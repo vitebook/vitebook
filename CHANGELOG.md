@@ -1,3 +1,18 @@
+# [0.10.0](https://github.com/vitebook/vitebook/compare/v0.9.0...v0.10.0) (2021-11-16)
+
+### Bug Fixes
+
+- **client:** tabs with `groupId` not setting default value ([a029ae0](https://github.com/vitebook/vitebook/commit/a029ae0e3af605c0447953c7d003291676dde0e1))
+- **create:** add `// [@ts-check](https://github.com/ts-check)` to non-ts config files ([d5e915e](https://github.com/vitebook/vitebook/commit/d5e915e4f45fe7f8b0a692f358571f1064300105))
+- increase tabs margin to `2rem` from `1.15rem` ([c476d56](https://github.com/vitebook/vitebook/commit/c476d56fb2f281cff977eef64e312372c1a6a5e2))
+- remove potentially unused imports from main exports ([c431a3f](https://github.com/vitebook/vitebook/commit/c431a3f0ea7ec07edf69e356091de5912abc4ed2))
+- **theme-default:** focus box shadow missing from prev/next md links ([579c85c](https://github.com/vitebook/vitebook/commit/579c85c51ce03ba28ced2d46f874577ad31f7192))
+- **theme-default:** md toc issues when last header is at page bottom ([3ee5166](https://github.com/vitebook/vitebook/commit/3ee51664b0c9ed569d94898e7d81ab5d90a302f4))
+
+### Features
+
+- **client:** optimize svelte markdown files using static analysis ([43a223f](https://github.com/vitebook/vitebook/commit/43a223f05fdb3f47fd174459db16b605cbb5b4e3))
+
 # [0.9.0](https://github.com/vitebook/vitebook/compare/v0.8.3...v0.9.0) (2021-11-15)
 
 ### Bug Fixes
