@@ -7,12 +7,7 @@ import {
 import { App, ClientPlugin, isArray, Plugin } from '@vitebook/core/node';
 import { path } from '@vitebook/core/node/utils';
 import MagicString from 'magic-string';
-import {
-  compile as svelteCompile,
-  parse,
-  preprocess,
-  walk,
-} from 'svelte/compiler';
+import { compile as svelteCompile, parse, walk } from 'svelte/compiler';
 import {
   Options as TypescriptOptions,
   typescript,
@@ -177,11 +172,33 @@ export function clientPlugin(
         app.context.themeScopeClass =
           options.themeScope?.scopeClass ?? DEFAULT_THEME_SCOPE_CLASS;
 
+        preprocessors.push(themeScope(options.themeScope), staticifyMarkdown());
+
         const sveltePlugin = svelte({
           ...options.svelte,
           preprocess: [
-            ...preprocessors,
-            themeScope({ ...options.themeScope, preprocessors }),
+            {
+              async markup({ content, filename }) {
+                let map;
+                let code = content;
+
+                for (const preprocessor of preprocessors) {
+                  const markup = await preprocessor.markup?.({
+                    content: code,
+                    filename,
+                  });
+
+                  map = markup?.map ?? map;
+                  code = markup?.code ?? code;
+                }
+
+                return { code, map };
+              },
+            },
+            ...preprocessors.map((p) => ({
+              ...p,
+              markup: undefined, // We run markup preprocessing sequentailly above.
+            })),
           ],
           compilerOptions: {
             ...options.svelte?.compilerOptions,
@@ -399,7 +416,6 @@ function themeScope({
   scopeClass,
   include = DEFAULT_THEME_SCOPE_INCLUDE,
   exclude,
-  preprocessors = [],
 }: ThemeScopeOptions = {}): PreprocessorGroup {
   const filter = createFilter(include, exclude);
 
@@ -407,17 +423,89 @@ function themeScope({
     // @ts-expect-error - can return `undefined`.
     async markup({ content, filename }) {
       if (filter(filename)) {
-        // TODO: inefficiently running `preprocess` twice each time changes are made, need to
-        // run them sequentially and once. Not a priority at the moment.
-        const processedContent = await preprocess(content, preprocessors, {
-          filename,
-        });
-
         return addThemeScope({
           filename,
-          content: processedContent.code,
+          content,
           scopeClass,
         });
+      }
+    },
+  };
+}
+
+function staticifyMarkdown(): PreprocessorGroup {
+  const filter = createFilter(/\.md$/);
+
+  return {
+    // @ts-expect-error - can return `undefined`.
+    async markup({ content, filename }) {
+      if (filter(filename)) {
+        const mcs = new MagicString(content);
+        const ast = parse(content, { filename });
+
+        const staticNodeTypeRE = /(Element|Fragment|Text)/;
+        const staticBlocks: (readonly [number, number])[] = [];
+
+        const findStaticBlock = (node) => {
+          if (!node.children) {
+            return [node.start as number, node.end as number] as const;
+          }
+
+          const queue = [node];
+          const seen = new Set();
+
+          while (queue.length > 0) {
+            const currentNode = queue[0];
+
+            const hasDynamicAttribute = (node.attributes ?? []).some(
+              (attr) =>
+                attr.value?.[0]?.expression || attr.type !== 'Attribute',
+            );
+
+            if (
+              !staticNodeTypeRE.test(currentNode.type) ||
+              hasDynamicAttribute
+            ) {
+              return null;
+            }
+
+            if (node.children) {
+              for (const child of node.children) {
+                if (!seen.has(child)) {
+                  queue.push(child);
+                  seen.add(child);
+                }
+              }
+            }
+
+            queue.shift();
+          }
+
+          return [node.start as number, node.end as number] as const;
+        };
+
+        walk(ast.html, {
+          enter(node) {
+            if (node.type === 'Element' || node.type === 'Fragment') {
+              const staticBlock = findStaticBlock(node);
+              if (staticBlock) {
+                staticBlocks.push(staticBlock);
+                this.skip();
+              }
+            }
+          },
+        });
+
+        staticBlocks.forEach(([start, end]) => {
+          if (end > start) {
+            mcs.overwrite(start, end, `{@html \`${mcs.slice(start, end)}\`}`);
+          }
+        });
+
+        return {
+          code: mcs.toString(),
+          map: mcs.generateMap({ source: filename }).toString(),
+        };
       }
     },
   };

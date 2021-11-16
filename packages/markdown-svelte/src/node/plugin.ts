@@ -54,7 +54,7 @@ export function svelteMarkdownPlugin(
       app = _app;
       parser = await createMarkdownParser(parserOptions);
 
-      // sveltePlugin = _app.plugins.find(
+      // const sveltePlugin = _app.plugins.find(
       //   (plugin) => plugin.name === 'vite-plugin-svelte',
       // ) as Plugin;
 

@@ -6,6 +6,8 @@ function walk(node: HTMLElement, scopeClass: string, apply = true) {
   for (let i = 0; i < node.childNodes.length; i += 1) {
     if (COMPONENT_NAME_RE.test(node.rawTagName)) {
       walk(node.childNodes[i] as HTMLElement, scopeClass, false);
+    } else if (node.rawTagName?.startsWith('svelte:')) {
+      walk(node.childNodes[i] as HTMLElement, scopeClass, true);
     } else if (/language-/.test(node.classList.toString())) {
       node.classList?.add(scopeClass);
       walk(node.childNodes[i] as HTMLElement, scopeClass, true);

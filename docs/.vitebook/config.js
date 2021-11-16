@@ -1,3 +1,5 @@
+// @ts-check
+
 import { clientPlugin, defineConfig } from '@vitebook/client/node';
 import { svelteMarkdownPlugin } from '@vitebook/markdown-svelte/node';
 import { defaultThemePlugin } from '@vitebook/theme-default/node';
