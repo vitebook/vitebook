@@ -10,7 +10,6 @@ import Layout from './layout/Layout.svelte';
 import NotFound from './layout/404.svelte';
 
 const Theme = /** @type {import('@vitebook/client').ClientTheme} */ ({
-  explorer: true,
   Layout,
   NotFound,
   configureRouter(router) {

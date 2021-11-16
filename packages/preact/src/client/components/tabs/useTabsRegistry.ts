@@ -1,4 +1,4 @@
-import { TabsRegistry } from '@vitebook/client';
+import type { TabsRegistry } from '@vitebook/client/components/tabs';
 import { createContext } from 'preact';
 import { useContext } from 'preact/hooks';
 

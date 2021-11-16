@@ -1,4 +1,4 @@
-import type { TabsRegistry } from '@vitebook/client';
+import type { TabsRegistry } from '@vitebook/client/components/tabs';
 import { inject, InjectionKey, provide } from 'vue';
 
 export const TabsRegistryKey: InjectionKey<TabsRegistry> = Symbol(

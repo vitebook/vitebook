@@ -66,6 +66,7 @@ importers:
 
   packages/client:
     specifiers:
+      '@ampproject/remapping': ^1.0.1
       '@rollup/pluginutils': ^4.1.1
       '@sveltejs/vite-plugin-svelte': 1.0.0-next.30
       '@vitebook/core': 0.9.0
@@ -76,6 +77,7 @@ importers:
       svelte-preprocess-esbuild: ^2.0.0
       vite: 2.7.0-beta.1
     dependencies:
+      '@ampproject/remapping': 1.0.1
       '@rollup/pluginutils': 4.1.1
       '@sveltejs/vite-plugin-svelte': 1.0.0-next.30_svelte@3.44.1+vite@2.7.0-beta.1
       '@vitebook/core': link:../core
@@ -325,6 +327,14 @@ importers:
       vite: 2.7.0-beta.1
 
 packages:
+
+  /@ampproject/remapping/1.0.1:
+    resolution: {integrity: sha512-Ta9bMA3EtUHDaZJXqUoT5cn/EecwOp+SXpKJqxDbDuMbLvEMu6YTyDDuvTWeStODfdmXyfMo7LymQyPkN3BicA==}
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      '@jridgewell/resolve-uri': 1.0.0
+      sourcemap-codec: 1.4.8
+    dev: false
 
   /@babel/code-frame/7.12.11:
     resolution: {integrity: sha512-Zt1yodBx1UcyiePMSkWnU4hPqhwq7hGi2nFL1LeA3EUl+q2LQx16MISgJ0+z7dnmgvP9QtIleuETGOiOH1RcIw==}
@@ -753,6 +763,11 @@ packages:
     resolution: {integrity: sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==}
     engines: {node: '>=6.9.0'}
     dev: true
+
+  /@jridgewell/resolve-uri/1.0.0:
+    resolution: {integrity: sha512-9oLAnygRMi8Q5QkYEU4XWK04B+nuoXoxjRvRxgjuChkLZFBja0YPSgdZ7dZtwhncLBcQe/I/E+fLuk5qxcYVJA==}
+    engines: {node: '>=6.0.0'}
+    dev: false
 
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}

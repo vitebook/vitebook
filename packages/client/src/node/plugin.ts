@@ -1,3 +1,9 @@
+import remapping from '@ampproject/remapping';
+import {
+  DecodedSourceMap,
+  RawSourceMap,
+  SourceMapLoader,
+} from '@ampproject/remapping/dist/types/types';
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import {
   Options as SvelteOptions,
@@ -179,8 +185,8 @@ export function clientPlugin(
           preprocess: [
             {
               async markup({ content, filename }) {
-                let map;
                 let code = content;
+                const sourcemaps: Array<DecodedSourceMap | RawSourceMap> = [];
 
                 for (const preprocessor of preprocessors) {
                   const markup = await preprocessor.markup?.({
@@ -188,11 +194,23 @@ export function clientPlugin(
                     filename,
                   });
 
-                  map = markup?.map ?? map;
+                  const map = markup?.map
+                    ? typeof markup.map === 'string'
+                      ? JSON.parse(markup.map)
+                      : markup.map
+                    : undefined;
+
+                  if (markup?.map) {
+                    sourcemaps.unshift(map);
+                  }
+
                   code = markup?.code ?? code;
                 }
 
-                return { code, map };
+                return {
+                  code,
+                  map: combineSourcemaps(filename, sourcemaps),
+                };
               },
             },
             ...preprocessors.map((p) => ({
@@ -509,4 +527,46 @@ function staticifyMarkdown(): PreprocessorGroup {
       }
     },
   };
+}
+
+export function combineSourcemaps(
+  filename: string,
+  sourcemapList: Array<DecodedSourceMap | RawSourceMap>,
+): RawSourceMap | undefined {
+  if (sourcemapList.length == 0) return undefined;
+
+  let map_idx = 1;
+
+  // @ts-expect-error - .
+  const map: RawSourceMap =
+    sourcemapList.slice(0, -1).find((m) => m.sources.length !== 1) === undefined
+      ? remapping(
+          // use array interface
+          // only the oldest sourcemap can have multiple sources
+          sourcemapList,
+          () => null,
+          true, // skip optional field `sourcesContent`
+        )
+      : remapping(
+          // use loader interface
+          sourcemapList[0], // last map
+          function loader(sourcefile) {
+            if (sourcefile === filename && sourcemapList[map_idx]) {
+              return sourcemapList[map_idx++]; // idx 1, 2, ...
+              // bundle file = branch node
+            } else {
+              return null; // source file = leaf node
+            }
+          } as SourceMapLoader,
+          true,
+        );
+
+  if (!map.file) delete map.file; // skip optional field `file`
+
+  // When source maps are combined and the leading map is empty, sources is not set.
+  // Add the filename to the empty array in this case.
+  // Further improvements to remapping may help address this as well https://github.com/ampproject/remapping/issues/116
+  if (!map.sources.length) map.sources = [filename];
+
+  return map;
 }

@@ -12,7 +12,6 @@ import NotFound from './layout/NotFound.svelte';
 import { localizedThemeConfig } from './stores/localizedThemeConfig';
 
 const theme: ClientTheme = {
-  explorer: false,
   Layout,
   NotFound,
   configureRouter(router) {

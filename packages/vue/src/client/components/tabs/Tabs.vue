@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { isString } from '@vitebook/core';
-import { createTabsRegistry } from '@vitebook/client';
-import type { TabsRegistryItem } from '@vitebook/client';
+import { createTabsRegistry } from '@vitebook/client/components/tabs';
+import type { TabsRegistryItem } from '@vitebook/client/components/tabs';
 import { onBeforeMount, onBeforeUnmount } from 'vue';
 import { provideTabsRegistry } from './useTabsRegistry';
 import TabItem from './TabItem.vue';

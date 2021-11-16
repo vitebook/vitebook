@@ -34,12 +34,8 @@ export async function createRouter() {
     });
   }
 
-  if (!router.hasRoute('/') && get(theme).explorer !== false) {
-    router.addRoute({
-      path: '/',
-      loader: async () =>
-        (await import('./components/explorer/Explorer.svelte')).default,
-    });
+  if (!router.hasRoute('/')) {
+    // TODO: add welcome page.
   }
 
   if (inBrowser) {

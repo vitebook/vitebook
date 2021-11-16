@@ -26,6 +26,8 @@
   "exports": {
     ".": "./dist/client/index.js",
     "./*": "./dist/client/*",
+    "./components/tabs": "./dist/client/components/tabs/index.js",
+    "./components/explorer": "./dist/client/components/explorer/index.js",
     "./node": "./dist/node/index.js",
     "./src/*": "./src/*",
     "./package.json": "./package.json"
@@ -34,6 +36,12 @@
     "*": {
       "node": [
         "dist/types/node/index.d.ts"
+      ],
+      "components/explorer": [
+        "dist/types/client/components/explorer/index.d.ts"
+      ],
+      "components/tabs": [
+        "dist/types/client/components/tabs/index.d.ts"
       ],
       "*": [
         "dist/types/client/*"
@@ -58,6 +66,7 @@
     "watch:types": "pnpm build:types -- --watch"
   },
   "dependencies": {
+    "@ampproject/remapping": "^1.0.1",
     "@rollup/pluginutils": "^4.1.1",
     "@sveltejs/vite-plugin-svelte": "1.0.0-next.30",
     "@vitebook/core": "0.9.0",

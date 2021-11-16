@@ -1,14 +1,8 @@
 // components
 export { default as ClientOnly } from './components/ClientOnly.svelte';
-export { default as Component } from './components/Component.svelte';
 export { default as OutboundLink } from './components/OutboundLink.svelte';
 export { default as PageView } from './components/PageView.svelte';
 export { default as Variant } from './components/Variant.svelte';
-// tabs
-export { default as TabItem } from './components/tabs/TabItem.svelte';
-export { default as TabPanel } from './components/tabs/TabPanel.svelte';
-export { default as Tabs } from './components/tabs/Tabs.svelte';
-export * from './components/tabs/tabsRegistry';
 // router
 export * from './router/router';
 export * from './router/types';

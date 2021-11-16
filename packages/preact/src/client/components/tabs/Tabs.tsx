@@ -1,8 +1,8 @@
+import { isString } from '@vitebook/client';
 import {
   createTabsRegistry,
-  isString,
   TabsRegistryItem,
-} from '@vitebook/client';
+} from '@vitebook/client/components/tabs';
 import type { ComponentChildren } from 'preact';
 import { useRef } from 'preact/hooks';
 
