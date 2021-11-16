@@ -48,7 +48,7 @@ provideTabsRegistry(registry);
 .tabs {
   width: 100%;
   border: var(--vbk--menu-border);
-  margin: 1.15rem 0;
+  margin: 2rem 0;
 }
 
 .tabs__list {
