@@ -1,5 +1,5 @@
 <script>
-import { Tabs, TabPanel } from '@vitebook/client';
+import { Tabs, TabPanel } from '@vitebook/client/components/tabs';
 
 const jsLangs = ['JavaScript', 'TypeScript'];
 </script>
