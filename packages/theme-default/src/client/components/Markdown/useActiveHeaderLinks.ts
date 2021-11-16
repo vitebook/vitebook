@@ -105,7 +105,7 @@ export function useActiveHeaderLinks({
       }
 
       const scrollBehaviour = router.scrollBehaviour;
-      router.scrollBehaviour = 'auto';
+      router.scrollBehaviour = undefined;
       await router.go(anchorHash, {
         scroll: false,
         replace: true,

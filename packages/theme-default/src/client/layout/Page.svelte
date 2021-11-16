@@ -1,6 +1,7 @@
 <script>
   import { PageView, currentPage } from '@vitebook/client';
   import { localizedThemeConfig } from '../stores/localizedThemeConfig';
+  import { isMarkdownFloatingTocEnabled } from '../components/markdown/isMarkdownFloatingTocEnabled';
 
   $: noNavbar = $localizedThemeConfig.navbar === false;
   $: isMarkdownPage = $currentPage?.type?.endsWith('md');
@@ -9,6 +10,7 @@
 <main
   class={`page ${$currentPage?.type ? `type-${$currentPage.type}` : ''}`}
   class:no-navbar={noNavbar}
+  class:with-toc={$isMarkdownFloatingTocEnabled}
 >
   <div class="page__container">
     <slot name="start" />
@@ -70,6 +72,10 @@
   @media (min-width: 992px) {
     .page.no-navbar[class*='md'] > .page__container {
       padding-top: 1.5rem;
+    }
+
+    .page.no-navbar[class*='md'].with-toc > .page__container {
+      padding-bottom: 100vh;
     }
   }
 
