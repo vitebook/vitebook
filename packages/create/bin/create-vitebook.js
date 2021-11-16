@@ -550,6 +550,7 @@ async function main() {
     fs.writeFileSync(
       path.resolve(configDir, `config.${hasTypescriptFeature ? 'ts' : 'js'}`),
       [
+        !hasTypescriptFeature && '// @ts-check\n',
         // Imports
         "import { clientPlugin, defineConfig } from '@vitebook/client/node';",
         ...getFrameworkPluginImports({
