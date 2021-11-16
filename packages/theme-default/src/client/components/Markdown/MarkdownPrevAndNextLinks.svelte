@@ -86,6 +86,14 @@
     transition: transform 150ms ease;
   }
 
+  .md-footer__pagination-nav-item__link:focus {
+    box-shadow: var(--vbk--focus-box-shadow) !important;
+  }
+
+  .md-footer__pagination-nav-item__link:not(:focus-visible) {
+    box-shadow: none !important;
+  }
+
   .md-footer__pagination-nav-item__link:hover {
     text-decoration: none;
   }

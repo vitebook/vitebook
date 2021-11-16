@@ -78,6 +78,8 @@
   --vbk--color-transition: color var(--vbk--color-transition-duration)
     var(--vbk--color-transition-timing);
 
+  --vbk--focus-box-shadow: 0 0 0 4px rgba(var(--vbk--color-text-rgb));
+
   /**-------------------------------------------------------------------------------------------
    * Elevation
    *-------------------------------------------------------------------------------------------*/
