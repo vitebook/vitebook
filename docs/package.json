@@ -10,11 +10,11 @@
     "vitebook:preview": "vitebook preview"
   },
   "devDependencies": {
-    "@vitebook/client": "0.10.0",
-    "@vitebook/core": "0.10.0",
-    "@vitebook/markdown-shiki": "0.10.0",
-    "@vitebook/markdown-svelte": "0.10.0",
-    "@vitebook/theme-default": "0.10.0",
+    "@vitebook/client": "0.11.0",
+    "@vitebook/core": "0.11.0",
+    "@vitebook/markdown-shiki": "0.11.0",
+    "@vitebook/markdown-svelte": "0.11.0",
+    "@vitebook/theme-default": "0.11.0",
     "svelte": "3.44.1"
   },
   "engines": {
