@@ -1,3 +1,13 @@
+# [0.11.0](https://github.com/vitebook/vitebook/compare/v0.10.0...v0.11.0) (2021-11-24)
+
+### Bug Fixes
+
+- **theme-default:** code highlight color hard to see on light theme ([1d7a90a](https://github.com/vitebook/vitebook/commit/1d7a90ad743dfa7c9481114fd0577257b53dcbd0))
+
+### Features
+
+- add global app component to config dir ([1342846](https://github.com/vitebook/vitebook/commit/13428460a8d1a4771e1fc277b8cce38c05dd0e93))
+
 # [0.10.0](https://github.com/vitebook/vitebook/compare/v0.9.0...v0.10.0) (2021-11-16)
 
 ### Bug Fixes
