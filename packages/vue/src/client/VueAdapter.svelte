@@ -8,8 +8,9 @@
     useAppContext,
     SSR_CTX_KEY,
   } from '@vitebook/client';
-  import { getAllContexts, onDestroy } from 'svelte';
+  import { onDestroy } from 'svelte';
   import { createApp, h } from 'vue';
+  import * as App from ':virtual/vitebook/vue/app';
 
   const isSSR = import.meta.env.SSR;
 
@@ -17,8 +18,6 @@
   let app;
 
   export let component;
-
-  const context = getAllContexts();
 
   onDestroy(() => {
     destroy();
@@ -28,10 +27,16 @@
     mount(component);
   }
 
-  function mount(component) {
-    destroy();
+  async function createNewApp(component) {
+    // @ts-expect-error - .
+    app = createApp(h(App.default, { component }));
+    await App.configureApp(app);
+  }
+
+  async function mount(component) {
     if (!component) return;
-    app = createApp(component);
+    destroy();
+    await createNewApp(component);
     app.mount(target, import.meta.env.PROD && !hasHydrated);
     hasHydrated = true;
   }
@@ -53,10 +58,11 @@
         // We pass this render function back up to the server entry file because top-level await
         // is not supported in Svelte yet.
         async render() {
+          await createNewApp(component);
           const html = await renderToString(
             // Passing in app SSR context as Vue will automatically add component module id's
             // to the `module` set on it.
-            h(component),
+            app,
             appSSrContext,
           );
           return [ssrMarker, html];

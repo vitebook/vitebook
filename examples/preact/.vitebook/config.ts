@@ -13,7 +13,7 @@ export default defineConfig<DefaultThemeConfig>({
     shikiMarkdownPlugin(),
     preactMarkdownPlugin(),
     preactPlugin({
-      include: /\.tsx/,
+      appFile: 'App.tsx',
       preact: { include: /\.([j|t]sx?|md)$/ },
     }),
     clientPlugin(),

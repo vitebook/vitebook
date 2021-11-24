@@ -4,12 +4,15 @@ import { defineComponent, onBeforeUnmount, onMounted } from 'vue';
 
 import { useActiveVariant, useVariants } from '../composables/useVariants';
 
-export type VariantProps = {
-  name: string;
-  description?: string;
-};
-
-export default defineComponent<VariantProps>({
+export default defineComponent({
+  name: 'Variant',
+  props: {
+    name: {
+      type: String,
+      required: true,
+    },
+    description: String,
+  },
   setup(props) {
     const variantId = encodeURI(`${props.name}`.toLowerCase());
 
@@ -48,9 +51,9 @@ export default defineComponent<VariantProps>({
       variants.delete(variantId);
     });
 
-    return { $variants, variantId };
+    return { variants: $variants, variantId };
   },
-  render({ $variants, variantId }) {
-    return $variants[variantId].active ? this.$slots.default?.() : null;
+  render({ variants, variantId }) {
+    return variants[variantId].active ? this.$slots.default?.() : null;
   },
 });

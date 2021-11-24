@@ -4,7 +4,10 @@
     "baseUrl": ".",
     "outDir": "../../dist",
     "declaration": false,
-    "declarationMap": false
+    "declarationMap": false,
+    "paths": {
+      ":virtual/vitebook/vue/app": ["../virtual/app.d.ts"]
+    }
   },
   "include": ["."]
 }

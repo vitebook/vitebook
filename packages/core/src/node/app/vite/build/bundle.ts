@@ -67,6 +67,14 @@ function resolveBundleConfig(
                 return 'assets/[name].[hash][extname]';
               },
               chunkFileNames(chunk) {
+                if (
+                  !chunk.isEntry &&
+                  (/runtime/.test(chunk.name) ||
+                    chunk.name.startsWith('preact'))
+                ) {
+                  return `assets/js/framework.[hash].js`;
+                }
+
                 const isVitebookChunk = /@vitebook/.test(
                   chunk.facadeModuleId ?? '',
                 );

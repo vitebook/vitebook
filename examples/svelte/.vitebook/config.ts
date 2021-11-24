@@ -13,7 +13,7 @@ export default defineConfig<DefaultThemeConfig>({
     shikiMarkdownPlugin(),
     svelteMarkdownPlugin(),
     clientPlugin({
-      include: /\.svelte/,
+      appFile: 'App.svelte',
       svelte: {
         extensions: ['.svelte', '.md'],
         preprocess: [

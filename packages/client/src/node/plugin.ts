@@ -10,8 +10,14 @@ import {
   PreprocessorGroup,
   svelte,
 } from '@sveltejs/vite-plugin-svelte';
-import { App, ClientPlugin, isArray, Plugin } from '@vitebook/core/node';
-import { path } from '@vitebook/core/node/utils';
+import {
+  App,
+  ClientPlugin,
+  isArray,
+  Plugin,
+  VM_PREFIX,
+} from '@vitebook/core/node';
+import { fs, path } from '@vitebook/core/node/utils';
 import MagicString from 'magic-string';
 import { compile as svelteCompile, parse, walk } from 'svelte/compiler';
 import {
@@ -29,6 +35,13 @@ import {
 export const PLUGIN_NAME = '@vitebook/client' as const;
 
 export type ClientPluginOptions = {
+  /**
+   * Path to Svelte app file. The path can be absolute or relative to `<configDir>`.
+   *
+   * @default undefined
+   */
+  appFile?: string;
+
   /**
    * Page addon plugins.
    */
@@ -68,6 +81,9 @@ export type ClientPluginOptions = {
    */
   themeScope?: Omit<ThemeScopeOptions, 'preprocessors'>;
 };
+
+const VIRTUAL_APP_ID = `${VM_PREFIX}/client/app`;
+const VIRTUAL_APP_REQUEST_PATH = '/' + VIRTUAL_APP_ID;
 
 const DEFAULT_INCLUDE_RE = /\.svelte($|\?)/;
 const DEFAULT_THEME_SCOPE_CLASS = '__vbk__';
@@ -230,6 +246,7 @@ export function clientPlugin(
         return {
           resolve: {
             alias: {
+              [VIRTUAL_APP_ID]: VIRTUAL_APP_REQUEST_PATH,
               [VIRTUAL_ADDONS_MODULE_ID]: VIRTUAL_ADDONS_MODULE_REQUEST_PATH,
             },
           },
@@ -248,6 +265,14 @@ export function clientPlugin(
       resolveId(id) {
         if (id === VIRTUAL_ADDONS_MODULE_REQUEST_PATH) {
           return id;
+        }
+
+        if (id === VIRTUAL_APP_REQUEST_PATH) {
+          const appFile = options.appFile;
+          const path = appFile && app.dirs.config.resolve(appFile);
+          return path && fs.existsSync(path)
+            ? { id: path }
+            : { id: require.resolve('@vitebook/client/app') };
         }
 
         return null;

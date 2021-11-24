@@ -1,11 +1,23 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
-import { ensureLeadingSlash, Plugin } from '@vitebook/core/node';
+import {
+  App,
+  ensureLeadingSlash,
+  Plugin,
+  VM_PREFIX,
+} from '@vitebook/core/node';
 import { fs, path } from '@vitebook/core/node/utils';
 import createVuePlugin, { Options as ViteVueOptions } from '@vitejs/plugin-vue';
 
 import { compileHTML } from './compilers/compileHTML';
 
 export type VuePluginOptions = {
+  /**
+   * Path to Vue app file. The path can be absolute or relative to `<configDir>`.
+   *
+   * @default undefined
+   */
+  appFile?: string;
+
   /**
    * Filter out which files to be included as vue pages.
    *
@@ -35,7 +47,12 @@ export const DEFAULT_INCLUDE_RE = /\.vue($|\?)/;
 
 export const PLUGIN_NAME = '@vitebook/client' as const;
 
+const VIRTUAL_APP_ID = `${VM_PREFIX}/vue/app`;
+const VIRTUAL_APP_REQUEST_PATH = '/' + VIRTUAL_APP_ID;
+
 export function vuePlugin(options: VuePluginOptions = {}): Plugin[] {
+  let app: App;
+
   const filter = createFilter(
     options.include ?? DEFAULT_INCLUDE_RE,
     options.exclude,
@@ -52,11 +69,20 @@ export function vuePlugin(options: VuePluginOptions = {}): Plugin[] {
       enforce: 'pre',
       config() {
         return {
+          resolve: {
+            dedupe: ['vue'],
+            alias: {
+              [VIRTUAL_APP_ID]: VIRTUAL_APP_REQUEST_PATH,
+            },
+          },
           optimizeDeps: {
             // Force include `vue` to avoid duplicated copies when linked + optimized.
             include: ['vue'],
           },
         };
+      },
+      configureApp(_app) {
+        app = _app;
       },
       async resolvePage({ filePath, relativeFilePath }) {
         if (filter(filePath)) {
@@ -77,6 +103,26 @@ export function vuePlugin(options: VuePluginOptions = {}): Plugin[] {
         pages.forEach(({ filePath }) => {
           files.delete(filePath);
         });
+      },
+      resolveId(id) {
+        if (id === VIRTUAL_APP_REQUEST_PATH) {
+          const appFile = options.appFile;
+          const path = appFile && app.dirs.config.resolve(appFile);
+          return path && fs.existsSync(path) ? { id: path } : id;
+        }
+
+        return null;
+      },
+      load(id) {
+        if (id === VIRTUAL_APP_REQUEST_PATH) {
+          return `
+import { h, resolveDynamicComponent } from 'vue';
+export function configureApp() {};
+export default { props: ['component'], render({ component }) { return resolveDynamicComponent(h(component));  } };
+          `;
+        }
+
+        return null;
       },
       async transform(code, id) {
         // Transform raw SVG's into Vue components.

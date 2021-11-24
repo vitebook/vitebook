@@ -1,12 +1,6 @@
 <script>
+  import App from ':virtual/vitebook/client/app';
   import { currentRoute } from '../stores/currentRoute';
 </script>
 
-{#if $currentRoute && 'adapter' in $currentRoute.component}
-  <svelte:component
-    this={$currentRoute.component.adapter}
-    component={$currentRoute.component.component}
-  />
-{:else}
-  <svelte:component this={$currentRoute?.component} />
-{/if}
+<App component={$currentRoute?.component} />

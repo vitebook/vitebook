@@ -5,7 +5,7 @@
     activeVariant,
     currentRoute,
     toTitleCase,
-    variants
+    variants,
   } from '@vitebook/client';
   import { tick } from 'svelte';
   import { darkMode } from '../stores/darkMode';
@@ -180,6 +180,7 @@
     padding-bottom: 1rem;
     margin: 0;
     opacity: 0;
+    list-style: none;
     visibility: hidden;
     z-index: calc(var(--vbk--navbar-z-index) + 1);
     border-radius: 0.15rem;

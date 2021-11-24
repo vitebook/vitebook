@@ -2,6 +2,7 @@
   import { COMPONENT_SSR_CTX_KEY, useAppContext } from '@vitebook/client';
   import { h, hydrate as preactHydrate, render as preactRender } from 'preact';
   import { onDestroy } from 'svelte';
+  import App from ':virtual/vitebook/preact/app';
 
   const isSSR = import.meta.env.SSR;
 
@@ -17,13 +18,17 @@
     mount(component);
   }
 
+  function createNewApp() {
+    return h(App, { component: h(component, {}) });
+  }
+
   function mount(component) {
     destroy();
     if (!component) return;
     if (import.meta.env.PROD) {
-      preactHydrate(h(component, {}), target);
+      preactHydrate(createNewApp(), target);
     } else {
-      preactRender(h(component, {}), target);
+      preactRender(createNewApp(), target);
     }
   }
 
@@ -39,7 +44,7 @@
     if (component) {
       const renderToString = require('preact-render-to-string');
       // @ts-expect-error - .
-      ssr = renderToString(h(component, {}));
+      ssr = renderToString(createNewApp());
       const ssrContext = useAppContext(COMPONENT_SSR_CTX_KEY);
       ssrContext[ssrId] = {};
     }

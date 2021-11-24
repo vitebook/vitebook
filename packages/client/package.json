@@ -26,6 +26,7 @@
   "exports": {
     ".": "./dist/client/index.js",
     "./*": "./dist/client/*",
+    "./app": "./dist/client/components/App.svelte",
     "./components/tabs": "./dist/client/components/tabs/index.js",
     "./components/explorer": "./dist/client/components/explorer/index.js",
     "./node": "./dist/node/index.js",

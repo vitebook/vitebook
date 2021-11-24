@@ -13,7 +13,7 @@ export default defineConfig<DefaultThemeConfig>({
     shikiMarkdownPlugin(),
     vueMarkdownPlugin(),
     vuePlugin({
-      include: /\.vue/,
+      appFile: 'App.vue',
       vue: {
         include: /\.(md|vue)/,
       },
