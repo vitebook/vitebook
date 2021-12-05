@@ -32,11 +32,10 @@ the default, which is `<rootDir>/src`.
 
 ```md:no-line-numbers
 src/index.md                 -> site.com/
-src/intro.md                 -> site.com/intro
-src/intro/README.md          -> site.com/intro
-src/button/index.md          -> site.com/button
-src/button/usage.md          -> site.com/button/usage
-src/Button/Button.story.md   -> site.com/button/button
+src/intro.md                 -> site.com/intro.html
+src/about/README.md          -> site.com/about/
+src/button/index.md          -> site.com/button/
+src/button/usage.md          -> site.com/button/usage.html
 ```
 
 </TabPanel>
@@ -45,10 +44,10 @@ src/Button/Button.story.md   -> site.com/button/button
 
 ```md:no-line-numbers
 src/index.jsx                 -> site.com/
-src/intro.jsx                 -> site.com/intro
-src/button/index.jsx          -> site.com/button
-src/button/usage.jsx          -> site.com/button/usage
-src/Button/Button.story.jsx   -> site.com/button/button
+src/intro.jsx                 -> site.com/intro.html
+src/button/index.jsx          -> site.com/button/
+src/button/usage.jsx          -> site.com/button/usage.html
+src/Button/Button.story.jsx   -> site.com/button/button.html
 ```
 
 </TabPanel>
@@ -57,10 +56,10 @@ src/Button/Button.story.jsx   -> site.com/button/button
 
 ```md:no-line-numbers
 src/index.svelte                -> site.com/
-src/intro.svelte                -> site.com/intro
-src/button/index.svelte         -> site.com/button
-src/button/usage.svelte         -> site.com/button/usage
-src/Button/Button.story.svelte  -> site.com/button/button
+src/intro.svelte                -> site.com/intro.html
+src/button/index.svelte         -> site.com/button/
+src/button/usage.svelte         -> site.com/button/usage.html
+src/Button/Button.story.svelte  -> site.com/button/button.html
 ```
 
 </TabPanel>
@@ -69,10 +68,10 @@ src/Button/Button.story.svelte  -> site.com/button/button
 
 ```md:no-line-numbers
 src/index.vue                -> site.com/
-src/intro.vue                -> site.com/intro
-src/button/index.vue         -> site.com/button
-src/button/usage.vue         -> site.com/button/usage
-src/Button/Button.story.vue  -> site.com/button/button
+src/intro.vue                -> site.com/intro.html
+src/button/index.vue         -> site.com/button/
+src/button/usage.vue         -> site.com/button/usage.html
+src/Button/Button.story.vue  -> site.com/button/button.html
 ```
 
 </TabPanel>
