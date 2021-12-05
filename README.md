@@ -1,7 +1,6 @@
 # Vitebook&nbsp;&nbsp;🖼️
 
 [![package-badge]][package]
-[![Discord][discord-badge]](https://discord.gg/aKu2VwUc6U)
 
 > 🚨&nbsp;&nbsp;Vitebook is still in early stages of development, so this means you can expect bugs
 > and certain [features to be missing](#missing-features). As much as we'll try not to break
@@ -55,4 +54,3 @@ Copyright (c) 2021-present, Rahim Alwer
 [vite-why]: https://vitejs.dev/guide/why.html
 [vitebook]: https://vitebook.dev
 [vitebook-install]: https://vitebook.dev/introduction/installation.html
-[discord-badge]: https://img.shields.io/discord/906045506340413480.svg?style=flat-square&label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2

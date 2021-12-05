@@ -94,8 +94,3 @@ Vitebook GitHub repository:
 - [React](https://github.com/vitebook/vitebook/tree/main/examples/react)
 - [Svelte](https://github.com/vitebook/vitebook/tree/main/examples/svelte)
 - [Vue](https://github.com/vitebook/vitebook/tree/main/examples/vue)
-
-## Getting Help
-
-This is an open-source project that's community driven, so feel free to jump in our
-[Discord](https://discord.gg/aKu2VwUc6U) server and head over to the `#help` channel.

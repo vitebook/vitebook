@@ -6,7 +6,7 @@ import { defaultThemePlugin } from '@vitebook/theme-default/node';
 import { shikiMarkdownPlugin } from '@vitebook/markdown-shiki/node';
 
 export default defineConfig({
-  include: ['src/**/*.md', 'src/**/*.svelte'],
+  include: ['src/**/*.md'],
   plugins: [
     svelteMarkdownPlugin(),
     shikiMarkdownPlugin(),
@@ -38,9 +38,6 @@ export default defineConfig({
         remoteGitRepo: {
           dir: 'docs',
         },
-      },
-      socials: {
-        discord: 'https://discord.gg/aKu2VwUc6U',
       },
       remoteGitRepo: {
         url: 'vitebook/vitebook',
