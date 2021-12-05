@@ -33,6 +33,7 @@ the default, which is `<rootDir>/src`.
 ```md:no-line-numbers
 src/index.md                 -> site.com/
 src/intro.md                 -> site.com/intro
+src/intro/README.md          -> site.com/intro
 src/button/index.md          -> site.com/button
 src/button/usage.md          -> site.com/button/usage
 src/Button/Button.story.md   -> site.com/button/button
@@ -79,8 +80,122 @@ src/Button/Button.story.vue  -> site.com/button/button
 
 ### 404 Page
 
-Coming soon.
+The theme you've selected will most likely already include a 404 page, but you can have a
+custom one by creating a file at `<srcDir>/404.{md,jsx,tsx,vue,svelte}`. Now when
+a user visits any unknown route in the browser they'll be redirected to this 404 page.
 
 ## Page Meta
 
-Coming soon.
+Page meta refers to metadata about the page such as the title, description, and head tags. You
+can set the page meta via markdown frontmatter, or by exporting a `__pageMeta` object.
+
+:::info
+The title for markdown pages is automatically inferred by the top-level heading, and for all other
+pages by the filename.
+:::
+
+<Tabs values={langs} groupId="lang">
+<TabPanel value="Markdown">
+
+```md:no-line-numbers
+---
+title: Awesome Title
+description: Awesome description.
+head:
+  - - meta
+    - name: foo
+      content: bar
+  - - script
+    - type: module
+      src: https://foobar.com
+---
+
+
+# Inferred Title
+
+...
+```
+
+</TabPanel>
+
+<TabPanel value="Preact">
+
+```tsx:no-line-numbers
+import type { PageMeta } from '@vitebook/client';
+
+// This can also be an async function which receives the loaded page and module.
+export const __pageMeta: PageMeta = {
+  title: 'Awesome Title',
+  description: 'Awesome description.',
+  head: [
+    ['meta', { name: 'foo', content: 'bar' }],
+    ['script', { type: 'module', src: 'https://foobar.com' }],
+    ['style', { type: 'text/css' }, 'p { color: red; }'],
+  ],
+}
+
+function Page() {
+  // ...
+}
+
+export default Page;
+```
+
+</TabPanel>
+
+<TabPanel value="Svelte">
+
+```svelte:no-line-numbers
+<script context="module" lang="ts">
+import type { PageMeta } from '@vitebook/client';
+
+// This can also be an async function which receives the loaded page and module.
+export const __pageMeta: PageMeta = {
+  title: 'Awesome Title',
+  description: 'Awesome description.',
+  head: [
+    ['meta', { name: 'foo', content: 'bar' }],
+    ['script', { type: 'module', src: 'https://foobar.com' }],
+    ['style', { type: 'text/css' }, 'p { color: red; }'],
+  ],
+}
+</script>
+
+<script lang="ts">
+  // ...
+</script>
+
+<!-- ... -->
+```
+
+</TabPanel>
+
+<TabPanel value="Vue">
+
+```vue:no-line-numbers
+<script lang="ts">
+import type { PageMeta } from '@vitebook/client';
+
+// This can also be an async function which receives the loaded page and module.
+export const __pageMeta: PageMeta = {
+  title: 'Awesome Title',
+  description: 'Awesome description.',
+  head: [
+    ['meta', { name: 'foo', content: 'bar' }],
+    ['script', { type: 'module', src: 'https://foobar.com' }],
+    ['style', { type: 'text/css' }, 'p { color: red; }'],
+  ],
+}
+</script>
+
+<script setup lang="ts">
+  // ...
+</script>
+
+<template>
+ <!-- ... -->
+</template>
+```
+
+</TabPanel>
+</Tabs>
