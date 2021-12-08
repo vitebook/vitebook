@@ -30,48 +30,48 @@ the default, which is `<rootDir>/src`.
 <Tabs values={langs} groupId="lang">
 <TabPanel value="Markdown">
 
-```md:no-line-numbers
-src/index.md                 -> site.com/
-src/intro.md                 -> site.com/intro.html
-src/about/README.md          -> site.com/about/
-src/button/index.md          -> site.com/button/
-src/button/usage.md          -> site.com/button/usage.html
+```
+src/index.md -> site.com/
+src/intro.md -> site.com/intro.html
+src/about/README.md -> site.com/about/
+src/button/index.md -> site.com/button/
+src/button/usage.md -> site.com/button/usage.html
 ```
 
 </TabPanel>
 
 <TabPanel value="Preact">
 
-```md:no-line-numbers
-src/index.jsx                 -> site.com/
-src/intro.jsx                 -> site.com/intro.html
-src/button/index.jsx          -> site.com/button/
-src/button/usage.jsx          -> site.com/button/usage.html
-src/Button/Button.story.jsx   -> site.com/button/button.html
+```
+src/index.jsx -> site.com/
+src/intro.jsx -> site.com/intro.html
+src/button/index.jsx -> site.com/button/
+src/button/usage.jsx -> site.com/button/usage.html
+src/Button/Button.story.jsx -> site.com/button/button.html
 ```
 
 </TabPanel>
 
 <TabPanel value="Svelte">
 
-```md:no-line-numbers
-src/index.svelte                -> site.com/
-src/intro.svelte                -> site.com/intro.html
-src/button/index.svelte         -> site.com/button/
-src/button/usage.svelte         -> site.com/button/usage.html
-src/Button/Button.story.svelte  -> site.com/button/button.html
+```
+src/index.svelte -> site.com/
+src/intro.svelte -> site.com/intro.html
+src/button/index.svelte -> site.com/button/
+src/button/usage.svelte -> site.com/button/usage.html
+src/Button/Button.story.svelte -> site.com/button/button.html
 ```
 
 </TabPanel>
 
 <TabPanel value="Vue">
 
-```md:no-line-numbers
-src/index.vue                -> site.com/
-src/intro.vue                -> site.com/intro.html
-src/button/index.vue         -> site.com/button/
-src/button/usage.vue         -> site.com/button/usage.html
-src/Button/Button.story.vue  -> site.com/button/button.html
+```
+src/index.vue -> site.com/
+src/intro.vue -> site.com/intro.html
+src/button/index.vue -> site.com/button/
+src/button/usage.vue -> site.com/button/usage.html
+src/Button/Button.story.vue -> site.com/button/button.html
 ```
 
 </TabPanel>
@@ -96,7 +96,7 @@ pages by the filename.
 <Tabs values={langs} groupId="lang">
 <TabPanel value="Markdown">
 
-```md:no-line-numbers
+```md
 ---
 title: Awesome Title
 description: Awesome description.
@@ -109,7 +109,6 @@ head:
       src: https://foobar.com
 ---
 
-
 # Inferred Title
 
 ...
@@ -119,7 +118,7 @@ head:
 
 <TabPanel value="Preact">
 
-```tsx:no-line-numbers
+```tsx
 import type { PageMeta } from '@vitebook/client';
 
 // This can also be an async function which receives the loaded page and module.
@@ -131,7 +130,7 @@ export const __pageMeta: PageMeta = {
     ['script', { type: 'module', src: 'https://foobar.com' }],
     ['style', { type: 'text/css' }, 'p { color: red; }'],
   ],
-}
+};
 
 function Page() {
   // ...
@@ -144,7 +143,7 @@ export default Page;
 
 <TabPanel value="Svelte">
 
-```svelte:no-line-numbers
+```svelte
 <script context="module" lang="ts">
 import type { PageMeta } from '@vitebook/client';
 
@@ -171,7 +170,7 @@ export const __pageMeta: PageMeta = {
 
 <TabPanel value="Vue">
 
-```vue:no-line-numbers
+```vue
 <script lang="ts">
 import type { PageMeta } from '@vitebook/client';
 
@@ -184,15 +183,15 @@ export const __pageMeta: PageMeta = {
     ['script', { type: 'module', src: 'https://foobar.com' }],
     ['style', { type: 'text/css' }, 'p { color: red; }'],
   ],
-}
+};
 </script>
 
 <script setup lang="ts">
-  // ...
+// ...
 </script>
 
 <template>
- <!-- ... -->
+  <!-- ... -->
 </template>
 ```
 

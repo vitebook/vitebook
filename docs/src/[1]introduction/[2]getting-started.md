@@ -4,7 +4,7 @@
 
 It's super easy to get started with Vitebook, simply run the following command in your terminal...
 
-```bash:no-line-numbers
+```bash
 # npm
 $: npm init vitebook
 # or (new directory)
@@ -28,7 +28,7 @@ $: pnpm create vitebook my-app
 - `{FEATURES}`: replace with comma separated list such as `markdown,typescript`. Valid features
   are `markdown`, `typescript`, `eslint`, `prettier`, and `lint-staged`.
 
-```bash:no-line-numbers
+```bash
 # npm 6.x
 npm init vitebook my-app \
 --template {TEMPLATE} \
@@ -60,7 +60,7 @@ Vitebook provides three commands out of the box:
 
 The following are added to your `package.json` when using the installation method above...
 
-```json:no-line-numbers
+```json
 {
   "scripts": {
     "vitebook:dev": "vitebook dev",

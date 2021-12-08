@@ -18,7 +18,7 @@ Vitebook configuration file...
 <Tabs values={frameworks} groupId="jsFramework">
 <TabPanel value="Preact">
 
-```js:no-line-numbers {4}
+```js {4}
 import { defineConfig } from '@vitebook/client/node';
 
 export default defineConfig({
@@ -31,7 +31,7 @@ export default defineConfig({
 
 <TabPanel value="Svelte">
 
-```js:no-line-numbers {4}
+```js {4}
 import { defineConfig } from '@vitebook/client/node';
 
 export default defineConfig({
@@ -44,7 +44,7 @@ export default defineConfig({
 
 <TabPanel value="Vue">
 
-```js:no-line-numbers {4}
+```js {4}
 import { defineConfig } from '@vitebook/client/node';
 
 export default defineConfig({
@@ -64,13 +64,18 @@ application level configuration such as setting context providers, or adding plu
 <Tabs values={frameworks} groupId="jsFramework">
 <TabPanel value="Preact">
 
-```js:no-line-numbers {4}
+```js {9}
 import { defineConfig } from '@vitebook/client/node';
+import { preactPlugin } from '@vitebook/preact/node';
 
 export default defineConfig({
-  appFile: './App.tsx',
-  include: ['src/**/*.story.{jsx,tsx,svelte,vue}'],
-  // ...
+  include: ['src/**/*.story.tsx'],
+  plugins: [
+    // ...
+    preactPlugin({
+      appFile: './App.tsx',
+    }),
+  ],
 });
 ```
 
@@ -78,13 +83,17 @@ export default defineConfig({
 
 <TabPanel value="Svelte">
 
-```js:no-line-numbers {4}
-import { defineConfig } from '@vitebook/client/node';
+```js {8}
+import { defineConfig, clientPlugin } from '@vitebook/client/node';
 
 export default defineConfig({
-  appFile: './App.svelte',
   include: ['src/**/*.story.svelte'],
-  // ...
+  plugins: [
+    // ...
+    clientPlugin({
+      appFile: './App.svelte',
+    }),
+  ],
 });
 ```
 
@@ -92,13 +101,18 @@ export default defineConfig({
 
 <TabPanel value="Vue">
 
-```js:no-line-numbers {4}
+```js {9}
 import { defineConfig } from '@vitebook/client/node';
+import { vuePlugin } from '@vitebook/vue/node';
 
 export default defineConfig({
-  appFile: './App.vue',
   include: ['src/**/*.story.vue'],
-  // ...
+  plugins: [
+    // ...
+    vuePlugin({
+      appFile: './App.vue',
+    }),
+  ],
 });
 ```
 
@@ -114,15 +128,11 @@ recommend creating a companion `.story` file next to each component in your app.
 <Tabs values={frameworks} groupId="jsFramework">
 <TabPanel value="Preact">
 
-```js:no-line-numbers
-import Button from './Button'
+```js
+import Button from './Button';
 
 function ButtonStory() {
-  return (
-    <Button>
-      {/** ... */}
-    </Button>
-  )
+  return <Button>{/** ... */}</Button>;
 }
 
 export default ButtonStory;
@@ -132,7 +142,7 @@ export default ButtonStory;
 
 <TabPanel value="Svelte">
 
-```svelte:no-line-numbers
+```svelte
 <script>
 import Button from './Button.svelte'
 </script>
@@ -146,9 +156,9 @@ import Button from './Button.svelte'
 
 <TabPanel value="Vue">
 
-```vue:no-line-numbers
+```vue
 <script setup>
-import Button from './Button.vue'
+import Button from './Button.vue';
 </script>
 
 <template>
@@ -170,8 +180,8 @@ variant.
 <Tabs values={frameworks} groupId="jsFramework">
 <TabPanel value="Preact">
 
-```js:no-line-numbers
-import Button from './Button'
+```js
+import Button from './Button';
 import { Variant } from '@vitebook/preact';
 
 function ButtonStory() {
@@ -185,7 +195,7 @@ function ButtonStory() {
         <Button disabled />
       </Variant>
     </>
-  )
+  );
 }
 
 export default ButtonStory;
@@ -195,7 +205,7 @@ export default ButtonStory;
 
 <TabPanel value="Svelte">
 
-```svelte:no-line-numbers
+```svelte
 <script>
 import Button from './Button.svelte'
 import { Variant } from '@vitebook/client';
@@ -214,9 +224,9 @@ import { Variant } from '@vitebook/client';
 
 <TabPanel value="Vue">
 
-```vue:no-line-numbers
+```vue
 <script setup>
-import Button from './Button.vue'
+import Button from './Button.vue';
 import { Variant } from '@vitebook/vue';
 </script>
 

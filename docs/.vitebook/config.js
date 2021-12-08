@@ -8,7 +8,11 @@ import { shikiMarkdownPlugin } from '@vitebook/markdown-shiki/node';
 export default defineConfig({
   include: ['src/**/*.md'],
   plugins: [
-    svelteMarkdownPlugin(),
+    svelteMarkdownPlugin({
+      code: {
+        lineNumbers: false,
+      },
+    }),
     shikiMarkdownPlugin(),
     clientPlugin({
       include: /\.svelte/,

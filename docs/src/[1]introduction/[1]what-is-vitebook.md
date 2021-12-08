@@ -87,4 +87,5 @@ contributors of these projects, who helped pave the way for us to build Vitebook
 
 - [VitePress](https://github.com/vuejs/vitepress)
 - [VuePress](https://github.com/vuepress/vuepress-next)
+- [Docusaurus](https://github.com/facebook/docusaurus)
 - [Storybook](https://github.com/storybookjs/storybook)

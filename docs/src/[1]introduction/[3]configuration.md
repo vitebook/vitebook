@@ -17,7 +17,7 @@ The configuration file is a JavaScript (JS) or TypeScript (TS) file that must co
 `default` export binding to a plain JS object `export default { ... }`. The `@vitebook/client`
 package exports a helper function `defineConfig` to ensure TypeScript type checking is applied.
 
-```js:no-line-numbers
+```js
 import { defineConfig } from '@vitebook/client/node';
 
 export default defineConfig({
@@ -58,7 +58,7 @@ The following directories can be configured when using Vitebook:
   suggests, used to store temporary files. This directory is reset if it becomes larger than 10MB.
   The value can be either an absolute file system path, or a path relative to `<configDir>`.
 
-```js:no-line-numbers {4-10}
+```js {4-10}
 import { defineConfig } from '@vitebook/client/node';
 
 export default defineConfig({
@@ -79,11 +79,11 @@ application. The option accepts a list of [globs][do-glob-tool] that point to fi
 resolved to a page. The page resolution happens via [plugins](.../advanced/plugins.md), see
 the [pages guide](../guides/pages.md) for more information.
 
-```js:no-line-numbers {4}
+```js {4}
 import { defineConfig } from '@vitebook/client/node';
 
 export default defineConfig({
-  include: ['src/**/*.md']
+  include: ['src/**/*.md'],
 });
 ```
 
@@ -94,7 +94,7 @@ export default defineConfig({
 Site-wide options for setting the base language, document title, description, locales, etc. This
 metadata is available to all themes via the `@vitebook/client` package.
 
-```js:no-line-numbers {4-16}
+```js {4-16}
 import { defineConfig } from '@vitebook/client/node';
 
 export default defineConfig({
@@ -110,7 +110,7 @@ export default defineConfig({
     locales: {
       // ...
     },
-  }
+  },
 });
 ```
 
@@ -126,7 +126,7 @@ If the head tags you're inserting don't require dynamic processing, simply inclu
 `index.html` file present in your Vitebook configuration directory.
 :::
 
-```js:no-line-numbers {5-9}
+```js {5-9}
 import { defineConfig } from '@vitebook/client/node';
 
 export default defineConfig({
@@ -136,7 +136,7 @@ export default defineConfig({
       ['script', { src: 'https://site.com/script.js', type: 'module' }],
       ['style', { type: 'text/css' }, 'p { color: red; }'],
     ],
-  }
+  },
 });
 ```
 
@@ -149,7 +149,7 @@ for more information.
 <Tabs values={jsLangs} groupId="jsLang">
 <TabPanel value="JavaScript">
 
-```js:no-line-numbers {5-8}
+```js {5-8}
 import { defineConfig } from '@vitebook/client/node';
 
 export default defineConfig({
@@ -158,7 +158,7 @@ export default defineConfig({
     theme: {
       // ...
     },
-  }
+  },
 });
 ```
 
@@ -166,7 +166,7 @@ export default defineConfig({
 
 <TabPanel value="TypeScript">
 
-```ts:no-line-numbers {6-8}
+```ts {6-8}
 import { defineConfig } from '@vitebook/client/node';
 import { DefaultThemeConfig } from '@vitebook/theme-default/node';
 
@@ -175,7 +175,7 @@ export default defineConfig<DefaultThemeConfig>({
     theme: {
       // ...
     },
-  }
+  },
 });
 ```
 
@@ -186,7 +186,7 @@ export default defineConfig<DefaultThemeConfig>({
 
 The `locales` option is used to specify locale specific site settings.
 
-```js:no-line-numbers {5-20}
+```js {5-20}
 import { defineConfig } from '@vitebook/client/node';
 
 export default defineConfig({
@@ -205,9 +205,9 @@ export default defineConfig({
         title: '快速地 书',
         description: 'Storybook 选择.',
         head: [],
-      }
+      },
     },
-  }
+  },
 });
 ```
 
@@ -223,16 +223,16 @@ in that the first defined rules are applied first.
 See the [@rollup/plugin-alias](https://github.com/rollup/plugins/tree/master/packages/alias#entries)
 documentation for more information.
 
-```js:no-line-numbers {6-9}
+```js {6-9}
 import path from 'path';
 
 import { defineConfig } from '@vitebook/client/node';
 
 export default defineConfig({
-  alias : {
+  alias: {
     '~src': path.resolve(__dirname, '../src'),
     // ...
-  }
+  },
 });
 ```
 
@@ -246,7 +246,7 @@ you require overriding some configuration options, simply import the Vite config
 Vitebook config file and override as needed.
 :::
 
-```js:no-line-numbers {7-10}
+```js {7-10}
 // Import any existing vite configuration and override if needed.
 import viteConfig from '../vite.config.js';
 
@@ -256,7 +256,7 @@ export default defineConfig({
   vite: {
     ...viteConfig,
     // ...
-  }
+  },
 });
 ```
 
@@ -277,15 +277,12 @@ available. The following resources are perfect for diving deeper into plugins:
 - [Vite Plugins](https://vitejs.dev/guide/api-plugin.html)
 - [Rollup Plugins](https://rollupjs.org/guide/en/#plugins-overview)
 
-```js:no-line-numbers {5-8}
+```js {5-8}
 import { clientPlugin, defineConfig } from '@vitebook/client/node';
 import { defaultThemePlugin } from '@vitebook/theme-default/node';
 
 export default defineConfig({
-  plugins: [
-    clientPlugin(),
-    defaultThemePlugin(),
-  ]
+  plugins: [clientPlugin(), defaultThemePlugin()],
 });
 ```
 
@@ -302,12 +299,12 @@ option to override routing to specific, or all file paths.
 - Plugins can override application-level routing provided by Vitebook, or values returned from the
   `resolveRoute` function.
 
-```js:no-line-numbers {4-6}
+```js {4-6}
 import { defineConfig } from '@vitebook/client/node';
 
 export default defineConfig({
   resolveRoute({ filePath, relativeFilePath }) {
     // ...
-  }
+  },
 });
 ```
