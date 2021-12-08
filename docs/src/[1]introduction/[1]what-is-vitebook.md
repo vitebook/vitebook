@@ -8,7 +8,7 @@ existing API's, occasionally it _might_ happen.
 
 Vitebook is a fast and lightweight alternative to [Storybook][storybook] that's
 powered by [Vite][vite]. If you'd like to explore more about Vite vs traditional bundlers/dev
-environments such as [Webpack][webpack], check out [Why Vite][vite-why].
+environments such as [Webpack][webpack], check out ["Why Vite"][vite-why].
 
 If you're unfamiliar with Storybook, it's an open source tool for building UI components and
 pages in isolation. It streamlines UI development, testing, and documentation. Vitebook aims

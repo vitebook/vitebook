@@ -59,7 +59,7 @@ export default defineConfig({
 ## App File
 
 An app file should be present inside your Vitebook config folder, which can be used for
-application level configuration such as settings contexts, or adding plugins in Vue.
+application level configuration such as setting context providers, or adding plugins in Vue.
 
 <Tabs values={frameworks} groupId="jsFramework">
 <TabPanel value="Preact">
