@@ -277,7 +277,7 @@ available. The following resources are perfect for diving deeper into plugins:
 - [Vite Plugins](https://vitejs.dev/guide/api-plugin.html)
 - [Rollup Plugins](https://rollupjs.org/guide/en/#plugins-overview)
 
-```js {5-8}
+```js {5}
 import { clientPlugin, defineConfig } from '@vitebook/client/node';
 import { defaultThemePlugin } from '@vitebook/theme-default/node';
 
