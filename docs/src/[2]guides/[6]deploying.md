@@ -1,11 +1,11 @@
 # Deploying
 
 Vitebook is a static-site generator, so it can be virtually deployed on any hosting provider that
-supports Node.js version `>=16.10.0`. We recommend Netlify, but feel free to use whatever you like.
+supports Node.js version `>=16`. We recommend Netlify, but feel free to use whatever you like.
 
 - Build command: `npm run vitebook:build`
 - Output Directory: `.vitebook/dist`
-- Minimum Node.js Version: `16.10.0`
+- Minimum Node.js Version: `16`
 
 ## Netlify
 
@@ -63,7 +63,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16.10.0'
+          node-version: '16'
 
       - name: Cache node modules
         uses: actions/cache@v2
