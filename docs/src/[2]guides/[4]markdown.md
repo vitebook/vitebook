@@ -545,7 +545,7 @@ function aFunction() {
 
 ### Import Code Blocks
 
-You can import code blocks from files with following syntax...
+You can import code blocks from files with the following syntax...
 
 ```md
 @[code](../foo.js)
