@@ -79,3 +79,12 @@ Here's some of our overall design goals:
 [vitepress]: https://vitepress.vuejs.org
 [package]: https://www.npmjs.com/package/@vitebook/core
 [what-is-ssg]: https://www.cloudflare.com/en-au/learning/performance/static-site-generator/#:~:text=A%20static%20site%20generator%20is,to%20users%20ahead%20of%20time.
+
+## Inspiration
+
+Vitebook was heavily inspiried by the projects listed below. Huge thanks to the authors and
+contributors of these projects, who helped pave the way for us to build Vitebook.
+
+- [VitePress](https://github.com/vuejs/vitepress)
+- [VuePress](https://github.com/vuepress/vuepress-next)
+- [Storybook](https://github.com/storybookjs/storybook)
