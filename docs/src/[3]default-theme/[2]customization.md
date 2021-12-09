@@ -29,7 +29,7 @@ clashing with user defined styles. It is automatically applied to all elements i
 :::
 
 ```css
-/* ❌ Do not do this - it will affect user components.  */
+/* ❌ Do not do this - it will potentially overwrite user-defined styles. */
 p {
   font-size: 16px;
 }
