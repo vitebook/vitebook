@@ -21,16 +21,14 @@ The missing features below could be dealbreakers for some. If so, feel free to k
 how we're doing with bringing these features to you. Also, feel free to chime in on the issues
 and share your thoughts!
 
-- Addons
-- Controls Addon
-- API Reference Addon
-- Viewport Addon
-- Event Logging
-- HTTP API Mocking
-- Testing Guides
-- Algolia Plugin
-- Component Search
-- Keyboard Shortcuts
+- [Addons](https://github.com/vitebook/vitebook/issues/2)
+- [Controls Addon](https://github.com/vitebook/vitebook/issues/3)
+- [API Reference Addon](https://github.com/vitebook/vitebook/issues/4)
+- [Event Logging](https://github.com/vitebook/vitebook/issues/5)
+- [HTTP API Mocking](https://github.com/vitebook/vitebook/issues/6)
+- [Testing](https://github.com/vitebook/vitebook/issues/7)
+- [Algolia Plugin](https://github.com/vitebook/vitebook/issues/8)
+- [File Search](https://github.com/vitebook/vitebook/issues/9)
 
 ## Documentation
 
