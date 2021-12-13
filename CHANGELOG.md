@@ -1,3 +1,13 @@
+## [0.12.1](https://github.com/vitebook/vitebook/compare/v0.12.0...v0.12.1) (2021-12-13)
+
+### Bug Fixes
+
+- **core:** sort ordered directories correctly ([38f44f9](https://github.com/vitebook/vitebook/commit/38f44f9bd5c7b3ea00e08250095b3aea43154bb6))
+- **markdown-vue:** temp disable external link icons - breaking vue builds ([42648a8](https://github.com/vitebook/vitebook/commit/42648a87a783c9ee6d114b5c63bd5280177710c1))
+- **theme-default:** improve floating markdown toc responsiveness ([0c78f75](https://github.com/vitebook/vitebook/commit/0c78f7574621e52ee657e01ab691463cec95ddea))
+- **theme-default:** navbar fallback fouc in dark mode ([b253a75](https://github.com/vitebook/vitebook/commit/b253a75d0ebbe08916e8c757d5b413c8c3ef1e44))
+- **theme-default:** variants menu not opening on mobile ([fae78bf](https://github.com/vitebook/vitebook/commit/fae78bf6ef3ddfe98209265eb50fc38338376573))
+
 # [0.12.0](https://github.com/vitebook/vitebook/compare/v0.11.0...v0.12.0) (2021-12-13)
 
 ### Features
