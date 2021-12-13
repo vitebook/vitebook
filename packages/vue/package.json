@@ -62,15 +62,15 @@
   },
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
-    "@vitejs/plugin-vue": "1.10.0-beta.0",
-    "@vue/compiler-sfc": "^3.2.19",
-    "vue": "^3.2.6"
+    "@vitejs/plugin-vue": "2.0.0",
+    "@vue/compiler-sfc": "3.2.26",
+    "vue": "3.2.26"
   },
   "devDependencies": {
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
     "svelte": "^3.44.1",
-    "vite": "2.7.0-beta.1"
+    "vite": "2.7.1"
   },
   "peerDependencies": {
     "@vitebook/client": "0.11.0",

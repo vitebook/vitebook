@@ -69,7 +69,7 @@
   "dependencies": {
     "@ampproject/remapping": "^1.0.1",
     "@rollup/pluginutils": "^4.1.1",
-    "@sveltejs/vite-plugin-svelte": "1.0.0-next.30",
+    "@sveltejs/vite-plugin-svelte": "1.0.0-next.31",
     "@vitebook/core": "0.11.0",
     "esbuild": "^0.12.24",
     "kleur": "^4.1.4",
@@ -78,7 +78,7 @@
     "svelte-preprocess-esbuild": "^2.0.0"
   },
   "devDependencies": {
-    "vite": "2.7.0-beta.1"
+    "vite": "2.7.1"
   },
   "publishConfig": {
     "access": "public"
