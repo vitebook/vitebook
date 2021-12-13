@@ -16,7 +16,7 @@ to provide the same capabilities but in a more laxed, lighter, faster and config
 
 ## Demos
 
-- This [site](https://vitebook.dev) serves as an example of a documentation only site.
+- The [Vitebook docs](https://vitebook.dev) serves as an example of a documentation only site.
 - A Storybook-esque example is available [here](https://simple-demo.vitebook.dev).
 
 ### 🚧&nbsp;&nbsp;Missing Features
