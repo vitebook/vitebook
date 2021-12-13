@@ -23,6 +23,7 @@ export function createMarkdownParser({
   code,
   customComponent,
   hoistTags,
+  links,
   ...markdownOptions
 }: MarkdownParserOptions): Promise<MarkdownParser> {
   return createDefaultMarkdownParser({
@@ -30,6 +31,13 @@ export function createMarkdownParser({
     // Use Vue specific plugins.
     code: false,
     customComponent: false,
+    links:
+      links !== false
+        ? {
+            ...links,
+            externalIcon: false,
+          }
+        : false,
     async configureParser(parser) {
       await markdownOptions.configureParser?.(parser);
 
