@@ -29,9 +29,18 @@
     max-width: 11rem;
     max-height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
     padding-top: calc(var(--vbk--navbar-height) + 2rem);
     padding-left: 0.5rem;
     padding-right: 1.25rem;
+    display: none;
+  }
+
+  .md-floating-toc {
+    scrollbar-width: none;
+  }
+
+  .md-floating-toc::-webkit-scrollbar {
     display: none;
   }
 
@@ -39,7 +48,7 @@
     padding-top: 2rem;
   }
 
-  @media (min-width: 992px) {
+  @media (min-width: 1200px) {
     .md-floating-toc {
       display: block;
     }
