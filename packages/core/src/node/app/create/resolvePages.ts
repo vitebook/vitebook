@@ -161,6 +161,8 @@ export function loadPagesVirtualModule(app: App): string {
 const splitRouteRE = /(.*?\/)/g;
 const splitRoute = (route: string) => route.split(splitRouteRE).slice(3);
 
+const orderedPageTokenRE = /^\[(\d)\]/;
+
 export function sortPages(pages: ServerPage[]): ServerPage[] {
   return Object.values(pages).sort((pageA, pageB) => {
     const tokensA = splitRoute(pageA.rootPath);
@@ -178,6 +180,13 @@ export function sortPages(pages: ServerPage[]): ServerPage[] {
 
       const tokenA = tokensA[i].toLowerCase();
       const tokenB = tokensB[i].toLowerCase();
+
+      const tokenAOrderNo = tokensA[i].match(orderedPageTokenRE)?.[1];
+      const tokenBOrderNo = tokensA[i].match(orderedPageTokenRE)?.[1];
+
+      if (tokenAOrderNo && tokenBOrderNo) {
+        return tokenAOrderNo < tokenBOrderNo ? -1 : 1;
+      }
 
       if (tokenA === tokenB) {
         continue;
