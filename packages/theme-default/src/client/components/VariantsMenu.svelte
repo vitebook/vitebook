@@ -66,10 +66,10 @@
   <div
     class="variants"
     class:dark={$darkMode}
-    on:pointerenter={() => {
+    on:mouseenter={() => {
       open = true;
     }}
-    on:pointerleave={() => {
+    on:mouseleave={() => {
       open = false;
     }}
     on:keydown={onKeyDown}
