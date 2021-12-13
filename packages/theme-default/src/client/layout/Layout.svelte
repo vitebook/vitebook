@@ -225,7 +225,9 @@
     padding-left: 1rem;
   }
 
-  .theme.no-navbar.dark .navbar-fallback {
+  :global(html[data-vbk-theme='dark']
+      .theme.__vbk__.no-navbar
+      .navbar-fallback) {
     background-color: var(--vbk--color-bg-300);
   }
 
