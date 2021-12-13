@@ -1,0 +1,26 @@
+{
+  "name": "@vitebook/demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "vitebook:build": "vitebook build",
+    "vitebook:dev": "vitebook dev",
+    "vitebook:preview": "vitebook preview"
+  },
+  "dependencies": {
+    "vant": "^3.3.7"
+  },
+  "devDependencies": {
+    "@vitebook/client": "0.12.0",
+    "@vitebook/core": "0.12.0",
+    "@vitebook/markdown-shiki": "^0.12.0",
+    "@vitebook/markdown-vue": "0.12.0",
+    "@vitebook/theme-default": "0.12.0",
+    "@vitebook/vue": "0.12.0",
+    "typescript": "^4.4.0",
+    "vite-plugin-style-import": "^1.2.0"
+  },
+  "volta": {
+    "node": "16.13.1"
+  }
+}
