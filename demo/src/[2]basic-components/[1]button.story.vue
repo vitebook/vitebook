@@ -39,12 +39,8 @@ import { Button } from 'vant';
 
 <style>
 .btn-group {
-  display: flex;
-  align-items: center;
-}
-
-.btn-group > button {
-  margin-left: 8px;
+  display: grid;
+  grid-gap: 8px;
 }
 
 .btn-group > button:first-child {

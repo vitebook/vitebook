@@ -9,7 +9,7 @@ module.exports = {
     'scope-enum': [
       2,
       'always',
-      ['', 'docs', 'examples', 'release', 'vitebook', ...packages],
+      ['', 'docs', 'examples', 'demo', 'release', 'vitebook', ...packages],
     ],
   },
 };
