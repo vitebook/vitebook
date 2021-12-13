@@ -1,3 +1,9 @@
+# [0.12.0](https://github.com/vitebook/vitebook/compare/v0.11.0...v0.12.0) (2021-12-13)
+
+### Features
+
+- bump `vite` to `2.7.1` ([a80bfe4](https://github.com/vitebook/vitebook/commit/a80bfe4d0fa993aaef29eae7f2361e5fe7567a71))
+
 # [0.11.0](https://github.com/vitebook/vitebook/compare/v0.10.0...v0.11.0) (2021-11-24)
 
 ### Bug Fixes

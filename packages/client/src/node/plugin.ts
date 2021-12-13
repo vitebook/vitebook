@@ -175,7 +175,6 @@ export function clientPlugin(
 
   return [
     {
-      // @ts-expect-error - .
       name: PLUGIN_NAME,
       enforce: 'pre',
       entry: {
@@ -241,7 +240,6 @@ export function clientPlugin(
           },
         });
 
-        // @ts-expect-error - .
         app.plugins.push(sveltePlugin);
       },
       config() {
