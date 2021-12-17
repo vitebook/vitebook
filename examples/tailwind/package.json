@@ -1,0 +1,24 @@
+{
+  "name": "@vitebook/example-tailwind",
+  "version": "0.12.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "vitebook:build": "vitebook build",
+    "vitebook:dev": "vitebook dev",
+    "vitebook:preview": "vitebook preview"
+  },
+  "dependencies": {
+    "clsx": "^1.1.1"
+  },
+  "devDependencies": {
+    "@vitebook/client": "0.12.1",
+    "@vitebook/core": "0.12.1",
+    "@vitebook/theme-default": "0.12.1",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.5",
+    "svelte": "^3.43.1",
+    "tailwindcss": "^3.0.6",
+    "typescript": "^4.4.3"
+  }
+}
