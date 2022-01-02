@@ -40,9 +40,9 @@ export class Package {
       ? JSON.parse(fs.readFileSync(this.pkgPath).toString())
       : { name: '', description: '', version: '0.0.0', type: 'module' };
 
-    this.pkg.scripts ??= {};
-    this.pkg.dependencies ??= {};
-    this.pkg.devDependencies ??= {};
+    this.pkg.scripts = this.pkg.scripts ?? {};
+    this.pkg.dependencies = this.pkg.dependencies ?? {};
+    this.pkg.devDependencies = this.pkg.devDependencies ?? {};
   }
 
   /**
