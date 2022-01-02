@@ -1,3 +1,9 @@
+## [0.13.1](https://github.com/vitebook/vitebook/compare/v0.13.0...v0.13.1) (2022-01-02)
+
+### Bug Fixes
+
+- **create:** remove `??=` so `create` package works on node `>=14` ([3f7a447](https://github.com/vitebook/vitebook/commit/3f7a447c2266c4b1592051c6f8591ecf47f24df7))
+
 # [0.13.0](https://github.com/vitebook/vitebook/compare/v0.12.1...v0.13.0) (2022-01-02)
 
 ### Features
