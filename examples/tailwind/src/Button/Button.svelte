@@ -7,7 +7,9 @@
 <button
   {disabled}
   class={clsx(
-    'p-4 rounded-md text-gray-800',
-    disabled ? 'bg-gray-300' : 'bg-yellow-500',
+    'px-4 py-2 rounded-md',
+    disabled
+      ? 'bg-gray-500 dark:bg-gray-300 text-white dark:text-gray-800'
+      : 'bg-indigo-500 dark:bg-yellow-500 text-white dark:text-black',
   )}>Click Me</button
 >

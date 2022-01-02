@@ -17,7 +17,7 @@ in the `theme` directory (default: `.vitebook/theme`), and importing it into the
   --vbk--color-primary-rgb: 97, 15, 230;
 }
 
-html[data-vbk-theme='dark'] .theme.__vbk__ {
+html.dark .theme.__vbk__ {
   --vbk--color-primary: #ffc107;
   --vbk--color-primary-rgb: 255, 193, 7;
 }

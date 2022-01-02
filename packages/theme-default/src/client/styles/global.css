@@ -28,7 +28,7 @@ body {
   background-color: var(--vbk--body-bg-color, hsl(0, 0%, 95%));
 }
 
-html[data-vbk-theme='dark'] body {
+html.dark body {
   background-color: var(--vbk--body-bg-color, hsl(0, 0%, 10.2%));
 }
 
@@ -126,7 +126,7 @@ code.__vbk__ {
   padding: 0.125rem 0.375rem;
 }
 
-html[data-vbk-theme='dark'] code.__vbk__ {
+html.dark code.__vbk__ {
   background-color: var(--vbk--color-gray-500);
 }
 
@@ -311,7 +311,7 @@ tr.__vbk__:nth-child(2n) {
   background-color: var(--vbk--color-gray-200);
 }
 
-html[data-vbk-theme='dark'] tr.__vbk__:nth-child(2n) {
+html.dark tr.__vbk__:nth-child(2n) {
   background-color: var(--vbk--color-gray-600);
 }
 
@@ -321,8 +321,8 @@ td.__vbk__ {
   padding: 0.6rem 1.15rem;
 }
 
-html[data-vbk-theme='dark'] th.__vbk__,
-html[data-vbk-theme='dark'] td.__vbk__ {
+html.dark th.__vbk__,
+html.dark td.__vbk__ {
   border: 1px solid var(--vbk--color-gray-500);
 }
 

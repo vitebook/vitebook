@@ -19,9 +19,7 @@
   margin-right: 0.325rem;
 }
 
-html[data-vbk-theme='dark']
-  .admonition.__vbk__:not(.warning)
-  .admonition__title.__vbk__ {
+html.dark .admonition.__vbk__:not(.warning) .admonition__title.__vbk__ {
   filter: brightness(125%);
 }
 
@@ -29,7 +27,7 @@ html[data-vbk-theme='dark']
   background-color: var(--vbk--color-gray-400);
 }
 
-html[data-vbk-theme='dark'] .admonition.__vbk__ code.__vbk__ {
+html.dark .admonition.__vbk__ code.__vbk__ {
   background-color: var(--vbk--color-gray-500);
 }
 

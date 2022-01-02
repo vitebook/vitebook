@@ -30,8 +30,10 @@
   const dark = saved === 'auto' ?
     window.matchMedia('(prefers-color-scheme: dark)').matches
     : saved === 'dark';
-  const htmlEl = window.document.querySelector('html');
-  htmlEl.setAttribute('data-vbk-theme', dark ? 'dark' : 'light');
+  if (dark) {
+    const htmlEl = window.document.querySelector('html');
+    htmlEl.classList.add('dark')
+  }
     `,
     ]);
   }
@@ -225,9 +227,7 @@
     padding-left: 1rem;
   }
 
-  :global(html[data-vbk-theme='dark']
-      .theme.__vbk__.no-navbar
-      .navbar-fallback) {
+  :global(html.dark .theme.__vbk__.no-navbar .navbar-fallback) {
     background-color: var(--vbk--color-bg-300);
   }
 

@@ -6,7 +6,7 @@ import { DefaultThemeConfig, defaultThemeLocaleOptions } from '../../shared';
 import { localizedThemeConfig } from './localizedThemeConfig';
 
 export const darkMode = writable(
-  inBrowser && import.meta.env.PROD ? htmlHasDarkDataAttr() : false,
+  inBrowser && import.meta.env.PROD ? htmlHasDarkClass() : false,
 );
 
 const STORAGE_KEY = '@vitebook/color-scheme';
@@ -65,13 +65,13 @@ export function useDarkMode(): void {
   });
 }
 
-function htmlHasDarkDataAttr() {
+function htmlHasDarkClass() {
   const htmlEl = window?.document.querySelector('html');
-  return htmlEl?.getAttribute('data-vbk-theme') === 'dark';
+  return htmlEl?.classList.contains('dark') ?? false;
 }
 
 function updateHtmlDarkDataAttr(isDarkMode: boolean): void {
   if (!inBrowser) return;
   const htmlEl = window?.document.querySelector('html');
-  htmlEl?.setAttribute('data-vbk-theme', isDarkMode ? 'dark' : 'light');
+  htmlEl?.classList[isDarkMode ? 'add' : 'remove']('dark');
 }

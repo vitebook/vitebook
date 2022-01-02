@@ -25,7 +25,7 @@
         (await import(':virtual/vitebook/icons/home-feature-4?raw')),
       async () =>
         features.length > 5 &&
-        (await import(':virtual/vitebook/icons/home-feature-5?raw'))
+        (await import(':virtual/vitebook/icons/home-feature-5?raw')),
     ];
   }
 
@@ -84,7 +84,7 @@
   .home__feature {
     display: flex;
     flex-direction: row;
-    align-items: start;
+    align-items: flex-start;
     flex-grow: 1;
     flex-basis: 100%;
     max-width: 100%;

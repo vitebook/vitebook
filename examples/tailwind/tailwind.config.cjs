@@ -1,4 +1,5 @@
 module.exports = {
+  darkMode: 'class',
   content: [
     './src/**/*.svelte',
     './src/**/*.story.svelte',
