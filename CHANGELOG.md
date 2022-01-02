@@ -1,3 +1,10 @@
+# [0.13.0](https://github.com/vitebook/vitebook/compare/v0.12.1...v0.13.0) (2022-01-02)
+
+### Features
+
+- **create:** add warning and instructions for node `<16` ([2984311](https://github.com/vitebook/vitebook/commit/298431139dde65730ac7c881d8f77fb4511bd7f3))
+- toggle now updates `dark` class instead of attr for tailwind users ([16a3b87](https://github.com/vitebook/vitebook/commit/16a3b87c0b38326c7e05aa4e0176c45e8562e23b))
+
 ## [0.12.1](https://github.com/vitebook/vitebook/compare/v0.12.0...v0.12.1) (2021-12-13)
 
 ### Bug Fixes

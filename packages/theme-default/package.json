@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/theme-default",
-  "version": "0.12.1",
+  "version": "0.13.0",
   "keywords": [
     "esm",
     "plugin",
@@ -69,8 +69,8 @@
     "vite": "2.7.1"
   },
   "peerDependencies": {
-    "@vitebook/client": "0.12.1",
-    "@vitebook/core": "0.12.1"
+    "@vitebook/client": "0.13.0",
+    "@vitebook/core": "0.13.0"
   },
   "publishConfig": {
     "access": "public"
