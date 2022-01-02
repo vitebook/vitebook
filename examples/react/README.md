@@ -8,15 +8,15 @@ Bear in mind that the React package uses [Preact](https://preactjs.com) under th
 `@vitebook/preact` package aliases `react` and `react-dom` to `preact/compat`, which you can find
 more information about [here](https://preactjs.com/guide/v10/switching-to-preact/).
 
-**TL;DR: `preact/compat`**
+**TL;DR**
 
-> This lets you continue writing React/ReactDOM code without any changes to your workflow or
-> codebase. preact/compat adds somewhere around 2kb to your bundle size, but has the advantage
-> of supporting the vast majority of existing React modules you might find on npm. The
+> `preact/compat` lets you continue writing React/ReactDOM code without any changes to your workflow or
+> codebase. It adds somewhere around 2kb to your bundle size, but has the advantage
+> of supporting the vast majority of existing React modules you might find on NPM. The
 > `preact/compat` package provides all the necessary tweaks on top of Preact's core to make it
-> work just like react and react-dom, in a single module.
+> work just like `react` and `react-dom`, in a single module.
 
-**Why are we using Preact for React?**
+## Why are we using Preact for React?
 
 We don't support an official React package for Vitebook because:
 
