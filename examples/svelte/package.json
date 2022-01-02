@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "preinstall": "node ../../.scripts/check-node-version.js",
     "vitebook:build": "vitebook build",
     "vitebook:dev": "vitebook dev",
     "vitebook:preview": "vitebook preview"
@@ -17,5 +18,11 @@
     "svelte": "^3.43.1",
     "svelte-preprocess": "^4.9.8",
     "typescript": "^4.4.3"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "volta": {
+    "node": "16.13.1"
   }
 }

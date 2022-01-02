@@ -5,6 +5,7 @@
   "description": "Blazing fast static-site generator and alternative to Storybook.",
   "type": "module",
   "scripts": {
+    "preinstall": "node ../.scripts/check-node-version.js",
     "vitebook:build": "vitebook build",
     "vitebook:dev": "vitebook dev",
     "vitebook:preview": "vitebook preview"
@@ -18,7 +19,7 @@
     "svelte": "3.44.1"
   },
   "engines": {
-    "node": ">=16.10.0"
+    "node": ">=16"
   },
   "volta": {
     "node": "16.10.0"

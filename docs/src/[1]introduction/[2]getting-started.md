@@ -29,13 +29,7 @@ $: pnpm create vitebook my-app
   are `markdown`, `typescript`, `eslint`, `prettier`, and `lint-staged`.
 
 ```bash
-# npm 6.x
-npm init vitebook my-app \
---template {TEMPLATE} \
---theme {THEME} \
---features {FEATURES}
-
-# npm 7+, extra double-dash is needed:
+# npm
 npm init vitebook my-app -- --template vue
 
 # yarn
