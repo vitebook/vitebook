@@ -7,7 +7,7 @@ import {
 } from '@vitebook/theme-default/node';
 
 export default defineConfig<DefaultThemeConfig>({
-  include: ['src/**/*.{md,jsx,tsx}'],
+  include: ['src/**/*.md', 'src/**/*.story.{js,jsx,ts,tsx}'],
   plugins: [
     preactMarkdownPlugin(),
     preactPlugin({
