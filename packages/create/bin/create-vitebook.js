@@ -15,6 +15,7 @@ import { addTypescriptFeature } from '../src/features/typescript.js';
 import { ProjectBuilder } from '../src/ProjectBuilder.js';
 import { overwritePrompt, setupPrompt } from '../src/prompts.js';
 import { emptyDir } from '../src/utils/emptyDir.js';
+import { getNodeMajorVersion } from '../src/utils/getNodeVersion.js';
 import { isDirEmpty } from '../src/utils/isDirEmpty.js';
 import { toValidPackageName } from '../src/utils/pkg.js';
 import { removeTrailingSlash } from '../src/utils/removeTrailingSlash.js';
@@ -290,6 +291,26 @@ async function main() {
         ),
       );
       break;
+  }
+
+  const nodeVersion = await getNodeMajorVersion();
+
+  if (nodeVersion < 16) {
+    console.warn(
+      `\n\n⚠️ ${kleur.yellow(
+        `This package requires your Node.js version to be \`>=16\` to work properly (detected v${nodeVersion}).`,
+      )}`,
+      `\n\n1. Install Volta to automatically manage it by running: ${kleur.bold(
+        'https://get.volta.sh | bash',
+      )}`,
+      `\n2. Make sure you're inside the correct directory: ${kleur.bold(
+        `cd ${path.relative(process.cwd(), targetDir)}`,
+      )}`,
+      `\n3. Pin the package version: ${kleur.bold('volta pin node@16')}`,
+      "\n4. Done! Run `npm` commands as usual and it'll just work :)",
+      `\n\nSee ${kleur.bold('https://volta.sh')} for more information.`,
+      '\n',
+    );
   }
 
   console.log();
