@@ -20,7 +20,7 @@
     "lint": "run-s lint:*",
     "lint:eslint": "eslint --ext .js,.jsx,.ts,.tsx . --ignore-path .gitignore",
     "lint:prettier": "prettier . --check --ignore-path .gitignore --loglevel warn",
-    "preinstall": "node .scripts/preinstall.js",
+    "preinstall": "node .scripts/check-for-pnpm.js && node .scripts/check-node-version.js",
     "postinstall": "npm i --prefix docs",
     "prepare": "husky install",
     "release": "pnpm test:node-esm && node .scripts/release.js",
@@ -64,11 +64,11 @@
     "upath": "^2.0.1"
   },
   "engines": {
-    "node": ">=16.10.0",
-    "pnpm": ">=6.16.1"
+    "node": ">=16",
+    "pnpm": ">=6"
   },
-  "packageManager": "pnpm",
   "volta": {
-    "node": "16.10.0"
+    "node": "16.10.0",
+    "pnpm": "6.24.4"
   }
 }
