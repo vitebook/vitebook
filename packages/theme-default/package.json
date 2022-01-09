@@ -59,6 +59,7 @@
     "watch:copy": "pnpm copy:client -- --watch"
   },
   "dependencies": {
+    "focus-visible": "^5.2.0",
     "kleur": "^4.1.4"
   },
   "devDependencies": {

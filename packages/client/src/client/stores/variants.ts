@@ -1,7 +1,7 @@
 import { inBrowser } from '@vitebook/core';
 import { derived, writable } from 'svelte/store';
 
-function updateVariantSearchParam(variantId) {
+function updateSearchParam(variantId) {
   if (!inBrowser) return;
   const url = new URL(location.href);
   url.searchParams.set('variant', variantId);
@@ -11,34 +11,34 @@ function updateVariantSearchParam(variantId) {
 export const variants = {
   ...writable<Variants>({}),
   add(variant: Variation) {
-    variants.update((v) => ({
-      ...v,
+    variants.update(($variants) => ({
+      ...$variants,
       [variant.id]: variant,
     }));
   },
   delete(variantId: string) {
-    variants.update((v) => {
-      delete v[variantId];
-      return v;
+    variants.update(($variants) => {
+      delete $variants[variantId];
+      return $variants;
     });
   },
   setActive(variantId: string) {
-    variants.update((variants) => {
-      Object.values(variants).forEach((variant) => {
+    variants.update(($variants) => {
+      Object.values($variants).forEach((variant) => {
         variant.active = false;
       });
 
-      variants[variantId].active = true;
+      $variants[variantId].active = true;
 
-      updateVariantSearchParam(variantId);
+      updateSearchParam(variantId);
 
-      return variants;
+      return $variants;
     });
   },
 };
 
-export const activeVariant = derived([variants], ([variants]) => {
-  const variations = Object.values(variants);
+export const activeVariant = derived([variants], ([$variants]) => {
+  const variations = Object.values($variants);
   return variations.length > 0
     ? variations.find((variant) => variant.active)
     : undefined;

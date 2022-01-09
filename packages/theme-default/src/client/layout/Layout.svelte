@@ -13,6 +13,7 @@
   import ThemeSwitch from '../components/ThemeSwitch.svelte';
   import DiscordLink from '../components/links/DiscordLink.svelte';
   import RepoLink from '../components/links/RepoLink.svelte';
+  import { addons } from '@vitebook/client/addons';
   import TwitterLink from '../components/links/TwitterLink.svelte';
   import { darkMode, useDarkMode } from '../stores/darkMode';
   import { isLargeScreen } from '../stores/isLargeScreen';
@@ -130,14 +131,12 @@
     </Sidebar>
   </slot>
 
-  <div class="preview">
+  <div class="preview" class:md={isMarkdownPage}>
     <slot name="preview-top-bar-start" />
 
     {#if showPreviewTopBar}
       <div class="preview__top-bar">
-        {#if noNavbar}
-          <div style="flex-grow: 1;" />
-        {/if}
+        <div style="flex-grow: 1;" />
         <VariantsMenu />
         <div style="flex-grow: 1;" />
       </div>
@@ -161,6 +160,22 @@
 
     <slot name="preview-end" />
   </div>
+
+  <slot name="addons">
+    {#if !isMarkdownPage && Object.values($addons).length > 0 && !!$currentPage?.type}
+      {#await import('../components/addons/Addons.svelte') then Addons}
+        <svelte:component this={Addons.default}>
+          <svelte:fragment slot="start">
+            <slot name="addons-start" />
+          </svelte:fragment>
+
+          <svelte:fragment slot="end">
+            <slot name="addons-end" />
+          </svelte:fragment>
+        </svelte:component>
+      {/await}
+    {/if}
+  </slot>
 
   <slot name="root" />
 
@@ -220,15 +235,12 @@
     height: var(--vbk--navbar-height);
     width: 100%;
     z-index: var(--vbk--navbar-z-index);
-    background-color: var(--vbk--color-bg-100);
+    background-color: var(--vbk--navbar-bg-color);
+    border-bottom: 0.125rem solid var(--vbk--color-divider);
   }
 
   .navbar-fallback.no-sidebar-toggle {
     padding-left: 1rem;
-  }
-
-  :global(html.dark .theme.__vbk__.no-navbar .navbar-fallback) {
-    background-color: var(--vbk--color-bg-300);
   }
 
   .navbar__theme-switch {
@@ -240,10 +252,18 @@
     flex-direction: column;
     position: relative;
     margin: 0;
-    min-height: 100vh;
+    min-height: calc(calc(100vh - var(--vbk--navbar-height)) + 8px);
     padding-top: var(--vbk--navbar-height);
     flex: none;
     width: 100%;
+  }
+
+  .preview:not(.md) {
+    background-color: #d9d9d9;
+  }
+
+  .theme.dark .preview:not(.md) {
+    background-color: #2a2a2a;
   }
 
   .preview__top-bar {

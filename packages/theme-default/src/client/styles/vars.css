@@ -78,7 +78,7 @@
   --vbk--color-transition: color var(--vbk--color-transition-duration)
     var(--vbk--color-transition-timing);
 
-  --vbk--focus-box-shadow: 0 0 0 4px rgba(var(--vbk--color-text-rgb));
+  --vbk--focus-box-shadow: 0 0 0 2.5px rgba(var(--vbk--color-text-rgb));
 
   /**-------------------------------------------------------------------------------------------
    * Elevation
@@ -137,7 +137,7 @@
    * Navbar
    *-------------------------------------------------------------------------------------------*/
 
-  --vbk--navbar-height: 5rem;
+  --vbk--navbar-height: 4.25rem;
   --vbk--navbar-z-index: 100;
   --vbk--navbar-bg-color: var(--vbk--color-bg-100);
 
@@ -173,7 +173,7 @@
   --vbk--sidebar-item-padding: 0.5rem 0.75rem;
   --vbk--sidebar-item-font-size: 1rem;
   --vbk--sidebar-item-spacing: 0.2rem;
-  --vbk--sidebar-item-font-weight: 500;
+  --vbk--sidebar-item-font-weight: 400;
   --vbk--sidebar-item-border-radius: 0.12rem;
   --vbk--sidebar-item-line-height: 1.5;
   --vbk--sidebar-item-min-width: 10.5rem;

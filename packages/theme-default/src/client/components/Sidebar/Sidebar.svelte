@@ -16,7 +16,6 @@
   import SidebarButton from './SidebarButton.svelte';
   import { sidebarItems } from './sidebarItems';
   import SidebarTree from './SidebarTree.svelte';
-  import { tick } from 'svelte';
 
   export let open = false;
 
@@ -63,16 +62,6 @@
   }
 
   $: hasHeader = !$isLargeScreen || $localizedThemeConfig.navbar === false;
-
-  let headerHasShadow = false;
-  async function checkIfSidebarHeaderHasShadow(_) {
-    await tick();
-    const bodyRect = sidebarBodyRef.getBoundingClientRect();
-    headerHasShadow = bodyRect.top + bodyRect.height >= window.innerHeight;
-  }
-
-  $: if (hasHeader && sidebarBodyRef)
-    checkIfSidebarHeaderHasShadow($sidebarItems);
 </script>
 
 <aside
@@ -85,7 +74,7 @@
   <slot name="start" />
 
   {#if hasHeader}
-    <div class="sidebar__header" class:shadow={headerHasShadow}>
+    <div class="sidebar__header">
       <div class="sidebar__header-wrapper">
         <NavbarTitle />
         <div style="flex-grow: 1; margin-left: 2.5rem;" />
@@ -171,10 +160,6 @@
     background-color: var(--vbk--sidebar-bg-color);
   }
 
-  .sidebar__header.shadow {
-    box-shadow: var(--vbk--elevation-small);
-  }
-
   .sidebar__header-wrapper {
     display: flex;
     padding: 1rem;
@@ -202,7 +187,7 @@
   .sidebar__current-menu {
     padding: 0;
     margin: 0;
-    margin-top: 1rem;
+    margin-top: 0.75rem;
   }
 
   .sidebar__current-menu[aria-hidden='true'] {
@@ -227,7 +212,7 @@
     }
 
     .sidebar.open.dark {
-      border-right: 0.125rem solid var(--vbk--color-gray-500);
+      border-color: var(--vbk--color-gray-500);
     }
 
     .sidebar:not(.sidebar.open) {

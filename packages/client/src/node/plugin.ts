@@ -25,13 +25,6 @@ import {
   typescript,
 } from 'svelte-preprocess-esbuild';
 
-import type { PageAddonPlugin, PageAddons } from '../shared';
-import {
-  loadAddonsVirtualModule,
-  VIRTUAL_ADDONS_MODULE_ID,
-  VIRTUAL_ADDONS_MODULE_REQUEST_PATH,
-} from './addon';
-
 export const PLUGIN_NAME = '@vitebook/client' as const;
 
 export type ClientPluginOptions = {
@@ -41,11 +34,6 @@ export type ClientPluginOptions = {
    * @default undefined
    */
   appFile?: string;
-
-  /**
-   * Page addon plugins.
-   */
-  addons?: PageAddons[];
 
   /**
    * Filter out which files to be included as svelte pages.
@@ -153,10 +141,6 @@ export function clientPlugin(
 
   let themeScopeFilter: (id: unknown) => boolean;
 
-  const filteredAddons = (options.addons ?? [])
-    .flat()
-    .filter((addon) => !!addon) as PageAddonPlugin[];
-
   const userPreprocessors = isArray(options.svelte?.preprocess)
     ? options.svelte!.preprocess
     : [options.svelte?.preprocess ?? {}];
@@ -247,7 +231,6 @@ export function clientPlugin(
           resolve: {
             alias: {
               [VIRTUAL_APP_ID]: VIRTUAL_APP_REQUEST_PATH,
-              [VIRTUAL_ADDONS_MODULE_ID]: VIRTUAL_ADDONS_MODULE_REQUEST_PATH,
             },
           },
         };
@@ -263,23 +246,12 @@ export function clientPlugin(
         return null;
       },
       resolveId(id) {
-        if (id === VIRTUAL_ADDONS_MODULE_REQUEST_PATH) {
-          return id;
-        }
-
         if (id === VIRTUAL_APP_REQUEST_PATH) {
           const appFile = options.appFile;
           const path = appFile && app.dirs.config.resolve(appFile);
           return path && fs.existsSync(path)
             ? { id: path }
             : { id: require.resolve('@vitebook/client/app') };
-        }
-
-        return null;
-      },
-      load(id) {
-        if (id === VIRTUAL_ADDONS_MODULE_REQUEST_PATH) {
-          return loadAddonsVirtualModule(filteredAddons);
         }
 
         return null;
@@ -323,7 +295,6 @@ export function clientPlugin(
         return null;
       },
     },
-    ...filteredAddons,
     {
       name: '@vitebook/client:svelte-ssr-context',
       enforce: 'post',
