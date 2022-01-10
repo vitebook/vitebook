@@ -27,8 +27,6 @@
     "./*": "./dist/client/*",
     "./components/tabs": "./dist/client/components/tabs/index.js",
     "./addons": "./dist/client/addons/index.js",
-    "./addons/controls": "./dist/client/addons/controls/index.js",
-    "./addons/events": "./dist/client/addons/events/index.js",
     "./node": "./dist/node/index.js",
     "./src/*": "./src/*",
     "./package.json": "./package.json"
@@ -43,12 +41,6 @@
       ],
       "addons": [
         "dist/types/client/addons/index.d.ts"
-      ],
-      "addons/controls": [
-        "dist/types/client/addons/controls/index.d.ts"
-      ],
-      "addons/events": [
-        "dist/types/client/addons/events/index.d.ts"
       ],
       "*": [
         "dist/types/client/*"

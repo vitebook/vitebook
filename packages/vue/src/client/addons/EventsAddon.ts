@@ -1,4 +1,4 @@
-import { EventsAddon } from '@vitebook/client/addons/events';
+import { EventsAddon } from '@vitebook/client/addons';
 import type { SvelteComponent } from 'svelte';
 import { defineComponent, h, onBeforeMount, ref, watchEffect } from 'vue';
 

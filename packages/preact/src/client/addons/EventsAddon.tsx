@@ -1,4 +1,4 @@
-import { EventsAddon as SvelteEventsAddon } from '@vitebook/client/addons/events';
+import { EventsAddon as SvelteEventsAddon } from '@vitebook/client/addons';
 import { useEffect, useRef } from 'preact/hooks';
 import type { SvelteComponent } from 'svelte';
 

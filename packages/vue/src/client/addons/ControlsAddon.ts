@@ -1,6 +1,6 @@
 import { defineComponent, h } from 'vue';
 
-import Addon from '../Addon';
+import Addon from './Addon';
 
 export default defineComponent({
   name: 'ControlsAddon',
