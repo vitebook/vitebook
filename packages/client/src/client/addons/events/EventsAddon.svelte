@@ -71,7 +71,7 @@
   .addon__events__header {
     display: flex;
     align-items: center;
-    justify-content: end;
+    justify-content: flex-end;
   }
 
   .addon__events__clear {
