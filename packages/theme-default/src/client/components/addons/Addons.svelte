@@ -19,6 +19,7 @@
   const iconCache = new Map();
 
   onMount(() => {
+    if (hasActiveAddon) contentYTranslation = 50;
     addons.ready.set(true);
     return () => {
       addons.ready.set(false);
@@ -94,26 +95,28 @@
     if (isDraggingContent) {
       isDraggingContent = false;
 
-      window.requestAnimationFrame(() => {
-        const thresholds = [0, 50, 100];
+      if (!$isLargeScreen) {
+        window.requestAnimationFrame(() => {
+          const thresholds = [0, 50, 100];
 
-        const threshold = thresholds.sort((a, b) => {
-          return (
-            Math.abs(contentYTranslation - a) -
-            Math.abs(contentYTranslation - b)
-          );
-        })[0];
+          const threshold = thresholds.sort((a, b) => {
+            return (
+              Math.abs(contentYTranslation - a) -
+              Math.abs(contentYTranslation - b)
+            );
+          })[0];
 
-        if (threshold === 100) {
-          addons.setActive(null);
-          prevContentYTranslation = 50;
-        } else {
-          prevContentYTranslation = threshold;
-        }
+          if (threshold === 100) {
+            addons.setActive(null);
+            prevContentYTranslation = 50;
+          } else {
+            prevContentYTranslation = threshold;
+          }
 
-        contentYTranslation = threshold;
-        hasContentReachedTop = threshold === 0;
-      });
+          contentYTranslation = threshold;
+          hasContentReachedTop = threshold === 0;
+        });
+      }
     }
   }
 
@@ -450,6 +453,16 @@
     .addons.dark .addons__tab__tooltip {
       color: var(--vbk--color-gray-600);
       background-color: var(--vbk--color-gray-400);
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .addons__content {
+      min-width: 28rem;
+    }
+
+    .addons.content-active {
+      margin-left: 28rem;
     }
   }
 </style>
