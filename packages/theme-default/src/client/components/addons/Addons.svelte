@@ -1,4 +1,5 @@
 <script>
+  import { tick } from 'svelte';
   import { darkMode } from '../../stores/darkMode';
   import { isLargeScreen } from '../../stores/isLargeScreen';
   import {
@@ -20,7 +21,11 @@
 
   onMount(() => {
     if (hasActiveAddon) contentYTranslation = 50;
-    addons.ready.set(true);
+
+    tick().then(() => {
+      addons.ready.set(true);
+    });
+
     return () => {
       addons.ready.set(false);
       iconCache.clear();
