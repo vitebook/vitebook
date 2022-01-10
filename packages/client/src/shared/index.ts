@@ -2,8 +2,6 @@
 export * from './types/ClientPage';
 export * from './types/ClientTheme';
 export * from './types/MarkdownPage';
-export * from './types/PageAddon';
-export * from './types/PageAddonPlugin';
 export * from './types/SveltePage';
 // utils
 export * from './utils/isLoadedMarkdownPage';

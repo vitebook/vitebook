@@ -29,7 +29,7 @@ body {
 }
 
 html.dark body {
-  background-color: var(--vbk--body-bg-color, hsl(0, 0%, 10.2%));
+  background-color: var(--vbk--body-bg-color, hsl(0, 0%, 10.8%));
 }
 
 .__vbk__ {
@@ -53,11 +53,15 @@ html.dark body {
 
 .__vbk__:focus {
   outline: 0;
-  border-radius: 0.15rem !important;
+  border-radius: 0.12rem !important;
   box-shadow: var(--vbk--focus-box-shadow) !important;
 }
 
 .__vbk__:focus:not(:focus-visible) {
+  box-shadow: none !important;
+}
+
+.__vbk__:focus:not(.focus-visible) {
   box-shadow: none !important;
 }
 

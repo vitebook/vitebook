@@ -18,4 +18,5 @@ export type VitebookIcon =
   | `brand-${string}`
   | `sidebar-file-${string}`
   | `sidebar-folder-open`
-  | `sidebar-folder-closed`;
+  | `sidebar-folder-closed`
+  | `addon-${string}`;

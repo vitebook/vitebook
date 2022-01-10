@@ -18,6 +18,9 @@ const SIDEBAR_ICONS_DIR = path.resolve(ICONS_DIR, './sidebar-file');
 const BRAND_ICONS_DIR = path.resolve(ICONS_DIR, './brand');
 const FILE_ICON_PATH = path.resolve(ICONS_DIR, './sidebar-file/file.svg');
 
+const ADDON_ICONS_DIR = path.resolve(ICONS_DIR, './addon');
+const UNKNOWN_ADDON_ICON_PATH = path.resolve(ICONS_DIR, './addon/unknown.svg');
+
 export type IconsRecord = Partial<Record<VitebookIcon, string>>;
 
 export type IconsResolver = (
@@ -79,6 +82,12 @@ export function iconsPlugin(resolver?: DefaultThemeIconsOptions): Plugin {
 function getIconFilePath(icon: VitebookIcon): string | false {
   if (icon.startsWith('home-feature-')) {
     return path.resolve(ICONS_DIR, 'home-feature.svg');
+  }
+
+  if (icon.startsWith('addon-')) {
+    const name = icon.replace('addon-', '');
+    const iconPath = path.resolve(ADDON_ICONS_DIR, `${name}.svg`);
+    return fs.existsSync(iconPath) ? iconPath : UNKNOWN_ADDON_ICON_PATH;
   }
 
   if (icon.startsWith('sidebar-file-')) {

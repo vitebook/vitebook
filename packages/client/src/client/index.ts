@@ -21,7 +21,6 @@ export * from './stores/currentPageTitle';
 export * from './stores/currentRoute';
 export * from './stores/currentRouteLocale';
 export * from './stores/localizedSiteOptions';
-export * from './stores/pageAddons';
 export * from './stores/pages';
 export * from './stores/siteLang';
 export * from './stores/siteOptions';

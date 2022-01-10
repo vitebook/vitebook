@@ -1,5 +1,6 @@
 <script>
   import { useRouter } from '@vitebook/client';
+  import { darkMode } from '../../stores/darkMode';
 
   import { onMount } from 'svelte';
 
@@ -14,7 +15,7 @@
   });
 </script>
 
-<header class="navbar">
+<header class="navbar" class:dark={$darkMode}>
   <div class="navbar__container">
     <slot name="start" />
 
@@ -38,7 +39,7 @@
     z-index: var(--vbk--navbar-z-index);
     height: var(--vbk--navbar-height);
     background-color: var(--vbk--navbar-bg-color);
-    box-shadow: var(--vbk--elevation-small);
+    border-bottom: 0.125rem solid var(--vbk--color-divider);
   }
 
   .navbar__container {

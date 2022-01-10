@@ -1,3 +1,4 @@
+import 'focus-visible/dist/focus-visible.min.js';
 import './styles/vars.css';
 import './styles/vars-dark.css';
 import './styles/global.css';

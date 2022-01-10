@@ -153,11 +153,11 @@
   }
 
   .variants__button__segment {
-    opacity: 0.64;
+    opacity: 0.9;
   }
 
   .variants__button__separator {
-    opacity: 0.64;
+    opacity: 0.9;
     margin: 0 0.375rem;
   }
 
@@ -213,17 +213,20 @@
     height: 100%;
   }
 
+  .variants__menu-item.active .variants__menu-item__button {
+    font-weight: 500;
+  }
+
   .variants__menu-item__tooltip {
     display: none;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     position: absolute;
     padding: 0 0.5rem;
-    top: 0;
+    top: 0.5rem;
     left: calc(100% + 0.25rem);
     min-width: 150px;
     max-width: 200px;
-    min-height: 100%;
     font-size: 0.75rem;
     color: var(--vbk--color-gray-100);
     background-color: var(--vbk--color-gray-500);

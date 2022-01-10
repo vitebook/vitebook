@@ -9,8 +9,7 @@
       ":virtual/vitebook/app": ["../virtual/app.d.ts"],
       ":virtual/vitebook/site": ["../virtual/site.d.ts"],
       ":virtual/vitebook/theme": ["../virtual/theme.d.ts"],
-      ":virtual/vitebook/pages": ["../virtual/pages.d.ts"],
-      ":virtual/vitebook/addons": ["../virtual/addons.d.ts"]
+      ":virtual/vitebook/pages": ["../virtual/pages.d.ts"]
     }
   },
   "include": ["."]
