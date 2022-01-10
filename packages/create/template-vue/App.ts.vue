@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { App, Component } from 'vue';
+/** __APP_IMPORTS__ **/ import type { App, Component } from 'vue';
 
 export async function configureApp(app: App) {
   //

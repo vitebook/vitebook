@@ -7,6 +7,7 @@ export type Feature =
   | 'eslint'
   | 'markdown'
   | 'lint-staged'
+  | 'tailwind'
   | 'typescript';
 
 export type PackageManager = 'npm' | 'pnpm' | 'yarn';

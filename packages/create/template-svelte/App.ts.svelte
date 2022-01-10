@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { SvelteComponent } from 'svelte';
+  /** __APP_IMPORTS__ **/ import type { SvelteComponent } from 'svelte';
 
   export let component: typeof SvelteComponent;
 </script>

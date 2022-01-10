@@ -1,4 +1,4 @@
-function App({ component }) {
+/** __APP_IMPORTS__ **/ function App({ component }) {
   return component;
 }
 

@@ -1,5 +1,5 @@
 <script>
-export async function configureApp(app) {
+/** __APP_IMPORTS__ **/ export async function configureApp(app) {
   //
 }
 </script>

@@ -11,6 +11,7 @@ import { FEATURES, FRAMEWORKS, THEMES } from '../src/constants.js';
 import { addEslintFeature } from '../src/features/eslint.js';
 import { addLintStagedFeature } from '../src/features/lint-staged.js';
 import { addPrettierFeature } from '../src/features/prettier.js';
+import { addTailwindFeature } from '../src/features/tailwind.js';
 import { addTypescriptFeature } from '../src/features/typescript.js';
 import { ProjectBuilder } from '../src/ProjectBuilder.js';
 import { overwritePrompt, setupPrompt } from '../src/prompts.js';
@@ -105,15 +106,6 @@ async function main() {
   });
 
   // -------------------------------------------------------------------------------------------
-  // Features
-  // -------------------------------------------------------------------------------------------
-
-  addTypescriptFeature(builder);
-  addEslintFeature(builder);
-  addPrettierFeature(builder);
-  addLintStagedFeature(builder);
-
-  // -------------------------------------------------------------------------------------------
   // Core Dependencies
   // -------------------------------------------------------------------------------------------
 
@@ -142,8 +134,6 @@ async function main() {
   if (builder.theme === 'default') {
     builder.pkg.addVitebookDependency('theme-default');
   }
-
-  builder.pkg.save();
 
   // -------------------------------------------------------------------------------------------
   // Gitignore
@@ -194,6 +184,16 @@ async function main() {
       `index.${builder.hasFeature('typescript') ? 'js' : 'ts'}`,
     );
   }
+
+  // -------------------------------------------------------------------------------------------
+  // Features
+  // -------------------------------------------------------------------------------------------
+
+  addTailwindFeature(builder);
+  addTypescriptFeature(builder);
+  addEslintFeature(builder);
+  addPrettierFeature(builder);
+  addLintStagedFeature(builder);
 
   // -------------------------------------------------------------------------------------------
   // Configuration File
@@ -258,12 +258,29 @@ async function main() {
     frameworkDir.copyFile(
       appSrcFileName,
       builder.dirs.dest.config.resolve(`App${frameworkFileExt}`),
+      {
+        replace: {
+          '\\s*\\/\\*\\*\\s__APP_IMPORTS__\\s\\*\\*\\/\\s*': builder.hasFeature(
+            'tailwind',
+          )
+            ? `${builder.framework !== 'preact' ? '\n' : ''}${
+                builder.framework === 'svelte' ? '  ' : ''
+              }import './global.css';\n\n${
+                builder.framework === 'svelte' ? '  ' : ''
+              }`
+            : builder.framework !== 'preact'
+            ? `\n${builder.framework === 'svelte' ? '  ' : ''}`
+            : '',
+        },
+      },
     );
   }
 
   // -------------------------------------------------------------------------------------------
   // Finish
   // -------------------------------------------------------------------------------------------
+
+  builder.pkg.save();
 
   console.log(kleur.bold(kleur.green(`✅ Done. Now run:\n`)));
 
