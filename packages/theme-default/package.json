@@ -20,7 +20,9 @@
   "contributors": [
     "Rahim Alwer <rahim.alwer@gmail.com>"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/client/polyfills/*"
+  ],
   "type": "module",
   "exports": {
     ".": "./dist/client/index.js",
@@ -59,7 +61,6 @@
     "watch:copy": "pnpm copy:client -- --watch"
   },
   "dependencies": {
-    "focus-visible": "^5.2.0",
     "kleur": "^4.1.4"
   },
   "devDependencies": {
