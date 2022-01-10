@@ -9,13 +9,32 @@
 
 <script>
   import { Variant } from '@vitebook/client';
+  import {
+    ControlsAddon,
+    EventsAddon,
+    eventCallback,
+  } from '@vitebook/client/addons';
   import Button from './Button.svelte';
+
+  let title = 'Click Me';
+  let disabled = false;
 </script>
 
 <Variant name="Default" description="The default button.">
-  <Button />
+  <Button {disabled} on:click={eventCallback}>{title}</Button>
 </Variant>
 
 <Variant name="Disabled" description="The disabled button.">
-  <Button disabled />
+  <Button disabled>{title}</Button>
 </Variant>
+
+<ControlsAddon>
+  <div>
+    Title: <input type="text" bind:value={title} />
+  </div>
+  <div style="margin-top: 24px;">
+    Disabled: <input type="checkbox" bind:checked={disabled} />
+  </div>
+</ControlsAddon>
+
+<EventsAddon />

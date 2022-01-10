@@ -2,4 +2,4 @@
   export let disabled = false;
 </script>
 
-<button {disabled}>Click Me</button>
+<button {disabled} on:click><slot /></button>

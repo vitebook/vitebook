@@ -5,5 +5,5 @@ const props = defineProps<{
 </script>
 
 <template>
-  <button :disabled="disabled">Click Me</button>
+  <button :disabled="disabled"><slot /></button>
 </template>

@@ -11,5 +11,6 @@
     disabled
       ? 'bg-gray-500 dark:bg-gray-300 text-white dark:text-gray-800'
       : 'bg-indigo-500 dark:bg-yellow-500 text-white dark:text-black',
-  )}>Click Me</button
+  )}
+  on:click><slot /></button
 >

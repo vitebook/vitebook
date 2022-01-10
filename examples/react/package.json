@@ -16,11 +16,11 @@
   "devDependencies": {
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
-    "@vitebook/client": "^0.12.1",
-    "@vitebook/core": "^0.12.1",
-    "@vitebook/markdown-preact": "^0.12.1",
-    "@vitebook/preact": "^0.12.1",
-    "@vitebook/theme-default": "^0.12.1",
+    "@vitebook/client": "0.14.1",
+    "@vitebook/core": "0.14.1",
+    "@vitebook/markdown-preact": "0.14.1",
+    "@vitebook/preact": "0.14.1",
+    "@vitebook/theme-default": "0.14.1",
     "typescript": "^4.4.0"
   },
   "engines": {
