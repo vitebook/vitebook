@@ -1,3 +1,18 @@
+# [0.14.0](https://github.com/vitebook/vitebook/compare/v0.13.1...v0.14.0) (2022-01-10)
+
+### Bug Fixes
+
+- `focus-visible` polyfill error msg on build ([8820244](https://github.com/vitebook/vitebook/commit/88202446bd9c7bb52c9c97e233b80b51306dae9e))
+
+### Features
+
+- **create:** add tailwind feature ([9b87318](https://github.com/vitebook/vitebook/commit/9b8731880d6e0818707b910045e6e5de6240ebba))
+- preact addons ([38077cc](https://github.com/vitebook/vitebook/commit/38077cc93f9a6a2b248fb745ff62a463ecd262ee)), closes [#2](https://github.com/vitebook/vitebook/issues/2) [#3](https://github.com/vitebook/vitebook/issues/3) [#5](https://github.com/vitebook/vitebook/issues/5)
+- simplify addon import paths ([4d3013a](https://github.com/vitebook/vitebook/commit/4d3013acda297641aea3c63301bd6cee454fc4b8))
+- svelte events addon ([fd44d24](https://github.com/vitebook/vitebook/commit/fd44d24bac00ff43998a011d7463b6e1b6a22155)), closes [#5](https://github.com/vitebook/vitebook/issues/5)
+- svelte page addons ([#12](https://github.com/vitebook/vitebook/issues/12)) ([63b6782](https://github.com/vitebook/vitebook/commit/63b67823615448f51e96226ed8740796b029eae2))
+- vue addons ([4249bd8](https://github.com/vitebook/vitebook/commit/4249bd8a18609b81e368e13bfd81d9e050810567)), closes [#2](https://github.com/vitebook/vitebook/issues/2) [#3](https://github.com/vitebook/vitebook/issues/3) [#5](https://github.com/vitebook/vitebook/issues/5)
+
 ## [0.13.1](https://github.com/vitebook/vitebook/compare/v0.13.0...v0.13.1) (2022-01-02)
 
 ### Bug Fixes
