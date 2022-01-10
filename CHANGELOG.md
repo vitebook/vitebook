@@ -1,3 +1,9 @@
+## [0.14.1](https://github.com/vitebook/vitebook/compare/v0.14.0...v0.14.1) (2022-01-10)
+
+### Bug Fixes
+
+- get rid of use `flex-end` warning ([b8c1c1c](https://github.com/vitebook/vitebook/commit/b8c1c1cbe5e4f1c0c6757b7cf2a099858babfb26))
+
 # [0.14.0](https://github.com/vitebook/vitebook/compare/v0.13.1...v0.14.0) (2022-01-10)
 
 ### Bug Fixes
