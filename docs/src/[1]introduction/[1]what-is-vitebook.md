@@ -14,10 +14,14 @@ If you're unfamiliar with Storybook, it's an open source tool for building UI co
 pages in isolation. It streamlines UI development, testing, and documentation. Vitebook aims
 to provide the same capabilities but in a more laxed, lighter, faster and configurable way.
 
-## Demos
+## Playgrounds
 
-- This site (vitebook.dev) serves as an example of a documentation only site.
-- A Storybook-esque example is available [here](https://simple-demo.vitebook.dev).
+- [Documentation Site](https://stackblitz.com/github/vitebook/vitebook/tree/main/docs)
+- [Svelte](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/svelte)
+- [Vue](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/vue)
+- [Preact](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/preact)
+- [React](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/react)
+- [Tailwind](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/tailwind)
 
 ## Missing Features
 
@@ -26,10 +30,7 @@ The missing features below could be dealbreakers for some. If so, feel free to k
 on [GitHub][vitebook-gh]) to see how we're doing with bringing these features to you. Also,
 feel free to chime in on the issues and share your thoughts!
 
-- [Addons](https://github.com/vitebook/vitebook/issues/2)
-- [Controls Addon](https://github.com/vitebook/vitebook/issues/3)
 - [API Reference Addon](https://github.com/vitebook/vitebook/issues/4)
-- [Event Logging](https://github.com/vitebook/vitebook/issues/5)
 - [HTTP API Mocking](https://github.com/vitebook/vitebook/issues/6)
 - [Testing](https://github.com/vitebook/vitebook/issues/7)
 - [Algolia Plugin](https://github.com/vitebook/vitebook/issues/8)
