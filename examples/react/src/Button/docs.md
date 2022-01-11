@@ -5,7 +5,7 @@ This is the documentation page for the awesome `<Button />` component.
 ## Usage
 
 ```tsx{1}
-<Button />
+<Button>My Button</Button>
 ```
 
 ## Example
@@ -14,4 +14,4 @@ This is the documentation page for the awesome `<Button />` component.
   import Button from './Button';
 </script>
 
-<Button />
+<Button>My Button</Button>

@@ -6,7 +6,7 @@ This is the documentation page for the awesome `<Button />` component.
 
 ```vue{2}
 <template>
-  <Button />
+  <Button>My Button</Button>
 </template>
 ```
 
@@ -16,4 +16,4 @@ This is the documentation page for the awesome `<Button />` component.
   import Button from './Button.vue';
 </script>
 
-<Button />
+<Button>My Button</Button>
