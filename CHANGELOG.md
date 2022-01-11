@@ -1,3 +1,9 @@
+## [0.16.1](https://github.com/vitebook/vitebook/compare/v0.16.0...v0.16.1) (2022-01-11)
+
+### Bug Fixes
+
+- **create:** svelte is now a core dependency ([4e71f4a](https://github.com/vitebook/vitebook/commit/4e71f4a0d06831237373d8ce473b4108608410a7))
+
 # [0.16.0](https://github.com/vitebook/vitebook/compare/v0.15.1...v0.16.0) (2022-01-11)
 
 ### Bug Fixes

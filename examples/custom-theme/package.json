@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/example-custom-theme",
-  "version": "0.16.0",
+  "version": "0.16.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,8 +10,8 @@
     "vitebook:preview": "vitebook preview"
   },
   "devDependencies": {
-    "@vitebook/client": "0.16.0",
-    "@vitebook/core": "0.16.0",
+    "@vitebook/client": "0.16.1",
+    "@vitebook/core": "0.16.1",
     "svelte": "^3.44.0"
   },
   "engines": {
