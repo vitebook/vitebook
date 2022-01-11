@@ -1,19 +1,34 @@
-import { activeVariant, inBrowser, variants } from '@vitebook/client';
+import {
+  activeVariant,
+  inBrowser,
+  variants,
+  Variation,
+} from '@vitebook/client';
 import type { ComponentChildren } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import { get } from 'svelte/store';
 
-import { useVariants } from '../hooks/useVariants';
+import { useActiveVariant, useVariants } from '../hooks/useVariants';
 
 export type VariantProps = {
   name: string;
   description?: string;
   children: ComponentChildren;
+  onEnter?: (variant: Variation) => void;
+  onExit?: (variant: Variation) => void;
 };
 
-function Variant({ name, description, children }: VariantProps) {
+function Variant({
+  name,
+  description,
+  children,
+  onEnter,
+  onExit,
+}: VariantProps) {
   const variantId = useRef(encodeURI(`${name}`.toLowerCase()));
   const hasAddedVariant = useRef(false);
+  const _activeVariant = useActiveVariant();
+  const visibleState = useRef('exit');
 
   const searchParams = useRef(
     inBrowser ? new URL(location.href).searchParams : undefined,
@@ -55,8 +70,23 @@ function Variant({ name, description, children }: VariantProps) {
 
     return () => {
       variants.delete(variantId.current);
+      visibleState.current = 'exit';
     };
   }, []);
+
+  useEffect(() => {
+    if (_activeVariant?.id === variantId.current) {
+      if (visibleState.current !== 'enter') {
+        onEnter?.(get(variants)[variantId.current]!);
+        visibleState.current = 'enter';
+      }
+    } else {
+      if (visibleState.current !== 'exit') {
+        onExit?.(get(variants)[variantId.current]!);
+        visibleState.current = 'exit';
+      }
+    }
+  }, [_activeVariant]);
 
   return <>{get(variants)[variantId.current]?.active && children}</>;
 }

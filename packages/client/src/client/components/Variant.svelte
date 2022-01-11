@@ -1,8 +1,10 @@
 <script>
   import { inBrowser } from '@vitebook/core';
 
-  import { onMount, onDestroy } from 'svelte';
+  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import { activeVariant, variants } from '../stores/variants';
+
+  const dispatch = createEventDispatcher();
 
   export let name;
   export let description = undefined;
@@ -40,6 +42,12 @@
   });
 
   $: active = $variants[variantId].active;
+
+  $: if (active) {
+    dispatch('enter', variant);
+  } else {
+    dispatch('exit', variant);
+  }
 </script>
 
 {#if active}
