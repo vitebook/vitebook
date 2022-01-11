@@ -1,3 +1,9 @@
+## [0.15.1](https://github.com/vitebook/vitebook/compare/v0.15.0...v0.15.1) (2022-01-11)
+
+### Bug Fixes
+
+- **create:** include `vite/client` in tsconfig `types` ([2fd2573](https://github.com/vitebook/vitebook/commit/2fd25738c02c3cb49d1366f5a80a481428e95d5d))
+
 # [0.15.0](https://github.com/vitebook/vitebook/compare/v0.14.1...v0.15.0) (2022-01-11)
 
 ### Bug Fixes
