@@ -26,8 +26,14 @@ function ButtonStory() {
         </Button>
       </Variant>
 
-      <Variant name="Disabled" description="The disabled button.">
-        <Button disabled>{title}</Button>
+      <Variant
+        name="Disabled"
+        description="The disabled button."
+        onEnter={() => {
+          disabled = true;
+        }}
+      >
+        <Button disabled={disabled}>{title}</Button>
       </Variant>
 
       <ControlsAddon>
@@ -36,7 +42,7 @@ function ButtonStory() {
           <input
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => setTitle(e.target?.value)}
           />
         </div>
         <div style={{ marginTop: '24px' }}>
@@ -44,7 +50,7 @@ function ButtonStory() {
           <input
             type="checkbox"
             checked={disabled}
-            onChange={(e) => setDisabled(e.target.checked)}
+            onChange={(e) => setDisabled(e.target?.checked)}
           />
         </div>
       </ControlsAddon>

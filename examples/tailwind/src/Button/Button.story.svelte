@@ -24,8 +24,14 @@
   <Button {disabled} on:click={eventCallback}>{title}</Button>
 </Variant>
 
-<Variant name="Disabled" description="The disabled button.">
-  <Button disabled>{title}</Button>
+<Variant
+  name="Disabled"
+  description="The disabled button."
+  on:enter={() => {
+    disabled = true;
+  }}
+>
+  <Button {disabled}>{title}</Button>
 </Variant>
 
 <ControlsAddon>

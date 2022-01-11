@@ -27,8 +27,14 @@ function ButtonStory() {
         </Button>
       </Variant>
 
-      <Variant name="Disabled" description="The disabled button.">
-        <Button disabled>{title}</Button>
+      <Variant
+        name="Disabled"
+        description="The disabled button."
+        onEnter={() => {
+          disabled = true;
+        }}
+      >
+        <Button disabled={disabled}>{title}</Button>
       </Variant>
 
       <ControlsAddon>

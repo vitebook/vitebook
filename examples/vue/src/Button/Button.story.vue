@@ -20,6 +20,10 @@ import { ref } from 'vue';
 
 const title = ref('Click Me');
 const disabled = ref(false);
+
+function onEnterDisabledButton() {
+  disabled.value = true;
+}
 </script>
 
 <template>
@@ -28,7 +32,9 @@ const disabled = ref(false);
   </Variant>
 
   <Variant name="Disabled" description="The disabled button.">
-    <Button disabled>{{ title }}</Button>
+    <Button :disabled="disabled" @enter="onEnterDisabledButton">{{
+      title
+    }}</Button>
   </Variant>
 
   <ControlsAddon>
