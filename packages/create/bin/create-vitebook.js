@@ -111,6 +111,7 @@ async function main() {
 
   builder.pkg.addVitebookDependency('client');
   builder.pkg.addVitebookDependency('core');
+  builder.pkg.addDependency('svelte', '^3.43.1', { dev: true });
 
   switch (builder.framework) {
     case 'vue':
@@ -127,7 +128,6 @@ async function main() {
         builder.pkg.addVitebookDependency('markdown-preact');
       break;
     case 'svelte':
-      builder.pkg.addDependency('svelte', '^3.43.1', { dev: true });
       if (builder.hasFeature('markdown'))
         builder.pkg.addVitebookDependency('markdown-svelte');
   }

@@ -22,6 +22,7 @@
     "@vitebook/preact": "0.14.1",
     "@vitebook/theme-default": "0.14.1",
     "preact": "^10.5.14",
+    "svelte": "^3.43.1",
     "typescript": "^4.4.0"
   },
   "engines": {
