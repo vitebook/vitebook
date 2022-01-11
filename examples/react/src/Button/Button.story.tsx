@@ -33,6 +33,9 @@ function ButtonStory() {
         onEnter={() => {
           disabled = true;
         }}
+        onExit={() => {
+          disabled = false;
+        }}
       >
         <Button disabled={disabled}>{title}</Button>
       </Variant>
