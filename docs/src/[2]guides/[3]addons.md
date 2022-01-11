@@ -194,8 +194,12 @@ const disabled = ref(false);
 ## Events Addon
 
 :::tip
-Clicking the event in the addon panel will log the event to your console for deeper
-inspection :detective:
+
+- Clicking the event in the addon panel will log the event to your console for deeper
+  inspection.
+- You can also import the `throttledEventCallback` and `debouncedEventCallback` functions for
+  logging events.
+
 :::
 
 <Tabs values={frameworks} groupId="jsFramework">
