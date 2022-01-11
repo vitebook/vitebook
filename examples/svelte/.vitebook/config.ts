@@ -5,7 +5,6 @@ import {
   DefaultThemeConfig,
   defaultThemePlugin,
 } from '@vitebook/theme-default/node';
-import sveltePreprocess from 'svelte-preprocess';
 
 export default defineConfig<DefaultThemeConfig>({
   include: ['src/**/*.md', 'src/**/*.story.svelte'],
@@ -16,12 +15,10 @@ export default defineConfig<DefaultThemeConfig>({
       appFile: 'App.svelte',
       svelte: {
         extensions: ['.svelte', '.md'],
-        preprocess: [
-          sveltePreprocess({
-            // Vitebook internally handles preprocessing typescript with `esbuild`.
-            typescript: false,
-          }),
-        ],
+        experimental: {
+          // Remove if using `svelte-preprocess`.
+          useVitePreprocess: true,
+        },
       },
     }),
     defaultThemePlugin(),

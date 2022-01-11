@@ -16,7 +16,6 @@
     "@vitebook/markdown-svelte": "0.15.1",
     "@vitebook/theme-default": "0.15.1",
     "svelte": "^3.43.1",
-    "svelte-preprocess": "^4.9.8",
     "typescript": "^4.4.3"
   },
   "engines": {
