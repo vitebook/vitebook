@@ -1,3 +1,10 @@
+## [0.16.2](https://github.com/vitebook/vitebook/compare/v0.16.1...v0.16.2) (2022-01-11)
+
+### Bug Fixes
+
+- allow `public/logo.svg` to specify own dimensions ([a8fa6d2](https://github.com/vitebook/vitebook/commit/a8fa6d2ce3d4bf81a3a69c51d55618ea2104e004))
+- improve inferred sidebar titles ([d05b225](https://github.com/vitebook/vitebook/commit/d05b2256bcdb853b86260d779732e258b69b6772))
+
 ## [0.16.1](https://github.com/vitebook/vitebook/compare/v0.16.0...v0.16.1) (2022-01-11)
 
 ### Bug Fixes
