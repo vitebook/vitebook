@@ -115,6 +115,7 @@ async function main() {
   switch (builder.framework) {
     case 'vue':
       builder.pkg.addDependency('vue', '^3.0.0');
+      builder.pkg.addDependency('@vue/compiler-sfc', '^3.2.26', { dev: true });
       builder.pkg.addVitebookDependency('vue');
       if (builder.hasFeature('markdown'))
         builder.pkg.addVitebookDependency('markdown-vue');

@@ -72,7 +72,8 @@
   },
   "peerDependencies": {
     "@vitebook/client": "0.15.1",
-    "@vitebook/core": "0.15.1"
+    "@vitebook/core": "0.15.1",
+    "svelte": "^3.44.1"
   },
   "publishConfig": {
     "access": "public"

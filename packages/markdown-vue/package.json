@@ -64,11 +64,12 @@
   "devDependencies": {
     "@vitebook/core": "workspace:*",
     "@vitebook/vue": "workspace:*",
-    "vue": "3.2.26"
+    "vue": "^3.2.26"
   },
   "peerDependencies": {
     "@vitebook/core": "0.15.1",
-    "@vitebook/vue": "0.15.1"
+    "@vitebook/vue": "0.15.1",
+    "vue": "^3.2.26"
   },
   "publishConfig": {
     "access": "public"

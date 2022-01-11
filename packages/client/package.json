@@ -77,11 +77,14 @@
     "@vitebook/core": "0.15.1",
     "esbuild": "^0.12.24",
     "kleur": "^4.1.4",
-    "magic-string": "^0.25.7",
-    "svelte": "^3.44.1"
+    "magic-string": "^0.25.7"
   },
   "devDependencies": {
+    "svelte": "^3.44.1",
     "vite": "2.7.1"
+  },
+  "peerDependencies": {
+    "svelte": "^3.44.1"
   },
   "publishConfig": {
     "access": "public"

@@ -65,12 +65,14 @@
   "devDependencies": {
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
-    "@vitebook/preact": "workspace:*"
+    "@vitebook/preact": "workspace:*",
+    "preact": "^10.5.14"
   },
   "peerDependencies": {
     "@vitebook/client": "0.15.1",
     "@vitebook/core": "0.15.1",
-    "@vitebook/preact": "0.15.1"
+    "@vitebook/preact": "0.15.1",
+    "preact": "^10.5.14"
   },
   "publishConfig": {
     "access": "public"

@@ -73,7 +73,6 @@
     "@babel/core": "^7.16.7",
     "@preact/preset-vite": "^2.1.5",
     "kleur": "^4.1.4",
-    "preact": "^10.5.14",
     "preact-render-to-string": "^5.1.19"
   },
   "devDependencies": {
@@ -81,12 +80,14 @@
     "@rollup/pluginutils": "^4.1.1",
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
+    "preact": "^10.5.14",
     "svelte": "^3.44.1",
     "vite": "2.7.1"
   },
   "peerDependencies": {
     "@vitebook/client": "0.15.1",
-    "@vitebook/core": "0.15.1"
+    "@vitebook/core": "0.15.1",
+    "preact": "^10.5.14"
   },
   "publishConfig": {
     "access": "public"

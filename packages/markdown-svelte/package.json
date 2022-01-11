@@ -59,16 +59,17 @@
     "@types/lru-cache": "^5.1.1",
     "@vitebook/markdown": "0.15.1",
     "kleur": "^4.1.4",
-    "lru-cache": "^6.0.0",
-    "svelte": "^3.44.1"
+    "lru-cache": "^6.0.0"
   },
   "devDependencies": {
     "@vitebook/client": "workspace:*",
-    "@vitebook/core": "workspace:*"
+    "@vitebook/core": "workspace:*",
+    "svelte": "^3.44.1"
   },
   "peerDependencies": {
     "@vitebook/client": "0.15.1",
-    "@vitebook/core": "0.15.1"
+    "@vitebook/core": "0.15.1",
+    "svelte": "^3.44.1"
   },
   "publishConfig": {
     "access": "public"

@@ -18,7 +18,8 @@
     "@vitebook/markdown-shiki": "0.15.1",
     "@vitebook/markdown-vue": "0.15.1",
     "@vitebook/theme-default": "0.15.1",
-    "@vitebook/vue": "0.15.1"
+    "@vitebook/vue": "0.15.1",
+    "@vue/compiler-sfc": "^3.2.26"
   },
   "engines": {
     "node": ">=16"
