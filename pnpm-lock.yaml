@@ -71,6 +71,7 @@ importers:
       '@sveltejs/vite-plugin-svelte': 1.0.0-next.31
       '@vitebook/core': 0.15.1
       esbuild: ^0.12.24
+      just-debounce: ^1.1.0
       just-throttle: ^4.0.1
       kleur: ^4.1.4
       magic-string: ^0.25.7
@@ -82,6 +83,7 @@ importers:
       '@sveltejs/vite-plugin-svelte': 1.0.0-next.31_svelte@3.44.1+vite@2.7.1
       '@vitebook/core': link:../core
       esbuild: 0.12.29
+      just-debounce: 1.1.0
       just-throttle: 4.0.1
       kleur: 4.1.4
       magic-string: 0.25.7
@@ -2977,6 +2979,10 @@ packages:
 
   /just-debounce-it/1.5.0:
     resolution: {integrity: sha512-itSWJS5d2DTSCizVJ2Z0Djx/dGmUGfZe7WNfUfVP23+htGcIcPHbEjL4eB8ljojTs/+oYwLexImRRCP0A2WXjA==}
+    dev: false
+
+  /just-debounce/1.1.0:
+    resolution: {integrity: sha512-qpcRocdkUmf+UTNBYx5w6dexX5J31AKK1OmPwH630a83DdVVUIngk55RSAiIGpQyoH0dlr872VHfPjnQnK1qDQ==}
     dev: false
 
   /just-throttle/4.0.1:

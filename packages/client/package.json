@@ -76,6 +76,7 @@
     "@sveltejs/vite-plugin-svelte": "1.0.0-next.31",
     "@vitebook/core": "0.15.1",
     "esbuild": "^0.12.24",
+    "just-debounce": "^1.1.0",
     "just-throttle": "^4.0.1",
     "kleur": "^4.1.4",
     "magic-string": "^0.25.7"
