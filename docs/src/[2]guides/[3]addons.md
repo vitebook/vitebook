@@ -60,7 +60,7 @@ import CustomAddonIcon from './custom-addon-icon.svg?raw';
 
 <Button>My Button</Button>
 
-<Addon title="Custom Addon" :icon="CustomAddonIcon">
+<Addon title="Custom Addon" icon={CustomAddonIcon}>
   <!-- Addon content here. -->
   <div>...</div>
 </Addon>
