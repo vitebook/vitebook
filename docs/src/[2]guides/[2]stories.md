@@ -235,8 +235,8 @@ function onExitVariant({ detail: variant }) {
 <Variant
   name="Default"
   description="The default button."
-  on:enter={onEnterVariant}
-  on:exit={onExitVariant}
+  on\:enter={onEnterVariant}
+  on\:exit={onExitVariant}
 >
   <Button />
 </Variant>
