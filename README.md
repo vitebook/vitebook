@@ -14,19 +14,6 @@ If you're unfamiliar with Storybook, it's an open source tool for building UI co
 pages in isolation. It streamlines UI development, testing, and documentation. Vitebook aims
 to provide the same capabilities but in a more laxed, lighter, faster and configurable way.
 
-### 🚧&nbsp;&nbsp;Missing Features
-
-The missing features below could be dealbreakers for some. If so, feel free to keep using
-[Storybook][storybook] in the meantime, and reguarly check-in (tap the watch button above) to see
-how we're doing with bringing these features to you. Also, feel free to chime in on the issues
-and share your thoughts!
-
-- [Docs Addon](https://github.com/vitebook/vitebook/issues/4)
-- [HTTP API Mocking](https://github.com/vitebook/vitebook/issues/6)
-- [Testing](https://github.com/vitebook/vitebook/issues/7)
-- [Algolia Plugin](https://github.com/vitebook/vitebook/issues/8)
-- [File Search](https://github.com/vitebook/vitebook/issues/9)
-
 ## Playgrounds
 
 - [Documentation Site](https://stackblitz.com/github/vitebook/vitebook/tree/main/docs)

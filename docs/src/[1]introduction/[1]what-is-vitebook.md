@@ -23,19 +23,6 @@ to provide the same capabilities but in a more laxed, lighter, faster and config
 - [React](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/react)
 - [Tailwind](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/tailwind)
 
-## Missing Features
-
-The missing features below could be dealbreakers for some. If so, feel free to keep using
-[Storybook][storybook] in the meantime, and reguarly check-in (tap the watch button
-on [GitHub][vitebook-gh]) to see how we're doing with bringing these features to you. Also,
-feel free to chime in on the issues and share your thoughts!
-
-- [API Reference Addon](https://github.com/vitebook/vitebook/issues/4)
-- [HTTP API Mocking](https://github.com/vitebook/vitebook/issues/6)
-- [Testing](https://github.com/vitebook/vitebook/issues/7)
-- [Algolia Plugin](https://github.com/vitebook/vitebook/issues/8)
-- [File Search](https://github.com/vitebook/vitebook/issues/9)
-
 ## Design Goals
 
 > You can think of Vitebook as a SSG that's a mix between something like [Vitepress][vitepress]
