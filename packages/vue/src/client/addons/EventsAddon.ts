@@ -1,6 +1,6 @@
 import { EventsAddon } from '@vitebook/client/addons';
 import type { SvelteComponent } from 'svelte';
-import { defineComponent, h, onBeforeMount, ref, watchEffect } from 'vue';
+import { defineComponent, h, onBeforeUnmount, ref, watchEffect } from 'vue';
 
 let hasInitialized = false;
 
@@ -31,8 +31,10 @@ export default defineComponent({
       }
     });
 
-    onBeforeMount(() => {
+    onBeforeUnmount(() => {
       component?.$destroy();
+      addonRef.value = null;
+      hasInitialized = false;
     });
 
     hasInitialized = true;
