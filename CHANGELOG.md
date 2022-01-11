@@ -1,3 +1,13 @@
+# [0.15.0](https://github.com/vitebook/vitebook/compare/v0.14.1...v0.15.0) (2022-01-11)
+
+### Bug Fixes
+
+- **vue:** `EventsAddon` not destroyed correctly ([31cce9b](https://github.com/vitebook/vitebook/commit/31cce9bc4797f251f886d52a1ed3a1e401180bfe))
+
+### Features
+
+- emit `enter`/`exit` events on `Variant` ([d88d6b2](https://github.com/vitebook/vitebook/commit/d88d6b2eeab928b81623dbbdfd60e7cce1de2c02))
+
 ## [0.14.1](https://github.com/vitebook/vitebook/compare/v0.14.0...v0.14.1) (2022-01-10)
 
 ### Bug Fixes

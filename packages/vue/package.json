@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/vue",
-  "version": "0.14.1",
+  "version": "0.15.0",
   "keywords": [
     "client",
     "esm",
@@ -77,8 +77,8 @@
     "vite": "2.7.1"
   },
   "peerDependencies": {
-    "@vitebook/client": "0.14.1",
-    "@vitebook/core": "0.14.1"
+    "@vitebook/client": "0.15.0",
+    "@vitebook/core": "0.15.0"
   },
   "publishConfig": {
     "access": "public"
