@@ -185,9 +185,22 @@ import Button from './Button';
 import { Variant } from '@vitebook/preact';
 
 function ButtonStory() {
+  function onEnterVariant(variant) {
+    // ...
+  }
+
+  function onExitVariant(variant) {
+    // ...
+  }
+
   return (
     <>
-      <Variant name="Default" description="The default button.">
+      <Variant
+        name="Default"
+        description="The default button."
+        onEnter={onEnterVariant}
+        onExit={onExitVariant}
+      >
         <Button />
       </Variant>
 
@@ -209,9 +222,22 @@ export default ButtonStory;
 <script>
 import Button from './Button.svelte'
 import { Variant } from '@vitebook/client';
+
+function onEnterVariant({ detail: variant }) {
+  // ...
+}
+
+function onExitVariant({ detail: variant }) {
+  // ...
+}
 </script>
 
-<Variant name="Default" description="The default button.">
+<Variant
+  name="Default"
+  description="The default button."
+  on:enter={onEnterVariant}
+  on:exit={onExitVariant}
+>
   <Button />
 </Variant>
 
@@ -228,10 +254,23 @@ import { Variant } from '@vitebook/client';
 <script setup>
 import Button from './Button.vue';
 import { Variant } from '@vitebook/vue';
+
+function onEnterVariant(variant) {
+  // ...
+}
+
+function onExitVariant(variant) {
+  // ...
+}
 </script>
 
 <template>
-  <Variant name="Default" description="The default button.">
+  <Variant
+    name="Default"
+    description="The default button."
+    @enter="onEnterVariant"
+    @exit="onExitVariant"
+  >
     <Button />
   </Variant>
 
