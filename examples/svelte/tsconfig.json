@@ -27,7 +27,7 @@
     "strictNullChecks": true,
     "target": "esnext",
     "useDefineForClassFields": false,
-    "types": ["node"]
+    "types": ["node", "vite/client"]
   },
   "include": ["src"]
 }

@@ -52,7 +52,7 @@ export function getRawTSConfig(compilerOptions = {}) {
       strictNullChecks: true,
       target: 'esnext',
       useDefineForClassFields: false,
-      types: ['node'],
+      types: ['node', 'vite/client'],
       ...compilerOptions,
     },
     include: ['src'],
