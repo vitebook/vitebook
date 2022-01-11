@@ -18,9 +18,7 @@ const resolvePageTitle = (
   return title ? `${title} | ${siteLocale.title}` : siteLocale.title;
 };
 
-const PAGE_TITLE_RE = /\/(.+)\.html$/;
-
 export function inferPageTitle(page?: LoadedClientPage): string | null {
   if (!page) return null;
-  return toTitleCase(decodeURI(page.route).match(PAGE_TITLE_RE)?.[1] ?? '');
+  return toTitleCase(page.rootPath.split('.')[0].split('/').slice(1).join(' '));
 }
