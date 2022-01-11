@@ -1,4 +1,4 @@
-import debounce from 'just-debounce';
+import debounce from 'just-debounce-it';
 import throttle from 'just-throttle';
 import { writable } from 'svelte/store';
 
@@ -35,14 +35,9 @@ export function throttledEventCallback(
   return throttle(eventCallback, interval, options);
 }
 
-export function debouncedEventCallback(
-  delay = 0,
-  options?: {
-    atStart?: boolean;
-    guarantee?: boolean;
-  },
-) {
-  return debounce(eventCallback, delay, ...Object.values(options ?? []));
+export function debouncedEventCallback(wait = 0, callFirst?: boolean) {
+  // @ts-expect-error - .
+  return debounce(eventCallback, wait, callFirst);
 }
 
 export type EventEntry = {
