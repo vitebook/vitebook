@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/vue",
-  "version": "0.15.1",
+  "version": "0.16.2",
   "keywords": [
     "client",
     "esm",
@@ -66,19 +66,21 @@
   },
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
-    "@vitejs/plugin-vue": "2.0.0",
-    "@vue/compiler-sfc": "3.2.26",
-    "vue": "3.2.26"
+    "@vitejs/plugin-vue": "2.0.0"
   },
   "devDependencies": {
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
+    "@vue/compiler-sfc": "^3.2.26",
     "svelte": "^3.44.1",
-    "vite": "2.6.13"
+    "vite": "2.7.1",
+    "vue": "^3.2.26"
   },
   "peerDependencies": {
-    "@vitebook/client": "0.15.1",
-    "@vitebook/core": "0.15.1"
+    "@vitebook/client": "0.16.2",
+    "@vitebook/core": "0.16.2",
+    "@vue/compiler-sfc": "^3.2.26",
+    "vue": "^3.2.26"
   },
   "publishConfig": {
     "access": "public"

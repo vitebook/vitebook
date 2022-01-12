@@ -1,3 +1,29 @@
+## [0.16.2](https://github.com/vitebook/vitebook/compare/v0.16.1...v0.16.2) (2022-01-11)
+
+### Bug Fixes
+
+- allow `public/logo.svg` to specify own dimensions ([a8fa6d2](https://github.com/vitebook/vitebook/commit/a8fa6d2ce3d4bf81a3a69c51d55618ea2104e004))
+- improve inferred sidebar titles ([d05b225](https://github.com/vitebook/vitebook/commit/d05b2256bcdb853b86260d779732e258b69b6772))
+
+## [0.16.1](https://github.com/vitebook/vitebook/compare/v0.16.0...v0.16.1) (2022-01-11)
+
+### Bug Fixes
+
+- **create:** svelte is now a core dependency ([4e71f4a](https://github.com/vitebook/vitebook/commit/4e71f4a0d06831237373d8ce473b4108608410a7))
+
+# [0.16.0](https://github.com/vitebook/vitebook/compare/v0.15.1...v0.16.0) (2022-01-11)
+
+### Bug Fixes
+
+- **client:** prefer vite preprocessing `.svelte` files ([9596b28](https://github.com/vitebook/vitebook/commit/9596b2828cb42e05f3825d00bc26e96835fa50db))
+- move framework deps to `peerDependencies` ([1f19433](https://github.com/vitebook/vitebook/commit/1f1943313216a8fb0c443d58e6d50f5d1c147455))
+
+### Features
+
+- add `debouncedEventCallback` for `EventsAddon` ([c708320](https://github.com/vitebook/vitebook/commit/c708320ba004c5705b7bfb7354db888ca0f0be42))
+- add `throttledEventCallback` for `EventsAddon` ([a3fbb2e](https://github.com/vitebook/vitebook/commit/a3fbb2e7af987b44f7170ea7259223cc02c49981))
+- improve logging events in `EventsAddon` ([45b52f9](https://github.com/vitebook/vitebook/commit/45b52f992cc83b99f7cb19911735a6e3a687f7be))
+
 ## [0.15.1](https://github.com/vitebook/vitebook/compare/v0.15.0...v0.15.1) (2022-01-11)
 
 ### Bug Fixes

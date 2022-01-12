@@ -43,8 +43,9 @@
   }
 
   .navbar__logo {
-    width: 2rem;
-    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-right: 0.2rem;
     vertical-align: middle;
     transition: var(--vbk--navbar-logo-transition);

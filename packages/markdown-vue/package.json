@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/markdown-vue",
-  "version": "0.15.1",
+  "version": "0.16.2",
   "keywords": [
     "esm",
     "markdown",
@@ -57,18 +57,19 @@
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
     "@types/lru-cache": "^5.1.1",
-    "@vitebook/markdown": "0.15.1",
+    "@vitebook/markdown": "0.16.2",
     "kleur": "^4.1.4",
     "lru-cache": "^6.0.0"
   },
   "devDependencies": {
     "@vitebook/core": "workspace:*",
     "@vitebook/vue": "workspace:*",
-    "vue": "3.2.26"
+    "vue": "^3.2.26"
   },
   "peerDependencies": {
-    "@vitebook/core": "0.15.1",
-    "@vitebook/vue": "0.15.1"
+    "@vitebook/core": "0.16.2",
+    "@vitebook/vue": "0.16.2",
+    "vue": "^3.2.26"
   },
   "publishConfig": {
     "access": "public"

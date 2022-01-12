@@ -24,6 +24,10 @@ const disabled = ref(false);
 function onEnterDisabledButton() {
   disabled.value = true;
 }
+
+function onExitDisabledButton() {
+  disabled.value = false;
+}
 </script>
 
 <template>
@@ -31,10 +35,13 @@ function onEnterDisabledButton() {
     <Button :disabled="disabled" @click="eventCallback">{{ title }}</Button>
   </Variant>
 
-  <Variant name="Disabled" description="The disabled button.">
-    <Button :disabled="disabled" @enter="onEnterDisabledButton">{{
-      title
-    }}</Button>
+  <Variant
+    name="Disabled"
+    description="The disabled button."
+    @enter="onEnterDisabledButton"
+    @exit="onExitDisabledButton"
+  >
+    <Button :disabled="disabled">{{ title }}</Button>
   </Variant>
 
   <ControlsAddon>

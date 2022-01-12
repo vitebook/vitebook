@@ -30,6 +30,9 @@
   on:enter={() => {
     disabled = true;
   }}
+  on:exit={() => {
+    disabled = false;
+  }}
 >
   <Button {disabled}>{title}</Button>
 </Variant>

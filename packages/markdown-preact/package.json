@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/markdown-preact",
-  "version": "0.15.1",
+  "version": "0.16.2",
   "keywords": [
     "esm",
     "markdown",
@@ -58,19 +58,21 @@
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
     "@types/lru-cache": "^5.1.1",
-    "@vitebook/markdown": "0.15.1",
+    "@vitebook/markdown": "0.16.2",
     "kleur": "^4.1.4",
     "lru-cache": "^6.0.0"
   },
   "devDependencies": {
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
-    "@vitebook/preact": "workspace:*"
+    "@vitebook/preact": "workspace:*",
+    "preact": "^10.5.14"
   },
   "peerDependencies": {
-    "@vitebook/client": "0.15.1",
-    "@vitebook/core": "0.15.1",
-    "@vitebook/preact": "0.15.1"
+    "@vitebook/client": "0.16.2",
+    "@vitebook/core": "0.16.2",
+    "@vitebook/preact": "0.16.2",
+    "preact": "^10.5.14"
   },
   "publishConfig": {
     "access": "public"

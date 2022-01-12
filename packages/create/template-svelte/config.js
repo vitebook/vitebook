@@ -5,7 +5,15 @@ import {
 
 export default defineConfig(/** __GENERICS__ */)({
   include: ['src/**/*.svelte'],
-  plugins: [clientPlugin({ appFile: 'App.svelte' }) /** __PLUGINS__ */],
+  plugins: [
+    clientPlugin({
+      appFile: 'App.svelte',
+      svelte: {
+        // Remove if using `svelte-preprocess`.
+        useVitePreprocess: true,
+      },
+    }) /** __PLUGINS__ */,
+  ],
   site: {
     title: '__SITE_NAME__',
     description: '__SITE_DESCRIPTION__',

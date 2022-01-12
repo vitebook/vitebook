@@ -24,8 +24,10 @@ export const autoSidebarItems = derived(
 
     let items = sidebarItems;
 
+    const toPath = (page) => page.rootPath.split('.')[0].split('/').slice(1);
+
     for (const page of pages) {
-      let path = decodeURI(page.route).split('/').slice(1);
+      let path = toPath(page);
 
       if (path[0] === '' && path.length === 1) continue;
 
@@ -48,7 +50,20 @@ export const autoSidebarItems = derived(
           return;
         }
 
-        const title = toTitleCase(segment.replace('.html', ''));
+        const matchingDirAndAlone =
+          i === path.length - 2 &&
+          path[i] === path[i + 1] &&
+          !pages.some(
+            (p) =>
+              p !== page &&
+              p.rootPath.startsWith(
+                page.rootPath.split('/').slice(0, -1).join('/'),
+              ),
+          );
+
+        if (matchingDirAndAlone) return;
+
+        const title = toTitleCase(segment);
 
         if (i === path.length - 1) {
           items.push({

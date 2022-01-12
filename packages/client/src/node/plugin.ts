@@ -20,10 +20,6 @@ import {
 import { fs, path } from '@vitebook/core/node/utils';
 import MagicString from 'magic-string';
 import { compile as svelteCompile, parse, walk } from 'svelte/compiler';
-import {
-  Options as TypescriptOptions,
-  typescript,
-} from 'svelte-preprocess-esbuild';
 
 export const PLUGIN_NAME = '@vitebook/client' as const;
 
@@ -55,13 +51,6 @@ export type ClientPluginOptions = {
    * @link https://github.com/sveltejs/vite-plugin-svelte
    */
   svelte?: SvelteOptions;
-
-  /**
-   * `svelte-preprocess-esbuild` preprocessor options.
-   *
-   * @link https://github.com/lukeed/svelte-preprocess-esbuild
-   */
-  typescript?: TypescriptOptions;
 
   /**
    * Applies a CSS class to all elements in included `.svelte` files to enable scoped styling. This
@@ -145,17 +134,7 @@ export function clientPlugin(
     ? options.svelte!.preprocess
     : [options.svelte?.preprocess ?? {}];
 
-  const preprocessors = [
-    typescript({
-      // Silence `esbuild` warning if `tsconfig` not found.
-      tsconfigRaw:
-        !options.typescript?.tsconfig && !options.typescript?.tsconfigRaw
-          ? { compilerOptions: {} }
-          : options.typescript?.tsconfigRaw,
-      ...options.typescript,
-    }),
-    ...userPreprocessors,
-  ];
+  const preprocessors = [...userPreprocessors];
 
   return [
     {
