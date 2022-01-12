@@ -73,5 +73,6 @@ function htmlHasDarkClass() {
 function updateHtmlDarkDataAttr(isDarkMode: boolean): void {
   if (!inBrowser) return;
   const htmlEl = window?.document.querySelector('html');
+  htmlEl?.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
   htmlEl?.classList[isDarkMode ? 'add' : 'remove']('dark');
 }

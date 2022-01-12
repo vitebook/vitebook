@@ -82,7 +82,7 @@
     "svelte-preprocess-esbuild": "^2.0.0"
   },
   "devDependencies": {
-    "vite": "2.7.1"
+    "vite": "2.6.13"
   },
   "publishConfig": {
     "access": "public"

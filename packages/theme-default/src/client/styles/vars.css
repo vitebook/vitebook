@@ -208,3 +208,13 @@
 .sidebar.__vbk__ {
   --vbk-brand-link-spacing: 0.15rem;
 }
+
+/* Replace Algolia default color */
+:root{
+  --docsearch-primary-color:#610fe6 !important;
+}
+
+html[data-theme=dark] {
+  --docsearch-primary-color:#ffc107 !important;
+}
+/* Algolia End */

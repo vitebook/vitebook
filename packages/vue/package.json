@@ -74,7 +74,7 @@
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
     "svelte": "^3.44.1",
-    "vite": "2.7.1"
+    "vite": "2.6.13"
   },
   "peerDependencies": {
     "@vitebook/client": "0.15.1",
