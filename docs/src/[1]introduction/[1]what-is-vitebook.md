@@ -16,6 +16,11 @@ to provide the same capabilities but in a more laxed, lighter, faster and config
 
 ## Playgrounds
 
+⚠️ If you're checking out the React/Preact/Vue demo, please press the refresh icon in the Stackblitz
+browser (not your actual browser) if you see the message
+`Something unexpected happened while optimizing...`. This is a known issue we'll be resolving soon.
+Thanks!
+
 - [Documentation Site](https://stackblitz.com/github/vitebook/vitebook/tree/main/docs)
 - [Svelte](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/svelte)
 - [Vue](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/vue)
