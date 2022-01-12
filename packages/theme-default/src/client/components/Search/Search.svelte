@@ -63,7 +63,7 @@
     });
   };
 
-  if ($localizedThemeConfig.search) {
+  if ($localizedThemeConfig.search.localSearch) {
     onMount(() => {
       document.addEventListener('keydown', onKeydown);
     });
@@ -73,26 +73,26 @@
     });
   }
 
-  if ($localizedThemeConfig.algolia) {
+  if ($localizedThemeConfig.search.algoliaSearch) {
     onMount(() => {
       let link = document.createElement('link');
       link.setAttribute('rel', 'preconnect');
       link.setAttribute('crossorigin', '');
       link.setAttribute(
         'href',
-        `https://${$localizedThemeConfig.algolia.appId}-dsn.algolia.net`,
+        `https://${$localizedThemeConfig.search.algoliaSearch.appId}-dsn.algolia.net`,
       );
       document.head.appendChild(link);
 
       docsearch({
         container: '#docsearch',
-        ...$localizedThemeConfig.algolia,
+        ...$localizedThemeConfig.search.algoliaSearch,
       });
     });
   }
 </script>
 
-{#if $localizedThemeConfig.search}
+{#if $localizedThemeConfig.search.localSearch}
   <div>
     <button class="Search Search-Button" on:click|stopPropagation={showModel}>
       {@html SearchIcon}
@@ -178,7 +178,7 @@
     on:click|stopPropagation={showModel}
   />
 {/if}
-{#if $localizedThemeConfig.algolia}
+{#if $localizedThemeConfig.search.algoliaSearch}
   <div id="docsearch" />
 {/if}
 

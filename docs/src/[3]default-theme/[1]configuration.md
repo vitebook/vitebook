@@ -900,3 +900,23 @@ theme: {
   }
 }
 ```
+
+## `Search`
+
+`@type NotFoundPageConfig | undefined`
+You can enable local search or Algolia search (Need to apply for [Algolia](https://docsearch.algolia.com/))
+Suggestion: Enable only one item
+
+### localSearch
+
+enable local search
+
+`@type boolean`
+`@default false`
+
+### algoliaSearch
+
+Fill in your Algolia configuration to start the search
+
+`@type` [DocSearchProps](https://docsearch.algolia.com/docs/api)
+`@default false`

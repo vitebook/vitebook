@@ -71,17 +71,8 @@ export type DefaultThemeLocaleData = {
    * Not found page (404) configuration.
    */
   notFoundPage?: NotFoundPageConfig;
-  /**
-   * Enable local search (search directories only).
-   *
-   * @default false
-   */
-  search?: boolean;
-  /**
-   * Enable algolia search.
-   *
-   */
-  algolia?: DocSearchProps | false;
+
+  search?: SearchConfig;
 };
 
 export type SocialsConfig = {
@@ -354,6 +345,20 @@ export type NotFoundPageConfig = {
    * @default 'Go back'
    */
   goBackText?: string;
+};
+
+export type SearchConfig = {
+  /**
+   * Enable local search (search directories only).
+   *
+   * @default false
+   */
+  localSearch?: boolean;
+  /**
+   * Enable algolia search.
+   *
+   */
+  algoliaSearch?: DocSearchProps | false;
 };
 
 export type DefaultThemeLocaleConfig = Record<string, DefaultThemeLocaleData>;
