@@ -6,7 +6,18 @@ import {
 
 export default defineConfig<DefaultThemeConfig>({
   include: ['src/**/*.story.svelte'],
-  plugins: [clientPlugin({ appFile: 'App.svelte' }), defaultThemePlugin()],
+  plugins: [
+    clientPlugin({
+      appFile: 'App.svelte',
+      svelte: {
+        experimental: {
+          // Remove if using `svelte-preprocess`.
+          useVitePreprocess: true,
+        },
+      },
+    }),
+    defaultThemePlugin(),
+  ],
   site: {
     title: 'Vitebook',
     description: 'Blazing fast Storybook alternative.',
