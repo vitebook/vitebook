@@ -7,8 +7,8 @@
   import Enter from ':virtual/vitebook/icons/enter?raw';
   import SearchIcon from ':virtual/vitebook/icons/search?raw';
   import { sidebarItems } from '../sidebar/sidebarItems';
-
   import '@docsearch/css';
+  import { isSidebarMenu } from '../../../shared';
 
   let ref,
     query = '',
@@ -20,7 +20,7 @@
     searchResult = [];
     if (query) {
       $sidebarItems.map((v) => {
-        if (v.text) {
+        if (isSidebarMenu(v)) {
           v.children.map((c) => {
             if (c.text.toLowerCase().indexOf(query) !== -1) {
               let idx = searchResult.find((x) => x.title === v.text);
@@ -34,6 +34,10 @@
               }
             }
           });
+        } else {
+          if (v.text.toLowerCase().indexOf(query) !== -1) {
+            searchResult = [...searchResult, { title: v.text, children: [v] }];
+          }
         }
       });
     } else searchResult = [];
@@ -43,10 +47,7 @@
     if (!ref) return;
     if (e.target === document.body && e.metaKey && e.code === 'KeyK') {
       e.preventDefault();
-      show = true;
-      tick().then(() => {
-        ref.focus();
-      });
+      showModel();
     }
   };
 
@@ -57,6 +58,9 @@
   const showModel = () => {
     searchResult = [];
     show = !show;
+    tick().then(() => {
+      ref.focus();
+    });
   };
 
   if ($localizedThemeConfig.search) {
@@ -118,7 +122,7 @@
           autocapitalize="off"
           enterkeyhint="go"
           spellcheck="false"
-          placeholder="搜索文档"
+          placeholder="Search"
           maxlength="64"
           type="search"
         />
@@ -160,6 +164,11 @@
           </ul>
         </section>
       {/each}
+      {#if searchResult.length <= 0}
+        <div class="DocSearch-StartScreen">
+          <p class="Search-Help">No recent searches</p>
+        </div>
+      {/if}
     </div>
   </div>
 
@@ -353,10 +362,12 @@
     width: 22px;
   }
 
-  .Search-Hit-action + .Search-Hit-action {
-    margin-left: 6px;
+  .Search-Help {
+    font-size: 0.9em;
+    margin: 0;
+    text-align: center;
+    user-select: none;
   }
-
   .Search-Hit-action-button {
     appearance: none;
     background: 0 0;

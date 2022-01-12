@@ -75,6 +75,7 @@ importers:
       just-throttle: ^4.0.1
       kleur: ^4.1.4
       magic-string: ^0.25.7
+      prismjs: ^1.25.0
       svelte: ^3.44.1
       vite: 2.7.1
     dependencies:
@@ -87,6 +88,7 @@ importers:
       just-throttle: 4.0.1
       kleur: 4.1.4
       magic-string: 0.25.7
+      prismjs: 1.25.0
     devDependencies:
       svelte: 3.44.1
       vite: 2.7.1

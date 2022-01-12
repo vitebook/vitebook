@@ -14,7 +14,9 @@ const getCircularReplacer = () => {
 export function stringifyEvent(event: Event | CustomEvent) {
   const o = {};
 
-  const whitelist = new Set<keyof CustomEvent>([
+  const whitelist = new Set<keyof CustomEvent | keyof MouseEvent>([
+    'clientX',
+    'clientY',
     'timeStamp',
     'bubbles',
     'composed',
