@@ -25,6 +25,7 @@ export const autoSidebarItems = derived(
     let items = sidebarItems;
 
     const toPath = (page) => page.rootPath.split('.')[0].split('/').slice(1);
+    const getDir = (page) => page.rootPath.split('/').slice(0, -1).join('/');
 
     for (const page of pages) {
       let path = toPath(page);
@@ -50,18 +51,12 @@ export const autoSidebarItems = derived(
           return;
         }
 
-        const matchingDirAndAlone =
+        const matchesDirNameAndSoloFile =
           i === path.length - 2 &&
           path[i] === path[i + 1] &&
-          !pages.some(
-            (p) =>
-              p !== page &&
-              p.rootPath.startsWith(
-                page.rootPath.split('/').slice(0, -1).join('/'),
-              ),
-          );
+          !pages.some((p) => p !== page && getDir(p) === getDir(page));
 
-        if (matchingDirAndAlone) return;
+        if (matchesDirNameAndSoloFile) return;
 
         const title = toTitleCase(segment);
 
