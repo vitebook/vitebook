@@ -9,8 +9,6 @@ import {
   watchEffect,
 } from 'vue';
 
-let hasMatchedSearchParam = false;
-
 export default defineComponent({
   name: 'Addon',
   props: {
@@ -30,14 +28,13 @@ export default defineComponent({
     });
 
     watchEffect(() => {
-      if (ready.value && !hasMatchedSearchParam) {
+      if (ready.value) {
         const searchParams = new URL(location.href).searchParams;
         const addonParam = searchParams?.get('addon');
         if (addonParam) {
           const addon = get(addons)[addonParam];
           if (addon) {
             addons.setActive(addon);
-            hasMatchedSearchParam = true;
           }
         }
       }

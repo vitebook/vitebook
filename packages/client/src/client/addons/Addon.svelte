@@ -1,7 +1,3 @@
-<script context="module">
-  let hasMatchedSearchParam = false;
-</script>
-
 <script>
   import { onMount } from 'svelte';
   import { addons, getAddonPortalId } from './addons';
@@ -19,15 +15,12 @@
   }
 
   onMount(() => {
-    if (!hasMatchedSearchParam) {
-      const searchParams = new URL(location.href).searchParams;
-      const addonParam = searchParams?.get('addon');
-      if (addonParam) {
-        const addon = $addons[addonParam];
-        if (addon) {
-          addons.setActive(addon);
-          hasMatchedSearchParam = true;
-        }
+    const searchParams = new URL(location.href).searchParams;
+    const addonParam = searchParams?.get('addon');
+    if (addonParam) {
+      const addon = $addons[addonParam];
+      if (addon) {
+        addons.setActive(addon);
       }
     }
 

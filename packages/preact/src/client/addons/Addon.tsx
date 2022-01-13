@@ -10,8 +10,6 @@ export type AddonProps = {
   children: ComponentChildren;
 };
 
-let hasMatchedSearchParam = false;
-
 function Addon({ title, icon, children }: AddonProps) {
   const addon = useRef<AddonEntry>();
   const [ready, setReady] = useState(false);
@@ -31,14 +29,13 @@ function Addon({ title, icon, children }: AddonProps) {
   });
 
   useEffect(() => {
-    if (ready && !hasMatchedSearchParam) {
+    if (ready) {
       const searchParams = new URL(location.href).searchParams;
       const addonParam = searchParams?.get('addon');
       if (addonParam) {
         const addon = get(addons)[addonParam];
         if (addon) {
           addons.setActive(addon);
-          hasMatchedSearchParam = true;
         }
       }
     }
