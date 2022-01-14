@@ -1,3 +1,10 @@
+# [0.18.0](https://github.com/vitebook/vitebook/compare/v0.17.0...v0.18.0) (2022-01-14)
+
+### Features
+
+- **client:** allow `eventCallback` whitelist to be extended ([1f0ea35](https://github.com/vitebook/vitebook/commit/1f0ea35e2abebaa4fbb966d7d3cf7c5aaf65fed1))
+- **theme-default:** add event output syntax highlighting in addon ([835a332](https://github.com/vitebook/vitebook/commit/835a332e1f85268f21b1889125d6a5b36c390138))
+
 # [0.17.0](https://github.com/vitebook/vitebook/compare/v0.16.2...v0.17.0) (2022-01-14)
 
 ### Bug Fixes
