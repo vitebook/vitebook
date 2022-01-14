@@ -1,3 +1,14 @@
+# [0.17.0](https://github.com/vitebook/vitebook/compare/v0.16.2...v0.17.0) (2022-01-14)
+
+### Bug Fixes
+
+- story hmr closing addons panel ([39d216f](https://github.com/vitebook/vitebook/commit/39d216f7cf9455c1ea43b454c39559ae9c7f3e2a))
+- **theme-default:** file matching dir name matching failing ([e60c7e6](https://github.com/vitebook/vitebook/commit/e60c7e696d2372d26804f09aeed87d34e7d4ca2f))
+
+### Features
+
+- **theme-default:** save active addon panel to local storage ([8b5b927](https://github.com/vitebook/vitebook/commit/8b5b9276cf84352faab1b1c2bb2eeac89869152e))
+
 ## [0.16.2](https://github.com/vitebook/vitebook/compare/v0.16.1...v0.16.2) (2022-01-11)
 
 ### Bug Fixes
