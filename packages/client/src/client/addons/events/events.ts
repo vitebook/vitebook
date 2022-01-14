@@ -6,8 +6,12 @@ import { stringifyEvent } from './stringifyEvent';
 
 export const events = writable<Events>([]);
 
+/**
+ * @param event - The event to be logged.
+ * @param whitelist - Event properties that can be included in the event log output.
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function eventCallback(event: any) {
+export function eventCallback(event: any, whitelist: string[] = []) {
   window.requestAnimationFrame(() => {
     events.update(($events) => {
       let stringifiedEvent;
@@ -16,7 +20,10 @@ export function eventCallback(event: any) {
         id: Symbol(),
         ref: event,
         stringify: () => {
-          return stringifiedEvent ?? (stringifiedEvent = stringifyEvent(event));
+          return (
+            stringifiedEvent ??
+            (stringifiedEvent = stringifyEvent(event, whitelist))
+          );
         },
       });
 

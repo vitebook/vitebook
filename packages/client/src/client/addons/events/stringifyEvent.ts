@@ -1,4 +1,4 @@
-const getCircularReplacer = () => {
+function getCircularReplacer() {
   const seen = new WeakSet();
   return (key, value) => {
     if (typeof value === 'object' && value !== null) {
@@ -9,12 +9,15 @@ const getCircularReplacer = () => {
     }
     return value;
   };
-};
+}
 
-export function stringifyEvent(event: Event | CustomEvent) {
+export function stringifyEvent(
+  event: Event | CustomEvent,
+  extendedWhitelist: string[] = [],
+) {
   const o = {};
 
-  const whitelist = new Set<keyof CustomEvent>([
+  const whitelist = new Set([
     'timeStamp',
     'bubbles',
     'composed',
@@ -22,6 +25,7 @@ export function stringifyEvent(event: Event | CustomEvent) {
     'CAPTURING_PHASE',
     'BUBBLING_PHASE',
     'target',
+    ...extendedWhitelist,
   ]);
 
   whitelist.forEach((prop) => {
