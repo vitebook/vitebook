@@ -81,8 +81,7 @@
     "just-debounce-it": "^3.0.1",
     "just-throttle": "^4.0.1",
     "kleur": "^4.1.4",
-    "magic-string": "^0.25.7",
-    "prismjs": "^1.25.0"
+    "magic-string": "^0.25.7"
   },
   "devDependencies": {
     "svelte": "^3.44.1",
