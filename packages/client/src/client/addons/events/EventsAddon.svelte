@@ -6,7 +6,7 @@
   import { events } from './events';
   import { onDestroy } from 'svelte';
 
-  import Prism from 'prismjs';
+  import * as Prism from 'prismjs';
 
   export let title = 'Events';
   export let icon = undefined;
