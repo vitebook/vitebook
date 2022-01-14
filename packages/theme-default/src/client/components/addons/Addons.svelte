@@ -8,6 +8,8 @@
     getAddonSSRMarker,
   } from '@vitebook/client/addons';
   import { onMount } from 'svelte';
+  import { currentRoute } from '@vitebook/client';
+  import { get } from 'svelte/store';
 
   let contentRef = null;
   let initialClientY = 0;
@@ -19,14 +21,17 @@
 
   const iconCache = new Map();
 
+  let mounted = false;
   onMount(() => {
     if (hasActiveAddon) contentYTranslation = 50;
 
     tick().then(() => {
       addons.ready.set(true);
+      mounted = true;
     });
 
     return () => {
+      mounted = false;
       addons.ready.set(false);
       iconCache.clear();
     };
@@ -65,14 +70,20 @@
     return `vbk-addons-tab-panel-${title.toLowerCase()}`;
   }
 
+  function updateAddonStorage(addon) {
+    window?.localStorage.setItem('@vitebook/addon', addon?.id ?? '');
+  }
+
   function onSelectAddon(addon) {
     if ($addons[addon?.id]?.active) {
       addons.setActive(null);
       contentYTranslation = 100;
+      updateAddonStorage(null);
       return;
     }
 
     addons.setActive(addon);
+    updateAddonStorage(addon);
 
     if (contentYTranslation === 100) {
       contentYTranslation = prevContentYTranslation;
@@ -113,6 +124,7 @@
 
           if (threshold === 100) {
             addons.setActive(null);
+            updateAddonStorage(null);
             prevContentYTranslation = 50;
           } else {
             prevContentYTranslation = threshold;
@@ -153,6 +165,17 @@
 
   $: activeAddon = Object.values($addons).find((addon) => addon.active);
   $: hasActiveAddon = !!activeAddon;
+
+  $: if ($currentRoute && mounted) {
+    tick().then(() => {
+      const prevActiveAddonId = window?.localStorage.getItem('@vitebook/addon');
+      const addon = Object.values(get(addons)).find(
+        (a) => a.id === prevActiveAddonId,
+      );
+      updateAddonStorage(addon);
+      addons.setActive(addon ?? null);
+    });
+  }
 </script>
 
 <svelte:body
