@@ -1,3 +1,9 @@
+## [0.18.1](https://github.com/vitebook/vitebook/compare/v0.18.0...v0.18.1) (2022-01-14)
+
+### Bug Fixes
+
+- **client:** prism does not export correctly when bundled ([cfe6524](https://github.com/vitebook/vitebook/commit/cfe6524d810e706c549d4a3ac7d5be62d8f8b062))
+
 # [0.18.0](https://github.com/vitebook/vitebook/compare/v0.17.0...v0.18.0) (2022-01-14)
 
 ### Features

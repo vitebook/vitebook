@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/preact",
-  "version": "0.18.0",
+  "version": "0.18.1",
   "keywords": [
     "esm",
     "plugin",
@@ -85,8 +85,8 @@
     "vite": "2.7.1"
   },
   "peerDependencies": {
-    "@vitebook/client": "0.18.0",
-    "@vitebook/core": "0.18.0",
+    "@vitebook/client": "0.18.1",
+    "@vitebook/core": "0.18.1",
     "preact": "^10.5.14"
   },
   "publishConfig": {
