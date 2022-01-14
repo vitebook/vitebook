@@ -14,6 +14,8 @@ export type VitebookIcon =
   | 'external-link'
   | 'theme-switch-light'
   | 'theme-switch-dark'
+  | 'enter'
+  | 'search'
   | `home-feature-${number}`
   | `brand-${string}`
   | `sidebar-file-${string}`

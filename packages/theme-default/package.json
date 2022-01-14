@@ -61,6 +61,9 @@
     "watch:copy": "pnpm copy:client -- --watch"
   },
   "dependencies": {
+    "@docsearch/css": "^3.0.0-alpha.42",
+    "@docsearch/js": "^3.0.0-alpha.42",
+    "@docsearch/react": "^3.0.0-alpha.42",
     "kleur": "^4.1.4"
   },
   "devDependencies": {

@@ -18,6 +18,7 @@
   import { darkMode, useDarkMode } from '../stores/darkMode';
   import { isLargeScreen } from '../stores/isLargeScreen';
   import { localizedThemeConfig } from '../stores/localizedThemeConfig';
+  import Search from '../components/Search/Search.svelte'
   import Page from './Page.svelte';
 
   if (import.meta.env.SSR) {
@@ -139,6 +140,7 @@
         <div style="flex-grow: 1;" />
         <VariantsMenu />
         <div style="flex-grow: 1;" />
+        <Search />
       </div>
     {/if}
 

@@ -1,3 +1,5 @@
+import type { DocSearchProps } from '@docsearch/react';
+
 import type { NavbarItemsConfig } from './NavbarItemsConfig';
 import type {
   MultiSidebarItemsConfig,
@@ -69,6 +71,8 @@ export type DefaultThemeLocaleData = {
    * Not found page (404) configuration.
    */
   notFoundPage?: NotFoundPageConfig;
+
+  search?: SearchConfig;
 };
 
 export type SocialsConfig = {
@@ -343,6 +347,20 @@ export type NotFoundPageConfig = {
   goBackText?: string;
 };
 
+export type SearchConfig = {
+  /**
+   * Enable local search (search directories only).
+   *
+   * @default false
+   */
+  localSearch?: boolean;
+  /**
+   * Enable algolia search.
+   *
+   */
+  algoliaSearch?: DocSearchProps | false;
+};
+
 export type DefaultThemeLocaleConfig = Record<string, DefaultThemeLocaleData>;
 
 export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
@@ -401,4 +419,8 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
     goHomeText: 'Take me home',
     goBackText: 'Go back',
   },
+
+  search: false,
+
+  algolia: false,
 };
