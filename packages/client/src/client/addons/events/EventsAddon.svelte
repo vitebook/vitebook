@@ -6,6 +6,8 @@
   import { events } from './events';
   import { onDestroy } from 'svelte';
 
+  import { highlight, languages } from 'prismjs';
+
   export let title = 'Events';
   export let icon = undefined;
 
@@ -21,6 +23,10 @@
   function openEvent(event) {
     const isOpen = open[event.id] ?? false;
     open = { ...open, [event.id]: !isOpen };
+  }
+
+  function getHighlighted(code) {
+    return highlight(code, languages.javascript, 'javascript');
   }
 
   onDestroy(() => {
@@ -67,7 +73,7 @@
         <pre class:open={open[event.id]}>
         <code>
           {#if open}
-              {event.stringify()}
+              {@html getHighlighted(event.stringify())}
             {/if}
         </code>
       </pre>

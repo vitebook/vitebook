@@ -22,8 +22,6 @@ export function stringifyEvent(
     'bubbles',
     'composed',
     'isTrusted',
-    'CAPTURING_PHASE',
-    'BUBBLING_PHASE',
     'target',
     ...extendedWhitelist,
   ]);
