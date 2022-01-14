@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/client",
-  "version": "0.18.1",
+  "version": "0.18.2",
   "keywords": [
     "client",
     "esm",
@@ -76,7 +76,7 @@
     "@ampproject/remapping": "^1.0.1",
     "@rollup/pluginutils": "^4.1.1",
     "@sveltejs/vite-plugin-svelte": "1.0.0-next.31",
-    "@vitebook/core": "0.18.1",
+    "@vitebook/core": "0.18.2",
     "esbuild": "^0.12.24",
     "just-debounce-it": "^3.0.1",
     "just-throttle": "^4.0.1",
