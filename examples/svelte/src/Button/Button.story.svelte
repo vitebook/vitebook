@@ -38,12 +38,12 @@
 </Variant>
 
 <ControlsAddon>
-  <div>
-    Title: <input type="text" bind:value={title} />
-  </div>
-  <div style="margin-top: 24px;">
-    Disabled: <input type="checkbox" bind:checked={disabled} />
-  </div>
+  <label>
+    Title <input type="text" bind:value={title} />
+  </label>
+  <label style="margin-top: 24px;">
+    Disabled <input type="checkbox" bind:checked={disabled} />
+  </label>
 </ControlsAddon>
 
 <EventsAddon />

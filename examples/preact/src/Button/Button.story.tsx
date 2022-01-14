@@ -40,22 +40,22 @@ function ButtonStory() {
       </Variant>
 
       <ControlsAddon>
-        <div>
-          Title:{' '}
+        <label>
+          Title
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target?.value)}
           />
-        </div>
-        <div style={{ marginTop: '24px' }}>
-          Disabled:{' '}
+        </label>
+        <label style={{ marginTop: '24px' }}>
+          Disabled
           <input
             type="checkbox"
             checked={disabled}
             onChange={(e) => setDisabled(e.target?.checked)}
           />
-        </div>
+        </label>
       </ControlsAddon>
 
       <EventsAddon />

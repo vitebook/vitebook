@@ -39,10 +39,10 @@
 
 <ControlsAddon>
   <div>
-    Title: <input type="text" bind:value={title} />
+    Title <input type="text" bind:value={title} />
   </div>
   <div class="mt-6">
-    Disabled: <input type="checkbox" bind:checked={disabled} />
+    Disabled <input type="checkbox" bind:checked={disabled} />
   </div>
 </ControlsAddon>
 

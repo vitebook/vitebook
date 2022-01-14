@@ -45,10 +45,10 @@ function onExitDisabledButton() {
   </Variant>
 
   <ControlsAddon>
-    <div>Title: <input type="text" v-model="title" /></div>
-    <div style="margin-top: 24px">
-      Disabled: <input type="checkbox" v-model="disabled" />
-    </div>
+    <label>Title <input type="text" v-model="title" /></label>
+    <label style="margin-top: 24px">
+      Disabled <input type="checkbox" v-model="disabled" />
+    </label>
   </ControlsAddon>
 
   <EventsAddon />

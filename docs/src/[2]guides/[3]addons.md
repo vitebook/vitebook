@@ -96,7 +96,7 @@ import CustomAddonIcon from './custom-addon-icon.svg?raw';
 <Tabs values={frameworks} groupId="jsFramework">
 <TabPanel value="Preact">
 
-```tsx {5,15-28}
+```tsx {5,15-32}
 // FILE: Button.story.tsx
 import { useState } from 'preact/hooks';
 
@@ -112,18 +112,22 @@ function ButtonStory() {
       <Button disabled={disabled}>{title}</Button>
 
       <ControlsAddon>
-        Title
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        Disabled
-        <input
-          type="checkbox"
-          checked={disabled}
-          onChange={(e) => setDisabled(e.target.checked)}
-        />
+        <label>
+          Title
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </label>
+        <label>
+          Disabled
+          <input
+            type="checkbox"
+            checked={disabled}
+            onChange={(e) => setDisabled(e.target.checked)}
+          />
+        </label>
       </ControlsAddon>
     </>
   );
@@ -153,12 +157,12 @@ let props = {
 <Button {...props} />
 
 <ControlsAddon>
-  <div>
+  <label>
     Title <input type="text" bind\:value={props.title} />
-  </div>
-  <div>
+  </label>
+  <label>
     Disabled <input type="checkbox" bind\:checked={props.disabled} />
-  </div>
+  </label>
 </ControlsAddon>
 ```
 
@@ -182,8 +186,8 @@ const disabled = ref(false);
   <Button :disabled="disabled">{{ title }}</Button>
 
   <ControlsAddon>
-    <div>Title <input type="text" v-model="title" /></div>
-    <div>Disabled <input type="checkbox" v-model="disabled" /></div>
+    <label>Title <input type="text" v-model="title" /></label>
+    <label>Disabled <input type="checkbox" v-model="disabled" /></label>
   </ControlsAddon>
 </template>
 ```
