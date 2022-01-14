@@ -1,3 +1,9 @@
+## [0.18.3](https://github.com/vitebook/vitebook/compare/v0.18.2...v0.18.3) (2022-01-14)
+
+### Bug Fixes
+
+- give up on prismjs for now -\_- ([c84e0c2](https://github.com/vitebook/vitebook/commit/c84e0c201be518b6fde71048363fa13f926f6178))
+
 ## [0.18.2](https://github.com/vitebook/vitebook/compare/v0.18.1...v0.18.2) (2022-01-14)
 
 ### Bug Fixes
