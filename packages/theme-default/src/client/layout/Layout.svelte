@@ -45,6 +45,8 @@
   let hasMounted = false;
 
   $: noNavbar = $localizedThemeConfig.navbar === false;
+  $: noVariantsMenu = $localizedThemeConfig.variantsMenuEnable === false;
+  $: noDirectory = $localizedThemeConfig.directoryEnable === false;
   $: isMarkdownPage = $currentPage?.type?.endsWith('md');
   $: hasVariants = Object.values($variants).length > 0;
   $: showPreviewTopBar = hasVariants;
@@ -137,7 +139,9 @@
     {#if showPreviewTopBar}
       <div class="preview__top-bar">
         <div style="flex-grow: 1;" />
-        <VariantsMenu />
+        {#if !noVariantsMenu}
+          <VariantsMenu />
+        {/if}
         <div style="flex-grow: 1;" />
       </div>
     {/if}
@@ -173,6 +177,11 @@
             <slot name="addons-end" />
           </svelte:fragment>
         </svelte:component>
+      {/await}
+    {/if}
+    {#if !isMarkdownPage && !noDirectory}
+      {#await import('@vitebook/client/addons/directory/DirectoryAddon.svelte') then Directory}
+        <svelte:component this={Directory.default} />
       {/await}
     {/if}
   </slot>

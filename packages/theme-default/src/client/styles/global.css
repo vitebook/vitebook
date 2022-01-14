@@ -344,3 +344,24 @@ blockquote.__vbk__ {
 blockquote.__vbk__ > p.__vbk__ {
   margin: 0;
 }
+
+/**-------------------------------------------------------------------------------------------
+ * scrollbar
+ *-------------------------------------------------------------------------------------------*/
+
+.__vbk__::-webkit-scrollbar {
+  width: 6px;
+}
+
+.__vbk__::-webkit-scrollbar-thumb {
+  background-color: rgba(69,90,100,.2);
+  border-radius: 10px;
+  transition: all .2s ease-in-out;
+}
+.dark .__vbk__::-webkit-scrollbar-thumb {
+  background-color: #525659;
+}
+
+.__vbk__::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
