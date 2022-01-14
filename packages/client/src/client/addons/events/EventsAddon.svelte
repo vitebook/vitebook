@@ -6,7 +6,7 @@
   import { events } from './events';
   import { onDestroy } from 'svelte';
 
-  import { highlight, languages } from 'prismjs';
+  import Prism from 'prismjs';
 
   export let title = 'Events';
   export let icon = undefined;
@@ -26,7 +26,7 @@
   }
 
   function getHighlighted(code) {
-    return highlight(code, languages.javascript, 'javascript');
+    return Prism.highlight(code, Prism.languages.javascript, 'javascript');
   }
 
   onDestroy(() => {
