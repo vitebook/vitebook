@@ -169,14 +169,13 @@ function startWatchingPages(app: App, server: ViteDevServer) {
 
   type ChangedFiles = {
     filePaths: string | string[];
-    action: 'add' | 'change' | 'unlink';
+    action: 'add' | 'unlink';
   };
 
   let pendingChanges: ChangedFiles[] = [];
+  let hasUnlinkedFile = false;
 
   const resolveNewPages = debounce(async () => {
-    // const prevNoOfPages = app.pages.length;
-
     groupPendingChanges();
 
     for (const { filePaths, action } of pendingChanges) {
@@ -192,13 +191,15 @@ function startWatchingPages(app: App, server: ViteDevServer) {
     pageChangesPending = undefined;
     resolvePendingChanges = undefined;
 
-    // Need to emit all changes to ensure pages is hot updated on the client, so current page meta
-    // is also hot updated.
-    server.watcher.emit('change', virtualModuleRequestPath.pages);
+    if (hasUnlinkedFile) {
+      server.ws.send({ type: 'full-reload' });
+    } else {
+      // Need to emit all changes to ensure pages is hot updated on the client, so current page meta
+      // is also hot updated.
+      server.watcher.emit('change', virtualModuleRequestPath.pages);
+    }
 
-    // Server is not aware of new pages being added.
-    // if (app.pages.length > prevNoOfPages) {
-    // }
+    hasUnlinkedFile = false;
   }, 300);
 
   async function handleChange(changedFiles: ChangedFiles): Promise<void> {
@@ -208,6 +209,10 @@ function startWatchingPages(app: App, server: ViteDevServer) {
       });
     }
 
+    if (!hasUnlinkedFile) {
+      hasUnlinkedFile = changedFiles.action === 'unlink';
+    }
+
     pendingChanges.push(changedFiles);
     resolveNewPages();
   }
@@ -215,9 +220,6 @@ function startWatchingPages(app: App, server: ViteDevServer) {
   watcher
     .on('add', (filePath) =>
       handleChange({ filePaths: filePath, action: 'add' }),
-    )
-    .on('change', (filePath) =>
-      handleChange({ filePaths: filePath, action: 'change' }),
     )
     .on('unlink', (filePath) =>
       handleChange({ filePaths: filePath, action: 'unlink' }),

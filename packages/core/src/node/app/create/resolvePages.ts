@@ -25,7 +25,7 @@ export function resolvePageFilePaths(app: App): string[] {
 
 export async function resolvePages(
   app: App,
-  action: 'add' | 'change' | 'unlink',
+  action: 'add' | 'unlink',
   changed?: string[],
 ): Promise<void> {
   const filePaths = changed ?? resolvePageFilePaths(app);
