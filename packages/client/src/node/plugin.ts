@@ -212,6 +212,9 @@ export function clientPlugin(
               [VIRTUAL_APP_ID]: VIRTUAL_APP_REQUEST_PATH,
             },
           },
+          optimizeDeps: {
+            include: ['just-throttle', 'just-debounce-it'],
+          },
         };
       },
       resolvePage({ filePath }) {
