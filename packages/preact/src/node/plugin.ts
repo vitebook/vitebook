@@ -77,7 +77,12 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
             jsxFragment: 'Fragment',
           },
           optimizeDeps: {
-            include: ['preact/jsx-runtime'],
+            include: [
+              'preact',
+              'preact/hooks',
+              'preact/compat',
+              'preact/jsx-runtime',
+            ],
           },
         };
       },
