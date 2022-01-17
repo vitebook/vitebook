@@ -1,3 +1,9 @@
+## [0.19.1](https://github.com/vitebook/vitebook/compare/v0.19.0...v0.19.1) (2022-01-17)
+
+### Bug Fixes
+
+- **preact:** simplify dep optimization due to breaking dev env ([3d0fd84](https://github.com/vitebook/vitebook/commit/3d0fd8424d1151e9a2251bd9e90b4c7d060239b7))
+
 # [0.19.0](https://github.com/vitebook/vitebook/compare/v0.18.6...v0.19.0) (2022-01-17)
 
 ### Features
