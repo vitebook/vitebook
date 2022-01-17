@@ -70,7 +70,16 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
             alias: {
               [VIRTUAL_APP_ID]: VIRTUAL_APP_REQUEST_PATH,
             },
-            dedupe: ['preact'],
+            dedupe: [
+              'preact',
+              'preact/debug',
+              'preact/devtools',
+              'preact/hooks',
+              'preact/jsx-runtime',
+              '@prefresh/core',
+              '@prefresh/vite',
+              '@prefresh/utils',
+            ],
           },
           esbuild: {
             jsxFactory: 'h',
@@ -79,9 +88,13 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
           optimizeDeps: {
             include: [
               'preact',
+              'preact/debug',
+              'preact/devtools',
               'preact/hooks',
-              'preact/compat',
               'preact/jsx-runtime',
+              '@prefresh/core',
+              '@prefresh/vite',
+              '@prefresh/utils',
             ],
           },
         };
