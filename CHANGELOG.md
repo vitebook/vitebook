@@ -1,3 +1,9 @@
+## [0.18.6](https://github.com/vitebook/vitebook/compare/v0.18.5...v0.18.6) (2022-01-17)
+
+### Bug Fixes
+
+- **theme-default:** flex addon portal and set direction to column ([08b11d9](https://github.com/vitebook/vitebook/commit/08b11d9c8a68855c87cfb0090ad5d3005d7adbd7))
+
 ## [0.18.5](https://github.com/vitebook/vitebook/compare/v0.18.4...v0.18.5) (2022-01-17)
 
 ### Bug Fixes
