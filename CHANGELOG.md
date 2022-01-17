@@ -1,3 +1,9 @@
+## [0.18.5](https://github.com/vitebook/vitebook/compare/v0.18.4...v0.18.5) (2022-01-17)
+
+### Bug Fixes
+
+- **preact:** include missing `preact/*` deps from vite optmization ([e6b9b33](https://github.com/vitebook/vitebook/commit/e6b9b33ffd8237b8e111cfe231b5d206b293d38d))
+
 ## [0.18.4](https://github.com/vitebook/vitebook/compare/v0.18.3...v0.18.4) (2022-01-17)
 
 ### Bug Fixes

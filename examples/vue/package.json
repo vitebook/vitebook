@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/example-vue",
-  "version": "0.18.4",
+  "version": "0.18.5",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,12 +13,12 @@
     "vue": "^3.0.0"
   },
   "devDependencies": {
-    "@vitebook/client": "0.18.4",
-    "@vitebook/core": "0.18.4",
-    "@vitebook/markdown-shiki": "0.18.4",
-    "@vitebook/markdown-vue": "0.18.4",
-    "@vitebook/theme-default": "0.18.4",
-    "@vitebook/vue": "0.18.4",
+    "@vitebook/client": "0.18.5",
+    "@vitebook/core": "0.18.5",
+    "@vitebook/markdown-shiki": "0.18.5",
+    "@vitebook/markdown-vue": "0.18.5",
+    "@vitebook/theme-default": "0.18.5",
+    "@vitebook/vue": "0.18.5",
     "@vue/compiler-sfc": "^3.2.26",
     "svelte": "^3.43.1"
   },
