@@ -1,3 +1,10 @@
+## [0.18.4](https://github.com/vitebook/vitebook/compare/v0.18.3...v0.18.4) (2022-01-17)
+
+### Bug Fixes
+
+- **client:** include throttle/debounce deps in vite optimization ([7055c73](https://github.com/vitebook/vitebook/commit/7055c738d66ab83b137244b63a66f74c222413f8))
+- **core:** improve handling of unlinked pages ([9275473](https://github.com/vitebook/vitebook/commit/92754737ad5b4311e1e6577152320702e14dddc3))
+
 ## [0.18.3](https://github.com/vitebook/vitebook/compare/v0.18.2...v0.18.3) (2022-01-14)
 
 ### Bug Fixes
