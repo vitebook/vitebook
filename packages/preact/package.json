@@ -71,12 +71,12 @@
   },
   "dependencies": {
     "@babel/core": "^7.16.7",
-    "@preact/preset-vite": "^2.1.5",
+    "@preact/preset-vite": "2.1.7",
     "kleur": "^4.1.4",
     "preact-render-to-string": "^5.1.19"
   },
   "devDependencies": {
-    "@prefresh/vite": "2.2.4",
+    "@prefresh/vite": "2.2.6",
     "@rollup/pluginutils": "^4.1.1",
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
