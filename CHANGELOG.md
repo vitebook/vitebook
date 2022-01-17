@@ -1,3 +1,9 @@
+## [0.19.3](https://github.com/vitebook/vitebook/compare/v0.19.2...v0.19.3) (2022-01-17)
+
+### Bug Fixes
+
+- **preact:** revert 3d0fd8424d1151e9a2251bd9e90b4c7d060239b7 ([76d1cda](https://github.com/vitebook/vitebook/commit/76d1cda72472b5ef57eb31b1de0ea94dc3123fa2))
+
 ## [0.19.2](https://github.com/vitebook/vitebook/compare/v0.19.1...v0.19.2) (2022-01-17)
 
 ### Bug Fixes
