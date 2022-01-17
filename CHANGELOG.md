@@ -1,3 +1,9 @@
+# [0.19.0](https://github.com/vitebook/vitebook/compare/v0.18.6...v0.19.0) (2022-01-17)
+
+### Features
+
+- **preact:** bump `@preact/preset-vite` from `2.1.5` to `2.1.7` ([80b0aaa](https://github.com/vitebook/vitebook/commit/80b0aaaaa1679c214bb11caf6deccedab1ab1210))
+
 ## [0.18.6](https://github.com/vitebook/vitebook/compare/v0.18.5...v0.18.6) (2022-01-17)
 
 ### Bug Fixes
