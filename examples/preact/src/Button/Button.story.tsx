@@ -30,10 +30,10 @@ function ButtonStory() {
         name="Disabled"
         description="The disabled button."
         onEnter={() => {
-          disabled = true;
+          setDisabled(true);
         }}
         onExit={() => {
-          disabled = false;
+          setDisabled(false);
         }}
       >
         <Button disabled={disabled}>{title}</Button>
