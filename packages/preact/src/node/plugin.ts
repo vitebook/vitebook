@@ -72,6 +72,10 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
             },
             dedupe: [
               'preact',
+              'preact/debug',
+              'preact/devtools',
+              'preact/hooks',
+              'preact/jsx-runtime',
               '@prefresh/core',
               '@prefresh/vite',
               '@prefresh/utils',
@@ -82,8 +86,12 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
             jsxFragment: 'Fragment',
           },
           optimizeDeps: {
-            exclude: [
+            include: [
               'preact',
+              'preact/debug',
+              'preact/devtools',
+              'preact/hooks',
+              'preact/jsx-runtime',
               '@prefresh/core',
               '@prefresh/vite',
               '@prefresh/utils',
