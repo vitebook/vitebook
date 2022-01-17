@@ -16,6 +16,9 @@ to provide the same capabilities but in a more laxed, lighter, faster and config
 
 ## Playgrounds
 
+⚠️ The Preact/React playgrounds are currently not working on Stackblitz. Prefer cloning the
+[repository][vitebook-gh], then running from the root `cd examples/preact && npm install && npm run vitebook:dev`.
+
 - [Documentation Site](https://stackblitz.com/github/vitebook/vitebook/tree/main/docs)
 - [Svelte](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/svelte)
 - [Vue](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/vue)
