@@ -1,3 +1,9 @@
+## [0.19.2](https://github.com/vitebook/vitebook/compare/v0.19.1...v0.19.2) (2022-01-17)
+
+### Bug Fixes
+
+- **preact:** include few preact required vite optimizations ([216ace8](https://github.com/vitebook/vitebook/commit/216ace8697c93ab0de29ad6c1b000a32386147c3))
+
 ## [0.19.1](https://github.com/vitebook/vitebook/compare/v0.19.0...v0.19.1) (2022-01-17)
 
 ### Bug Fixes
