@@ -316,6 +316,11 @@
     display: none;
   }
 
+  .addons__panel > div {
+    display: flex;
+    flex-direction: column;
+  }
+
   .addons__tab__tooltip {
     display: none;
   }
