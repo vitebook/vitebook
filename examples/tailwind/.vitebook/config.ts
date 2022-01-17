@@ -6,6 +6,11 @@ import {
 
 export default defineConfig<DefaultThemeConfig>({
   include: ['src/**/*.story.svelte'],
+  vite: {
+    optimizeDeps: {
+      include: ['clsx'],
+    },
+  },
   plugins: [
     clientPlugin({
       appFile: 'App.svelte',
