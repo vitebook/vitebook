@@ -9,8 +9,10 @@ export default defineConfig(/** __GENERICS__ */)({
       appFile: 'App.svelte',
       svelte: {
         extensions: ['.svelte', '.md'],
-        // Remove if using `svelte-preprocess`.
-        useVitePreprocess: true,
+        experimental: {
+          // Remove if using `svelte-preprocess`.
+          useVitePreprocess: true,
+        },
       },
     }) /** __PLUGINS__ */,
   ],
