@@ -1,3 +1,7 @@
+## <small>0.19.4 (2022-01-20)</small>
+
+- fix(create): `useVitePreprocess` configured incorrectly ([5dd1cbc](https://github.com/vitebook/vitebook/commit/5dd1cbc))
+
 ## [0.19.3](https://github.com/vitebook/vitebook/compare/v0.19.2...v0.19.3) (2022-01-17)
 
 ### Bug Fixes
