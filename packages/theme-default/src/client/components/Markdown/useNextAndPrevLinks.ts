@@ -7,8 +7,8 @@ import { derived, Readable } from 'svelte/store';
 
 import type { SidebarLink } from '../../../shared';
 import { localizedThemeConfig } from '../../stores/localizedThemeConfig';
-import { flattenSidebarLinks } from '../sidebar/flattenSidebarLinks';
-import { sidebarItems } from '../sidebar/sidebarItems';
+import { flattenSidebarLinks } from '../Sidebar/flattenSidebarLinks';
+import { sidebarItems } from '../Sidebar/sidebarItems';
 
 const candidates = derived(sidebarItems, (items) =>
   isArray(items) ? flattenSidebarLinks(items) : [],
