@@ -16,6 +16,7 @@
   let open = false;
 
   let showingTooltipFor;
+  let client = {};
   let showingTooltipForTimer;
 
   $: variations = Object.values($variants);
@@ -110,7 +111,8 @@
           <button
             class="variants__menu-item__button"
             aria-describedby={`variant-tooltip-${variant.name}`}
-            on:pointerenter={() => {
+            on:pointerenter={(e) => {
+              client = { clientX: e.clientX, clientY: e.clientY };
               showingTooltipForTimer = setTimeout(() => {
                 showingTooltipFor = variant;
               }, 1000);
@@ -129,6 +131,7 @@
             <div
               id={`variant-tooltip-${variant.name}`}
               class="variants__menu-item__tooltip"
+              style={`left: ${client.clientX}px;top:${client.clientY}px`}
               role="tooltip"
               aria-hidden={showingTooltipFor !== variant ? 'true' : undefined}
             >
@@ -176,8 +179,7 @@
     position: absolute;
     top: 100%;
     right: 1rem;
-    padding: 0.8rem;
-    padding-bottom: 1rem;
+    padding: 0.8rem 0.8rem 1rem;
     margin: 0;
     opacity: 0;
     list-style: none;
@@ -186,9 +188,12 @@
     border-radius: 0.15rem;
     box-shadow: var(--vbk--elevation-medium);
     min-width: 10rem;
-    border: var(--vbk--menu-border);
+    /*border: var(--vbk--menu-border);*/
     background-color: var(--vbk--menu-bg-color);
     transition: var(--vbk--menu-transition);
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 80vh;
   }
 
   .variants__menu[aria-expanded='true'] {
@@ -221,10 +226,10 @@
     display: none;
     align-items: center;
     justify-content: center;
-    position: absolute;
+    position: fixed;
     padding: 0 0.5rem;
-    top: 0.5rem;
-    left: calc(100% + 0.25rem);
+    /*top: 0.5rem;*/
+    /*left: calc(100% + 0.25rem);*/
     min-width: 150px;
     max-width: 200px;
     font-size: 0.75rem;

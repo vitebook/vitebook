@@ -56,6 +56,14 @@ export type DefaultThemeLocaleData = {
    */
   sidebar?: SidebarConfig;
   /**
+   * VariantsMenu configuration.
+   */
+  variantsMenuEnable?: boolean;
+  /**
+   * DirectoryMenu configuration.
+   */
+  directoryEnable?: boolean;
+  /**
    * Markdown documentation configuration.
    */
   markdown?: MarkdownConfig;
@@ -375,6 +383,10 @@ export const defaultThemeLocaleOptions: Required<DefaultThemeLocaleData> = {
     backToMainMenuText: 'Back to main menu',
     toggleAriaLabel: 'Toggle sidebar menu',
   },
+
+  variantsMenuEnable: true,
+
+  directoryEnable: false,
 
   markdown: {
     toc: false,

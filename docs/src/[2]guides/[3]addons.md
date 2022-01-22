@@ -265,3 +265,29 @@ import { eventCallback, EventsAddon } from '@vitebook/vue/addons';
 
 </TabPanel>
 </Tabs>
+
+## Directory Addon
+
+:::tip
+
+- When [directoryenable](../default-theme/configuration.md#directoryEnable) is false, you can also insert a menu for a single page
+
+:::
+
+<Tabs values={frameworks} groupId="jsFramework">
+
+<TabPanel value="Svelte">
+
+```svelte {4,10-13}
+<script lang="ts">
+// FILE: Button.story.svelte
+import Button from './Button.svelte';
+import { DirectoryAddon } from '@vitebook/client/addons';
+</script>
+
+<Button>My Button</Button>
+
+<DirectoryAddon />
+```
+
+</TabPanel>

@@ -900,3 +900,21 @@ theme: {
   }
 }
 ```
+
+## VariantsMenu
+
+You can choose to enable the top or addons menu
+
+### variantsMenuEnable
+
+`@type boolean`
+`@default true`
+
+The top variants menu is enabled by default You can choose to close
+
+### directoryEnable
+
+`@type boolean`
+`@default true`
+
+When it is true, a directory will be added on the variables side of each page
