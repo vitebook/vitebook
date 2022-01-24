@@ -207,10 +207,10 @@ export default Markdown;
 </script>
 
 <script>
-  let clicked = 0;
+  let count = 0;
 
   function onClick() {
-    clicked += 1;
+    count += 1;
   }
 </script>
 
@@ -225,10 +225,10 @@ will be transformed into...
 </script>
 
 <script>
-  let clicked = 0;
+  let count = 0;
 
   function onClick() {
-    clicked += 1;
+    count += 1;
   }
 </script>
 
@@ -245,10 +245,10 @@ will be transformed into...
   import Button from './Button.vue';
   import { ref } from 'vue'
 
-  let clicked = ref(0);
+  let count = ref(0);
 
   function onClick() {
-    clicked.value = clicked.value + 1;
+    count.value = count.value + 1;
   }
 </script>
 
@@ -262,10 +262,10 @@ will be transformed into...
 import Button from './Button.vue';
 import { ref } from 'vue';
 
-let clicked = ref(0);
+let count = ref(0);
 
 function onClick() {
-  clicked.value = clicked.value + 1;
+  count.value = count.value + 1;
 }
 </script>
 
