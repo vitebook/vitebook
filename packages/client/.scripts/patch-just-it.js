@@ -1,6 +1,6 @@
 import { writeFile, readFile } from 'fs/promises';
 import { createRequire } from 'module';
-import { path } from '@vitebook/core/node/utils';
+import path from 'upath';
 
 // @ts-expect-error - .
 export const esmRequire = createRequire(import.meta.url);
