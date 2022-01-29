@@ -1,3 +1,9 @@
+## [0.19.5](https://github.com/vitebook/vitebook/compare/v0.19.4...v0.19.5) (2022-01-29)
+
+### Bug Fixes
+
+- move vite and all plugins to peer deps ([c971e78](https://github.com/vitebook/vitebook/commit/c971e78acbf0e6397d5db306a945f06e9c3d31f6)), closes [#18](https://github.com/vitebook/vitebook/issues/18) [#17](https://github.com/vitebook/vitebook/issues/17)
+
 ## <small>0.19.4 (2022-01-20)</small>
 
 - fix(create): `useVitePreprocess` configured incorrectly ([5dd1cbc](https://github.com/vitebook/vitebook/commit/5dd1cbc))
