@@ -29,7 +29,7 @@ const theme: ClientTheme = {
           loader: () =>
             theme.homePage === false
               ? import('./layout/Blank.svelte')
-              : import('./components/home/Home.svelte'),
+              : import('./components/_home/Home.svelte'),
         });
 
         if (import.meta.env.DEV) {

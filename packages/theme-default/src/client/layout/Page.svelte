@@ -1,7 +1,7 @@
 <script>
   import { PageView, currentPage } from '@vitebook/client';
   import { localizedThemeConfig } from '../stores/localizedThemeConfig';
-  import { isMarkdownFloatingTocEnabled } from '../components/markdown/isMarkdownFloatingTocEnabled';
+  import { isMarkdownFloatingTocEnabled } from '../components/_markdown/isMarkdownFloatingTocEnabled';
 
   $: noNavbar = $localizedThemeConfig.navbar === false;
   $: isMarkdownPage = $currentPage?.type?.endsWith('md');
@@ -18,7 +18,7 @@
     <PageView />
 
     {#if isMarkdownPage}
-      {#await import('../components/markdown/MarkdownFooter.svelte') then c}
+      {#await import('../components/_markdown/MarkdownFooter.svelte') then c}
         <svelte:component this={c.default} />
       {/await}
     {/if}
