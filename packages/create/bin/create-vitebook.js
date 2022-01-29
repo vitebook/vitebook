@@ -115,13 +115,6 @@ async function main() {
   if (!builder.pkg.hasDependency('@sveltejs/kit')) {
     builder.pkg.addDependency('vite', '^2.7.0', { dev: true });
     builder.pkg.addDependency('svelte', '^3.43.1', { dev: true });
-    builder.pkg.addDependency(
-      '@sveltejs/vite-plugin-svelte',
-      '^1.0.0-next.36',
-      {
-        dev: true,
-      },
-    );
   }
 
   switch (builder.framework) {
