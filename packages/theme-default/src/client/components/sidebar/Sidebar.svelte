@@ -8,9 +8,9 @@
   import { hasNavbarItems } from '../navbar/hasNavbarItems';
   import NavbarTitle from '../navbar/NavbarTitle.svelte';
   import ThemeSwitch from '../ThemeSwitch.svelte';
-  import DiscordLink from '../_links/DiscordLink.svelte';
-  import RepoLink from '../_links/RepoLink.svelte';
-  import TwitterLink from '../_links/TwitterLink.svelte';
+  import DiscordLink from '../links/DiscordLink.svelte';
+  import RepoLink from '../links/RepoLink.svelte';
+  import TwitterLink from '../links/TwitterLink.svelte';
   import { hasSidebarItems } from './hasSidebarItems';
   import { multiSidebarStyleConfig } from './multiSidebarStyleConfig';
   import SidebarButton from './SidebarButton.svelte';

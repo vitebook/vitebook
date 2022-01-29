@@ -3,7 +3,7 @@
 
   import { onMount } from 'svelte';
 
-  import { isMarkdownFloatingTocEnabled } from '../components/_markdown/isMarkdownFloatingTocEnabled';
+  import { isMarkdownFloatingTocEnabled } from '../components/markdown/isMarkdownFloatingTocEnabled';
   import NavbarTitle from '../components/navbar/NavbarTitle.svelte';
   import Scrim from '../components/Scrim.svelte';
   import VariantsMenu from '../components/VariantsMenu.svelte';
@@ -11,10 +11,10 @@
   import Sidebar from '../components/sidebar/Sidebar.svelte';
   import SidebarToggle from '../components/sidebar/SidebarToggle.svelte';
   import ThemeSwitch from '../components/ThemeSwitch.svelte';
-  import DiscordLink from '../components/_links/DiscordLink.svelte';
-  import RepoLink from '../components/_links/RepoLink.svelte';
+  import DiscordLink from '../components/links/DiscordLink.svelte';
+  import RepoLink from '../components/links/RepoLink.svelte';
   import { addons } from '@vitebook/client/addons';
-  import TwitterLink from '../components/_links/TwitterLink.svelte';
+  import TwitterLink from '../components/links/TwitterLink.svelte';
   import { darkMode, useDarkMode } from '../stores/darkMode';
   import { isLargeScreen } from '../stores/isLargeScreen';
   import { localizedThemeConfig } from '../stores/localizedThemeConfig';
@@ -180,7 +180,7 @@
   <slot name="root" />
 
   {#if isMarkdownPage && $isMarkdownFloatingTocEnabled}
-    {#await import('../components/_markdown/MarkdownFloatingToc.svelte') then c}
+    {#await import('../components/markdown/MarkdownFloatingToc.svelte') then c}
       <svelte:component this={c.default} />
     {/await}
   {/if}
