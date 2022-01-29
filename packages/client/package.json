@@ -61,7 +61,7 @@
   "scripts": {
     "build": "run-s clean build:client build:node build:types copy",
     "build:client": "tsc -p src/client/tsconfig.json",
-    "build:node": "node ../../.scripts/build-node.js --external @sveltejs/vite-plugin-svelte,magic-string,svelte-preprocess-esbuild",
+    "build:node": "node ../../.scripts/build-node.js --external magic-string",
     "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
     "clean": "rimraf dist",
     "copy": "node ../../.scripts/copy-non-ts-files.js",
@@ -73,10 +73,8 @@
     "watch:types": "pnpm build:types -- --watch"
   },
   "dependencies": {
-    "@ampproject/remapping": "^1.0.1",
     "@rollup/pluginutils": "^4.1.1",
-    "@sveltejs/vite-plugin-svelte": "1.0.0-next.31",
-    "@vitebook/core": "0.19.4",
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.36",
     "esbuild": "^0.12.24",
     "just-debounce-it": "^3.0.1",
     "just-throttle": "^4.0.1",
@@ -84,10 +82,12 @@
     "magic-string": "^0.25.7"
   },
   "devDependencies": {
+    "@vitebook/core": "workspace:*",
     "svelte": "^3.44.1",
-    "vite": "2.7.1"
+    "vite": "^2.7.1"
   },
   "peerDependencies": {
+    "@vitebook/core": "0.19.4",
     "svelte": "^3.44.1"
   },
   "publishConfig": {

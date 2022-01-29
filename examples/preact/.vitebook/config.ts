@@ -1,3 +1,4 @@
+import preact from '@preact/preset-vite';
 import { defineConfig, clientPlugin } from '@vitebook/client/node';
 import { preactPlugin } from '@vitebook/preact/node';
 import { preactMarkdownPlugin } from '@vitebook/markdown-preact/node';
@@ -12,12 +13,10 @@ export default defineConfig<DefaultThemeConfig>({
   plugins: [
     shikiMarkdownPlugin(),
     preactMarkdownPlugin(),
-    preactPlugin({
-      appFile: 'App.tsx',
-      preact: { include: /\.([j|t]sx?|md)$/ },
-    }),
+    preactPlugin({ appFile: 'App.tsx' }),
     clientPlugin(),
     defaultThemePlugin(),
+    preact({ include: /\.([j|t]sx?|md)$/ }),
   ],
   site: {
     title: 'Vitebook',

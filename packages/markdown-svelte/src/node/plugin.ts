@@ -1,6 +1,10 @@
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import type { App, Plugin } from '@vitebook/core/node';
+import { logger } from '@vitebook/core/node/utils';
 import type { MarkdownParser, MarkdownPlugin } from '@vitebook/markdown/node';
+import kleur from 'kleur';
+import MagicString from 'magic-string';
+import { parse, walk } from 'svelte/compiler';
 
 import {
   createMarkdownParser,
@@ -52,12 +56,16 @@ export function svelteMarkdownPlugin(
     },
     async configureApp(_app) {
       app = _app;
+
+      if (!_app.plugins.find((plugin) => plugin.name === '@vitebook/client')) {
+        throw logger.createError(
+          `${kleur.bold('@vitebook/markdown-svelte')} requires ${kleur.bold(
+            '@vitebook/client',
+          )}`,
+        );
+      }
+
       parser = await createMarkdownParser(parserOptions);
-
-      // const sveltePlugin = _app.plugins.find(
-      //   (plugin) => plugin.name === 'vite-plugin-svelte',
-      // ) as Plugin;
-
       for (const plugin of app.plugins) {
         const mdPlugin = plugin as MarkdownPlugin;
         await mdPlugin.configureMarkdownParser?.(parser);
@@ -85,7 +93,7 @@ export function svelteMarkdownPlugin(
           define,
         });
 
-        return component;
+        return staticify({ content: component, filename: id }).code;
       }
 
       return null;
@@ -108,8 +116,84 @@ export function svelteMarkdownPlugin(
           },
         );
 
-        ctx.read = () => component;
+        const optimizedComponent = staticify({
+          content: component,
+          filename: file,
+        }).code;
+
+        ctx.read = () => optimizedComponent;
       }
     },
+  };
+}
+
+function staticify({
+  content,
+  filename,
+}: {
+  content: string;
+  filename: string;
+}) {
+  const mcs = new MagicString(content);
+  const ast = parse(content, { filename });
+
+  const staticNodeTypeRE = /(Element|Fragment|Text)/;
+  const staticBlocks: (readonly [number, number])[] = [];
+
+  const findStaticBlock = (node) => {
+    if (!node.children) {
+      return [node.start as number, node.end as number] as const;
+    }
+
+    const queue = [node];
+    const seen = new Set();
+
+    while (queue.length > 0) {
+      const currentNode = queue[0];
+
+      const hasDynamicAttribute = (node.attributes ?? []).some(
+        (attr) => attr.value?.[0]?.expression || attr.type !== 'Attribute',
+      );
+
+      if (!staticNodeTypeRE.test(currentNode.type) || hasDynamicAttribute) {
+        return null;
+      }
+
+      if (node.children) {
+        for (const child of node.children) {
+          if (!seen.has(child)) {
+            queue.push(child);
+            seen.add(child);
+          }
+        }
+      }
+
+      queue.shift();
+    }
+
+    return [node.start as number, node.end as number] as const;
+  };
+
+  walk(ast.html, {
+    enter(node) {
+      if (node.type === 'Element' || node.type === 'Fragment') {
+        const staticBlock = findStaticBlock(node);
+        if (staticBlock) {
+          staticBlocks.push(staticBlock);
+          this.skip();
+        }
+      }
+    },
+  });
+
+  staticBlocks.forEach(([start, end]) => {
+    if (end > start) {
+      mcs.overwrite(start, end, `{@html \`${mcs.slice(start, end)}\`}`);
+    }
+  });
+
+  return {
+    code: mcs.toString(),
+    map: mcs.generateMap({ source: filename }).toString(),
   };
 }

@@ -6,10 +6,7 @@ export default defineConfig(/** __GENERICS__ */)({
   include: ['src/**/*.{md,jsx,tsx}'],
   plugins: [
     preactMarkdownPlugin(),
-    preactPlugin({
-      appFile: 'App.tsx',
-      preact: { include: /\.([j|t]sx?|md)$/ },
-    }),
+    preactPlugin({ appFile: 'App.tsx' }),
     clientPlugin() /** __PLUGINS__ */,
   ],
   site: {

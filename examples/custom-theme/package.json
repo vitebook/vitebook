@@ -10,9 +10,11 @@
     "vitebook:preview": "vitebook preview"
   },
   "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.36",
     "@vitebook/client": "0.19.4",
     "@vitebook/core": "0.19.4",
-    "svelte": "^3.44.0"
+    "svelte": "^3.44.0",
+    "vite": "^2.7.0"
   },
   "engines": {
     "node": ">=16"

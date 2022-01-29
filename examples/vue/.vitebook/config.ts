@@ -1,3 +1,4 @@
+import vue from '@vitejs/plugin-vue';
 import { defineConfig, clientPlugin } from '@vitebook/client/node';
 import { vuePlugin } from '@vitebook/vue/node';
 import { vueMarkdownPlugin } from '@vitebook/markdown-vue/node';
@@ -12,14 +13,10 @@ export default defineConfig<DefaultThemeConfig>({
   plugins: [
     shikiMarkdownPlugin(),
     vueMarkdownPlugin(),
-    vuePlugin({
-      appFile: 'App.vue',
-      vue: {
-        include: /\.(md|vue)/,
-      },
-    }),
+    vuePlugin({ appFile: 'App.vue' }),
     clientPlugin(),
     defaultThemePlugin(),
+    vue({ include: /\.(md|vue)/ }),
   ],
   site: {
     title: 'Vitebook',

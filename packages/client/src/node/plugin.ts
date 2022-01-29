@@ -1,15 +1,4 @@
-import remapping from '@ampproject/remapping';
-import {
-  DecodedSourceMap,
-  RawSourceMap,
-  SourceMapLoader,
-} from '@ampproject/remapping/dist/types/types';
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
-import {
-  Options as SvelteOptions,
-  PreprocessorGroup,
-  svelte,
-} from '@sveltejs/vite-plugin-svelte';
 import {
   App,
   ClientPlugin,
@@ -17,7 +6,8 @@ import {
   Plugin,
   VM_PREFIX,
 } from '@vitebook/core/node';
-import { fs, path } from '@vitebook/core/node/utils';
+import { fs, logger, path } from '@vitebook/core/node/utils';
+import kleur from 'kleur';
 import MagicString from 'magic-string';
 import { compile as svelteCompile, parse, walk } from 'svelte/compiler';
 
@@ -46,17 +36,10 @@ export type ClientPluginOptions = {
   exclude?: FilterPattern;
 
   /**
-   * `@sveltejs/vite-plugin-svelte` plugin options.
-   *
-   * @link https://github.com/sveltejs/vite-plugin-svelte
-   */
-  svelte?: SvelteOptions;
-
-  /**
    * Applies a CSS class to all elements in included `.svelte` files to enable scoped styling. This
    * is to avoid theme styles affecting user components in pages/stories.
    */
-  themeScope?: Omit<ThemeScopeOptions, 'preprocessors'>;
+  themeScope?: ThemeScopeOptions;
 };
 
 const VIRTUAL_APP_ID = `${VM_PREFIX}/client/app`;
@@ -64,51 +47,6 @@ const VIRTUAL_APP_REQUEST_PATH = '/' + VIRTUAL_APP_ID;
 
 const DEFAULT_INCLUDE_RE = /\.svelte($|\?)/;
 const DEFAULT_THEME_SCOPE_CLASS = '__vbk__';
-
-const DEFAULT_THEME_SCOPE_INCLUDE = [
-  /@vitebook\/client/,
-  /@vitebook\/theme-default/,
-  /@vitebook\/preact/,
-  /@vitebook\/vue/,
-  // The following regex's are for monorepo environments due to packages being linked.
-  /vitebook\/packages\/client/,
-  /vitebook\/packages\/preact/,
-  /vitebook\/packages\/vue/,
-  /vitebook\/packages\/theme-default/,
-];
-
-try {
-  DEFAULT_THEME_SCOPE_INCLUDE.push(
-    new RegExp(path.dirname(require.resolve('@vitebook/preact'))),
-  );
-} catch (e) {
-  //
-}
-
-try {
-  DEFAULT_THEME_SCOPE_INCLUDE.push(
-    new RegExp(path.dirname(require.resolve('@vitebook/vue'))),
-  );
-} catch (e) {
-  //
-}
-
-try {
-  DEFAULT_THEME_SCOPE_INCLUDE.push(
-    new RegExp(path.dirname(require.resolve('@vitebook/theme-default'))),
-  );
-
-  DEFAULT_THEME_SCOPE_INCLUDE.push(
-    new RegExp(
-      path.resolve(
-        path.dirname(require.resolve('@vitebook/theme-default')),
-        '../../dist/icons',
-      ),
-    ),
-  );
-} catch (e) {
-  //  ...
-}
 
 const PNG_RE = /\.png($|\?)/;
 const JPEG_RE = /\.jpeg($|\?)/;
@@ -130,80 +68,73 @@ export function clientPlugin(
 
   let themeScopeFilter: (id: unknown) => boolean;
 
-  const userPreprocessors = isArray(options.svelte?.preprocess)
-    ? options.svelte!.preprocess
-    : [options.svelte?.preprocess ?? {}];
-
-  const preprocessors = [...userPreprocessors];
-
   return [
     {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       name: PLUGIN_NAME,
       enforce: 'pre',
       entry: {
         client: require.resolve(`${PLUGIN_NAME}/entry-client.js`),
         server: require.resolve(`${PLUGIN_NAME}/entry-server.js`),
       },
-      configureApp(_app) {
+      async configureApp(_app) {
         app = _app;
 
-        DEFAULT_THEME_SCOPE_INCLUDE.push(new RegExp(app.dirs.theme.path));
-
         themeScopeFilter = createFilter(
-          options.themeScope?.include ?? DEFAULT_THEME_SCOPE_INCLUDE,
+          [
+            /@vitebook\/.+\.svelte/,
+            /vitebook\/packages\/.+\.svelte/,
+            new RegExp(app.dirs.theme.path + '.+\\.svelte'),
+            ...(isArray(options.themeScope?.include)
+              ? options.themeScope!.include
+              : [options.themeScope?.include].filter(Boolean)),
+          ],
           options.themeScope?.exclude,
         );
 
         app.context.themeScopeClass =
           options.themeScope?.scopeClass ?? DEFAULT_THEME_SCOPE_CLASS;
 
-        preprocessors.push(themeScope(options.themeScope), staticifyMarkdown());
+        try {
+          const hasSveltePlugin = app.hasPlugin('vite-plugin-svelte');
+          const hasMarkdownSveltePlugin = app.hasPlugin(
+            '@vitebook/markdown-svelte',
+          );
 
-        const sveltePlugin = svelte({
-          ...options.svelte,
-          preprocess: [
-            {
-              async markup({ content, filename }) {
-                let code = content;
-                const sourcemaps: Array<DecodedSourceMap | RawSourceMap> = [];
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          if (!hasSveltePlugin) {
+            // We can't simply `import(...)` as it will fail in a monorepo (linked packages).
+            const rootPath = app.dirs.root.resolve(
+              'node_modules/@sveltejs/vite-plugin-svelte',
+            );
 
-                for (const preprocessor of preprocessors) {
-                  const markup = await preprocessor.markup?.({
-                    content: code,
-                    filename,
-                  });
+            const modulePath = JSON.parse(
+              (await fs.readFile(`${rootPath}/package.json`)).toString(),
+            ).module;
 
-                  const map = markup?.map
-                    ? typeof markup.map === 'string'
-                      ? JSON.parse(markup.map)
-                      : markup.map
-                    : undefined;
-
-                  if (markup?.map) {
-                    sourcemaps.unshift(map);
-                  }
-
-                  code = markup?.code ?? code;
-                }
-
-                return {
-                  code,
-                  map: combineSourcemaps(filename, sourcemaps),
-                };
-              },
-            },
-            ...preprocessors.map((p) => ({
-              ...p,
-              markup: undefined, // We run markup preprocessing sequentailly above.
-            })),
-          ],
-          compilerOptions: {
-            ...options.svelte?.compilerOptions,
-            hydratable: app.env.isProd,
-          },
-        });
-
-        app.plugins.push(sveltePlugin);
+            const { svelte } = await import(path.resolve(rootPath, modulePath));
+            _app.plugins.push(
+              svelte({
+                extensions: hasMarkdownSveltePlugin
+                  ? ['.svelte', '.md']
+                  : ['.svelte'],
+                experimental: { useVitePreprocess: true },
+              }),
+            );
+          }
+        } catch (e) {
+          throw logger.createError(
+            `${kleur.bold('@vitebook/client')} requires ${kleur.bold(
+              '@sveltejs/vite-plugin-svelte',
+            )}\n\n${kleur.white(
+              `See ${kleur.bold(
+                'https://github.com/sveltejs/vite-plugin-svelte',
+              )} for more information`,
+            )}\n`,
+          );
+        }
       },
       config() {
         return {
@@ -239,6 +170,15 @@ export function clientPlugin(
         return null;
       },
       transform(code, id) {
+        if (themeScopeFilter(id) && !id.includes('&type=')) {
+          return addThemeScope({
+            content: code,
+            filename: id,
+            scopeClass:
+              options.themeScope?.scopeClass ?? DEFAULT_THEME_SCOPE_CLASS,
+          });
+        }
+
         // Transform raw SVG's into Svelte components.
         if (SVG_ID_RE.test(id) && RAW_SVELTE_ID_RE.test(id)) {
           const content = JSON.parse(code.replace('export default', ''));
@@ -338,7 +278,7 @@ export type ThemeScopeOptions = {
    * Svelte files to be included. All elements in these files will have the theme scope class
    * applied to them.
    *
-   * @default ['@vitebook/client', '@vitebook/theme-default']
+   * @default [/@vitebook/]
    */
   include?: FilterPattern;
   /**
@@ -347,28 +287,27 @@ export type ThemeScopeOptions = {
    * @default undefined
    */
   exclude?: FilterPattern;
-  /**
-   * Svelte preprocessors.
-   */
-  preprocessors?: PreprocessorGroup[];
-};
-
-export type AddThemeScopeOptions = {
-  content: string;
-  filename: string;
-  scopeClass?: string;
 };
 
 function addThemeScope({
   content,
   filename,
-  scopeClass = DEFAULT_THEME_SCOPE_CLASS,
-}: AddThemeScopeOptions) {
+  scopeClass,
+}: {
+  content: string;
+  filename: string;
+  scopeClass: string;
+}) {
   const mcs = new MagicString(content);
   const ast = parse(content, { filename });
 
   walk(ast, {
     enter(node) {
+      if (/(script|style)/.test(node.name)) {
+        this.skip();
+        return;
+      }
+
       if (node.type === 'Element') {
         const classAttr = node.attributes.find(
           (attr) =>
@@ -406,145 +345,4 @@ function addThemeScope({
     code: mcs.toString(),
     map: mcs.generateMap({ source: filename }).toString(),
   };
-}
-
-function themeScope({
-  scopeClass,
-  include = DEFAULT_THEME_SCOPE_INCLUDE,
-  exclude,
-}: ThemeScopeOptions = {}): PreprocessorGroup {
-  const filter = createFilter(include, exclude);
-
-  return {
-    // @ts-expect-error - can return `undefined`.
-    async markup({ content, filename }) {
-      if (filter(filename)) {
-        return addThemeScope({
-          filename,
-          content,
-          scopeClass,
-        });
-      }
-    },
-  };
-}
-
-function staticifyMarkdown(): PreprocessorGroup {
-  const filter = createFilter(/\.md$/);
-
-  return {
-    // @ts-expect-error - can return `undefined`.
-    async markup({ content, filename }) {
-      if (filter(filename)) {
-        const mcs = new MagicString(content);
-        const ast = parse(content, { filename });
-
-        const staticNodeTypeRE = /(Element|Fragment|Text)/;
-        const staticBlocks: (readonly [number, number])[] = [];
-
-        const findStaticBlock = (node) => {
-          if (!node.children) {
-            return [node.start as number, node.end as number] as const;
-          }
-
-          const queue = [node];
-          const seen = new Set();
-
-          while (queue.length > 0) {
-            const currentNode = queue[0];
-
-            const hasDynamicAttribute = (node.attributes ?? []).some(
-              (attr) =>
-                attr.value?.[0]?.expression || attr.type !== 'Attribute',
-            );
-
-            if (
-              !staticNodeTypeRE.test(currentNode.type) ||
-              hasDynamicAttribute
-            ) {
-              return null;
-            }
-
-            if (node.children) {
-              for (const child of node.children) {
-                if (!seen.has(child)) {
-                  queue.push(child);
-                  seen.add(child);
-                }
-              }
-            }
-
-            queue.shift();
-          }
-
-          return [node.start as number, node.end as number] as const;
-        };
-
-        walk(ast.html, {
-          enter(node) {
-            if (node.type === 'Element' || node.type === 'Fragment') {
-              const staticBlock = findStaticBlock(node);
-              if (staticBlock) {
-                staticBlocks.push(staticBlock);
-                this.skip();
-              }
-            }
-          },
-        });
-
-        staticBlocks.forEach(([start, end]) => {
-          if (end > start) {
-            mcs.overwrite(start, end, `{@html \`${mcs.slice(start, end)}\`}`);
-          }
-        });
-
-        return {
-          code: mcs.toString(),
-          map: mcs.generateMap({ source: filename }).toString(),
-        };
-      }
-    },
-  };
-}
-
-export function combineSourcemaps(
-  filename: string,
-  sourcemapList: Array<DecodedSourceMap | RawSourceMap>,
-): RawSourceMap | undefined {
-  if (sourcemapList.length == 0) return undefined;
-
-  let map_idx = 1;
-
-  // @ts-expect-error - .
-  const map: RawSourceMap =
-    sourcemapList.slice(0, -1).find((m) => m.sources.length !== 1) === undefined
-      ? remapping(
-          // use array interface
-          // only the oldest sourcemap can have multiple sources
-          sourcemapList,
-          () => null,
-          true, // skip optional field `sourcesContent`
-        )
-      : remapping(
-          // use loader interface
-          sourcemapList[0], // last map
-          function loader(sourcefile) {
-            if (sourcefile === filename && sourcemapList[map_idx]) {
-              return sourcemapList[map_idx++]; // idx 1, 2, ...
-              // bundle file = branch node
-            } else {
-              return null; // source file = leaf node
-            }
-          } as SourceMapLoader,
-          true,
-        );
-
-  if (!map.file) delete map.file; // skip optional field `file`
-
-  // When source maps are combined and the leading map is empty, sources is not set.
-  // Add the filename to the empty array in this case.
-  // Further improvements to remapping may help address this as well https://github.com/ampproject/remapping/issues/116
-  if (!map.sources.length) map.sources = [filename];
-
-  return map;
 }

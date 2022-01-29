@@ -109,6 +109,8 @@
   }
 
   .sidebar-link__icon {
+    display: flex;
+    align-items: center;
     margin-right: 0.5rem;
   }
 

@@ -6,10 +6,7 @@ export default defineConfig(/** __GENERICS__ */)({
   include: ['src/**/*.{md,vue}'],
   plugins: [
     vueMarkdownPlugin(),
-    vuePlugin({
-      appFile: 'App.vue',
-      vue: { include: /\.(md|vue)/ },
-    }),
+    vuePlugin({ appFile: 'App.vue' }),
     clientPlugin() /** __PLUGINS__ */,
   ],
   site: {

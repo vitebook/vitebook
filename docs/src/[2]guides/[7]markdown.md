@@ -49,7 +49,8 @@ npm install @vitebook/markdown-shiki -D
 <Tabs values={frameworks} groupId="jsFramework">
 <TabPanel value="Preact">
 
-```js {3,4,9,10,13}
+```js {1,4-5,8,10-11,13}
+import preact from '@preact/preset-vite';
 import { defineConfig } from '@vitebook/client/node';
 import { preactPlugin } from '@vitebook/preact/node';
 import { preactMarkdownPlugin } from '@vitebook/markdown-preact/node';
@@ -60,11 +61,8 @@ export default defineConfig({
   plugins: [
     preactMarkdownPlugin(),
     shikiMarkdownPlugin(),
-    preactPlugin({
-      appFile: 'App.tsx',
-      preact: { include: /\.([j|t]sx?|md)$/ },
-    }),
-    // ...
+    preactPlugin({ appFile: 'App.tsx' }),
+    preact({ include: /\.([j|t]sx?|md)$/ }),
   ],
 });
 ```
@@ -73,7 +71,8 @@ export default defineConfig({
 
 <TabPanel value="Svelte">
 
-```js {2,3,8,9,13}
+```js {1,3-4,7,9-10,12}
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig, clientPlugin } from '@vitebook/client/node';
 import { svelteMarkdownPlugin } from '@vitebook/markdown-svelte/node';
 import { shikiMarkdownPlugin } from '@vitebook/markdown-shiki/node';
@@ -83,13 +82,8 @@ export default defineConfig({
   plugins: [
     svelteMarkdownPlugin(),
     shikiMarkdownPlugin(),
-    clientPlugin({
-      appFile: 'App.svelte',
-      svelte: {
-        extensions: ['.svelte', '.md'],
-      },
-    }),
-    // ...
+    clientPlugin({ appFile: 'App.svelte' }),
+    svelte({ extensions: ['.svelte', '.md'] }),
   ],
 });
 ```
@@ -98,7 +92,8 @@ export default defineConfig({
 
 <TabPanel value="Vue">
 
-```js {3,4,9,10,14}
+```js {1,4-5,8,10-11,13}
+import vue from '@vitejs/plugin-vue';
 import { defineConfig } from '@vitebook/client/node';
 import { vuePlugin } from '@vitebook/vue/node';
 import { vueMarkdownPlugin } from '@vitebook/markdown-vue/node';
@@ -109,13 +104,8 @@ export default defineConfig({
   plugins: [
     vueMarkdownPlugin(),
     shikiMarkdownPlugin(),
-    vuePlugin({
-      appFile: 'App.vue',
-      vue: {
-        include: /\.(md|vue)/,
-      },
-    }),
-    // ...
+    vuePlugin({ appFile: 'App.vue' }),
+    vue({ include: /\.(md|vue)/ }),
   ],
 });
 ```

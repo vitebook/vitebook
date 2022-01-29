@@ -5,8 +5,8 @@ import {
   Plugin,
   VM_PREFIX,
 } from '@vitebook/core/node';
-import { fs, path } from '@vitebook/core/node/utils';
-import createVuePlugin, { Options as ViteVueOptions } from '@vitejs/plugin-vue';
+import { fs, logger, path } from '@vitebook/core/node/utils';
+import kleur from 'kleur';
 
 import { compileHTML } from './compilers/compileHTML';
 
@@ -31,13 +31,6 @@ export type VuePluginOptions = {
    * @default undefined
    */
   exclude?: FilterPattern;
-
-  /**
-   * `@vitejs/plugin-vue` plugin options.
-   *
-   * @link https://github.com/vitejs/vite/tree/main/packages/plugin-vue
-   */
-  vue?: ViteVueOptions;
 };
 
 const SVG_ID_RE = /\.svg($|\?)/;
@@ -45,7 +38,7 @@ const RAW_VUE_ID_RE = /(\?|&)raw&vue/;
 
 export const DEFAULT_INCLUDE_RE = /\.vue($|\?)/;
 
-export const PLUGIN_NAME = '@vitebook/client' as const;
+export const PLUGIN_NAME = '@vitebook/vue' as const;
 
 const VIRTUAL_APP_ID = `${VM_PREFIX}/vue/app`;
 const VIRTUAL_APP_REQUEST_PATH = '/' + VIRTUAL_APP_ID;
@@ -61,7 +54,7 @@ export function vuePlugin(options: VuePluginOptions = {}): Plugin[] {
   /** Page system file paths. */
   const files = new Set<string>();
 
-  const vuePlugin = createVuePlugin(options.vue) as Plugin;
+  let vuePlugin: Plugin | undefined;
 
   return [
     {
@@ -70,7 +63,6 @@ export function vuePlugin(options: VuePluginOptions = {}): Plugin[] {
       config() {
         return {
           resolve: {
-            dedupe: ['vue'],
             alias: {
               [VIRTUAL_APP_ID]: VIRTUAL_APP_REQUEST_PATH,
             },
@@ -81,8 +73,40 @@ export function vuePlugin(options: VuePluginOptions = {}): Plugin[] {
           },
         };
       },
-      configureApp(_app) {
+      async configureApp(_app) {
         app = _app;
+
+        try {
+          if (!app.plugins.some(({ name }) => name === 'vite:vue')) {
+            // We can't simply `import(...)` as it will fail in a monorepo (linked packages).
+            const rootPath = app.dirs.root.resolve(
+              'node_modules/@vitejs/plugin-vue',
+            );
+
+            const mainPath = JSON.parse(
+              (await fs.readFile(`${rootPath}/package.json`)).toString(),
+            ).main;
+
+            console.log(rootPath, mainPath);
+
+            // vue: { include: /\.(md|vue)/ },
+
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const vue = require(`${rootPath}/${mainPath}`);
+            _app.plugins.push(vue());
+          }
+        } catch (e) {
+          console.log(e);
+          throw logger.createError(
+            `${kleur.bold('@vitebook/vue')} requires ${kleur.bold(
+              '@vitejs/plugin-vue',
+            )}\n\n${kleur.white(
+              `See ${kleur.bold(
+                'https://github.com/vitejs/vite/tree/main/packages/plugin-vue',
+              )} for more information`,
+            )}\n`,
+          );
+        }
       },
       async resolvePage({ filePath, relativeFilePath }) {
         if (filter(filePath)) {
@@ -144,14 +168,13 @@ export default { props: ['component'], render({ component }) { return resolveDyn
         // Hot reload `.svg` files as `.vue` files.
         if (files.has(file) && SVG_ID_RE.test(file)) {
           const content = await read();
-          return vuePlugin.handleHotUpdate?.({
+          return vuePlugin?.handleHotUpdate?.({
             ...ctx,
             read: () => svgToVue(content),
           });
         }
       },
     },
-    vuePlugin,
   ];
 }
 

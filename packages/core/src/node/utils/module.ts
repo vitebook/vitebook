@@ -82,7 +82,7 @@ export const loadModule = async <T>(
   }
 
   const fileHash = await checksumFile('sha1', filePath);
-  const outputPath = path.resolve(tmpDir, `${fileHash}.js`);
+  const outputPath = path.resolve(tmpDir, `${fileHash}.mjs`);
 
   const fileComment = `// FILE: ${filePath}\n\n`;
   const code = await bundle(filePath, buildOptions);

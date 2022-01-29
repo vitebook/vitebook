@@ -45,8 +45,6 @@ export function vueMarkdownPlugin(
   /** Page system file paths. */
   const files = new Set<string>();
 
-  let vuePlugin: Plugin;
-
   return {
     name: PLUGIN_NAME,
     enforce: 'pre',
@@ -58,15 +56,11 @@ export function vueMarkdownPlugin(
       app = _app;
       parser = await createMarkdownParser(parserOptions);
 
-      vuePlugin = _app.plugins.find(
-        (plugin) => plugin.name === 'vite:vue',
-      ) as Plugin;
-
-      if (!vuePlugin) {
+      if (!_app.plugins.find((plugin) => plugin.name === '@vitebook/vue')) {
         throw logger.createError(
-          `${kleur.bold('@vitebook/markdown-vue')} requires the ${kleur.bold(
+          `${kleur.bold('@vitebook/markdown-vue')} requires ${kleur.bold(
             '@vitebook/vue',
-          )} plugin.`,
+          )}`,
         );
       }
 

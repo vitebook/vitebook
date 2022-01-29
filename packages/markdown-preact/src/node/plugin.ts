@@ -57,20 +57,20 @@ export function preactMarkdownPlugin(
     },
     async configureApp(_app) {
       app = _app;
-      parser = await createMarkdownParser(parserOptions);
+
+      if (!_app.plugins.find((plugin) => plugin.name === '@vitebook/preact')) {
+        throw logger.createError(
+          `${kleur.bold('@vitebook/markdown-preact')} requires ${kleur.bold(
+            '@vitebook/preact',
+          )}`,
+        );
+      }
 
       prefreshPlugin = _app.plugins.find(
         (plugin) => plugin.name === 'prefresh',
       ) as Plugin;
 
-      if (!prefreshPlugin) {
-        throw logger.createError(
-          `${kleur.bold('@vitebook/markdown-preact')} requires the ${kleur.bold(
-            '@vitebook/preact',
-          )} plugin.`,
-        );
-      }
-
+      parser = await createMarkdownParser(parserOptions);
       for (const plugin of app.plugins) {
         const mdPlugin = plugin as MarkdownPlugin;
         await mdPlugin.configureMarkdownParser?.(parser);

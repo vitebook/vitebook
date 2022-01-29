@@ -1,4 +1,4 @@
-import type { PreviewServer, ViteDevServer } from 'vite';
+import type { PreviewServer, ResolvedConfig, ViteDevServer } from 'vite';
 
 import type { ServerPage, SiteOptions } from '../../shared';
 import type { loadModule } from '../utils/module';
@@ -17,6 +17,7 @@ export type App = {
   client: ClientPlugin;
   options: AppOptions;
   site: AppSite;
+  vite: ResolvedConfig;
   plugins: FilteredPlugins;
   context: Record<string, unknown>;
   pages: ServerPage[];
@@ -25,6 +26,7 @@ export type App = {
   build: () => Promise<void>;
   preview: () => Promise<PreviewServer>;
   close: () => Promise<void>;
+  hasPlugin: (name: string) => boolean;
 };
 
 export type AppDirs = {

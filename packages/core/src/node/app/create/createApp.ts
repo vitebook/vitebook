@@ -1,4 +1,4 @@
-import { mergeConfig } from 'vite';
+import { mergeConfig, resolveConfig as resolveViteConfig } from 'vite';
 
 import { isObject, SiteOptions } from '../../../shared';
 import { logger } from '../../utils/logger';
@@ -46,10 +46,16 @@ export const createApp = async (
   const configPath = resolveConfigPath(dirs.config.path);
 
   const plugins = [
+    ...(options.vite.plugins ?? []).flat(),
     corePlugin(),
     ...options.plugins.flat(),
-    ...(options.vite.plugins ?? []).flat(),
   ].filter((plugin) => !!plugin) as FilteredPlugins;
+
+  const vite = await resolveViteConfig(
+    options.vite,
+    env.command === 'build' ? 'build' : 'serve',
+    env.mode,
+  );
 
   const app: App = {
     version,
@@ -59,6 +65,7 @@ export const createApp = async (
     dirs,
     site,
     plugins,
+    vite,
     pages: [],
     context: {},
     client,
@@ -74,6 +81,10 @@ export const createApp = async (
     build: () => build(app),
     preview: () => preview(app),
     close: () => app.disposal.empty(),
+    hasPlugin: (name) =>
+      [...(vite.plugins ?? []), ...plugins].some(
+        (plugin) => plugin.name === name,
+      ),
   };
 
   for (const plugin of plugins) {

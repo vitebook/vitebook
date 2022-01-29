@@ -1,3 +1,4 @@
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig, clientPlugin } from '@vitebook/client/node';
 import { svelteMarkdownPlugin } from '@vitebook/markdown-svelte/node';
 import { shikiMarkdownPlugin } from '@vitebook/markdown-shiki/node';
@@ -11,17 +12,15 @@ export default defineConfig<DefaultThemeConfig>({
   plugins: [
     shikiMarkdownPlugin(),
     svelteMarkdownPlugin(),
-    clientPlugin({
-      appFile: 'App.svelte',
-      svelte: {
-        extensions: ['.svelte', '.md'],
-        experimental: {
-          // Remove if using `svelte-preprocess`.
-          useVitePreprocess: true,
-        },
+    clientPlugin({ appFile: 'App.svelte' }),
+    defaultThemePlugin(),
+    svelte({
+      extensions: ['.svelte', '.md'],
+      experimental: {
+        // Remove if using `svelte-preprocess`.
+        useVitePreprocess: true,
       },
     }),
-    defaultThemePlugin(),
   ],
   site: {
     title: 'Vitebook',

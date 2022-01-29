@@ -58,36 +58,33 @@
   "scripts": {
     "build": "run-s clean build:client build:node build:types copy",
     "build:client": "tsc -p src/client/tsconfig.json",
-    "build:node": "node ../../.scripts/build-node.js --external @prefresh/vite",
+    "build:node": "node ../../.scripts/build-node.js",
     "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
     "clean": "rimraf dist",
     "copy": "node ../../.scripts/copy-non-ts-files.js",
     "dev": "pnpm clean && run-p watch:client watch:copy watch:node watch:types",
-    "postinstall": "node .scripts/patch-preact-preset.js",
     "watch:client": "pnpm build:client -- --watch",
     "watch:copy": "pnpm copy -- --watch",
     "watch:node": "pnpm build:node -- --watch",
     "watch:types": "pnpm build:types -- --watch"
   },
   "dependencies": {
-    "@babel/core": "^7.16.7",
-    "@preact/preset-vite": "2.1.7",
-    "kleur": "^4.1.4",
-    "preact-render-to-string": "^5.1.19"
+    "kleur": "^4.1.4"
   },
   "devDependencies": {
-    "@prefresh/vite": "2.2.6",
     "@rollup/pluginutils": "^4.1.1",
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
     "preact": "^10.5.14",
+    "preact-render-to-string": "^5.1.19",
     "svelte": "^3.44.1",
     "vite": "2.7.1"
   },
   "peerDependencies": {
     "@vitebook/client": "0.19.4",
     "@vitebook/core": "0.19.4",
-    "preact": "^10.5.14"
+    "preact": "^10.5.14",
+    "preact-render-to-string": "^5.1.19"
   },
   "publishConfig": {
     "access": "public"

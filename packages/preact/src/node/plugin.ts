@@ -1,6 +1,3 @@
-import preactPreset, {
-  PreactPluginOptions as PreactPresetOptions,
-} from '@preact/preset-vite';
 import { createFilter, FilterPattern } from '@rollup/pluginutils';
 import {
   App,
@@ -8,7 +5,8 @@ import {
   Plugin,
   VM_PREFIX,
 } from '@vitebook/core/node';
-import { fs, path } from '@vitebook/core/node/utils';
+import { fs, logger, path } from '@vitebook/core/node/utils';
+import kleur from 'kleur';
 
 import type { ResolvedPreactServerPage } from '../shared';
 
@@ -35,16 +33,6 @@ export type PreactPluginOptions = {
    * @default undefined
    */
   exclude?: FilterPattern;
-
-  /**
-   * `@preact/preset-vite` plugin options.
-   *
-   * @link https://github.com/preactjs/preset-vite
-   */
-  preact?: PreactPresetOptions & {
-    include?: FilterPattern;
-    exclude?: FilterPattern;
-  };
 };
 
 const DEFAULT_INCLUDE_RE = /\.(jsx|tsx)($|\?)/;
@@ -70,16 +58,6 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
             alias: {
               [VIRTUAL_APP_ID]: VIRTUAL_APP_REQUEST_PATH,
             },
-            dedupe: [
-              'preact',
-              'preact/debug',
-              'preact/devtools',
-              'preact/hooks',
-              'preact/jsx-runtime',
-              '@prefresh/core',
-              '@prefresh/vite',
-              '@prefresh/utils',
-            ],
           },
           esbuild: {
             jsxFactory: 'h',
@@ -99,8 +77,47 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
           },
         };
       },
-      configureApp(_app) {
+      async configureApp(_app) {
         app = _app;
+
+        try {
+          const hasPreactPlugin = app.hasPlugin('preact:config');
+          const hasMarkdownPreactPlugin = app.hasPlugin(
+            '@vitebook/markdown-preact',
+          );
+
+          if (!hasPreactPlugin) {
+            // We can't simply `import(...)` as it will fail in a monorepo (linked packages).
+            const rootPath = app.dirs.root.resolve(
+              'node_modules/@preact/preset-vite',
+            );
+
+            const modulePath = JSON.parse(
+              (await fs.readFile(`${rootPath}/package.json`)).toString(),
+            ).module;
+
+            const preact = (await import(path.resolve(rootPath, modulePath)))
+              .default;
+
+            _app.plugins.push(
+              preact({
+                include: hasMarkdownPreactPlugin
+                  ? /\.([j|t]sx?|md)$/
+                  : undefined,
+              }),
+            );
+          }
+        } catch (e) {
+          throw logger.createError(
+            `${kleur.bold('@vitebook/preact')} requires ${kleur.bold(
+              '@preact/preset-vite',
+            )}\n\n${kleur.white(
+              `See ${kleur.bold(
+                'https://github.com/preactjs/preset-vite',
+              )} for more information`,
+            )}\n`,
+          );
+        }
       },
       resolvePage({
         filePath,
@@ -143,6 +160,5 @@ export default App;
         return null;
       },
     },
-    ...preactPreset(options.preact),
   ];
 }

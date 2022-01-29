@@ -58,7 +58,7 @@
   "scripts": {
     "build": "run-s clean build:client build:node build:types",
     "build:client": "tsc -p src/client/tsconfig.json",
-    "build:node": "node ../../.scripts/build-node.js --entry src/node/index.ts,src/node/utils/index.ts,src/node/cli/run.ts",
+    "build:node": "node ../../.scripts/build-node.js --entry src/node/index.ts,src/node/utils/index.ts,src/node/cli/run.ts --external vite",
     "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
     "clean": "rimraf dist",
     "dev": "pnpm clean && run-p watch:client watch:node watch:types",
@@ -82,11 +82,11 @@
     "lru-cache": "^6.0.0",
     "ora": "^6.0.0",
     "pkg-up": "^2.0.0",
-    "upath": "^2.0.1",
-    "vite": "2.7.1"
+    "upath": "^2.0.1"
   },
   "devDependencies": {
-    "rollup": "^2.58.0"
+    "rollup": "^2.58.0",
+    "vite": "^2.7.0"
   },
   "engines": {
     "node": ">=15"

@@ -114,6 +114,13 @@ export class Package {
       : version;
   }
 
+  /**
+   * @param {string} name
+   */
+  hasDependency(name) {
+    return !!this.pkg.dependencies[name] || !!this.pkg.devDependencies[name];
+  }
+
   save() {
     this.pkg.scripts = sortObjectKeys(this.pkg.scripts);
     this.pkg.dependencies = sortObjectKeys(this.pkg.dependencies);

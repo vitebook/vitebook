@@ -1,3 +1,4 @@
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig, clientPlugin } from '@vitebook/client/node';
 import {
   DefaultThemeConfig,
@@ -12,16 +13,14 @@ export default defineConfig<DefaultThemeConfig>({
     },
   },
   plugins: [
-    clientPlugin({
-      appFile: 'App.svelte',
-      svelte: {
-        experimental: {
-          // Remove if using `svelte-preprocess`.
-          useVitePreprocess: true,
-        },
+    clientPlugin({ appFile: 'App.svelte' }),
+    defaultThemePlugin(),
+    svelte({
+      experimental: {
+        // Remove if using `svelte-preprocess`.
+        useVitePreprocess: true,
       },
     }),
-    defaultThemePlugin(),
   ],
   site: {
     title: 'Vitebook',

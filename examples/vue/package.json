@@ -19,8 +19,10 @@
     "@vitebook/markdown-vue": "0.19.4",
     "@vitebook/theme-default": "0.19.4",
     "@vitebook/vue": "0.19.4",
+    "@vitejs/plugin-vue": "^2.0.0",
     "@vue/compiler-sfc": "^3.2.26",
-    "svelte": "^3.43.1"
+    "svelte": "^3.43.1",
+    "vite": "^2.7.0"
   },
   "engines": {
     "node": ">=16"

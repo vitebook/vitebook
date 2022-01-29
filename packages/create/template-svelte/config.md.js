@@ -5,16 +5,7 @@ export default defineConfig(/** __GENERICS__ */)({
   include: ['src/**/*.{md,svelte}'],
   plugins: [
     svelteMarkdownPlugin(),
-    clientPlugin({
-      appFile: 'App.svelte',
-      svelte: {
-        extensions: ['.svelte', '.md'],
-        experimental: {
-          // Remove if using `svelte-preprocess`.
-          useVitePreprocess: true,
-        },
-      },
-    }) /** __PLUGINS__ */,
+    clientPlugin({ appFile: 'App.svelte' }) /** __PLUGINS__ */,
   ],
   site: {
     title: '__SITE_NAME__',

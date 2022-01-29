@@ -74,9 +74,15 @@ export function corePlugin(): Plugin {
     configureApp(_app) {
       app = _app;
     },
-    async configResolved() {
+    async configResolved(config) {
       // Resolve pages after aliases have been resolved.
       await resolvePages(app, 'add');
+
+      // @ts-expect-error - Move `@vitebook/*` plugins to start.
+      config.plugins = [
+        ...config.plugins.filter((p) => p.name.startsWith('@vitebook')),
+        ...config.plugins.filter((p) => !p.name.startsWith('@vitebook')),
+      ];
     },
     configureServer(devServer) {
       server = devServer;
