@@ -1,3 +1,9 @@
+## [0.19.6](https://github.com/vitebook/vitebook/compare/v0.19.5...v0.19.6) (2022-01-29)
+
+### Bug Fixes
+
+- **theme-default:** normalize folder name casing to avoid git issues ([baf7e75](https://github.com/vitebook/vitebook/commit/baf7e75b8d183827887573ee506e19f001cb00ec))
+
 ## [0.19.5](https://github.com/vitebook/vitebook/compare/v0.19.4...v0.19.5) (2022-01-29)
 
 ### Bug Fixes
