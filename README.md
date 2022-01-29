@@ -21,6 +21,7 @@ repository, then running from the root `cd examples/preact && npm install && npm
 
 - [Documentation Site](https://stackblitz.com/github/vitebook/vitebook/tree/main/docs)
 - [Svelte](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/svelte)
+- [SvelteKit](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/svelte-kit)
 - [Vue](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/vue)
 - [Preact](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/preact)
 - [React](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/react)
