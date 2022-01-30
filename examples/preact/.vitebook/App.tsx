@@ -1,11 +1,11 @@
 import type { ComponentChildren } from 'preact';
 
 type AppProps = {
-  component: ComponentChildren;
+  Component: ComponentChildren;
 };
 
-function App({ component }: AppProps) {
-  return component;
+function App({ Component }: AppProps) {
+  return <Component />;
 }
 
 App.displayName = 'VitebookApp';

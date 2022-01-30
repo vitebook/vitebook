@@ -5,6 +5,7 @@
   "description": "The fastest way to build Svelte apps.",
   "type": "module",
   "scripts": {
+    "preinstall": "node .scripts/preinstall.js",
     "build": "svelte-kit build",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",

@@ -59,21 +59,9 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
               [VIRTUAL_APP_ID]: VIRTUAL_APP_REQUEST_PATH,
             },
           },
-          esbuild: {
-            jsxFactory: 'h',
-            jsxFragment: 'Fragment',
-          },
           optimizeDeps: {
-            include: [
-              'preact',
-              'preact/debug',
-              'preact/devtools',
-              'preact/hooks',
-              'preact/jsx-runtime',
-              '@prefresh/core',
-              '@prefresh/vite',
-              '@prefresh/utils',
-            ],
+            include: ['preact/debug', 'preact/devtools', '@prefresh/vite'],
+            exclude: ['preact', 'preact/compat', 'preact/hooks'],
           },
         };
       },

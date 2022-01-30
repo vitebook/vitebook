@@ -19,12 +19,14 @@
   }
 
   function createNewApp() {
-    return h(App, { component: h(component, {}) });
+    return h(App, { Component: component });
   }
 
   function mount(component) {
     destroy();
+
     if (!component) return;
+
     if (import.meta.env.PROD) {
       preactHydrate(createNewApp(), target);
     } else {

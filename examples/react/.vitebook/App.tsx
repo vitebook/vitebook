@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react';
 
 type AppProps = {
-  component: ReactNode;
+  Component: ReactNode;
 };
 
-function App({ component }: AppProps) {
-  return component;
+function App({ Component }: AppProps) {
+  return <Component />;
 }
 
 App.displayName = 'VitebookApp';

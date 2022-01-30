@@ -6,7 +6,7 @@ import {
   EventsAddon,
 } from '@vitebook/preact/addons';
 // TODO: seems like importing from react (preact/compat alias) is not working...?
-import { useState } from 'preact/hooks';
+import { useState } from 'react';
 
 import Button from './Button';
 

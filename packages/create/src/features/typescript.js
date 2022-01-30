@@ -11,7 +11,9 @@ export function addTypescriptFeature(builder) {
   const preact = builder.framework === 'preact';
 
   const config = getRawTSConfig({
-    jsx: preact ? 'react-jsx' : 'preserve',
+    jsx: 'preserve',
+    jsxFactory: preact ? 'h' : undefined,
+    jsxFragmentFactory: preact ? 'Fragment' : undefined,
     jsxImportSource: preact ? 'preact' : undefined,
   });
 
@@ -34,8 +36,6 @@ export function getRawTSConfig(compilerOptions = {}) {
       esModuleInterop: true,
       experimentalDecorators: true,
       forceConsistentCasingInFileNames: true,
-      jsx: 'preserve',
-      jsxImportSource: 'preact',
       lib: ['dom', 'dom.iterable', 'esnext'],
       module: 'esnext',
       moduleResolution: 'node',

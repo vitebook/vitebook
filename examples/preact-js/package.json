@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "preinstall": "node .scripts/preinstall.js",
     "vitebook:build": "vitebook build",
     "vitebook:dev": "vitebook dev",
     "vitebook:preview": "vitebook preview"

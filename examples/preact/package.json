@@ -10,7 +10,8 @@
     "vitebook:preview": "vitebook preview"
   },
   "dependencies": {
-    "preact": "^10.5.14"
+    "preact": "^10.5.14",
+    "preact-render-to-string": "^5.1.19"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.1.7",
