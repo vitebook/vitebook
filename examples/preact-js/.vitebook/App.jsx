@@ -1,5 +1,5 @@
-function App({ component }) {
-  return component;
+function App({ Component }) {
+  return <Component />;
 }
 
 App.displayName = 'VitebookApp';
