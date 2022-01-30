@@ -1,5 +1,5 @@
-/** __APP_IMPORTS__ **/ function App({ component }) {
-  return component;
+/** __APP_IMPORTS__ **/ function App({ Component }) {
+  return <Component />;
 }
 
 App.displayName = 'VitebookApp';
