@@ -1,3 +1,9 @@
+## [0.19.7](https://github.com/vitebook/vitebook/compare/v0.19.6...v0.19.7) (2022-01-30)
+
+### Bug Fixes
+
+- preact/react broken due to multiple copies being imported ([4c2a54a](https://github.com/vitebook/vitebook/commit/4c2a54ad4340662ab0774a624c015e669ccb486b))
+
 ## [0.19.6](https://github.com/vitebook/vitebook/compare/v0.19.5...v0.19.6) (2022-01-29)
 
 ### Bug Fixes
