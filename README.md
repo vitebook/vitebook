@@ -16,12 +16,9 @@ to provide the same capabilities but in a more laxed, lighter, faster and config
 
 ## Playgrounds
 
-⚠️ The Preact/React playgrounds are currently not working on Stackblitz. Prefer cloning this
-repository, then running from the root `cd examples/preact && npm install && npm run vitebook:dev`.
-
 - [Documentation Site](https://stackblitz.com/github/vitebook/vitebook/tree/main/docs)
 - [Svelte](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/svelte)
-- [SvelteKit](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/svelte-kit)
+- [SvelteKit](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/svelte-kit) (🚧 WIP)
 - [Vue](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/vue)
 - [Preact](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/preact)
 - [React](https://stackblitz.com/github/vitebook/vitebook/tree/main/examples/react)
