@@ -1,3 +1,9 @@
+## [0.19.8](https://github.com/vitebook/vitebook/compare/v0.19.7...v0.19.8) (2022-01-30)
+
+### Bug Fixes
+
+- **create:** update preact app files ([d44a30b](https://github.com/vitebook/vitebook/commit/d44a30b0c20aa93a484236e04468a79a105897c8))
+
 ## [0.19.7](https://github.com/vitebook/vitebook/compare/v0.19.6...v0.19.7) (2022-01-30)
 
 ### Bug Fixes
