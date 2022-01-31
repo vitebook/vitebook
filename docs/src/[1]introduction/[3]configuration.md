@@ -238,23 +238,15 @@ export default defineConfig({
 
 ## Vite
 
-Used to set [Vite configuration](https://vitejs.dev/config) options.
+Used to set [Vite configuration](https://vitejs.dev/config) options. You can configure Vite as
+usual by placing a `vite.config.{js,ts}` file at the project root. If you require overriding some
+configuration options, simply override them here.
 
-:::tip
-You can configure Vite as usual by placing a `vite.config.{js,ts}` file at the project root. If
-you require overriding some configuration options, simply import the Vite config into the
-Vitebook config file and override as needed.
-:::
-
-```js {7-10}
-// Import any existing vite configuration and override if needed.
-import viteConfig from '../vite.config.js';
-
+```js {4-6}
 import { defineConfig } from '@vitebook/client/node';
 
 export default defineConfig({
   vite: {
-    ...viteConfig,
     // ...
   },
 });

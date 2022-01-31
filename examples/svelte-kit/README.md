@@ -1,4 +1,4 @@
-# Vitebook + SvelteKit (🚧 WIP)
+# Vitebook + SvelteKit
 
 This directory contains a simple example demonstrating how to setup Vitebook with
 [SvelteKit](https://kit.svelte.dev). Feel free to explore the [`.vitebook`](./.vitebook)
