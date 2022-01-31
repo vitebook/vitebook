@@ -4,7 +4,7 @@ This directory contains a simple example demonstrating how to setup Vitebook wit
 [SvelteKit](https://kit.svelte.dev). Feel free to explore the [`.vitebook`](./.vitebook)
 directory.
 
-This directory was setup using `npm init svelte@next`.
+This directory was setup using `npm init svelte@next` and then `npm init vitebook`.
 
 ## Commands
 

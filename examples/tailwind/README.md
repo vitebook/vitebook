@@ -5,6 +5,12 @@ This directory contains a simple example demonstrating how to setup Vitebook wit
 
 ## Steps
 
+### Automatic
+
+Choose the `tailwind` feature when running `npm init vitebook`.
+
+### Manual
+
 1. `npm install -D tailwindcss postcss autoprefixer`
 2. `npx tailwindcss init -p`
 3. Change the Tailwind configuration file name to `tailwind.config.cjs`.
