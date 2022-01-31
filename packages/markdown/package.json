@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/markdown",
-  "version": "0.19.9",
+  "version": "0.19.10",
   "keywords": [
     "esm",
     "markdown",
@@ -71,8 +71,8 @@
     "@vitebook/core": "workspace:*"
   },
   "peerDependencies": {
-    "@vitebook/client": "0.19.9",
-    "@vitebook/core": "0.19.9"
+    "@vitebook/client": "0.19.10",
+    "@vitebook/core": "0.19.10"
   },
   "publishConfig": {
     "access": "public"

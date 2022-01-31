@@ -1,3 +1,9 @@
+## [0.19.10](https://github.com/vitebook/vitebook/compare/v0.19.9...v0.19.10) (2022-01-31)
+
+### Bug Fixes
+
+- **create:** prefer `.story.*` extension by default ([8c5ebcc](https://github.com/vitebook/vitebook/commit/8c5ebcc931fb09b8bb4d99a0e6471394f0fd629d))
+
 ## [0.19.9](https://github.com/vitebook/vitebook/compare/v0.19.8...v0.19.9) (2022-01-31)
 
 ### Bug Fixes
