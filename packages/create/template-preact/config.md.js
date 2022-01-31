@@ -3,7 +3,7 @@ import { preactMarkdownPlugin } from '@vitebook/markdown-preact/node';
 import { preactPlugin } from '@vitebook/preact/node'; /** __IMPORTS__ */
 
 export default defineConfig(/** __GENERICS__ */)({
-  include: ['src/**/*.{md,jsx,tsx}'],
+  include: ['src/**/*.md', 'src/**/*.story.{jsx,tsx}'],
   plugins: [
     preactMarkdownPlugin(),
     preactPlugin({ appFile: 'App.tsx' }),

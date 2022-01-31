@@ -3,7 +3,7 @@ import { vueMarkdownPlugin } from '@vitebook/markdown-vue/node';
 import { vuePlugin } from '@vitebook/vue/node'; /** __IMPORTS__ */
 
 export default defineConfig(/** __GENERICS__ */)({
-  include: ['src/**/*.{md,vue}'],
+  include: ['src/**/*.md', 'src/**/*.story.vue'],
   plugins: [
     vueMarkdownPlugin(),
     vuePlugin({ appFile: 'App.vue' }),

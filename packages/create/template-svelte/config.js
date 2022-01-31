@@ -4,7 +4,7 @@ import {
 } from '@vitebook/client/node'; /** __IMPORTS__ */
 
 export default defineConfig(/** __GENERICS__ */)({
-  include: ['src/**/*.svelte'],
+  include: ['src/**/*.story.svelte'],
   plugins: [
     clientPlugin({ appFile: 'App.svelte' }) /** __PLUGINS__ */,
   ],

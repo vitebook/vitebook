@@ -2,7 +2,7 @@ import { clientPlugin, defineConfig } from '@vitebook/client/node';
 import { vuePlugin } from '@vitebook/vue/node'; /** __IMPORTS__ */
 
 export default defineConfig(/** __GENERICS__ */)({
-  include: ['src/**/*.vue'],
+  include: ['src/**/*.story.vue'],
   plugins: [
     vuePlugin({ appFile: 'App.vue' }),
     clientPlugin() /** __PLUGINS__ */,

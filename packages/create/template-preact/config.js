@@ -2,7 +2,7 @@ import { clientPlugin, defineConfig } from '@vitebook/client/node';
 import { preactPlugin } from '@vitebook/preact/node'; /** __IMPORTS__ */
 
 export default defineConfig(/** __GENERICS__ */)({
-  include: ['src/**/*.{jsx,tsx}'],
+  include: ['src/**/*.story.{jsx,tsx}'],
   plugins: [
     preactPlugin({ appFile: 'App.tsx' }),
     clientPlugin() /** __PLUGINS__ */,

@@ -2,7 +2,7 @@ import { clientPlugin, defineConfig } from '@vitebook/client/node';
 import { svelteMarkdownPlugin } from '@vitebook/markdown-svelte/node'; /** __IMPORTS__ */
 
 export default defineConfig(/** __GENERICS__ */)({
-  include: ['src/**/*.{md,svelte}'],
+  include: ['src/**/*.md', 'src/**/*.story.svelte'],
   plugins: [
     svelteMarkdownPlugin(),
     clientPlugin({ appFile: 'App.svelte' }) /** __PLUGINS__ */,
