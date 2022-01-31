@@ -19,7 +19,6 @@
     "@vitebook/markdown-vue": "0.19.8",
     "@vitebook/theme-default": "0.19.8",
     "@vitebook/vue": "0.19.8",
-    "@vitejs/plugin-vue": "^2.0.0",
     "@vue/compiler-sfc": "^3.2.26",
     "svelte": "^3.43.1",
     "vite": "^2.7.0"

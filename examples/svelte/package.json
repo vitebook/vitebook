@@ -10,7 +10,6 @@
     "vitebook:preview": "vitebook preview"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.36",
     "@vitebook/client": "0.19.8",
     "@vitebook/core": "0.19.8",
     "@vitebook/markdown-shiki": "0.19.8",

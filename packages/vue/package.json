@@ -65,7 +65,8 @@
     "watch:types": "pnpm build:types -- --watch"
   },
   "dependencies": {
-    "@rollup/pluginutils": "^4.1.1"
+    "@rollup/pluginutils": "^4.1.1",
+    "@vitejs/plugin-vue": "^2.0.0"
   },
   "devDependencies": {
     "@vitebook/client": "workspace:*",

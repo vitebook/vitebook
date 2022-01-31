@@ -69,6 +69,7 @@
     "watch:types": "pnpm build:types -- --watch"
   },
   "dependencies": {
+    "@preact/preset-vite": "^2.1.7",
     "kleur": "^4.1.4"
   },
   "devDependencies": {

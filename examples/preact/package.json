@@ -14,7 +14,6 @@
     "preact-render-to-string": "^5.1.19"
   },
   "devDependencies": {
-    "@preact/preset-vite": "^2.1.7",
     "@vitebook/client": "0.19.8",
     "@vitebook/core": "0.19.8",
     "@vitebook/markdown-preact": "0.19.8",
