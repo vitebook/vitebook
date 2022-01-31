@@ -29,7 +29,7 @@ const packages = fs
 
 const examples = fs
   .readdirSync(path.resolve(__dirname, '../examples'))
-  .filter((p) => !p.startsWith('.') && !p.startsWith('react'));
+  .filter((p) => !p.startsWith('.'));
 
 const preId =
   args.preid ||
