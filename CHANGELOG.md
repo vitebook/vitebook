@@ -1,3 +1,9 @@
+## [0.19.9](https://github.com/vitebook/vitebook/compare/v0.19.8...v0.19.9) (2022-01-31)
+
+### Bug Fixes
+
+- framework-specific vite plugin should be provided out of the box ([82578b3](https://github.com/vitebook/vitebook/commit/82578b3a0b47b8b0cd80eb7f5f9c42a4a1c7bef9))
+
 ## [0.19.8](https://github.com/vitebook/vitebook/compare/v0.19.7...v0.19.8) (2022-01-30)
 
 ### Bug Fixes
