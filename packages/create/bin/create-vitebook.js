@@ -27,7 +27,10 @@ const argv = minimist(process.argv.slice(2), { string: ['_'] });
 async function main() {
   const projectDirName = argv._[0];
 
-  let targetDir = path.resolve(process.cwd(), projectDirName ?? '.');
+  let targetDir = process.cwd();
+  if (projectDirName) {
+    targetDir = path.resolve(targetDir, projectDirName);
+  }
   let template = argv.template;
   let theme = argv.theme;
   let features = argv.features?.split(',');
