@@ -19,6 +19,8 @@ export class Package {
    */
   constructor(targetDir, { workspace, link }) {
     /** @protected @readonly @type {string} */
+    this.targetDir = targetDir;
+    /** @protected @readonly @type {string} */
     this.pkgPath = path.resolve(targetDir, 'package.json');
     /** @protected @readonly @type {boolean|undefined} */
     this.workspace = workspace;
@@ -28,7 +30,7 @@ export class Package {
     /** @type {import('./types').PackageManager} @readonly */
     this.manager =
       /** @type {import('./types').PackageManager} */ (
-        this.getPkgInfoFromUserAgent()?.name
+        this.getPkgManagerFromLockFile() ?? this.getPkgInfoFromUserAgent()?.name
       ) ?? 'npm';
 
     this.read();
@@ -127,6 +129,23 @@ export class Package {
     this.pkg.devDependencies = sortObjectKeys(this.pkg.devDependencies);
 
     fs.writeFileSync(this.pkgPath, JSON.stringify(this.pkg, null, 2));
+  }
+
+  /** @protected */
+  getPkgManagerFromLockFile() {
+    if (fs.existsSync(path.resolve(this.targetDir, 'package-lock.json'))) {
+      return 'npm';
+    }
+
+    if (fs.existsSync(path.resolve(this.targetDir, 'yarn.lock'))) {
+      return 'yarn';
+    }
+
+    if (fs.existsSync(path.resolve(this.targetDir, 'pnpm-lock.yaml'))) {
+      return 'pnpm';
+    }
+
+    return undefined;
   }
 
   /** @protected */
