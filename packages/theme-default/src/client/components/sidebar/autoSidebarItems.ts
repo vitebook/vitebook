@@ -24,8 +24,19 @@ export const autoSidebarItems = derived(
 
     let items = sidebarItems;
 
-    const toPath = (page) => page.rootPath.split('.')[0].split('/').slice(1);
-    const getDir = (page) => page.rootPath.split('/').slice(0, -1).join('/');
+    const toPath = (page) =>
+      page.rootPath
+        .replace(/\[.*?\]/g, '')
+        .split('.')[0]
+        .split('/')
+        .slice(1);
+
+    const getDir = (page) =>
+      page.rootPath
+        .replace(/\[.*?\]/g, '')
+        .split('/')
+        .slice(0, -1)
+        .join('/');
 
     for (const page of pages) {
       let path = toPath(page);
