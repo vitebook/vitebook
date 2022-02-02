@@ -73,6 +73,7 @@
     "kleur": "^4.1.4"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.0",
     "@rollup/pluginutils": "^4.1.1",
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
