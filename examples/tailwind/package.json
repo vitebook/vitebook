@@ -13,6 +13,7 @@
     "clsx": "^1.1.1"
   },
   "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.36",
     "@vitebook/client": "0.19.11",
     "@vitebook/core": "0.19.11",
     "@vitebook/theme-default": "0.19.11",

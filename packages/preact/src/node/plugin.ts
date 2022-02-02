@@ -75,23 +75,37 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
           );
 
           if (!hasPreactPlugin) {
-            // We can't simply `import(...)` as it will fail in a monorepo (linked packages).
-            const rootPath = app.dirs.root.resolve(
-              'node_modules/@preact/preset-vite',
-            );
+            let preactPlugin;
 
-            const modulePath = JSON.parse(
-              (await fs.readFile(`${rootPath}/package.json`)).toString(),
-            ).module;
+            try {
+              preactPlugin = (await import('@preact/preset-vite'))?.default;
+            } catch (e) {
+              //
+            }
 
-            const preact = (await import(path.resolve(rootPath, modulePath)))
-              .default;
+            // Might be a monorepo.
+            if (!preactPlugin) {
+              const rootPath = app.dirs.root.resolve(
+                'node_modules/@preact/preset-vite',
+              );
+
+              const modulePath = JSON.parse(
+                (await fs.readFile(`${rootPath}/package.json`)).toString(),
+              ).module;
+
+              preactPlugin = (await import(path.resolve(rootPath, modulePath)))
+                .default;
+            }
+
+            if (!preactPlugin) {
+              throw Error('`@preact/preset-vite` was not found');
+            }
 
             _app.plugins.push(
-              preact({
+              preactPlugin({
                 include: hasMarkdownPreactPlugin
                   ? /\.([j|t]sx?|md)$/
-                  : undefined,
+                  : /\.([j|t]sx?)$/,
               }),
             );
           }

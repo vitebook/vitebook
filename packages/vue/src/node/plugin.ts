@@ -76,27 +76,43 @@ export function vuePlugin(options: VuePluginOptions = {}): Plugin[] {
       async configureApp(_app) {
         app = _app;
 
+        const hasMarkdownVuePlugin = app.hasPlugin('@vitebook/markdown-vue');
+
         try {
           if (!app.plugins.some(({ name }) => name === 'vite:vue')) {
-            // We can't simply `import(...)` as it will fail in a monorepo (linked packages).
-            const rootPath = app.dirs.root.resolve(
-              'node_modules/@vitejs/plugin-vue',
+            let vuePlugin;
+
+            try {
+              vuePlugin = require('@vitejs/plugin-vue');
+            } catch (e) {
+              //
+            }
+
+            // Might be a monorepo.
+            if (!vuePlugin) {
+              const rootPath = app.dirs.root.resolve(
+                'node_modules/@vitejs/plugin-vue',
+              );
+
+              const mainPath = JSON.parse(
+                (await fs.readFile(`${rootPath}/package.json`)).toString(),
+              ).main;
+
+              // eslint-disable-next-line @typescript-eslint/no-var-requires
+              vuePlugin = require(`${rootPath}/${mainPath}`);
+            }
+
+            if (!vuePlugin) {
+              throw Error('`@vitejs/plugin-vue` was not found');
+            }
+
+            _app.plugins.push(
+              vuePlugin({
+                include: hasMarkdownVuePlugin ? /\.(md|vue)$/ : /\.vue$/,
+              }),
             );
-
-            const mainPath = JSON.parse(
-              (await fs.readFile(`${rootPath}/package.json`)).toString(),
-            ).main;
-
-            console.log(rootPath, mainPath);
-
-            // vue: { include: /\.(md|vue)/ },
-
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const vue = require(`${rootPath}/${mainPath}`);
-            _app.plugins.push(vue());
           }
         } catch (e) {
-          console.log(e);
           throw logger.createError(
             `${kleur.bold('@vitebook/vue')} requires ${kleur.bold(
               '@vitejs/plugin-vue',

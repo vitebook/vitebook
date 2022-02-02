@@ -115,10 +115,8 @@ async function main() {
   builder.pkg.addVitebookDependency('client');
   builder.pkg.addVitebookDependency('core');
 
-  if (!builder.pkg.hasDependency('@sveltejs/kit')) {
-    builder.pkg.addDependency('vite', '^2.7.0', { dev: true });
-    builder.pkg.addDependency('svelte', '^3.43.1', { dev: true });
-  }
+  builder.pkg.addDependency('svelte', '^3.43.1', { dev: true });
+  builder.pkg.addDependency('vite', '^2.7.0', { dev: true });
 
   switch (builder.framework) {
     case 'vue':
@@ -126,6 +124,7 @@ async function main() {
 
       builder.pkg.addDependency('vue', '^3.0.0');
       builder.pkg.addDependency('@vue/compiler-sfc', '^3.2.26', { dev: true });
+      builder.pkg.addDependency('@vitejs/plugin-vue', '^2.0.0', { dev: true });
 
       if (builder.hasFeature('markdown'))
         builder.pkg.addVitebookDependency('markdown-vue');
@@ -135,11 +134,21 @@ async function main() {
 
       builder.pkg.addDependency('preact', '^10.5.14');
       builder.pkg.addDependency('preact-render-to-string', '^5.1.19');
+      builder.pkg.addDependency('@babel/core', '^7.15.8', { dev: true });
+      builder.pkg.addDependency('@preact/preset-vite', '^2.1.7', { dev: true });
 
       if (builder.hasFeature('markdown'))
         builder.pkg.addVitebookDependency('markdown-preact');
       break;
     case 'svelte':
+      builder.pkg.addDependency(
+        '@sveltejs/vite-plugin-svelte',
+        '^1.0.0-next.36',
+        {
+          dev: true,
+        },
+      );
+
       if (builder.hasFeature('markdown'))
         builder.pkg.addVitebookDependency('markdown-svelte');
   }

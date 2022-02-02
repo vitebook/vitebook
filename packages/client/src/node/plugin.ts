@@ -105,18 +105,38 @@ export function clientPlugin(
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           if (!hasSveltePlugin) {
-            // We can't simply `import(...)` as it will fail in a monorepo (linked packages).
-            const rootPath = app.dirs.root.resolve(
-              'node_modules/@sveltejs/vite-plugin-svelte',
-            );
+            let sveltePlugin;
 
-            const modulePath = JSON.parse(
-              (await fs.readFile(`${rootPath}/package.json`)).toString(),
-            ).module;
+            try {
+              const { svelte } = await import('@sveltejs/vite-plugin-svelte');
+              sveltePlugin = svelte;
+            } catch (e) {
+              //
+            }
 
-            const { svelte } = await import(path.resolve(rootPath, modulePath));
+            // Might be monorepo
+            if (!sveltePlugin) {
+              const rootPath = app.dirs.root.resolve(
+                'node_modules/@sveltejs/vite-plugin-svelte',
+              );
+
+              const modulePath = JSON.parse(
+                (await fs.readFile(`${rootPath}/package.json`)).toString(),
+              ).module;
+
+              const { svelte } = await import(
+                path.resolve(rootPath, modulePath)
+              );
+
+              sveltePlugin = svelte;
+            }
+
+            if (!sveltePlugin) {
+              throw Error('`@sveltejs/vite-plugin-svelte` was not found');
+            }
+
             _app.plugins.push(
-              svelte({
+              sveltePlugin({
                 extensions: hasMarkdownSveltePlugin
                   ? ['.svelte', '.md']
                   : ['.svelte'],
