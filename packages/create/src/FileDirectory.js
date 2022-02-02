@@ -36,9 +36,9 @@ export class FileDirectory {
     if (pathSegments && pathSegments.length > 0) {
       // Windows + Git Bash doesn't seem to play nicely with path.resolve
       // when any of the path segments are `.`
-      segments = pathSegments.filter(seg => seg !== '.');
+      segments = pathSegments.filter((seg) => seg !== '.');
     }
-    return path.resolve(this.path, segments);
+    return path.resolve(this.path, ...segments);
   }
 
   /**
