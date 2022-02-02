@@ -32,7 +32,13 @@ export class FileDirectory {
    * @param  {string[]} pathSegments
    */
   resolve(...pathSegments) {
-    return path.resolve(this.path, ...(pathSegments ?? []));
+    let segments = [];
+    if (pathSegments && pathSegments.length > 0) {
+      // Windows + Git Bash doesn't seem to play nicely with path.resolve
+      // when any of the path segments are `.`
+      segments = pathSegments.filter((seg) => seg !== '.');
+    }
+    return path.resolve(this.path, ...segments);
   }
 
   /**
