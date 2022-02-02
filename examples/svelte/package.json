@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/example-svelte",
-  "version": "0.19.11",
+  "version": "0.20.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,11 +10,11 @@
     "vitebook:preview": "vitebook preview"
   },
   "devDependencies": {
-    "@vitebook/client": "0.19.11",
-    "@vitebook/core": "0.19.11",
-    "@vitebook/markdown-shiki": "0.19.11",
-    "@vitebook/markdown-svelte": "0.19.11",
-    "@vitebook/theme-default": "0.19.11",
+    "@vitebook/client": "0.20.0",
+    "@vitebook/core": "0.20.0",
+    "@vitebook/markdown-shiki": "0.20.0",
+    "@vitebook/markdown-svelte": "0.20.0",
+    "@vitebook/theme-default": "0.20.0",
     "svelte": "^3.43.1",
     "typescript": "^4.4.3",
     "vite": "^2.7.0"

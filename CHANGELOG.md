@@ -1,3 +1,15 @@
+# [0.20.0](https://github.com/vitebook/vitebook/compare/v0.19.11...v0.20.0) (2022-02-02)
+
+### Bug Fixes
+
+- **create:** try to detect package manager based on lockfile ([616cf86](https://github.com/vitebook/vitebook/commit/616cf86a95e2034a72f58dc152e0842838924d2c))
+- improve framework vite plugin resolution to work with pnpm ([0abb983](https://github.com/vitebook/vitebook/commit/0abb983e6cbe597f90f9889f5523b0063cbaf9c3)), closes [#25](https://github.com/vitebook/vitebook/issues/25)
+- remove `just-*` deps from vite optimization ([d803b87](https://github.com/vitebook/vitebook/commit/d803b877768d6dc1eb594ef4d083e3466921f5c5)), closes [#25](https://github.com/vitebook/vitebook/issues/25)
+
+### Features
+
+- **create:** detect svelte-kit and adjust config ([be08a33](https://github.com/vitebook/vitebook/commit/be08a337dae14098d1a48bd97553a86fb117555c))
+
 ## [0.19.11](https://github.com/vitebook/vitebook/compare/v0.19.10...v0.19.11) (2022-02-02)
 
 ### Bug Fixes

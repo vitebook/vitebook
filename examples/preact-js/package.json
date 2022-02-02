@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/example-preact-js",
-  "version": "0.19.11",
+  "version": "0.20.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,11 +14,11 @@
     "preact-render-to-string": "^5.1.19"
   },
   "devDependencies": {
-    "@vitebook/client": "0.19.11",
-    "@vitebook/core": "0.19.11",
-    "@vitebook/markdown-preact": "0.19.11",
-    "@vitebook/preact": "0.19.11",
-    "@vitebook/theme-default": "0.19.11",
+    "@vitebook/client": "0.20.0",
+    "@vitebook/core": "0.20.0",
+    "@vitebook/markdown-preact": "0.20.0",
+    "@vitebook/preact": "0.20.0",
+    "@vitebook/theme-default": "0.20.0",
     "svelte": "^3.43.1",
     "vite": "^2.7.0"
   }
