@@ -24,6 +24,7 @@
   "devDependencies": {
     "@sveltejs/adapter-auto": "next",
     "@sveltejs/kit": "next",
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.36",
     "@types/cookie": "^0.4.1",
     "@vitebook/client": "0.19.11",
     "@vitebook/core": "0.19.11",
@@ -33,6 +34,7 @@
     "svelte-check": "^2.2.6",
     "svelte-preprocess": "^4.9.4",
     "tslib": "^2.3.1",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.3",
+    "vite": "^2.7.13"
   }
 }
