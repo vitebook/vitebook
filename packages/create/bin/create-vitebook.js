@@ -229,8 +229,14 @@ async function main() {
       (builder.framework === 'vue' && '.vue') ||
       (builder.hasFeature('typescript') ? '.tsx' : '.jsx');
 
+    const hasSvelteKit =
+      builder.framework === 'svelte' &&
+      builder.pkg.hasDependency('@sveltejs/kit');
+
     frameworkDir.copyFile(
-      `config${builder.hasFeature('markdown') ? '.md' : ''}.js`,
+      `config${hasSvelteKit ? '.kit' : ''}${
+        builder.hasFeature('markdown') ? '.md' : ''
+      }.js`,
       builder.dirs.dest.config.resolve(
         `config${builder.hasFeature('typescript') ? '.ts' : '.js'}`,
       ),
@@ -242,6 +248,7 @@ async function main() {
           __SITE_NAME__: userInput.projectName ?? '',
           // Site description.
           __SITE_DESCRIPTION__: userInput.projectDescription ?? '',
+          '\\s\\/\\*\\* __CONFIG__ \\*\\/': '',
           // Import default theme, if required.
           '\\s\\/\\*\\* __IMPORTS__ \\*\\/':
             builder.theme === 'default'
@@ -258,9 +265,7 @@ async function main() {
               : '',
           // Add default theme plugin, if required.
           '\\s\\/\\*\\* __PLUGINS__ \\*\\/,':
-            builder.theme === 'default' ? ',\n    defaultThemePlugin()' : '',
-          '\\s\\/\\*\\* __PLUGINS__ \\*\\/':
-            builder.theme === 'default' ? ', defaultThemePlugin()' : '',
+            builder.theme === 'default' ? ',\n    defaultThemePlugin(),' : '',
           // Add JSDoc theme type, if required.
           '\\/\\*\\* __THEME_TYPE__  \\*\\/\\s': builder.hasFeature(
             'typescript',
