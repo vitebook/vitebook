@@ -1,3 +1,11 @@
+## [0.19.11](https://github.com/vitebook/vitebook/compare/v0.19.10...v0.19.11) (2022-02-02)
+
+### Bug Fixes
+
+- incorrect usage of `clicked` in markdown examples ([#19](https://github.com/vitebook/vitebook/issues/19)) ([76f4e19](https://github.com/vitebook/vitebook/commit/76f4e196d687ccf172d0ae84dcc42beedffe2bdc))
+- ordered page numbers are showing in sidebar ([9d9c126](https://github.com/vitebook/vitebook/commit/9d9c126b228402a7bbc7b60dd6c363bfdcb99d61)), closes [#23](https://github.com/vitebook/vitebook/issues/23)
+- windows path resolving of '.' in create-vitebook ([#24](https://github.com/vitebook/vitebook/issues/24)) ([f73c051](https://github.com/vitebook/vitebook/commit/f73c051be0b7f811304e33df624816a19d386cf6))
+
 ## [0.19.10](https://github.com/vitebook/vitebook/compare/v0.19.9...v0.19.10) (2022-01-31)
 
 ### Bug Fixes
