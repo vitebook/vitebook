@@ -58,7 +58,7 @@
   "scripts": {
     "build": "run-s clean build:client build:node build:types copy",
     "build:client": "tsc -p src/client/tsconfig.json",
-    "build:node": "node ../../.scripts/build-node.js",
+    "build:node": "node ../../.scripts/build-node.js --external @preact/preset-vite",
     "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
     "clean": "rimraf dist",
     "copy": "node ../../.scripts/copy-non-ts-files.js",
