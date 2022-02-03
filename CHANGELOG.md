@@ -1,3 +1,9 @@
+## [0.20.1](https://github.com/vitebook/vitebook/compare/v0.20.0...v0.20.1) (2022-02-03)
+
+### Bug Fixes
+
+- mark framework vite packages as external in node builds ([e9de643](https://github.com/vitebook/vitebook/commit/e9de643b852318060a40c588fc458fdff70179e8))
+
 # [0.20.0](https://github.com/vitebook/vitebook/compare/v0.19.11...v0.20.0) (2022-02-02)
 
 ### Bug Fixes
