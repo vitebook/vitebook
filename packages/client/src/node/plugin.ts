@@ -137,6 +137,7 @@ export function clientPlugin(
 
             _app.plugins.push(
               sveltePlugin({
+                compilerOptions: { hydratable: true },
                 extensions: hasMarkdownSveltePlugin
                   ? ['.svelte', '.md']
                   : ['.svelte'],

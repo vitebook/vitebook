@@ -16,6 +16,9 @@ export default defineConfig<DefaultThemeConfig>({
     clientPlugin({ appFile: 'App.svelte' }),
     defaultThemePlugin(),
     svelte({
+      compilerOptions: {
+        hydratable: true,
+      },
       experimental: {
         // Remove if using `svelte-preprocess`.
         useVitePreprocess: true,

@@ -13,6 +13,9 @@ export default defineConfig(/** __GENERICS__ */)({
     svelteMarkdownPlugin(),
     clientPlugin({ appFile: 'App.svelte' }) /** __PLUGINS__ */,
     svelte({
+      compilerOptions: {
+        hydratable: true
+      },
       extensions: ['.md', '.svelte'],
       // Consult https://github.com/sveltejs/svelte-preprocess for more information
       // about preprocessors.

@@ -11,6 +11,9 @@ export default defineConfig(/** __GENERICS__ */)({
   plugins: [
     clientPlugin({ appFile: 'App.svelte' }) /** __PLUGINS__ */,
     svelte({
+      compilerOptions: {
+        hydratable: true
+      },
       extensions: ['.svelte'],
       // Consult https://github.com/sveltejs/svelte-preprocess for more information
       // about preprocessors.

@@ -18,6 +18,9 @@ export default defineConfig<DefaultThemeConfig>({
     clientPlugin({ appFile: 'App.svelte' }),
     defaultThemePlugin(),
     svelte({
+      compilerOptions: {
+        hydratable: true,
+      },
       extensions: ['.svelte', '.md'],
       // Consult https://github.com/sveltejs/svelte-preprocess for more information
       // about preprocessors.
