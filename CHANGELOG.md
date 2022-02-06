@@ -1,3 +1,9 @@
+## [0.20.2](https://github.com/vitebook/vitebook/compare/v0.20.1...v0.20.2) (2022-02-06)
+
+### Bug Fixes
+
+- config for svelte requires `hydratable` compiler option ([6bc3d32](https://github.com/vitebook/vitebook/commit/6bc3d32e52ca9b890bf191f6b13afb26532479cb)), closes [#30](https://github.com/vitebook/vitebook/issues/30) [#32](https://github.com/vitebook/vitebook/issues/32)
+
 ## [0.20.1](https://github.com/vitebook/vitebook/compare/v0.20.0...v0.20.1) (2022-02-03)
 
 ### Bug Fixes
