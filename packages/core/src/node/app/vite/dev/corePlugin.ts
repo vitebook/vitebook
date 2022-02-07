@@ -215,21 +215,36 @@ function startWatchingPages(app: App, server: ViteDevServer) {
       });
     }
 
-    if (!hasUnlinkedFile) {
-      hasUnlinkedFile = changedFiles.action === 'unlink';
-    }
-
     pendingChanges.push(changedFiles);
     resolveNewPages();
   }
+
+  let prevRoutes;
 
   watcher
     .on('add', (filePath) =>
       handleChange({ filePaths: filePath, action: 'add' }),
     )
-    .on('unlink', (filePath) =>
-      handleChange({ filePaths: filePath, action: 'unlink' }),
-    );
+    .on(
+      'change',
+      debounce(async (filePath) => {
+        await resolvePages(app, 'add', [
+          resolveRelativePath(app.dirs.root.path, filePath),
+        ]);
+
+        const newRoutes = JSON.stringify(app.pages.map((page) => page.route));
+
+        if (newRoutes !== prevRoutes) {
+          server.ws.send({ type: 'full-reload' });
+        }
+
+        prevRoutes = newRoutes;
+      }, 300),
+    )
+    .on('unlink', (filePath) => {
+      hasUnlinkedFile = true;
+      handleChange({ filePaths: filePath, action: 'unlink' });
+    });
 
   server.watcher.on('unlinkDir', (dir) => {
     const filePaths: string[] = [];

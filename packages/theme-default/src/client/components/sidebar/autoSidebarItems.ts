@@ -5,6 +5,7 @@ import {
   isUndefined,
   localizedSiteOptions,
   pages,
+  removeLeadingSlash,
   resolveLocalePath,
   toTitleCase,
   withBaseUrl,
@@ -25,14 +26,14 @@ export const autoSidebarItems = derived(
     let items = sidebarItems;
 
     const toPath = (page) =>
-      page.rootPath
+      decodeURI(`<root>/${removeLeadingSlash(page.route)}`)
         .replace(/\[.*?\]/g, '')
         .split('.')[0]
         .split('/')
         .slice(1);
 
     const getDir = (page) =>
-      page.rootPath
+      decodeURI(`<root>/${removeLeadingSlash(page.route)}`)
         .replace(/\[.*?\]/g, '')
         .split('/')
         .slice(0, -1)

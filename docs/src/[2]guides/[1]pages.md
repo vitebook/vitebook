@@ -83,6 +83,89 @@ The theme you've selected will most likely already include a 404 page, but you c
 custom one by creating a file at `<srcDir>/404.{md,jsx,tsx,vue,svelte}`. Now when
 a user visits any unknown route in the browser they'll be redirected to this 404 page.
 
+### Custom Routes
+
+You can escape the default route resolution in two ways:
+
+(1) Creating a [route resolver](../introduction/configuration.md#routes) in your Vitebook config file.
+
+```js {4-6}
+import { defineConfig } from '@vitebook/client/node';
+
+export default defineConfig({
+  resolveRoute({ filePath, relativeFilePath }) {
+    // ...
+  },
+});
+```
+
+(2) Or, exporting a route in either the frontmatter for markdown files, or as an export binding for
+JS modules.
+
+<Tabs values={langs} groupId="lang">
+<TabPanel value="Markdown">
+
+```md
+---
+route: 'Design System/Atoms/Button'
+---
+
+# Title
+
+...
+```
+
+</TabPanel>
+
+<TabPanel value="Preact">
+
+```tsx
+export const __route = 'Design System/Atoms/Button';
+
+function Page() {
+  // ...
+}
+
+export default Page;
+```
+
+</TabPanel>
+
+<TabPanel value="Svelte">
+
+```svelte
+<script context="module" lang="ts">
+export const __route = 'Design System/Atoms/Button';
+</script>
+
+<script lang="ts">
+  // ...
+</script>
+
+<!-- ... -->
+```
+
+</TabPanel>
+
+<TabPanel value="Vue">
+
+```vue
+<script lang="ts">
+export const __route = 'Design System/Atoms/Button';
+</script>
+
+<script setup lang="ts">
+// ...
+</script>
+
+<template>
+  <!-- ... -->
+</template>
+```
+
+</TabPanel>
+</Tabs>
+
 ## Page Meta
 
 Page meta refers to metadata about the page such as the title, description, and head tags. You

@@ -1,12 +1,13 @@
 import kleur from 'kleur';
 
-import type { ServerPage } from '../../../shared';
 import {
   ensureLeadingSlash,
   prettyJsonStr,
+  removeLeadingSlash,
+  ServerPage,
   stripImportQuotesFromJson,
 } from '../../../shared';
-import { globby, readRecentlyChangedFile } from '../../utils/fs';
+import { fs, globby, readRecentlyChangedFile } from '../../utils/fs';
 import { logger } from '../../utils/logger';
 import { path } from '../../utils/path';
 import type { App } from '../App';
@@ -25,7 +26,7 @@ export function resolvePageFilePaths(app: App): string[] {
 
 export async function resolvePages(
   app: App,
-  action: 'add' | 'unlink',
+  action: 'add' | 'unlink' | 'change',
   changed?: string[],
 ): Promise<void> {
   const filePaths = changed ?? resolvePageFilePaths(app);
@@ -72,7 +73,7 @@ async function resolvePage(app: App, filePath: string): Promise<void> {
     const relativeFilePath = app.dirs.root.relative(filePath);
     const route =
       app.options.resolveRoute?.({ filePath, relativeFilePath }) ??
-      filePathToRoute(app, filePath);
+      (await filePathToRoute(app, filePath));
 
     const page = await plugin.resolvePage?.({
       id,
@@ -129,17 +130,38 @@ function pageCouldNotBeResolved(app: App, filePath: string) {
 }
 
 const FAKE_HOST = 'http://a.com';
-export function filePathToRoute(app: App, filePath: string): string {
-  const relativePath = path
-    .relative(app.dirs.src.path, filePath)
-    .replace(/\[\d*\]/g, '');
+const FRONTMATTER_RE = /^---(.|\s|\S)*?---/;
+const MD_FILE_ROUTE_RE = /route:\s?(.*)/;
+const FILE_ROUTE_RE = /export const __route = (?:'|")(.*?)(?:'|")/;
 
-  const url = new URL(relativePath.toLowerCase(), FAKE_HOST).pathname;
+export async function filePathToRoute(
+  app: App,
+  filePath: string,
+): Promise<string> {
+  const fileContent = (await fs.readFile(filePath)).toString();
+  const fileExt = path.extname(filePath);
+
+  let configuredRoute;
+
+  if (fileExt === '.md') {
+    const frontmatter = fileContent.match(FRONTMATTER_RE)?.[0];
+    if (frontmatter) configuredRoute = frontmatter.match(MD_FILE_ROUTE_RE)?.[1];
+  } else {
+    configuredRoute = fileContent.match(FILE_ROUTE_RE)?.[1];
+  }
+
+  if (configuredRoute && !configuredRoute.endsWith('.html')) {
+    configuredRoute += '.html';
+  }
+
+  const route =
+    configuredRoute ??
+    path.relative(app.dirs.src.path, filePath).replace(/\[\d*\]/g, '');
+
+  const url = new URL(route.toLowerCase(), FAKE_HOST).pathname;
+
   return url
-    .replace(
-      new RegExp(`(.story)?(${path.extname(filePath)})($|\\?)`, 'i'),
-      '.html',
-    )
+    .replace(new RegExp(`(.story)?(${fileExt})($|\\?)`, 'i'), '.html')
     .replace(/\/(README|index).html($|\?)/i, '/');
 }
 
@@ -165,8 +187,8 @@ const orderedPageTokenRE = /^\[(\d)\]/;
 
 export function sortPages(pages: ServerPage[]): ServerPage[] {
   return Object.values(pages).sort((pageA, pageB) => {
-    const tokensA = splitRoute(pageA.rootPath);
-    const tokensB = splitRoute(pageB.rootPath);
+    const tokensA = splitRoute(`<root>/${removeLeadingSlash(pageA.route)}`);
+    const tokensB = splitRoute(`<root>/${removeLeadingSlash(pageB.route)}`);
     const len = Math.max(tokensA.length, tokensB.length);
 
     for (let i = 0; i < len; i++) {
