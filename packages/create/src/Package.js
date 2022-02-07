@@ -124,10 +124,8 @@ export class Package {
   }
 
   save() {
-    this.pkg.scripts = sortObjectKeys(this.pkg.scripts);
     this.pkg.dependencies = sortObjectKeys(this.pkg.dependencies);
     this.pkg.devDependencies = sortObjectKeys(this.pkg.devDependencies);
-
     fs.writeFileSync(this.pkgPath, JSON.stringify(this.pkg, null, 2));
   }
 
