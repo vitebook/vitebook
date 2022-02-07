@@ -6,7 +6,7 @@ import preprocess from 'svelte-preprocess';
 export default defineConfig(/** __GENERICS__ */)({
   include: ['src/**/*.md', 'src/**/*.story.svelte'] /** __CONFIG__ */,
   alias: {
-    $app: '/.svelte-kit/runtime/app',
+    $app: '/node_modules/@sveltejs/kit/assets/app',
     $lib: '/src/lib',
   },
   plugins: [
