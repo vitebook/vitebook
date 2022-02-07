@@ -31,6 +31,7 @@ async function main() {
   if (projectDirName) {
     targetDir = path.resolve(targetDir, projectDirName);
   }
+
   let template = argv.template;
   let theme = argv.theme;
   let features = argv.features?.split(',');
@@ -58,6 +59,7 @@ async function main() {
   }
 
   const userInput = await setupPrompt({
+    isTargetDirEmpty,
     initialProjectName: projectName,
     initialPackageName: toValidPackageName(projectDirName ?? ''),
     showPackageNamePrompt: !targetDirHasPackageJson,
@@ -95,8 +97,10 @@ async function main() {
   // Pkg
   // -------------------------------------------------------------------------------------------
 
-  builder.pkg.addField('name', userInput.packageName);
-  builder.pkg.addField('description', userInput.projectDescription);
+  if (isTargetDirEmpty) {
+    builder.pkg.addField('name', userInput.packageName);
+    builder.pkg.addField('description', userInput.projectDescription);
+  }
 
   ['dev', 'build', 'preview'].forEach((script) => {
     builder.pkg.addScript(

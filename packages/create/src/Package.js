@@ -118,6 +118,14 @@ export class Package {
 
   /**
    * @param {string} name
+   * @param {string} value
+   */
+  hasField(name, value) {
+    return this.pkg[name] === value;
+  }
+
+  /**
+   * @param {string} name
    */
   hasDependency(name) {
     return !!this.pkg.dependencies[name] || !!this.pkg.devDependencies[name];

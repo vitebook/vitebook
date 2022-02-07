@@ -10,12 +10,14 @@ export function addTailwindFeature(builder) {
   builder.pkg.addDependency('postcss', '^8.0.0', { dev: true });
   builder.pkg.addDependency('autoprefixer', '^10.0.0', { dev: true });
 
+  const ext = builder.pkg.hasField('type', 'module') ? '.cjs' : '.js';
+
   builder.dirs.dest.root.writeFile(
-    'tailwind.config.cjs',
+    `tailwind.config${ext}`,
     getTailwindConfig(builder),
   );
 
-  builder.dirs.dest.root.writeFile('postcss.config.cjs', getPostCssConfig());
+  builder.dirs.dest.root.writeFile(`postcss.config${ext}`, getPostCssConfig());
 
   builder.dirs.dest.config.writeFile(
     'global.css',

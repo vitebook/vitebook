@@ -19,6 +19,7 @@ export function overwritePrompt() {
 
 /**
  * @param {{
+ *  isTargetDirEmpty: boolean;
  *  initialProjectName?: string ;
  *  initialPackageName: string;
  *  showPackageNamePrompt: boolean;
@@ -39,6 +40,7 @@ export function overwritePrompt() {
  * }>}
  */
 export function setupPrompt({
+  isTargetDirEmpty,
   initialProjectName,
   initialPackageName,
   showPackageNamePrompt,
@@ -89,7 +91,9 @@ export function setupPrompt({
           type: 'multiselect',
           name: 'features',
           message: 'Features:',
-          choices: FEATURES,
+          choices: isTargetDirEmpty
+            ? FEATURES
+            : ['markdown', 'tailwind', 'typescript'],
         },
         showOverwriteConfigPrompt && {
           type: 'confirm',
