@@ -7,7 +7,7 @@ import kleur from 'kleur';
 import minimist from 'minimist';
 import path from 'upath';
 
-import { FEATURES, FRAMEWORKS, THEMES } from '../src/constants.js';
+import { FRAMEWORKS, THEMES } from '../src/constants.js';
 import { addEslintFeature } from '../src/features/eslint.js';
 import { addLintStagedFeature } from '../src/features/lint-staged.js';
 import { addPrettierFeature } from '../src/features/prettier.js';
@@ -86,9 +86,7 @@ async function main() {
     workspace,
     framework: /(preact|react)/.test(framework) ? 'preact' : framework,
     theme: theme ?? userInput.theme,
-    features: (features ?? userInput.features ?? []).filter(
-      (feature) => !FEATURES.includes(feature),
-    ),
+    features: features ?? userInput.features ?? [],
   });
 
   console.log(kleur.bold(kleur.cyan(`\nvitebook@${builder.version}\n`)));
