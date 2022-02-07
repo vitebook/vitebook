@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/vue",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "keywords": [
     "client",
     "esm",
@@ -77,8 +77,8 @@
     "vue": "^3.2.26"
   },
   "peerDependencies": {
-    "@vitebook/client": "0.21.0",
-    "@vitebook/core": "0.21.0",
+    "@vitebook/client": "0.21.1",
+    "@vitebook/core": "0.21.1",
     "@vue/compiler-sfc": "^3.2.26",
     "vue": "^3.2.26"
   },

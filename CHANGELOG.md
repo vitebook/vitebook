@@ -1,3 +1,12 @@
+## [0.21.1](https://github.com/vitebook/vitebook/compare/v0.21.0...v0.21.1) (2022-02-07)
+
+### Bug Fixes
+
+- **create:** do not mess with order of pkg scripts ([661e64e](https://github.com/vitebook/vitebook/commit/661e64e4da188af0504bc7b83b4eeb06a5eea83a))
+- **create:** features are being incorrectly filtered ([6d3a76e](https://github.com/vitebook/vitebook/commit/6d3a76ebe9dd2875ef3d6dbf94c577d2659f7721))
+- **create:** remove some annoying side-effects when creating in existing dir ([afd0883](https://github.com/vitebook/vitebook/commit/afd0883eda124fb09eb0806ff3e46932f1e147db))
+- **create:** set initial prompt value for theme to `default` ([aad1bc4](https://github.com/vitebook/vitebook/commit/aad1bc4b56f55f01a3389866c38dcf7309920e45))
+
 # [0.21.0](https://github.com/vitebook/vitebook/compare/v0.20.2...v0.21.0) (2022-02-07)
 
 ### Features
