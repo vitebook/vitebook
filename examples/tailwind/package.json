@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/example-tailwind",
-  "version": "0.20.2",
+  "version": "0.21.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,9 +14,9 @@
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.36",
-    "@vitebook/client": "0.20.2",
-    "@vitebook/core": "0.20.2",
-    "@vitebook/theme-default": "0.20.2",
+    "@vitebook/client": "0.21.0",
+    "@vitebook/core": "0.21.0",
+    "@vitebook/theme-default": "0.21.0",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.5",
     "svelte": "^3.43.1",

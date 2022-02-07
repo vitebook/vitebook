@@ -1,3 +1,9 @@
+# [0.21.0](https://github.com/vitebook/vitebook/compare/v0.20.2...v0.21.0) (2022-02-07)
+
+### Features
+
+- custom page routes ([ffe7b54](https://github.com/vitebook/vitebook/commit/ffe7b54e0bb7f7b4c179f31c33e9e70453832912)), closes [#28](https://github.com/vitebook/vitebook/issues/28)
+
 ## [0.20.2](https://github.com/vitebook/vitebook/compare/v0.20.1...v0.20.2) (2022-02-06)
 
 ### Bug Fixes
