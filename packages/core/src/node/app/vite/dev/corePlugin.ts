@@ -228,6 +228,8 @@ function startWatchingPages(app: App, server: ViteDevServer) {
     .on(
       'change',
       debounce(async (filePath) => {
+        await resolvePendingChanges?.();
+
         await resolvePages(app, 'add', [
           resolveRelativePath(app.dirs.root.path, filePath),
         ]);
@@ -235,7 +237,10 @@ function startWatchingPages(app: App, server: ViteDevServer) {
         const newRoutes = JSON.stringify(app.pages.map((page) => page.route));
 
         if (newRoutes !== prevRoutes) {
-          server.ws.send({ type: 'full-reload' });
+          server.watcher.emit('change', virtualModuleRequestPath.pages);
+          setTimeout(() => {
+            server.ws.send({ type: 'full-reload' });
+          }, 100);
         }
 
         prevRoutes = newRoutes;

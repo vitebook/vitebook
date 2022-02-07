@@ -7,7 +7,7 @@ import {
   ServerPage,
   stripImportQuotesFromJson,
 } from '../../../shared';
-import { fs, globby, readRecentlyChangedFile } from '../../utils/fs';
+import { globby, readRecentlyChangedFile } from '../../utils/fs';
 import { logger } from '../../utils/logger';
 import { path } from '../../utils/path';
 import type { App } from '../App';
@@ -138,7 +138,7 @@ export async function filePathToRoute(
   app: App,
   filePath: string,
 ): Promise<string> {
-  const fileContent = (await fs.readFile(filePath)).toString();
+  const fileContent = (await readRecentlyChangedFile(filePath)).toString();
   const fileExt = path.extname(filePath);
 
   let configuredRoute;
