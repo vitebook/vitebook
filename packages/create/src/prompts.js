@@ -84,7 +84,7 @@ export function setupPrompt({
           type: 'select',
           name: 'theme',
           message: 'Select a theme:',
-          initial: 0,
+          initial: 2,
           choices: THEMES,
         },
         showFeaturesPrompt && {
