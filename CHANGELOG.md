@@ -1,3 +1,9 @@
+## [0.21.3](https://github.com/vitebook/vitebook/compare/v0.21.2...v0.21.3) (2022-02-08)
+
+### Bug Fixes
+
+- page container should flow vertically ([8454fc0](https://github.com/vitebook/vitebook/commit/8454fc0bc64d3cfd03615e2690c4220e2ac2046c)), closes [#34](https://github.com/vitebook/vitebook/issues/34)
+
 ## [0.21.2](https://github.com/vitebook/vitebook/compare/v0.21.1...v0.21.2) (2022-02-08)
 
 ### Bug Fixes
