@@ -1,3 +1,11 @@
+## [0.21.2](https://github.com/vitebook/vitebook/compare/v0.21.1...v0.21.2) (2022-02-08)
+
+### Bug Fixes
+
+- **core:** filter out duplicate routes and log warning ([b221e51](https://github.com/vitebook/vitebook/commit/b221e515947b812bff71779a990df24bb49adef2)), closes [#28](https://github.com/vitebook/vitebook/issues/28)
+- **core:** improve initial custom route detection when using `__route` ([934c18c](https://github.com/vitebook/vitebook/commit/934c18c042871fa748a4d3e96f4fd740fe8a1cbf)), closes [#28](https://github.com/vitebook/vitebook/issues/28)
+- use CI-safe `$app` alias for svelte kit ([679d500](https://github.com/vitebook/vitebook/commit/679d500fd389bb54d618abbef69645e85b008e98)), closes [#26](https://github.com/vitebook/vitebook/issues/26)
+
 ## [0.21.1](https://github.com/vitebook/vitebook/compare/v0.21.0...v0.21.1) (2022-02-07)
 
 ### Bug Fixes
