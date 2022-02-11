@@ -1,3 +1,10 @@
+# [0.22.0](https://github.com/vitebook/vitebook/compare/v0.21.3...v0.22.0) (2022-02-11)
+
+### Bug Fixes
+
+- reading `etag` of `undefined` - vite `^2.8.0` ([c442030](https://github.com/vitebook/vitebook/commit/c442030d8fc35a691faad8cd6b1ba75834c5d744))
+- **theme-default:** addons should not scroll with page ([024290c](https://github.com/vitebook/vitebook/commit/024290ccb4795ed72df891e9df306873659f86d1))
+
 ## [0.21.3](https://github.com/vitebook/vitebook/compare/v0.21.2...v0.21.3) (2022-02-08)
 
 ### Bug Fixes
