@@ -86,7 +86,7 @@
   },
   "devDependencies": {
     "rollup": "^2.58.0",
-    "vite": "^2.8.1"
+    "vite": "^2.8.0"
   },
   "engines": {
     "node": ">=15"

@@ -73,7 +73,7 @@
     "@vitebook/core": "workspace:*",
     "@vue/compiler-sfc": "^3.2.26",
     "svelte": "^3.44.1",
-    "vite": "2.7.1",
+    "vite": "^2.8.0",
     "vue": "^3.2.26"
   },
   "peerDependencies": {

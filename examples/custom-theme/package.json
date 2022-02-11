@@ -13,7 +13,7 @@
     "@vitebook/client": "0.21.3",
     "@vitebook/core": "0.21.3",
     "svelte": "^3.44.0",
-    "vite": "^2.7.0"
+    "vite": "^2.8.0"
   },
   "engines": {
     "node": ">=16"

@@ -80,7 +80,7 @@
     "preact": "^10.5.14",
     "preact-render-to-string": "^5.1.19",
     "svelte": "^3.44.1",
-    "vite": "2.7.1"
+    "vite": "^2.8.0"
   },
   "peerDependencies": {
     "@vitebook/client": "0.21.3",
