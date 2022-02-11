@@ -15,7 +15,7 @@ export const indexHtmlMiddleware =
       try {
         let html = readIndexHtmlFile(app);
         html = await server.transformIndexHtml(req.url, html, req.originalUrl);
-        return send(req, res, html, 'html');
+        return send(req, res, html, 'html', {});
       } catch (e) {
         return next(e);
       }

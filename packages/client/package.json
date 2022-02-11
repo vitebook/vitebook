@@ -84,7 +84,7 @@
   "devDependencies": {
     "@vitebook/core": "workspace:*",
     "svelte": "^3.44.1",
-    "vite": "^2.7.1"
+    "vite": "^2.8.1"
   },
   "peerDependencies": {
     "@vitebook/core": "0.21.3",
