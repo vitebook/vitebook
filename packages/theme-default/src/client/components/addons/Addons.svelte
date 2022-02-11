@@ -400,6 +400,8 @@
   @media (min-width: 992px) {
     .addons {
       position: sticky;
+      top: 0;
+      right: 0;
       width: auto;
       max-height: 100vh;
       opacity: 1;
