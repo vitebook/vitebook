@@ -1,3 +1,8 @@
+## 0.23.0 (2022-02-24)
+
+- feat(create): provide helpful tip when adding markdown support to existing vite config ([da9e098](https://github.com/vitebook/vitebook/commit/da9e098))
+- fix(vue): `configureApp` is not a function ([aa9e162](https://github.com/vitebook/vitebook/commit/aa9e162)), closes [#37](https://github.com/vitebook/vitebook/issues/37) [#39](https://github.com/vitebook/vitebook/issues/39)
+
 # [0.22.0](https://github.com/vitebook/vitebook/compare/v0.21.3...v0.22.0) (2022-02-11)
 
 ### Bug Fixes
