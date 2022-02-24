@@ -43,6 +43,14 @@ export class FileDirectory {
 
   /**
    * @param {string} filePath
+   */
+  readFile(filePath) {
+    const path = this.resolve(filePath);
+    return fs.existsSync(path) ? fs.readFileSync(path).toString() : '';
+  }
+
+  /**
+   * @param {string} filePath
    * @param {string} content
    * @param {{ overwrite?: boolean }} [options]
    */

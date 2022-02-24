@@ -78,8 +78,6 @@ async function main() {
     fs.mkdirSync(targetDir);
   }
 
-  console.log(targetDir);
-
   const builder = new ProjectBuilder({
     targetDir,
     link,
@@ -218,6 +216,49 @@ async function main() {
   addEslintFeature(builder);
   addPrettierFeature(builder);
   addLintStagedFeature(builder);
+
+  if (builder.hasFeature('markdown')) {
+    let ext = '.js';
+    let viteFileContent = builder.dirs.dest.root.readFile('vite.config.js');
+
+    if (viteFileContent.length === 0) {
+      ext = '.ts';
+      viteFileContent = builder.dirs.dest.root.readFile('vite.config.ts');
+    }
+
+    let frameworkPluginName = '@sveltejs/vite-plugin-svelte';
+    let includeStatement = `\n{\n  ${kleur.bold(
+      "extensions: ['.svelte', '.md']",
+    )}\n}`;
+
+    switch (builder.framework) {
+      case 'vue':
+        frameworkPluginName = '@vitejs/plugin-vue';
+        includeStatement = `\n{\n  ${kleur.bold('include: /\\.(md|vue)$/')}\n}`;
+        break;
+      case 'preact':
+        frameworkPluginName = '@preact/preset-vite';
+        includeStatement = `\n{\n  ${kleur.bold(
+          'include: /\\.([j|t]sx?|md)$/',
+        )}\n}`;
+        break;
+    }
+
+    const hasOwnFrameworkPlugin = viteFileContent.includes(frameworkPluginName);
+
+    if (hasOwnFrameworkPlugin) {
+      console.warn(
+        kleur.yellow(
+          `\nDetected ${kleur.bold(frameworkPluginName)} in ${kleur.bold(
+            `vite.config${ext}`,
+          )}`,
+        ),
+        '\n\nTo complete adding markdown support, add the following line to the plugin options:\n',
+        includeStatement,
+        '\n\n',
+      );
+    }
+  }
 
   // -------------------------------------------------------------------------------------------
   // Configuration File
