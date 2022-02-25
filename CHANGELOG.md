@@ -1,3 +1,7 @@
+## <small>0.23.1 (2022-02-25)</small>
+
+- feat: allow `root` to be passed to preview command ([ab0e947](https://github.com/vitebook/vitebook/commit/ab0e947))
+
 ## 0.23.0 (2022-02-24)
 
 - feat(create): provide helpful tip when adding markdown support to existing vite config ([da9e098](https://github.com/vitebook/vitebook/commit/da9e098))
