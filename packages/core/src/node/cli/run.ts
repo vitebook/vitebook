@@ -133,7 +133,7 @@ program
 
 // Preview
 program
-  .command('preview', 'Preview production build')
+  .command('preview [root]', 'Preview production build')
   .option('--base <baseUrl>', '[string] Set public base path (default: /)')
   .option(
     '-c, --configDir <configDir>',
@@ -147,7 +147,8 @@ program
   .option('--open [path]', '[boolean | string] Open browser on startup')
   .option('-m, --mode', '[string] Set env mode')
   .option('-d, --debug', '[boolean] Enable debug mode')
-  .action(function runPreviewCommand(options) {
+  .action(function runPreviewCommand(root, options) {
+    options.root = root;
     options.baseUrl = options.base;
     options.configDir = options.configDir ?? options.c;
     options.port = options.port ?? options.p;
