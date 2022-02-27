@@ -57,7 +57,10 @@ export async function resolvePages(
   }
 
   app.pages = filterDuplicateRoutes(
-    sortPages(Array.from(resolvedPages.values())),
+    sortPages(Array.from(resolvedPages.values())).map((page) => ({
+      ...page,
+      route: stripOrderFromRoute(page.route),
+    })),
   );
 
   // `pagesResolved` hook
@@ -75,7 +78,7 @@ async function resolvePage(app: App, filePath: string): Promise<void> {
     const relativeFilePath = app.dirs.root.relative(filePath);
     const route =
       app.options.resolveRoute?.({ filePath, relativeFilePath }) ??
-      (await filePathToRoute(app, filePath));
+      (await filePathToRoute(app, filePath, true));
 
     const page = await plugin.resolvePage?.({
       id,
@@ -136,9 +139,14 @@ const FRONTMATTER_RE = /^---(.|\s|\S)*?---/;
 const MD_FILE_ROUTE_RE = /route:\s?(.*)/;
 const FILE_ROUTE_RE = /export const __route = (?:'|")(.*?)(?:'|")/;
 
+export function stripOrderFromRoute(route: string) {
+  return route.replace(/\[\d*\]/g, '');
+}
+
 export async function filePathToRoute(
   app: App,
   filePath: string,
+  keepOrder = false,
 ): Promise<string> {
   const fileContent = (await readRecentlyChangedFile(filePath)).toString();
   const fileExt = path.extname(filePath);
@@ -156,9 +164,8 @@ export async function filePathToRoute(
     configuredRoute += '.html';
   }
 
-  const route =
-    configuredRoute ??
-    path.relative(app.dirs.src.path, filePath).replace(/\[\d*\]/g, '');
+  let route = configuredRoute ?? path.relative(app.dirs.src.path, filePath);
+  route = keepOrder ? route : stripOrderFromRoute(route);
 
   const url = new URL(route.toLowerCase(), FAKE_HOST).pathname;
 
