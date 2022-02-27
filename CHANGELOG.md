@@ -1,3 +1,7 @@
+## <small>0.23.2 (2022-02-27)</small>
+
+- fix: page sorting by file name order is not working ([783b1a4](https://github.com/vitebook/vitebook/commit/783b1a4)), closes [#43](https://github.com/vitebook/vitebook/issues/43)
+
 ## <small>0.23.1 (2022-02-25)</small>
 
 - feat: allow `root` to be passed to preview command ([ab0e947](https://github.com/vitebook/vitebook/commit/ab0e947))
