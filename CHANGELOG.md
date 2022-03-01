@@ -1,3 +1,7 @@
+## <small>0.23.4 (2022-03-01)</small>
+
+- fix: make `filePathToRoute` synchronous (#47) ([05cd5f9](https://github.com/vitebook/vitebook/commit/05cd5f9)), closes [#47](https://github.com/vitebook/vitebook/issues/47)
+
 ## <small>0.23.3 (2022-03-01)</small>
 
 - fix: ordered relative markdown links throw (#46) ([c3f05be](https://github.com/vitebook/vitebook/commit/c3f05be)), closes [#46](https://github.com/vitebook/vitebook/issues/46) [#45](https://github.com/vitebook/vitebook/issues/45)
