@@ -1,5 +1,6 @@
 import { filePathToRoute, isLinkExternal } from '@vitebook/core/node';
 import { resolveRelativePath } from '@vitebook/core/node/utils';
+import fs from 'fs';
 import type { PluginWithOptions } from 'markdown-it';
 
 import type { MarkdownParserEnv } from '../types';
@@ -63,7 +64,7 @@ export const linksPlugin: PluginWithOptions<LinksPluginOptions> = (
       const hrefAttr = token.attrs![hrefIndex];
       const hrefLink = hrefAttr[1];
 
-      const internalLinkMatch = hrefLink.match(
+      const internalLinkMatch = decodeURIComponent(hrefLink).match(
         /^((?:.*)(?:\/|\.md|\.html))(#.*)?$/,
       );
 
@@ -97,7 +98,8 @@ export const linksPlugin: PluginWithOptions<LinksPluginOptions> = (
           ? app!.dirs.src.resolve('.' + rawPath)
           : resolveRelativePath(filePath!, rawPath);
 
-        const route = filePathToRoute(app!, absolutePath);
+        const fileContent = fs.readFileSync(absolutePath).toString();
+        const route = filePathToRoute(app!, absolutePath, fileContent);
 
         withRouterLink();
 

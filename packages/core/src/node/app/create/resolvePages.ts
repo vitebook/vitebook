@@ -76,9 +76,10 @@ async function resolvePage(app: App, filePath: string): Promise<void> {
 
     const id = ensureLeadingSlash(path.relative(app.dirs.root.path, filePath));
     const relativeFilePath = app.dirs.root.relative(filePath);
+    const fileContent = (await readRecentlyChangedFile(filePath)).toString();
     const route =
       app.options.resolveRoute?.({ filePath, relativeFilePath }) ??
-      (await filePathToRoute(app, filePath, true));
+      (await filePathToRoute(app, filePath, fileContent, true));
 
     const page = await plugin.resolvePage?.({
       id,
@@ -146,9 +147,9 @@ export function stripOrderFromRoute(route: string) {
 export async function filePathToRoute(
   app: App,
   filePath: string,
+  fileContent: string,
   keepOrder = false,
 ): Promise<string> {
-  const fileContent = (await readRecentlyChangedFile(filePath)).toString();
   const fileExt = path.extname(filePath);
 
   let configuredRoute;
