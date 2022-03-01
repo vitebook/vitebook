@@ -1,3 +1,7 @@
+## <small>0.23.3 (2022-03-01)</small>
+
+- fix: ordered relative markdown links throw (#46) ([c3f05be](https://github.com/vitebook/vitebook/commit/c3f05be)), closes [#46](https://github.com/vitebook/vitebook/issues/46) [#45](https://github.com/vitebook/vitebook/issues/45)
+
 ## <small>0.23.2 (2022-02-27)</small>
 
 - fix: page sorting by file name order is not working ([783b1a4](https://github.com/vitebook/vitebook/commit/783b1a4)), closes [#43](https://github.com/vitebook/vitebook/issues/43)
