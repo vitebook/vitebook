@@ -265,14 +265,17 @@ a.__vbk__.header-anchor:focus {
 
 ul.__vbk__,
 ol.__vbk__ {
-  list-style: square;
   margin: 1.15rem 0;
   line-height: 1.8;
+  padding-left: 1.15rem;
 }
 
-ul.__vbk__,
+ul.__vbk__ {
+  list-style: square;
+}
+
 ol.__vbk__ {
-  padding-left: 1.15rem;
+  list-style: decimal;
 }
 
 li.__vbk__ > ul.__vbk__,
