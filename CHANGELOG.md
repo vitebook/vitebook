@@ -1,3 +1,8 @@
+## <small>0.23.5 (2022-04-06)</small>
+
+- fix: add inBrowser check to ButtonLink (#68) ([c94ce61](https://github.com/vitebook/vitebook/commit/c94ce61)), closes [#68](https://github.com/vitebook/vitebook/issues/68)
+- fix(theme-default): use list-style decimal for ol (#49) ([ab30ea2](https://github.com/vitebook/vitebook/commit/ab30ea2)), closes [#49](https://github.com/vitebook/vitebook/issues/49)
+
 ## <small>0.23.4 (2022-03-01)</small>
 
 - fix: make `filePathToRoute` synchronous (#47) ([05cd5f9](https://github.com/vitebook/vitebook/commit/05cd5f9)), closes [#47](https://github.com/vitebook/vitebook/issues/47)
