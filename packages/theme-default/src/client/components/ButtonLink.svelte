@@ -1,5 +1,6 @@
 <script>
   import { withBaseUrl, useRouter } from '@vitebook/client';
+  import { inBrowser } from '@vitebook/core';
   import { darkMode } from '../stores/darkMode';
 
   export let href;
@@ -19,7 +20,7 @@
   class="button"
   class:dark={$darkMode}
   class:secondary={type === 'secondary'}
-  href={href === '_back' ? document.referrer : withBaseUrl(href)}
+  href={(href === '_back' && inBrowser) ? document.referrer : withBaseUrl(href)}
   on:click={onClick}
 >
   <slot />
