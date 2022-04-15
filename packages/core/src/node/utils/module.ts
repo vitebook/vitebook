@@ -1,7 +1,7 @@
 import { build as esbuild, BuildOptions } from 'esbuild';
 import getFolderSize from 'get-folder-size';
 import { createRequire } from 'module';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 import { isObject } from '../../shared';
 import { checksumFile, fs } from './fs';
@@ -87,7 +87,7 @@ export const loadModule = async <T>(
   const fileComment = `// FILE: ${filePath}\n\n`;
   const code = await bundle(filePath, buildOptions);
   await fs.writeFile(outputPath, fileComment + requireShim + code);
-  const mod = import(outputPath + `?t=${Date.now()}`) as unknown as T;
+  const mod = import(pathToFileURL(outputPath).href + `?t=${Date.now()}`) as unknown as T;
 
   return mod;
 };
@@ -115,10 +115,10 @@ export async function bundle(
       {
         name: 'mark-externals',
         setup(build) {
-          // Must not start with "/" or "./" or "../"
+          // Must not start with "/" or "./" or "../" or "C:/"
           // eslint-disable-next-line no-useless-escape
-          const filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/;
-          build.onResolve({ filter }, async () => ({ external: true }));
+          build.onResolve({ filter: /[A-Z]:\/*/ }, async () => ({ external: false }));
+          build.onResolve({ filter: /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ }, async () => ({ external: true }));
         },
       },
     ],
