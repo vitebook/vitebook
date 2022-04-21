@@ -28,7 +28,7 @@ export function stringifyEvent(
 
   whitelist.forEach((prop) => {
     if (prop in event) {
-      if (prop === 'target') {
+      if (prop === 'target' && event[prop]) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         o[prop] = `${(event[prop] as any).constructor.name}`;
       } else {
