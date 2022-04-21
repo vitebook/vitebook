@@ -1,3 +1,10 @@
+## [0.23.6](https://github.com/vitebook/vitebook/compare/v0.23.5...v0.23.6) (2022-04-21)
+
+### Bug Fixes
+
+- **client:** event in svelte custom event ([#57](https://github.com/vitebook/vitebook/issues/57)) ([#73](https://github.com/vitebook/vitebook/issues/73)) ([8f33feb](https://github.com/vitebook/vitebook/commit/8f33febb6d09c6fabdf00bb3115466863c870a33))
+- **core:** fix windows absolute path related bug ([#77](https://github.com/vitebook/vitebook/issues/77)) ([0d132d4](https://github.com/vitebook/vitebook/commit/0d132d48ab1dad89d1d3967ed9e56a6eb13531e3))
+
 ## <small>0.23.5 (2022-04-06)</small>
 
 - fix: add inBrowser check to ButtonLink (#68) ([c94ce61](https://github.com/vitebook/vitebook/commit/c94ce61)), closes [#68](https://github.com/vitebook/vitebook/issues/68)
