@@ -44,11 +44,11 @@ export function addEslintFeature(builder) {
     });
   }
 
-  if (builder.framework === 'vue') {
-    builder.pkg.addDependency('eslint-plugin-vue', '^8.0.0', {
-      dev: true,
-    });
-  }
+  // if (builder.framework === 'vue') {
+  //   builder.pkg.addDependency('eslint-plugin-vue', '^8.0.0', {
+  //     dev: true,
+  //   });
+  // }
 
   if (builder.framework === 'svelte') {
     builder.pkg.addDependency('eslint-plugin-svelte3', '^3.0.0', {
@@ -79,7 +79,7 @@ export function getEslintConfig(
   { typescript = false, prettier = false },
 ) {
   const config =
-    (framework === 'preact' && getPreactEslintConfig({ typescript })) ||
+    // (framework === 'preact' && getPreactEslintConfig({ typescript })) ||
     (framework === 'svelte' && getSvelteEslintConfig({ typescript })) ||
     getVueEslintConfig({ typescript });
 
@@ -164,7 +164,7 @@ export function getLintExtensions(builder) {
       supportsJsx && '.jsx',
       withTypescript && '.ts',
       supportsJsx && withTypescript && '.tsx',
-      builder.framework === 'vue' && '.vue',
+      // builder.framework === 'vue' && '.vue',
       builder.framework === 'svelte' && '.svelte',
     ].filter(Boolean)
   );

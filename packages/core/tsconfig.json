@@ -1,4 +1,13 @@
 {
   "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "declarationDir": "types",
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "paths": {
+      ":virtual/vitebook/pages": ["./src/virtual/pages.d.ts"]
+    }
+  },
   "include": ["src"]
 }

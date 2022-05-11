@@ -3,13 +3,7 @@
 import fs from 'fs';
 import path from 'upath';
 
-export const GIT_IGNORE = [
-  '.DS_STORE',
-  '.cache',
-  '.temp',
-  'node_modules/',
-  'dist/',
-];
+export const GIT_IGNORE = ['.DS_STORE', 'node_modules/', 'build/'];
 
 export class GitIgnore {
   /** @protected @readonly */
@@ -37,7 +31,7 @@ export class GitIgnore {
     if (!exists) {
       fs.writeFileSync(this.gitignorePath, ignore.join('\n'));
     } else {
-      let content = fs.readFileSync(this.gitignorePath).toString();
+      let content = fs.readFileSync(this.gitignorePath, 'utf-8');
 
       ignore.forEach((ignore) => {
         if (!content.includes(ignore)) {

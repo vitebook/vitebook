@@ -1,13 +1,12 @@
 // @ts-check
 
-export const FRAMEWORKS = ['vue', 'svelte', 'preact', 'react'];
+export const FRAMEWORKS = ['svelte'];
 
-export const THEMES = ['blank', 'custom', 'default'];
+export const THEMES = [];
 
 export const FEATURES = [
   'eslint',
   'lint-staged',
-  'markdown',
   'prettier',
   'tailwind',
   'typescript',

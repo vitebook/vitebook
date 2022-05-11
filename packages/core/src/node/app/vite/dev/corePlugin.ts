@@ -1,43 +1,32 @@
-import { watch } from 'chokidar';
+import fs from 'fs-extra';
 import debounce from 'just-debounce-it';
-import kleur from 'kleur';
+import MagicString from 'magic-string';
+import path from 'upath';
 import {
   DepOptimizationMetadata,
   UserConfig as ViteConfig,
   ViteDevServer,
 } from 'vite';
 
-import { isArray, prettyJsonStr } from '../../../../shared';
-import { globby } from '../../../utils';
-import { logger } from '../../../utils/logger';
+import { isArray } from '../../../../shared';
 import { isSubpath, resolveRelativePath } from '../../../utils/path';
 import type { App } from '../../App';
 import {
   loadPagesVirtualModule,
   resolvePages,
 } from '../../create/resolvePages';
+import type { ClientPlugin } from '../../plugin/ClientPlugin';
 import type { Plugin } from '../../plugin/Plugin';
-import { resolveApp } from '../../resolveApp';
 import { virtualModuleId, virtualModuleRequestPath } from './alias';
-import { indexHtmlMiddleware } from './middlewares/indexHtml';
+import { indexHtmlMiddleware } from './indexHtml';
 
 let pageChangesPending: Promise<void> | undefined;
 
-const clientPackages = [
-  '@vitebook/core',
-  '@vitebook/client',
-  '@vitebook/theme-default',
-  '@vitebook/markdown',
-  '@vitebook/markdown-preact',
-  '@vitebook/markdown-prismjs',
-  '@vitebook/markdown-shiki',
-  '@vitebook/markdown-svelte',
-  '@vitebook/markdown-vue',
-  '@vitebook/preact',
-  '@vitebook/vue',
-];
+const clientPackages = ['@vitebook/core'];
 
-export function corePlugin(): Plugin {
+const DEFAULT_INCLUDE_RE = /\.(md|svelte)($|\?)/;
+
+export function corePlugin(): ClientPlugin {
   let app: App;
 
   let server: ViteDevServer & {
@@ -51,21 +40,25 @@ export function corePlugin(): Plugin {
   return {
     name: '@vitebook/core',
     enforce: 'pre',
+    entry: {
+      client: require.resolve(`@vitebook/core/entry-client.js`),
+      server: require.resolve(`@vitebook/core/entry-server.js`),
+    },
     config() {
       const config: ViteConfig = {
         resolve: {
           alias: {
-            '~config': app.dirs.config.path,
-            '~theme': app.dirs.theme.path,
+            $lib: app.dirs.root.resolve('lib'),
+            [virtualModuleId.app]: virtualModuleRequestPath.app,
             [virtualModuleId.noop]: virtualModuleRequestPath.noop,
-            [virtualModuleId.siteOptions]: virtualModuleRequestPath.siteOptions,
-            [virtualModuleId.themeEntry]: virtualModuleRequestPath.themeEntry,
             [virtualModuleId.clientEntry]: virtualModuleRequestPath.clientEntry,
             [virtualModuleId.pages]: virtualModuleRequestPath.pages,
           },
         },
-        optimizeDeps: { exclude: clientPackages },
-        // @ts-expect-error - not typed.
+        optimizeDeps: {
+          exclude: [...clientPackages],
+        },
+        // @ts-expect-error - .
         ssr: { noExternal: clientPackages },
       };
 
@@ -74,19 +67,13 @@ export function corePlugin(): Plugin {
     configureApp(_app) {
       app = _app;
     },
-    async configResolved(config) {
+    async configResolved() {
       // Resolve pages after aliases have been resolved.
       await resolvePages(app, 'add');
-
-      // @ts-expect-error - Move `@vitebook/*` plugins to start.
-      config.plugins = [
-        ...config.plugins.filter((p) => p.name.startsWith('@vitebook')),
-        ...config.plugins.filter((p) => !p.name.startsWith('@vitebook')),
-      ];
     },
     configureServer(devServer) {
       server = devServer;
-      server.watcher.add(app.dirs.config.path);
+      server.watcher.add(app.dirs.pages.path);
       startWatchingPages(app, devServer);
 
       app.disposal.add(() => {
@@ -102,6 +89,14 @@ export function corePlugin(): Plugin {
         server.middlewares.use(indexHtmlMiddleware(app, server));
       };
     },
+    resolvePage({ filePath }) {
+      if (DEFAULT_INCLUDE_RE.test(filePath)) {
+        const type = path.extname(filePath).slice(1);
+        return { type };
+      }
+
+      return null;
+    },
     resolveId(id) {
       // Vite will inject version hash into file queries, which does not work well with Vitebook.
       // As a workaround we remove the version hash to avoid the injection.
@@ -114,14 +109,11 @@ export function corePlugin(): Plugin {
         return { id: app.client.entry.client };
       }
 
-      if (id === virtualModuleRequestPath.themeEntry) {
-        return {
-          id: app.dirs.theme.resolve(
-            globby.sync('index.{js,ts,jsx,tsx}', {
-              cwd: app.dirs.theme.path,
-            })[0],
-          ),
-        };
+      if (id === virtualModuleRequestPath.app) {
+        const path = app.dirs.root.resolve('App.svelte');
+        return fs.existsSync(path)
+          ? { id: path }
+          : { id: require.resolve('@vitebook/core/App.svelte') };
       }
 
       if (virtualModuleRequestPaths.has(id)) {
@@ -135,10 +127,6 @@ export function corePlugin(): Plugin {
         return `export default function() {};`;
       }
 
-      if (id === virtualModuleRequestPath.siteOptions) {
-        return `export default ${prettyJsonStr(app.site.options)};`;
-      }
-
       if (id === virtualModuleRequestPath.pages) {
         await pageChangesPending;
         return loadPagesVirtualModule(app);
@@ -146,28 +134,16 @@ export function corePlugin(): Plugin {
 
       return null;
     },
-    async handleHotUpdate(ctx) {
-      const { file } = ctx;
-
-      if (file === app.configPath) {
-        await resolveNewSiteData(app);
-        return [
-          server.moduleGraph.getModuleById(
-            virtualModuleRequestPath.siteOptions,
-          )!,
-        ];
-      }
-
-      return undefined;
+    async handleHotUpdate() {
+      // ...
     },
   };
 }
 
 function startWatchingPages(app: App, server: ViteDevServer) {
-  const watcher = watch(app.options.include, {
-    cwd: app.dirs.root.path,
-    ignoreInitial: true,
-  });
+  server.watcher.add(
+    app.options.include.map((glob) => `${app.dirs.pages.path}/${glob}`),
+  );
 
   server.watcher.add(virtualModuleRequestPath.pages);
 
@@ -221,13 +197,19 @@ function startWatchingPages(app: App, server: ViteDevServer) {
 
   let prevRoutes;
 
-  watcher
-    .on('add', (filePath) =>
-      handleChange({ filePaths: filePath, action: 'add' }),
-    )
+  const isValidPagePath = (filePath: string) =>
+    filePath.startsWith(app.dirs.pages.path);
+
+  server.watcher
+    .on('add', (filePath) => {
+      if (!isValidPagePath(filePath)) return;
+      handleChange({ filePaths: filePath, action: 'add' });
+    })
     .on(
       'change',
       debounce(async (filePath) => {
+        if (!isValidPagePath(filePath)) return;
+
         await resolvePendingChanges?.();
 
         await resolvePages(app, 'add', [
@@ -247,6 +229,8 @@ function startWatchingPages(app: App, server: ViteDevServer) {
       }, 300),
     )
     .on('unlink', (filePath) => {
+      if (!isValidPagePath(filePath)) return;
+
       hasUnlinkedFile = true;
       handleChange({ filePaths: filePath, action: 'unlink' });
     });
@@ -271,7 +255,6 @@ function startWatchingPages(app: App, server: ViteDevServer) {
   app.disposal.add(() => {
     resolveNewPages.cancel();
     pendingChanges = [];
-    watcher.close();
   });
 
   function groupPendingChanges() {
@@ -312,22 +295,58 @@ function startWatchingPages(app: App, server: ViteDevServer) {
   }
 }
 
-async function resolveNewSiteData(app: App) {
-  const newApp = await resolveApp(app.options.cliArgs);
-  const newSiteOptions = newApp.site.options;
+export function ssrPlugin(): Plugin {
+  let app: App;
 
-  if (app.site.options.baseUrl !== newSiteOptions.baseUrl) {
-    logger.warn(
-      logger.formatWarnMsg(
-        `Config property ${kleur.bold(
-          '`site.baseUrl`',
-        )} was changed. Please restart the dev server.`,
-      ),
-    );
-  }
+  return {
+    name: '@vitebook/core:ssr',
+    enforce: 'post',
+    configureApp(_app) {
+      app = _app;
+    },
+    transform(code, id, { ssr } = {}) {
+      if (
+        ssr &&
+        !id.includes('@vitebook/core') && // Can't self-import.
+        !id.includes('packages/core/dist-client') && // Linked package.
+        id.endsWith('.svelte')
+      ) {
+        const mcs = new MagicString(code);
+        const matchRE = /export\sdefault\s(.*?);/;
+        const match = code.match(matchRE);
+        const componentName = match?.[1];
 
-  // unresolved (raw from user config)
-  app.options.site = newApp.options.site;
-  // resolved
-  app.site.options = newSiteOptions;
+        if (!match || !componentName) return null;
+
+        const start = code.search(match[0]);
+        const end = start + match[0].length;
+
+        const addModuleCode = `  __vitebook__getSSRContext().modules.add(${JSON.stringify(
+          app.dirs.root.relative(id),
+        )})`;
+
+        mcs.overwrite(
+          start,
+          end,
+          [
+            "import { getSSRContext as __vitebook__getSSRContext } from '@vitebook/core';",
+            `const $$render = ${componentName}.$$render;`,
+            `${componentName}.$$render = function(...args) {`,
+            addModuleCode,
+            '  return $$render(...args)',
+            '}',
+            '',
+            match[0],
+          ].join('\n'),
+        );
+
+        return {
+          code: mcs.toString(),
+          map: mcs.generateMap({ source: id }).toString(),
+        };
+      }
+
+      return null;
+    },
+  };
 }

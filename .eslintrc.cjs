@@ -10,7 +10,14 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
-  ignorePatterns: ['packages/create/template-*/**'],
+  ignorePatterns: [
+    'packages/create/template-*/**',
+    'packages/*/client/**',
+    'packages/*/node/**',
+    'packages/*/types/**',
+    'packages/*/index.d.ts',
+    'packages/*/node.d.ts',
+  ],
   plugins: ['@typescript-eslint', 'simple-import-sort'],
   extends: [
     'eslint:recommended',

@@ -1,8 +1,5 @@
+import fs from 'fs';
 import path from 'upath';
-
-import { fs } from './fs';
-
-export { path };
 
 export const resolveRelativePath = (base: string, filePath: string): string =>
   path.isAbsolute(filePath)

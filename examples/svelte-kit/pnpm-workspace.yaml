@@ -1,3 +1,0 @@
-# You don't need this, using it to avoid root Vitebook workspace.
-packages:
-  - '.'

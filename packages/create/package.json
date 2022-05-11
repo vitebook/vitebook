@@ -1,35 +1,23 @@
 {
   "name": "create-vitebook",
+  "type": "module",
   "version": "0.23.6",
-  "keywords": [
-    "alternative",
-    "create",
-    "esm",
-    "fast",
-    "lightweight",
-    "modern",
-    "storybook",
-    "vite",
-    "vitebook"
-  ],
-  "bugs": {
-    "url": "https://github.com/vitebook/vitebook/issues"
+  "license": "MIT",
+  "main": "bin/create-vitebook.js",
+  "engines": {
+    "node": ">=14.0.0"
   },
+  "contributors": [
+    "Rahim Alwer <rahim.alwer@gmail.com>"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vitebook/vitebook.git",
     "directory": "packages/create"
   },
-  "license": "MIT",
-  "contributors": [
-    "Rahim Alwer <rahim.alwer@gmail.com>"
-  ],
-  "type": "module",
-  "exports": {
-    ".": "./bin/create-vitebook.js",
-    "./package.json": "./package.json"
+  "bugs": {
+    "url": "https://github.com/vitebook/vitebook/issues"
   },
-  "main": "bin/create-vitebook.js",
   "bin": {
     "create-vitebook": "bin/create-vitebook.js"
   },
@@ -38,6 +26,10 @@
     "src/",
     "template-*"
   ],
+  "exports": {
+    ".": "./bin/create-vitebook.js",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "enquirer": "^2.3.6",
     "kleur": "^4.1.4",
@@ -47,10 +39,19 @@
   "devDependencies": {
     "@types/node": "^16.0.1"
   },
-  "engines": {
-    "node": ">=14.0.0"
-  },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "keywords": [
+    "alternative",
+    "documentation",
+    "esm",
+    "fast",
+    "lightweight",
+    "modern",
+    "ssg",
+    "storybook",
+    "vite",
+    "vitebook"
+  ]
 }

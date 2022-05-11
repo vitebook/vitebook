@@ -1,11 +1,8 @@
 // Client
 
-import type { PageMeta } from './PageMeta';
+import type { SvelteConstructor } from './Svelte';
 
-export type Page<
-  PageModule = DefaultPageModule,
-  Context extends DefaultPageContext = DefaultPageContext,
-> = {
+export type Page<Context = DefaultPageContext> = {
   /** Optional page type declared by a plugin to help identify specific pages client-side. */
   type?: string;
   /** Page name. Also used as route name if client-side router supports it. */
@@ -20,42 +17,28 @@ export type Page<
   loader: () => Promise<PageModule>;
 };
 
-export type DefaultPageContext = Record<string, unknown>;
-
-export type DefaultLoadedPage<
-  PageModule extends DefaultPageModule = DefaultPageModule,
-  Context extends DefaultPageContext = DefaultPageContext,
-> = Page<PageModule, Context> & {
-  meta: NonNullable<PageModule['__type']>;
-  module: PageModule;
+export type PageModule = {
+  [id: string]: unknown;
+  default: SvelteConstructor;
 };
 
-export type Pages<PageModule extends DefaultPageModule = DefaultPageModule> =
-  Page<PageModule>[];
+export type Pages = Page[];
 
-export type PageMetaBuilder<PageMeta> =
-  | PageMeta
-  | ((page: Page, mod: DefaultPageModule) => PageMeta | Promise<PageMeta>);
-
-export type DefaultPageModule<
-  DefaultExport = unknown,
-  PageMetaExport = PageMeta,
-> = {
-  /** type def (doesn't actually exist). */
-  __type?: PageMetaExport;
-  default: DefaultExport;
-  __pageMeta?: PageMetaBuilder<PageMetaExport>;
+export type LoadedPage<Context = DefaultPageContext> = Page<Context> & {
+  mod: PageModule;
+  component: SvelteConstructor;
 };
 
 export type VirtualPagesModule = {
-  default: Page[];
+  default: Pages;
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type DefaultPageContext = Record<string, any>;
 
 // Server
 
-export type ServerPage<
-  Context extends DefaultPageContext = DefaultPageContext,
-> = Omit<Page, 'loader'> & {
+export type ServerPage<Context = DefaultPageContext> = Omit<Page, 'loader'> & {
   /**
    * Page module id used by the client-side router to dynamically load this page module. If not
    * resolved by a plugin, it'll default to the page file path.

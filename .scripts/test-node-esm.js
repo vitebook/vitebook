@@ -1,4 +1,4 @@
-import globby from 'fast-glob';
+import { globby } from 'globby';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import kleur from 'kleur';

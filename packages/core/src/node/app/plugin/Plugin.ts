@@ -1,6 +1,6 @@
 import type { Plugin as VitePlugin } from 'vite';
 
-import type { ResolvedPage, ServerPage, SiteOptions } from '../../../shared';
+import type { ResolvedPage, ServerPage } from '../../../shared';
 import type { App, AppEnv } from '../App';
 
 export type Plugin = VitePlugin & {
@@ -12,28 +12,6 @@ export type Plugin = VitePlugin & {
    * but in parallel with the `siteData` hook.
    */
   configureApp?: (app: App, env: AppEnv) => void | Promise<void>;
-
-  /**
-   * Modify site data before it's resolved. This hook can either mutate the passed-in object
-   * directly, or return a partial object which will be deeply merged into existing data.
-   *
-   * This can also be used to update theme data (`site.options.theme`).
-   *
-   * This hook may be called more than once if the user changes the config file.
-   */
-  siteData?: <T extends SiteOptions>(
-    options: T,
-    env: AppEnv,
-  ) => Partial<T> | null | void | Promise<Partial<T> | null | void>;
-
-  /**
-   * Use this hook to read and store the final resolved site data.
-   *
-   * This hook may be called more than once if the user changes the config file.
-   */
-  siteDataResolved?: <T extends SiteOptions>(
-    options: T,
-  ) => void | Promise<void>;
 
   /**
    * Server-side Vitebook will resolve the `include` glob array the user has provided which will

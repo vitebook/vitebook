@@ -1,6 +1,6 @@
-export type Framework = 'preact' | 'svelte' | 'vue';
+export type Framework = 'svelte';
 
-export type Theme = 'blank' | 'custom' | 'default';
+export type Theme = '';
 
 export type Feature =
   | 'prettier'

@@ -1,6 +1,11 @@
 dist/
-server-dist/
+dist-*/
+types/
+
 packages/*/temp
+packages/*/index.d.ts
+packages/*/node.d.ts
+
 sandbox/*
 !sandbox/.gitkeep
 

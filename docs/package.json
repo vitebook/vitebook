@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "preinstall": "node ../.scripts/check-node-version.js",
-    "vitebook:build": "vitebook build",
-    "vitebook:dev": "vitebook dev",
-    "vitebook:preview": "vitebook preview"
+    "dev": "vitebook dev",
+    "build": "vitebook build",
+    "preview": "vitebook preview"
   },
   "devDependencies": {
     "@vitebook/client": "0.14.1",
@@ -20,7 +20,7 @@
     "vite": "^2.8.0"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=14"
   },
   "volta": {
     "node": "16.10.0"

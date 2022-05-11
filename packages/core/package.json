@@ -1,51 +1,21 @@
 {
   "name": "@vitebook/core",
   "version": "0.23.6",
-  "keywords": [
-    "alternative",
-    "core",
-    "esm",
-    "fast",
-    "lightweight",
-    "modern",
-    "storybook",
-    "vite",
-    "vitebook"
+  "type": "module",
+  "types": "index.d.ts",
+  "sideEffects": false,
+  "license": "MIT",
+  "svelte": "./dist/client/index.js",
+  "contributors": [
+    "Rahim Alwer <rahim.alwer@gmail.com>"
   ],
-  "bugs": {
-    "url": "https://github.com/vitebook/vitebook/issues"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/vitebook/vitebook.git",
     "directory": "packages/core"
   },
-  "license": "MIT",
-  "contributors": [
-    "Rahim Alwer <rahim.alwer@gmail.com>"
-  ],
-  "sideEffects": false,
-  "type": "module",
-  "exports": {
-    ".": "./dist/client/index.js",
-    "./*": "./dist/client/*",
-    "./node": "./dist/node/index.js",
-    "./node/utils": "./dist/node/utils/index.js",
-    "./src/*": "./src/*",
-    "./package.json": "./package.json"
-  },
-  "typesVersions": {
-    "*": {
-      "node": [
-        "dist/types/node/index.d.ts"
-      ],
-      "node/utils": [
-        "dist/types/node/utils/index.d.ts"
-      ],
-      "*": [
-        "dist/types/client/*"
-      ]
-    }
+  "bugs": {
+    "url": "https://github.com/vitebook/vitebook/issues"
   },
   "bin": {
     "vitebook": "bin/vitebook.js"
@@ -53,45 +23,77 @@
   "files": [
     "bin/",
     "dist/",
-    "src/"
+    "index.d.ts"
   ],
+  "exports": {
+    ".": "./dist/client/index.js",
+    "./*": "./dist/client/*",
+    "./node": "./dist/node/index.js",
+    "./package.json": "./package.json"
+  },
   "scripts": {
-    "build": "run-s clean build:client build:node build:types",
-    "build:client": "tsc -p src/client/tsconfig.json",
-    "build:node": "node ../../.scripts/build-node.js --entry src/node/index.ts,src/node/utils/index.ts,src/node/cli/run.ts --external vite",
-    "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
-    "clean": "rimraf dist",
-    "dev": "pnpm clean && run-p watch:client watch:node watch:types",
-    "watch:client": "pnpm build:client -- --watch",
-    "watch:node": "pnpm build:node -- --watch",
-    "watch:types": "pnpm build:types -- --watch"
+    "build": "run-s clean build:client build:node copy build:types",
+    "build:client": "node ../../.scripts/build.js --entry=src/client/**/*.ts,src/shared/**/*.ts --outbase=src --outdir=dist",
+    "build:node": "node ../../.scripts/build.js --platform=node --bundle",
+    "build:types": "tsc -p tsconfig.json && run-p types:*",
+    "types:client": "api-extractor run -c types.client.json",
+    "types:node": "api-extractor run -c types.node.json",
+    "copy": "node ../../.scripts/copy-non-ts-files.js",
+    "clean": "rimraf dist dist-* {index,node}.d.ts",
+    "dev": "pnpm clean && run-p watch:copy watch:client watch:node",
+    "postinstall": "node .scripts/patch-just-it.js",
+    "watch:client": "pnpm build:client -- -w",
+    "watch:copy": "pnpm copy -- -w",
+    "watch:node": "pnpm build:node -- -w"
   },
   "dependencies": {
+    "@rollup/pluginutils": "^4.1.1",
     "@types/debug": "^4.1.7",
     "@types/fs-extra": "^9.0.12",
     "@types/lru-cache": "^5.1.1",
     "cac": "^6.7.3",
-    "chokidar": "^3.5.2",
     "debug": "^4.3.2",
     "esbuild": "^0.12.24",
-    "fast-glob": "^3.2.7",
     "fs-extra": "^10.0.0",
     "get-folder-size": "^3.1.0",
+    "globby": "^13.1.1",
     "just-debounce-it": "^1.5.0",
+    "just-throttle": "^4.0.1",
     "kleur": "^4.1.4",
     "lru-cache": "^6.0.0",
+    "magic-string": "^0.25.9",
     "ora": "^6.0.0",
     "pkg-up": "^2.0.0",
     "upath": "^2.0.1"
   },
+  "peerDependencies": {
+    "@sveltejs/vite-plugin-svelte": "next"
+  },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.20.0",
+    "@sveltejs/vite-plugin-svelte": "next",
+    "chokidar": "^3.5.2",
+    "rimraf": "^3.0.2",
     "rollup": "^2.58.0",
+    "typescript": "^4.6.4",
     "vite": "^2.8.0"
   },
   "engines": {
-    "node": ">=15"
+    "node": ">=14"
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "keywords": [
+    "alternative",
+    "documentation",
+    "esm",
+    "fast",
+    "lightweight",
+    "modern",
+    "ssg",
+    "storybook",
+    "vite",
+    "vitebook"
+  ]
 }

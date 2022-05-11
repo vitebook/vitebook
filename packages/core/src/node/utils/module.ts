@@ -1,11 +1,12 @@
 import { build as esbuild, BuildOptions } from 'esbuild';
+import fs from 'fs-extra';
 import getFolderSize from 'get-folder-size';
 import { createRequire } from 'module';
+import path from 'upath';
 import { fileURLToPath, pathToFileURL } from 'url';
 
 import { isObject } from '../../shared';
-import { checksumFile, fs } from './fs';
-import { path } from './path';
+import { checksumFile } from './fs';
 
 /**
  * Check if a given module is an esm module with a default export.
@@ -25,7 +26,6 @@ export const esmRequire = createRequire(import.meta.url);
 /**
  * `__dirname` alternative for ESM.
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
 export const currentDirectory = (meta: any): string =>
   path.dirname(fileURLToPath(meta.url));
 
@@ -66,11 +66,7 @@ export const loadModule = async <T>(
 
   if (!tmpDir) {
     tmpDir =
-      options.outdir ??
-      path.join(
-        path.dirname(esmRequire.resolve('@vitebook/core/node')),
-        '.temp',
-      );
+      options.outdir ?? path.join(process.cwd(), 'node_modules/.vitebook/temp');
 
     if (fs.existsSync(tmpDir)) {
       // If greater than 5MB let's empty it.
@@ -87,7 +83,9 @@ export const loadModule = async <T>(
   const fileComment = `// FILE: ${filePath}\n\n`;
   const code = await bundle(filePath, buildOptions);
   await fs.writeFile(outputPath, fileComment + requireShim + code);
-  const mod = import(pathToFileURL(outputPath).href + `?t=${Date.now()}`) as unknown as T;
+  const mod = import(
+    pathToFileURL(outputPath).href + `?t=${Date.now()}`
+  ) as unknown as T;
 
   return mod;
 };
@@ -99,12 +97,10 @@ export async function bundle(
   const { outputFiles } = await esbuild({
     ...options,
     entryPoints: [filePath],
-    loader: options.loader ?? {
-      '.svg': 'base64',
-    },
+    loader: options.loader,
     platform: options.platform ?? 'node',
     format: options.format ?? 'esm',
-    target: options.target ?? 'es2020',
+    target: options.target ?? 'node14',
     allowOverwrite: options.allowOverwrite ?? true,
     bundle: options.bundle ?? true,
     preserveSymlinks: options.preserveSymlinks ?? true,
@@ -117,8 +113,13 @@ export async function bundle(
         setup(build) {
           // Must not start with "/" or "./" or "../" or "C:/"
           // eslint-disable-next-line no-useless-escape
-          build.onResolve({ filter: /[A-Z]:\/*/ }, async () => ({ external: false }));
-          build.onResolve({ filter: /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ }, async () => ({ external: true }));
+          build.onResolve({ filter: /[A-Z]:\/*/ }, async () => ({
+            external: false,
+          }));
+          build.onResolve(
+            { filter: /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ },
+            async () => ({ external: true }),
+          );
         },
       },
     ],

@@ -49,20 +49,12 @@ export class ProjectBuilder {
         root: new FileDirectory(resolveSrcPath()),
         template: {
           root: new FileDirectory(resolveSrcPath('template-root')),
-          vue: new FileDirectory(resolveSrcPath('template-vue')),
-          svelte: new FileDirectory(resolveSrcPath('template-svelte')),
-          preact: new FileDirectory(resolveSrcPath('template-preact')),
-          theme: {
-            blank: new FileDirectory(resolveSrcPath('template-theme-blank')),
-            custom: new FileDirectory(resolveSrcPath('template-theme-custom')),
-          },
         },
       },
       dest: {
         root: new FileDirectory(targetDir),
         src: new FileDirectory(path.resolve(targetDir, 'src')),
-        config: new FileDirectory(path.resolve(targetDir, '.vitebook')),
-        theme: new FileDirectory(path.resolve(targetDir, '.vitebook', 'theme')),
+        pages: new FileDirectory(path.resolve(targetDir, 'src/pages')),
       },
     };
   }

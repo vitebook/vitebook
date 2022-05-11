@@ -19,7 +19,7 @@ export function addTailwindFeature(builder) {
 
   builder.dirs.dest.root.writeFile(`postcss.config${ext}`, getPostCssConfig());
 
-  builder.dirs.dest.config.writeFile(
+  builder.dirs.dest.src.writeFile(
     'global.css',
     `@tailwind base;\n@tailwind components;\n@tailwind utilities;`,
   );
@@ -47,11 +47,7 @@ function getTailwindConfig(builder) {
 
   const ext = getExt();
 
-  const content = [
-    `'./src/**/*.${ext}'`,
-    `'./src/**/*.story.${ext}'`,
-    `'./.vitebook/App.${ext}'`,
-  ];
+  const content = [`'./pages/**/*.${ext}'`, `'./App.${ext}'`];
 
   return `module.exports = {
   darkMode: 'class',

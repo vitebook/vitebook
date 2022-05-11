@@ -33,7 +33,7 @@ const example = examples[exampleIndex];
 const exampleDir = path.resolve(examplesDir, example);
 const relativePathToExample = path.relative(process.cwd(), exampleDir);
 const examplePkgPath = path.resolve(exampleDir, 'package.json');
-const examplePkgContent = JSON.parse(readFileSync(examplePkgPath).toString());
+const examplePkgContent = JSON.parse(readFileSync(examplePkgPath, 'utf-8'));
 
 const scripts = Object.keys(examplePkgContent.scripts);
 const scriptArg = args.script;

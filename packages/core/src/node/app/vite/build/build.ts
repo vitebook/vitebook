@@ -1,21 +1,20 @@
+import fs from 'fs-extra';
 import kleur from 'kleur';
 import ora from 'ora';
 import type { OutputAsset, OutputChunk, RollupOutput } from 'rollup';
+import path from 'upath';
 
 import {
   ensureLeadingSlash,
-  HeadAttrsConfig,
-  HeadConfig,
   removeEndingSlash,
   removeLeadingSlash,
   ServerEntryModule,
   ServerPage,
-  SiteOptions,
 } from '../../../../shared';
-import { fs, path } from '../../../utils';
 import { logger, LoggerIcon } from '../../../utils/logger';
 import type { App } from '../../App';
 import { resolvePages } from '../../create/resolvePages';
+import { readIndexHtmlFile } from '../dev/indexHtml';
 import { bundle } from './bundle';
 
 export async function build(app: App): Promise<void> {
@@ -47,36 +46,26 @@ export async function build(app: App): Promise<void> {
     const [clientBundle] = await bundle(app);
 
     const APP_CHUNK = clientBundle.output.find(
-      (chunk) => chunk.type === 'chunk' && chunk.isEntry,
+      (chunk) =>
+        chunk.type === 'chunk' &&
+        chunk.isEntry &&
+        /^assets\/entry\./.test(chunk.fileName),
     ) as OutputChunk;
 
     const CSS_CHUNK = clientBundle.output.find(
       (chunk) => chunk.type === 'asset' && chunk.fileName.endsWith('.css'),
     ) as OutputAsset;
 
-    const HTML_TEMPLATE = (
-      await fs.readFile(app.dirs.config.resolve('index.html'), 'utf-8')
-    ).replace('{{ version }}', app.version);
+    const HTML_TEMPLATE = readIndexHtmlFile(app, { dev: false });
 
     const SSR_MANIFEST = JSON.parse(
       await fs.readFile(app.dirs.out.resolve('ssr-manifest.json'), 'utf-8'),
     );
 
-    const serverEntryPath = app.dirs.out.resolve('server', 'entry-server.cjs');
-
-    await fs.rename(
-      app.dirs.out.resolve(
-        'server',
-        path.changeExt(path.basename(app.client.entry.server), 'js'),
-      ),
-      serverEntryPath,
-    );
+    const serverEntryPath = app.dirs.out.resolve('server', 'entry.cjs');
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { render } = require(app.dirs.out.resolve(
-      'server',
-      serverEntryPath,
-    )) as ServerEntryModule;
+    const { render } = require(serverEntryPath) as ServerEntryModule;
 
     // Include home page so it's rendered (if not included).
     if (!includesHomePage()) {
@@ -85,9 +74,10 @@ export async function build(app: App): Promise<void> {
     }
 
     for (const page of app.pages) {
-      const { context, html, head } = await render(page);
+      const { ssr, html, head } = await render(page);
 
-      const stylesheetLinks = [CSS_CHUNK.fileName]
+      const stylesheetLinks = [CSS_CHUNK?.fileName]
+        .filter(Boolean)
         .map((fileName) => createLinkTag(app, 'stylesheet', fileName))
         .filter((tag) => tag.length > 0)
         .join('\n    ');
@@ -100,12 +90,12 @@ export async function build(app: App): Promise<void> {
       );
 
       const manifestImports = resolveImportsFromManifest(
-        context.modules,
+        ssr.modules,
         SSR_MANIFEST,
       );
 
       const preloadLinks = Array.from(
-        new Set([...manifestImports, ...pageImports.imports]),
+        new Set([...pageImports.imports, ...manifestImports]),
       )
         .map((fileName) => createPreloadTag(app, fileName))
         .join('\n    ');
@@ -114,28 +104,24 @@ export async function build(app: App): Promise<void> {
         .map((fileName) => createLinkTag(app, 'prefetch', fileName))
         .join('\n    ');
 
-      const headTags = [
-        addSocialTags(app.site.options, page, context.head)
-          .map(renderHeadTag)
-          .join('\n   '),
-        head,
-        stylesheetLinks,
-        preloadLinks,
-        prefetchLinks,
-      ]
+      const headTags = [head, stylesheetLinks, preloadLinks, prefetchLinks]
         .filter((t) => t.length > 0)
         .join('\n    ');
 
-      const appScriptTag = `<script type="module" src="${app.site.options.baseUrl}${APP_CHUNK.fileName}" defer></script>`;
+      const appScriptTag = `<script type="module" src="/${APP_CHUNK.fileName}" defer></script>`;
 
-      const pageHtml = HTML_TEMPLATE.replace('{{ lang }}', context.lang)
-        .replace(`<!--@vitebook/head-->`, headTags)
+      const pageHtml = HTML_TEMPLATE.replace(`<!--@vitebook/head-->`, headTags)
         .replace(`<!--@vitebook/app-->`, html)
-        .replace('<!--@vitebook/body-->', appScriptTag);
+        .replace('<!--@vitebook/body-->', appScriptTag)
+        .replace(
+          '<script type="module" src="/:virtual/vitebook/client"></script>',
+          '',
+        );
 
       const decodedRoute = decodeURI(page.route);
       const filePath = decodedRoute === '/' ? '/index.html' : decodedRoute;
       const outputPath = app.dirs.out.resolve(filePath.slice(1));
+
       await fs.ensureFile(outputPath);
       await fs.writeFile(outputPath, pageHtml);
     }
@@ -227,7 +213,7 @@ async function findPreviewScriptName(app: App): Promise<string | undefined> {
   try {
     const packageJson = app.dirs.root.resolve('package.json');
     if (fs.existsSync(packageJson)) {
-      const content = (await fs.readFile(packageJson)).toString();
+      const content = fs.readFileSync(packageJson, 'utf-8');
       const json = JSON.parse(content);
 
       const script = Object.keys(json.scripts ?? {}).find((script) => {
@@ -245,15 +231,15 @@ async function findPreviewScriptName(app: App): Promise<string | undefined> {
 
 function createLinkTag(app: App, rel: string, fileName?: string) {
   if (!fileName) return '';
-  const base = removeEndingSlash(app.site.options.baseUrl);
-  const href = `${base}${ensureLeadingSlash(fileName)}`;
+  const baseUrl = removeEndingSlash('/');
+  const href = `${baseUrl}${ensureLeadingSlash(fileName)}`;
   return `<link rel="${rel}" href="${href}">`;
 }
 
 function createPreloadTag(app: App, fileName?: string) {
   if (!fileName) return '';
 
-  const base = removeEndingSlash(app.site.options.baseUrl);
+  const base = removeEndingSlash('/');
   const href = `${base}${ensureLeadingSlash(fileName)}`;
 
   if (fileName.endsWith('.js')) {
@@ -283,7 +269,7 @@ function resolveImportsFromManifest(
 
   for (const filename of modules) {
     manifest[filename]?.forEach((file) => {
-      imports.add(file);
+      imports.add(removeLeadingSlash(file));
     });
   }
 
@@ -296,7 +282,9 @@ function resolvePageImports(
   clientBundle: RollupOutput,
   appChunk: OutputChunk,
 ) {
-  const srcPath = fs.realpathSync(app.dirs.root.relative(page.rootPath ?? ''));
+  const srcPath = fs.realpathSync(
+    path.resolve(app.dirs.root.path, page.rootPath ?? ''),
+  );
 
   const pageChunk = clientBundle.output.find(
     (chunk) => chunk.type === 'chunk' && chunk.facadeModuleId === srcPath,
@@ -304,65 +292,31 @@ function resolvePageImports(
 
   return {
     imports: Array.from(
-      new Set([...appChunk.imports, ...(pageChunk?.imports ?? [])]),
+      new Set([
+        ...appChunk.imports,
+        ...(pageChunk?.imports ?? []),
+        pageChunk.fileName,
+      ]),
     ),
     dynamicImports: Array.from(
       new Set([
-        // Needs to be filtered.
-        // ...appChunk.dynamicImports,
+        ...appChunk.dynamicImports.filter(
+          (fileName) => !isPageChunk(clientBundle, fileName),
+        ),
         ...(pageChunk?.dynamicImports ?? []),
       ]),
     ),
   };
 }
 
-function renderHeadTag([tag, attrs, innerHTML = '']: HeadConfig): string {
-  const openTag = `<${tag}${renderHeadAttrs(attrs)}>`;
-  if (tag === 'link' || tag === 'meta' || tag === 'base') {
-    return openTag;
-  }
-  return `${openTag}${innerHTML}</${tag}>`;
-}
+const cache = new Map();
+function isPageChunk(clientBundle: RollupOutput, fileName: string) {
+  if (cache.has(fileName)) return cache.get(fileName);
 
-function renderHeadAttrs(attrs: HeadAttrsConfig): string {
-  return Object.entries(attrs)
-    .filter((item): item is [string, string | true] => item[1] !== false)
-    .map(([key, value]) =>
-      value === true ? ` ${key}` : ` ${key}="${attrs[key]}"`,
-    )
-    .join('');
-}
+  const is = clientBundle.output.find(
+    (chunk) => chunk.type === 'chunk' && chunk.fileName === fileName,
+  ) as OutputChunk;
 
-function addSocialTags(
-  site: SiteOptions,
-  page: ServerPage,
-  head: HeadConfig[],
-): HeadConfig[] {
-  const pageTitle: string =
-    head.find((tag) => tag[0] === 'title')?.[2] ?? site.title;
-
-  const pageDescription: string =
-    (head.find(
-      (tag) => tag[0] === 'meta' && tag[1]?.name === 'description',
-    )?.[1]?.content as string) ?? site.description;
-
-  const tags: HeadConfig[] = [
-    ['meta', { property: 'og:site_name', content: site.title }],
-    ['meta', { property: 'og:title', content: pageTitle }],
-    ['meta', { property: 'og:description', content: pageDescription }],
-    ['meta', { property: 'twitter:title', content: pageTitle }],
-    ['meta', { property: 'twitter:description', content: pageDescription }],
-  ];
-
-  head.push(
-    ...tags.filter(
-      (tag) =>
-        !head.some(
-          (headTag) =>
-            headTag[0] === 'meta' && headTag[1]?.property === tag[1].property,
-        ),
-    ),
-  );
-
-  return head;
+  cache.set(fileName, is);
+  return is;
 }

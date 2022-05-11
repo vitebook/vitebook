@@ -1,6 +1,6 @@
-import type { PreviewServer, ResolvedConfig, ViteDevServer } from 'vite';
+import type { loadConfigFromFile, PreviewServer, ViteDevServer } from 'vite';
 
-import type { ServerPage, SiteOptions } from '../../shared';
+import type { ServerPage } from '../../shared';
 import type { loadModule } from '../utils/module';
 import type { AppOptions } from './AppOptions';
 import type { DisposalBin } from './create/DisposalBin';
@@ -16,28 +16,24 @@ export type App = {
   env: AppEnv;
   client: ClientPlugin;
   options: AppOptions;
-  site: AppSite;
-  vite: ResolvedConfig;
   plugins: FilteredPlugins;
   context: Record<string, unknown>;
   pages: ServerPage[];
   disposal: DisposalBin;
+  vite: Awaited<ReturnType<typeof loadConfigFromFile>>;
   dev: () => Promise<ViteDevServer>;
   build: () => Promise<void>;
   preview: () => Promise<PreviewServer>;
   close: () => Promise<void>;
-  hasPlugin: (name: string) => boolean;
 };
 
 export type AppDirs = {
+  cwd: AppDirUtils;
   root: AppDirUtils;
-  src: AppDirUtils;
-  cache: AppDirUtils;
-  config: AppDirUtils;
+  pages: AppDirUtils;
   tmp: AppDirUtils;
   out: AppDirUtils;
   public: AppDirUtils;
-  theme: AppDirUtils;
 };
 
 export type AppDirUtils = {
@@ -56,14 +52,7 @@ export type AppDirUtils = {
 };
 
 export type AppEnv = {
-  command: 'dev' | 'build' | 'preview';
   isDebug: boolean;
-  isDev: boolean;
-  isProd: boolean;
-  /** @see https://vitejs.dev/guide/env-and-mode.html */
-  mode?: string;
 };
 
-export type AppSite = {
-  options: SiteOptions;
-};
+export { DisposalBin };

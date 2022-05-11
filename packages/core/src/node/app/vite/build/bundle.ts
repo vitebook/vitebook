@@ -1,3 +1,4 @@
+import path from 'path';
 import type { RollupOutput } from 'rollup';
 import { build, mergeConfig, Plugin, UserConfig as ViteConfig } from 'vite';
 
@@ -36,7 +37,19 @@ function resolveBundleConfig(
   app: App,
   { config = {}, ssr }: BundleOptions,
 ): ViteConfig {
+  const input = {
+    entry: ssr ? app.client.entry.server : app.client.entry.client,
+  };
+
+  if (!ssr) {
+    for (const page of app.pages) {
+      const name = page.rootPath.replace(path.extname(page.rootPath), '.js');
+      input[name] = page.filePath;
+    }
+  }
+
   const baseBundleConfig: ViteConfig = {
+    root: app.dirs.root.path,
     logLevel: 'warn',
     publicDir: ssr ? false : undefined,
     esbuild: { treeShaking: !ssr },
@@ -52,9 +65,14 @@ function resolveBundleConfig(
         : app.dirs.root.relative(app.dirs.out.path),
       rollupOptions: {
         preserveEntrySignatures: 'allow-extension',
-        input: ssr ? app.client.entry.server : app.client.entry.client,
+        input,
         output: ssr
-          ? undefined
+          ? {
+              format: 'cjs',
+              entryFileNames: `[name].cjs`,
+              assetFileNames: `[name].cjs`,
+              chunkFileNames: `[name].cjs`,
+            }
           : {
               manualChunks: {
                 framework: ['svelte'],
@@ -69,27 +87,16 @@ function resolveBundleConfig(
               chunkFileNames(chunk) {
                 if (
                   !chunk.isEntry &&
-                  (/runtime/.test(chunk.name) ||
-                    chunk.name.startsWith('preact'))
+                  (/runtime/.test(chunk.name) || /svelte/.test(chunk.name))
                 ) {
-                  return `assets/js/framework.[hash].js`;
+                  return `framework.[hash].js`;
                 }
-
-                const isVitebookChunk = /@vitebook/.test(
-                  chunk.facadeModuleId ?? '',
-                );
 
                 if (
                   !chunk.isEntry &&
-                  /\.svg(\?raw)?/.test(chunk.facadeModuleId ?? '')
+                  /@vitebook/.test(chunk.facadeModuleId ?? '')
                 ) {
-                  return `assets/js${
-                    isVitebookChunk ? '/@vitebook' : ''
-                  }/svg/[name].[hash].js`;
-                }
-
-                if (!chunk.isEntry && isVitebookChunk) {
-                  return `assets/js/@vitebook/[name].[hash].js`;
+                  return `assets/@vitebook/[name].[hash].js`;
                 }
 
                 return 'assets/js/[name].[hash].js';
@@ -97,11 +104,11 @@ function resolveBundleConfig(
             },
       },
     },
-    plugins: [buildPlugin(app, { ssr })],
+    plugins: [...app.plugins, buildPlugin(app, { ssr })],
   };
 
   const mergedConfig = mergeConfig(
-    app.options.vite,
+    app.vite?.config ?? {},
     mergeConfig(baseBundleConfig, config),
   );
 

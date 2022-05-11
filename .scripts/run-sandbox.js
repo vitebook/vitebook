@@ -36,7 +36,7 @@ const sandboxDir = path.resolve(sandboxRootDir, sandbox);
 const relativePathToSandbox = path.relative(process.cwd(), sandboxDir);
 
 const sandboxPkgPath = path.resolve(sandboxDir, 'package.json');
-const sandboxPkgContent = JSON.parse(readFileSync(sandboxPkgPath).toString());
+const sandboxPkgContent = JSON.parse(readFileSync(sandboxPkgPath, 'utf-8'));
 
 const scripts = Object.keys(sandboxPkgContent.scripts);
 const scriptArg = args.s ?? args.script;

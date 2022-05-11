@@ -3,7 +3,6 @@
 import enquirer from 'enquirer';
 
 import { FEATURES, FRAMEWORKS, THEMES } from './constants.js';
-import { isValidPackageName } from './utils/pkg.js';
 
 /**
  * @returns {Promise<{ overwrite: boolean }>}
@@ -19,35 +18,25 @@ export function overwritePrompt() {
 
 /**
  * @param {{
- *  isTargetDirEmpty: boolean;
  *  initialProjectName?: string ;
- *  initialPackageName: string;
- *  showPackageNamePrompt: boolean;
  *  showTemplatePrompt: boolean;
  *  showThemePrompt: boolean;
  *  showFeaturesPrompt: boolean;
- *  showOverwriteConfigPrompt: boolean;
  * }} options
  *
  * @returns {Promise<{
  *  projectName: string;
  *  projectDescription: string;
- *  packageName: string;
  *  template: string;
  *  theme?: string;
  *  features: string[],
- *  overwrite?: boolean
  * }>}
  */
 export function setupPrompt({
-  isTargetDirEmpty,
   initialProjectName,
-  initialPackageName,
-  showPackageNamePrompt,
   showTemplatePrompt,
   showThemePrompt,
   showFeaturesPrompt,
-  showOverwriteConfigPrompt,
 }) {
   return enquirer.prompt(
     /** @type {any} */ (
@@ -63,15 +52,6 @@ export function setupPrompt({
           name: 'projectDescription',
           message: 'Project Description:',
           initial: '',
-        },
-        showPackageNamePrompt && {
-          type: 'input',
-          name: 'packageName',
-          message: 'Package Name:',
-          initial: initialPackageName,
-          validate: (name) =>
-            isValidPackageName(name) ||
-            'Invalid package name (https://docs.npmjs.com/cli/v7/configuring-npm/package-json#name)',
         },
         showTemplatePrompt && {
           type: 'select',
@@ -91,15 +71,7 @@ export function setupPrompt({
           type: 'multiselect',
           name: 'features',
           message: 'Features:',
-          choices: isTargetDirEmpty
-            ? FEATURES
-            : ['markdown', 'tailwind', 'typescript'],
-        },
-        showOverwriteConfigPrompt && {
-          type: 'confirm',
-          name: 'overwrite',
-          message: `\`.vitebook\` directory exists, overwrite?`,
-          initial: false,
+          choices: FEATURES,
         },
       ].filter(Boolean)
     ),

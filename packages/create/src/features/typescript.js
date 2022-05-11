@@ -8,7 +8,8 @@ export function addTypescriptFeature(builder) {
 
   builder.pkg.addDependency('typescript', '^4.4.0', { dev: true });
 
-  const preact = builder.framework === 'preact';
+  // const preact = builder.framework === 'preact';
+  const preact = false;
 
   const config = getRawTSConfig({
     jsx: 'preserve',
@@ -44,6 +45,9 @@ export function getRawTSConfig(compilerOptions = {}) {
       noImplicitReturns: true,
       noUnusedLocals: false,
       noUnusedParameters: false,
+      paths: {
+        '$lib/*': ['./src/lib/*'],
+      },
       preserveWatchOutput: true,
       resolveJsonModule: true,
       skipLibCheck: true,

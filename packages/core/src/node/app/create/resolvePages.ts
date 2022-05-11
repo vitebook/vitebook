@@ -1,4 +1,6 @@
+import { globbySync } from 'globby';
 import kleur from 'kleur';
+import path from 'upath';
 
 import {
   ensureLeadingSlash,
@@ -7,9 +9,8 @@ import {
   ServerPage,
   stripImportQuotesFromJson,
 } from '../../../shared';
-import { globby, readRecentlyChangedFile } from '../../utils/fs';
+import { readRecentlyChangedFile } from '../../utils/fs';
 import { logger } from '../../utils/logger';
-import { path } from '../../utils/path';
 import type { App } from '../App';
 import type { Plugin } from '../plugin/Plugin';
 
@@ -18,9 +19,9 @@ const unresolvedPages = new Set<string>();
 const pageResolvedBy = new Map<string, Plugin>();
 
 export function resolvePageFilePaths(app: App): string[] {
-  return globby.sync(app.options.include, {
+  return globbySync(app.options.include, {
     absolute: true,
-    cwd: app.dirs.root.path,
+    cwd: app.dirs.pages.path,
   });
 }
 
@@ -75,11 +76,9 @@ async function resolvePage(app: App, filePath: string): Promise<void> {
     const plugin = app.plugins[i];
 
     const id = ensureLeadingSlash(path.relative(app.dirs.root.path, filePath));
-    const relativeFilePath = app.dirs.root.relative(filePath);
-    const fileContent = (await readRecentlyChangedFile(filePath)).toString();
-    const route =
-      app.options.resolveRoute?.({ filePath, relativeFilePath }) ??
-      filePathToRoute(app, filePath, fileContent, true);
+    const relativeFilePath = app.dirs.pages.relative(filePath);
+    const fileContent = await readRecentlyChangedFile(filePath);
+    const route = filePathToRoute(app, filePath, fileContent, true);
 
     const page = await plugin.resolvePage?.({
       id,
@@ -125,9 +124,9 @@ function pageCouldNotBeResolved(app: App, filePath: string) {
   logger.warn(
     logger.formatWarnMsg(
       `No plugin could resolve page: ${kleur.bold(
-        path.basename(app.dirs.root.path) +
+        path.basename(app.dirs.pages.path) +
           '/' +
-          path.relative(app.dirs.root.path, filePath),
+          path.relative(app.dirs.pages.path, filePath),
       )}\n`,
     ),
   );
@@ -165,7 +164,7 @@ export function filePathToRoute(
     configuredRoute += '.html';
   }
 
-  let route = configuredRoute ?? path.relative(app.dirs.src.path, filePath);
+  let route = configuredRoute ?? path.relative(app.dirs.pages.path, filePath);
   route = keepOrder ? route : stripOrderFromRoute(route);
 
   const url = new URL(route.toLowerCase(), FAKE_HOST).pathname;

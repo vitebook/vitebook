@@ -39,7 +39,7 @@ export class Package {
   /** @protected */
   read() {
     this.pkg = fs.existsSync(this.pkgPath)
-      ? JSON.parse(fs.readFileSync(this.pkgPath).toString())
+      ? JSON.parse(fs.readFileSync(this.pkgPath, 'utf-8'))
       : { name: '', description: '', version: '0.0.0', type: 'module' };
 
     this.pkg.scripts = this.pkg.scripts ?? {};
@@ -134,6 +134,11 @@ export class Package {
   save() {
     this.pkg.dependencies = sortObjectKeys(this.pkg.dependencies);
     this.pkg.devDependencies = sortObjectKeys(this.pkg.devDependencies);
+
+    if (Object.keys(this.pkg.dependencies).length === 0) {
+      this.pkg.dependencies = undefined;
+    }
+
     fs.writeFileSync(this.pkgPath, JSON.stringify(this.pkg, null, 2));
   }
 

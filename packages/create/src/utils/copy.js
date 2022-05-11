@@ -29,7 +29,7 @@ export function copyFile(src, dest, { replace } = {}) {
     copyDir(src, dest);
   } else {
     if (replace) {
-      let content = fs.readFileSync(src).toString();
+      let content = fs.readFileSync(src, 'utf-8');
       fs.writeFileSync(dest, replaceTemplateStrings(content, replace));
     } else {
       fs.copyFileSync(src, dest);

@@ -233,7 +233,8 @@ async function publishPackage(pkgName, version, runIfNotDry) {
   } else if (version.includes('rc')) {
     releaseTag = 'rc';
   } else {
-    // releaseTag = 'next';
+    // TODO: remove on official
+    releaseTag = 'next';
   }
 
   step(`Publishing ${pkgName}...`);

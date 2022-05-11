@@ -46,7 +46,7 @@ export class FileDirectory {
    */
   readFile(filePath) {
     const path = this.resolve(filePath);
-    return fs.existsSync(path) ? fs.readFileSync(path).toString() : '';
+    return fs.existsSync(path) ? fs.readFileSync(path, 'utf-8') : '';
   }
 
   /**

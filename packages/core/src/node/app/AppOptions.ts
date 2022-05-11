@@ -1,86 +1,59 @@
-import type { AliasOptions, UserConfig as ViteConfig } from 'vite';
-
-import type { SiteConfig, ThemeConfig } from '../../shared';
 import { CLIArgs } from '../cli/args';
 import type { Plugins } from './plugin/Plugin';
 
-export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
+export type AppOptions = {
   /**
    * Parsed CLI arguments.
    */
   cliArgs: CLIArgs;
 
   /**
-   * Path to project root directory. The path can be absolute or relative to the current working
+   * Path to current working directory. The path can be absolute or relative to the current working
    * directory `process.cwd()`.
    *
-   * @default process.cwd()
+   * @default 'src'
+   */
+  cwd: string;
+
+  /**
+   * Path to project root directory. The path can be absolute or relative to the current working
+   * directory `<cwd>`.
+   *
+   * @default '<cwd>/src'
    */
   root: string;
 
   /**
-   * Path to source code directory. The value can be either an absolute file system path
+   * Path to application pages directory. The value can be either an absolute file system path
    * or a path relative to `<root>`.
    *
-   * @default '<root>/src'
+   * @default '<root>/pages'
    */
-  srcDir: string;
-
-  /**
-   * The Vitebook config directory. The value can be either an absolute file system path
-   * or a path relative to `<root>`.
-   *
-   * @default '<root>/.vitebook'
-   */
-  configDir: string;
+  pages: string;
 
   /**
    * Directory to serve as plain static assets. Files in this directory are served and copied to
    * build dist dir as-is without transform. The value can be either an absolute file system path
-   * or a path relative to `<configDir>`.
+   * or a path relative to `<root>`.
    *
-   * @default '<configDir>/public'
+   * @default '<root>/public'
    */
-  publicDir: string;
+  public: string;
 
   /**
    * The build output directory. The value can be either an absolute file system path or a path
-   * relative to `<configDir>`.
+   * relative to `<root>`.
    *
-   * @default '<configDir>/dist'
+   * @default '<cwd>/build'
    */
-  outDir: string;
+  output: string;
 
   /**
-   * Globs pointing to files to be included in Vitebook (relative to `<root>`).
+   * Globs pointing to files to be included in Vitebook (relative to `<pages>`).
    *
-   * @default []
+   * @default ['**\/*.{svelte,md}']
    */
   include: string[];
-
-  /**
-   * Site-wide options for setting the base language, document title, description, locales, etc.
-   */
-  site: SiteConfig<Theme>;
-
-  /**
-   * Specifies an object, or an array of objects, which defines aliases used to replace values
-   * in `import` or `require` statements. With either format, the order of the entries is important,
-   * in that the first defined rules are applied first.
-   *
-   * Notes:
-   *
-   * - This is simply an alias for `vite.resolve.alias`.
-   * - This is passed to `@rollup/plugin-alias` as the "entries" field.
-   *
-   * @link https://github.com/rollup/plugins/tree/master/packages/alias#entries
-   */
-  alias?: AliasOptions;
-
-  /**
-   * Options to pass on to `vite`.
-   */
-  vite: ViteConfig;
 
   /**
    * General plugins to use and their respective configurations.
@@ -93,35 +66,6 @@ export type AppOptions<Theme extends ThemeConfig = ThemeConfig> = {
    * @default false
    */
   debug: boolean;
-
-  /**
-   * Cache directory. The value can be either an absolute file system path or a path
-   * relative to `<configDir>`.
-   *
-   * @default '<configDir>/.cache'
-   */
-  cacheDir: string;
-
-  /**
-   * Temp directory. The value can be either an absolute file system path or a path
-   * relative to `<configDir>`.
-   *
-   * @default '<configDir>/.temp'
-   */
-  tmpDir: string;
-
-  /**
-   * Function to map file paths to client routes such as `/button/button.story.ts` ->
-   * `/button/button.html`.
-   *
-   * The route must resolve to a path ending with `.html`.
-   */
-  resolveRoute?: (path: {
-    filePath: string;
-    relativeFilePath: string;
-  }) => string | null | undefined;
 };
 
-export type AppConfig<Theme extends ThemeConfig = ThemeConfig> = Partial<
-  AppOptions<Theme>
->;
+export type AppConfig = Partial<AppOptions>;

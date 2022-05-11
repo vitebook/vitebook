@@ -60,7 +60,7 @@ export function addLintStagedFeature(builder) {
       ].join('\n'),
     );
   } else {
-    let content = fs.readFileSync(huskyPreCommitFilePath).toString();
+    let content = fs.readFileSync(huskyPreCommitFilePath, 'utf-8');
     if (!content.includes('npx lint-staged')) {
       content = content + `\nnpx lint-staged`;
       fs.writeFileSync(huskyPreCommitFilePath, content);

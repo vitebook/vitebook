@@ -1,15 +1,21 @@
-import {
-  createServer as createDevServer,
-  mergeConfig,
-  UserConfig as ViteConfig,
-  ViteDevServer,
-} from 'vite';
+import { createServer as createDevServer, ViteDevServer } from 'vite';
 
 import type { App } from '../../App';
 
-export async function createServer(
-  app: App,
-  config?: ViteConfig,
-): Promise<ViteDevServer> {
-  return createDevServer(mergeConfig(app.options.vite, config ?? {}));
+export async function createServer(app: App): Promise<ViteDevServer> {
+  const { host, port, https, open, strictPort } = app.options.cliArgs;
+
+  return createDevServer({
+    root: app.dirs.root.path,
+    ...app.vite,
+    plugins: [...app.plugins, ...(app.vite?.config.plugins ?? [])],
+    server: {
+      ...app.vite?.config.server,
+      host,
+      port,
+      https,
+      open,
+      strictPort,
+    },
+  });
 }

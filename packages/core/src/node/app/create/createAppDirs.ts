@@ -1,9 +1,10 @@
-import { fs } from '../../utils/fs';
+import fs from 'fs-extra';
+import path from 'upath';
+
 import {
   loadModule as loadModuleUtil,
   LoadModuleOptions,
 } from '../../utils/module';
-import { path } from '../../utils/path';
 import type { AppDirs, AppDirUtils } from '../App';
 import type { AppOptions } from '../AppOptions';
 
@@ -20,7 +21,7 @@ export const createAppDirUtil = (
     path.relative(baseDir, path.join(...args));
 
   const read = (filePath: string) =>
-    fs.readFileSync(resolve(filePath)).toString();
+    fs.readFileSync(resolve(filePath), 'utf-8');
 
   const write = (filePath: string, data: string) =>
     fs.writeFileSync(resolve(filePath), data);
@@ -44,23 +45,18 @@ export const createAppDirUtil = (
 };
 
 export const createAppDirs = (options: AppOptions): AppDirs => {
-  const tmp = createAppDirUtil(options.tmpDir, options.tmpDir);
+  const tmp = createAppDirUtil(process.cwd(), 'node_modules/.vitebook/temp');
+  const cwd = createAppDirUtil(options.cwd, tmp.path);
   const root = createAppDirUtil(options.root, tmp.path);
-  const src = createAppDirUtil(options.srcDir, tmp.path);
-  const cache = createAppDirUtil(options.cacheDir, tmp.path);
-  const config = createAppDirUtil(options.configDir, tmp.path);
-  const out = createAppDirUtil(options.outDir, tmp.path);
-  const publicDir = createAppDirUtil(options.publicDir, tmp.path);
-  const theme = createAppDirUtil(config.resolve('theme'), tmp.path);
-
+  const pages = createAppDirUtil(options.pages, tmp.path);
+  const out = createAppDirUtil(options.output, tmp.path);
+  const publicDir = createAppDirUtil(options.public, tmp.path);
   return {
-    root,
-    src,
-    cache,
-    config,
     tmp,
+    cwd,
+    root,
+    pages,
     out,
-    theme,
     public: publicDir,
   };
 };

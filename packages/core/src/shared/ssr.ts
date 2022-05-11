@@ -1,9 +1,6 @@
-import type { HeadConfig } from './types/HeadConfig';
 import type { ServerPage } from './types/Page';
 
 export type VitebookSSRContext = {
-  lang: string;
-  head: HeadConfig[];
   modules: Set<string>;
 };
 
@@ -12,7 +9,7 @@ export type ServerEntryModule = {
 };
 
 export type ServerRenderResult = {
-  context: VitebookSSRContext;
+  ssr: VitebookSSRContext;
   head: string;
   css: string;
   html: string;

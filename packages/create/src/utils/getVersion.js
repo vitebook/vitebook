@@ -6,7 +6,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const vitebookPkgPath = path.resolve(__dirname, '../../package.json');
 
 const vitebookPkgContent = JSON.parse(
-  fs.readFileSync(vitebookPkgPath).toString(),
+  fs.readFileSync(vitebookPkgPath, 'utf-8'),
 );
 
 export function getVersion() {
