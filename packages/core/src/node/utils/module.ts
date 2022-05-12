@@ -1,12 +1,12 @@
 import { build as esbuild, BuildOptions } from 'esbuild';
-import fs from 'fs-extra';
+import fs from 'fs';
 import getFolderSize from 'get-folder-size';
 import { createRequire } from 'module';
 import path from 'upath';
 import { fileURLToPath, pathToFileURL } from 'url';
 
 import { isObject } from '../../shared';
-import { checksumFile } from './fs';
+import { checksumFile, emptyDir, ensureDir } from './fs';
 
 /**
  * Check if a given module is an esm module with a default export.
@@ -26,6 +26,7 @@ export const esmRequire = createRequire(import.meta.url);
 /**
  * `__dirname` alternative for ESM.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const currentDirectory = (meta: any): string =>
   path.dirname(fileURLToPath(meta.url));
 
@@ -71,9 +72,9 @@ export const loadModule = async <T>(
     if (fs.existsSync(tmpDir)) {
       // If greater than 5MB let's empty it.
       const { size } = await getFolderSize(tmpDir);
-      if (size > 5000000) await fs.emptyDir(tmpDir);
+      if (size > 5000000) await emptyDir(tmpDir);
     } else {
-      await fs.ensureDir(tmpDir);
+      await ensureDir(tmpDir);
     }
   }
 
@@ -82,7 +83,7 @@ export const loadModule = async <T>(
 
   const fileComment = `// FILE: ${filePath}\n\n`;
   const code = await bundle(filePath, buildOptions);
-  await fs.writeFile(outputPath, fileComment + requireShim + code);
+  await fs.promises.writeFile(outputPath, fileComment + requireShim + code);
   const mod = import(
     pathToFileURL(outputPath).href + `?t=${Date.now()}`
   ) as unknown as T;
@@ -117,6 +118,7 @@ export async function bundle(
             external: false,
           }));
           build.onResolve(
+            // eslint-disable-next-line no-useless-escape
             { filter: /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ },
             async () => ({ external: true }),
           );

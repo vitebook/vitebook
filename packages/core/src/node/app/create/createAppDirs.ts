@@ -1,4 +1,4 @@
-import fs from 'fs-extra';
+import fs from 'fs';
 import path from 'upath';
 
 import {
@@ -46,11 +46,12 @@ export const createAppDirUtil = (
 
 export const createAppDirs = (options: AppOptions): AppDirs => {
   const tmp = createAppDirUtil(process.cwd(), 'node_modules/.vitebook/temp');
-  const cwd = createAppDirUtil(options.cwd, tmp.path);
-  const root = createAppDirUtil(options.root, tmp.path);
-  const pages = createAppDirUtil(options.pages, tmp.path);
-  const out = createAppDirUtil(options.output, tmp.path);
-  const publicDir = createAppDirUtil(options.public, tmp.path);
+  const cwd = createAppDirUtil(options.dirs.cwd, tmp.path);
+  const root = createAppDirUtil(options.dirs.root, tmp.path);
+  const pages = createAppDirUtil(options.dirs.pages, tmp.path);
+  const out = createAppDirUtil(options.dirs.output, tmp.path);
+  const publicDir = createAppDirUtil(options.dirs.public, tmp.path);
+
   return {
     tmp,
     cwd,

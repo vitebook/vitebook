@@ -10,6 +10,13 @@ export async function resolveApp(
   return createApp({
     cliArgs: args,
     ...appConfig,
-    ...args,
+    dirs: {
+      ...appConfig?.dirs,
+      ...args,
+    },
+    pages: {
+      ...appConfig?.pages,
+      ...args,
+    },
   });
 }

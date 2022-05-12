@@ -1,5 +1,6 @@
 // components
 export { default as ClientOnly } from './components/ClientOnly.svelte';
+export { default as PageLayouts } from './components/PageLayouts.svelte';
 export { default as PageView } from './components/PageView.svelte';
 // router
 export * from './router/history/memory';
@@ -9,6 +10,7 @@ export * from './router/types';
 export * from './context/getRouter';
 export * from './context/getSSRContext';
 // stores
+export * from './stores/layouts';
 export * from './stores/markdown';
 export * from './stores/page';
 export * from './stores/pages';

@@ -26,9 +26,9 @@ export function addTailwindFeature(builder) {
 
   builder.hooks.postBuild.push(() => {
     const appFile =
-      builder.dirs.src.template.root.readFile('pages/_App.svelte');
+      builder.dirs.src.template.root.readFile('pages/@app.svelte');
     builder.dirs.dest.pages.writeFile(
-      '_App.svelte',
+      '@app.svelte',
       appFile.replace('<script>', `<script>\n  import '$src/global.css';\n`),
       { overwrite: true },
     );

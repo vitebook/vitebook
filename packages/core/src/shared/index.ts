@@ -4,7 +4,6 @@ export * from './ssr';
 export * from './types/MarkdownContent';
 export * from './types/Page';
 export * from './types/Svelte';
-export * from './types/utils';
 // utils
 export * from './utils/date';
 export * from './utils/html';

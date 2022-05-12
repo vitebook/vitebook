@@ -1,5 +1,6 @@
 import { createHash } from 'crypto';
 import fs from 'fs';
+import path from 'path';
 
 export const isTypeScriptFile = (filePath: string): boolean =>
   /\.(ts|tsx)($|\?)/.test(filePath);
@@ -48,4 +49,38 @@ export function checksumFile(algorithm: string, path: string): Promise<string> {
     stream.on('data', (chunk) => hash.update(chunk));
     stream.on('end', () => resolve(hash.digest('hex')));
   });
+}
+
+export async function ensureDir(dir: string) {
+  if (fs.existsSync(dir)) return;
+  await fs.promises.mkdir(dir, { recursive: true });
+}
+
+export async function ensureFile(filePath: string) {
+  if (fs.existsSync(filePath)) return;
+  await ensureDir(path.dirname(filePath));
+  await fs.promises.writeFile(filePath, '', { encoding: 'utf-8' });
+}
+
+export function copyDir(srcDir: string, destDir: string) {
+  fs.mkdirSync(destDir, { recursive: true });
+  for (const file of fs.readdirSync(srcDir)) {
+    const srcFile = path.resolve(srcDir, file);
+    const destFile = path.resolve(destDir, file);
+    copyFile(srcFile, destFile);
+  }
+}
+
+export function copyFile(src: string, dest: string) {
+  const stat = fs.statSync(src);
+  if (stat.isDirectory()) {
+    copyDir(src, dest);
+  } else {
+    fs.copyFileSync(src, dest);
+  }
+}
+
+export async function emptyDir(dir: string) {
+  await fs.promises.rm(dir, { recursive: true, force: true });
+  await fs.promises.mkdir(dir);
 }

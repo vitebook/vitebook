@@ -1,6 +1,6 @@
-import type { VirtualPagesModule } from '../shared/types/Page';
+import type { VirtualClientPagesModule } from '../shared/types/Page';
 
 declare module ':virtual/vitebook/pages' {
-  declare const pages: VirtualPagesModule['default'];
+  declare const pages: VirtualClientPagesModule['default'];
   export default pages;
 }

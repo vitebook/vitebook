@@ -4,20 +4,22 @@ import type { AppConfig } from './app/AppOptions';
 
 export * from './app/App';
 export * from './app/AppOptions';
-export * from './app/markdown/plugins';
-export * from './app/markdown/types';
-export * from './app/plugin/ClientPlugin';
-export * from './app/plugin/Plugin';
+export * from './app/plugins/ClientPlugin';
+export * from './app/plugins/Plugin';
 export * from './cli/run';
 
+export type VitebookConfig = AppConfig | { [root: `$${string}`]: AppConfig };
+
 export function defineConfig(
-  config: ViteConfig & { book: AppConfig },
+  config: ViteConfig & { book: VitebookConfig },
 ): typeof config {
   return config;
 }
 
 export * from '../shared';
-export { filePathToRoute } from './app/create/resolvePages';
-export { VM_PREFIX } from './app/vite/alias';
-export { MarkdownPluginOptions } from './app/vite/plugins/markdownPlugin';
+export { VM_PREFIX } from './app/alias';
+export { type CorePluginOptions } from './app/plugins/core';
+export { type MarkdownPluginOptions } from './app/plugins/markdown';
+export { type Pages, type PagesOptions } from './app/plugins/pages';
+export { type PagesPluginOptions } from './app/plugins/pages';
 export * from './utils';

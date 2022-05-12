@@ -1,18 +1,18 @@
 import { loadConfigFromFile } from 'vite';
 
+import { resolveRelativePath } from '../../utils';
 import type { App, AppEnv } from '../App';
-import type { AppConfig } from '../AppOptions';
-import type { ClientPlugin } from '../plugin/ClientPlugin';
-import type { FilteredPlugins } from '../plugin/Plugin';
-import { build } from '../vite/build/build';
-import { createServer } from '../vite/createServer';
-import { corePlugin } from '../vite/plugins/corePlugin';
-import { markdownPlugin } from '../vite/plugins/markdownPlugin';
-import { ssrPlugin } from '../vite/plugins/ssrPlugin';
-import { preview } from '../vite/preview';
+import type { AppConfig, AppOptions } from '../AppOptions';
+import { build } from '../build';
+import { dev } from '../dev';
+import type { ClientPlugin } from '../plugins/ClientPlugin';
+import { corePlugin } from '../plugins/core';
+import { markdownPlugin } from '../plugins/markdown';
+import { Pages, pagesPlugin } from '../plugins/pages';
+import type { FilteredPlugins } from '../plugins/Plugin';
+import { ssrPlugin } from '../plugins/ssr';
+import { preview } from '../preview';
 import { createAppDirs } from './createAppDirs';
-import { createAppEnv } from './createAppEnv';
-import { createAppOptions } from './createAppOptions';
 import { DisposalBin } from './DisposalBin';
 import { getAppVersion } from './getAppVersion';
 
@@ -27,10 +27,16 @@ export const createApp = async (
     mode: config.cliArgs?.command === 'dev' ? 'development' : 'production',
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const bookConfig = (vite?.config as any).book;
+
+  const bookConfigRoot = config.dirs?.root
+    ? `$${config.dirs.root}`
+    : '$default';
+
   const options = createAppOptions({
     ...config,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ...(vite?.config as any).book,
+    ...(bookConfig?.[bookConfigRoot] ?? bookConfig),
   });
 
   const dirs = createAppDirs(options);
@@ -40,17 +46,18 @@ export const createApp = async (
     isDebug: options.debug ?? envConfig?.isDebug,
   });
 
-  const core = corePlugin();
+  const core = corePlugin(options.core);
 
-  const client = options.plugins
+  const client = (options.plugins
     .flat()
-    .find((plugin) => plugin && 'entry' in plugin);
+    .find((plugin) => plugin && 'entry' in plugin) ?? core) as ClientPlugin;
 
   const plugins = [
     core,
     ssrPlugin(),
-    markdownPlugin(options.markdown),
+    markdownPlugin(),
     ...options.plugins.flat(),
+    pagesPlugin(),
   ].filter((plugin) => !!plugin) as FilteredPlugins;
 
   const app: App = {
@@ -60,11 +67,11 @@ export const createApp = async (
     dirs,
     plugins,
     vite,
-    pages: [],
+    pages: new Pages(),
     context: {},
-    client: (client as ClientPlugin) ?? core,
+    client,
     disposal: new DisposalBin(),
-    dev: () => createServer(app),
+    dev: () => dev(app),
     build: () => build(app),
     preview: () => preview(app),
     close: () => app.disposal.empty(),
@@ -74,5 +81,56 @@ export const createApp = async (
     await plugin.configureApp?.(app, env);
   }
 
+  await app.pages.init({
+    dirs: {
+      root: dirs.root.path,
+      pages: dirs.pages.path,
+    },
+    include: {
+      pages: options.pages.include ?? [],
+      layouts: options.pages.layouts?.include ?? [],
+    },
+  });
+
+  await app.pages.discover();
+
   return app;
 };
+
+export function createAppOptions({
+  cliArgs = { command: 'dev', '--': [] },
+  dirs = {},
+  debug = false,
+  core = {},
+  pages = {},
+  markdown = {},
+  plugins = [],
+}: AppConfig): AppOptions {
+  const _cwd = resolveRelativePath(process.cwd(), dirs.cwd ?? '.');
+  const _root = resolveRelativePath(_cwd, dirs.root ?? '.');
+  const _pages = resolveRelativePath(_root, dirs.pages ?? 'pages');
+  const _output = resolveRelativePath(_root, dirs.output ?? 'build');
+  const _public = resolveRelativePath(_root, dirs.public ?? 'public');
+
+  return {
+    cliArgs,
+    debug,
+    dirs: {
+      cwd: _cwd,
+      root: _root,
+      pages: _pages,
+      output: _output,
+      public: _public,
+    },
+    core,
+    pages,
+    markdown,
+    plugins,
+  };
+}
+
+export function createAppEnv({ isDebug = false }: Partial<AppEnv>): AppEnv {
+  return {
+    isDebug,
+  };
+}

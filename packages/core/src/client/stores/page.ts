@@ -1,14 +1,14 @@
 import { Writable, writable } from 'svelte/store';
 
-import type { LoadedPage } from '../../shared';
+import type { LoadedClientPage } from '../../shared';
 
 export type PageStore = {
-  subscribe: Writable<LoadedPage>['subscribe'];
-  __update: Writable<LoadedPage>['update'];
-  __set: Writable<LoadedPage>['set'];
+  subscribe: Writable<LoadedClientPage>['subscribe'];
+  __update: Writable<LoadedClientPage>['update'];
+  __set: Writable<LoadedClientPage>['set'];
 };
 
-const store = writable<LoadedPage>();
+const store = writable<LoadedClientPage>();
 
 export const page: PageStore = {
   subscribe: store.subscribe,

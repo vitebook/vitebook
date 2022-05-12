@@ -4,15 +4,11 @@ import { get } from 'svelte/store';
 // @ts-expect-error - .
 import { configureRouter } from ':virtual/vitebook/app';
 
-import {
-  isLoadedMarkdownPage,
-  Page,
-  Pages,
-  SvelteConstructor,
-} from '../shared';
+import { ClientPage, isLoadedMarkdownPage, SvelteConstructor } from '../shared';
 import DefaultNotFound from './components/DefaultNotFound.svelte';
 import { createMemoryHistory } from './router/history/memory';
 import { Router } from './router/router';
+import { layouts as pageLayouts } from './stores/layouts';
 import { page } from './stores/page';
 import { pages } from './stores/pages';
 
@@ -27,13 +23,6 @@ export async function createRouter() {
 
   await configureRouter?.(router);
 
-  if (!router.hasRoute('/404.html')) {
-    router.addRoute({
-      path: '/404.html',
-      loader: async () => DefaultNotFound,
-    });
-  }
-
   if (!import.meta.env.SSR) {
     router.initListeners();
     await router.go(location.href, { replace: true });
@@ -44,7 +33,7 @@ export async function createRouter() {
 
 let routes: string[] = [];
 
-function addRoutes(router: Router, pages: Readonly<Pages>) {
+function addRoutes(router: Router, pages: Readonly<ClientPage[]>) {
   pages.forEach((_page) => {
     router.addRoute({
       path: _page.route,
@@ -60,35 +49,62 @@ function addRoutes(router: Router, pages: Readonly<Pages>) {
       loadPage(_page);
     }
   });
+
+  if (!router.hasRoute('/404.html')) {
+    router.addRoute({
+      path: '/404.html',
+      loader: async () => DefaultNotFound,
+    });
+  }
 }
 
 function handleHMR(router: Router) {
   if (import.meta.hot) {
-    const updatePages = (pages: Pages) => {
+    const updatePages = (pages: ClientPage[]) => {
       routes.forEach((route) => router.removeRoute(route));
       routes = [];
       addRoutes(router, pages);
     };
 
     let pagesUpdateTimer;
-    pages.subscribe(async (pages) => {
+    const delayedPagesUpdate = (pages: ClientPage[]) => {
       clearTimeout(pagesUpdateTimer);
       pagesUpdateTimer = setTimeout(() => updatePages(pages), 100);
-    });
+    };
+
+    pages.subscribe(($pages) => delayedPagesUpdate($pages));
+    pageLayouts.subscribe(() => delayedPagesUpdate(get(pages)));
   }
 }
 
 async function loadPage(
-  _page: Page,
+  _page: ClientPage,
   { prefetch = false } = {},
 ): Promise<SvelteConstructor> {
   const mod = await _page.loader();
   const component = mod.default;
 
+  const $pageLayouts = get(pageLayouts);
+  const layouts = await Promise.all(
+    _page.layouts
+      .map((i) => $pageLayouts[i])
+      .map(async (layout) => {
+        const mod = await layout.loader();
+        return {
+          ...layout,
+          module: mod,
+          get component() {
+            return mod.default;
+          },
+        };
+      }),
+  );
+
   if (!prefetch) {
     page.__set({
       ..._page,
       module: mod,
+      layouts,
       get component() {
         return mod.default;
       },

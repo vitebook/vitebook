@@ -1,24 +1,23 @@
 import type { loadConfigFromFile, PreviewServer, ViteDevServer } from 'vite';
 
-import type { ServerPage } from '../../shared';
 import type { loadModule } from '../utils/module';
 import type { AppOptions } from './AppOptions';
 import type { DisposalBin } from './create/DisposalBin';
-import type { ClientPlugin } from './plugin/ClientPlugin';
-import type { FilteredPlugins } from './plugin/Plugin';
+import type { ClientPlugin } from './plugins/ClientPlugin';
+import type { Pages } from './plugins/pages';
+import type { FilteredPlugins } from './plugins/Plugin';
 
 export type App = {
   /** Plugin extensions. */
   [x: string]: unknown;
   version: string;
-  configPath?: string;
   dirs: AppDirs;
   env: AppEnv;
   client: ClientPlugin;
   options: AppOptions;
   plugins: FilteredPlugins;
   context: Record<string, unknown>;
-  pages: ServerPage[];
+  pages: Pages;
   disposal: DisposalBin;
   vite: Awaited<ReturnType<typeof loadConfigFromFile>>;
   dev: () => Promise<ViteDevServer>;

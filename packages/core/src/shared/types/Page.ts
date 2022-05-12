@@ -1,74 +1,87 @@
 // Client
 
 import type { MarkdownMeta } from './MarkdownContent';
-import type { SvelteConstructor } from './Svelte';
+import type { SvelteConstructor, SvelteModule } from './Svelte';
 
-export type Page<Context = DefaultPageContext> = {
-  /** Optional page type declared by a plugin to help identify specific pages client-side. */
-  type?: string;
-  /** Page name. Also used as route name if client-side router supports it. */
+export type ClientPage = {
+  /** Page name which can be used to identify route. */
   name?: string;
-  /** Route path to this page such as `/pages/page.html`. */
+  /** Route to this page such as `/pages/page.html`. */
   route: string;
   /** System file path relative to `<root>`. */
   rootPath: string;
-  /** Optional page data included by a plugin. */
-  context?: Context;
+  /** Additional page metadata. */
+  context: Record<string, unknown>;
+  /** Page layouts identifiers. */
+  layouts: number[];
   /** Page module loader. Used to dynamically import page module client-side. */
-  loader: () => Promise<PageModule>;
+  loader: () => Promise<ClientPageModule>;
 };
 
-export type PageModule = {
+export type ClientPageModule = {
   [id: string]: unknown;
   readonly default: SvelteConstructor;
   readonly markdown?: MarkdownMeta;
 };
 
-export type Pages = Page[];
-
-export type LoadedPage<Context = DefaultPageContext> = Page<Context> & {
-  readonly module: PageModule;
+export type LoadedClientPage = Omit<ClientPage, 'layouts'> & {
+  readonly module: ClientPageModule;
   readonly component: SvelteConstructor;
+  readonly layouts: LoadedClientLayout[];
 };
 
-export type LoadedMarkdownPage = LoadedPage & {
-  type: 'md';
+export type LoadedClientMarkdownPage = LoadedClientPage & {
   readonly meta?: MarkdownMeta;
 };
 
-export type VirtualPagesModule = {
-  readonly default: Pages;
+export type ClientLayout = {
+  /** Layout name. */
+  name: string;
+  /** System file path relative to `<root>`. */
+  rootPath: string;
+  /** Layout module loader. Used to dynamically import client-side. */
+  loader: () => Promise<SvelteModule>;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type DefaultPageContext = Record<string, any>;
+export type LoadedClientLayout = ClientLayout & {
+  readonly module: SvelteModule;
+  readonly component: SvelteConstructor;
+};
+
+export type VirtualClientPagesModule = {
+  readonly default: ClientPage[];
+};
+
+export type VirtualClientPageLayoutsModule = {
+  readonly default: ClientLayout[];
+};
 
 // Server
 
-export type ServerPage<Context = DefaultPageContext> = Omit<Page, 'loader'> & {
-  /**
-   * Page module id used by the client-side router to dynamically load this page module. If not
-   * resolved by a plugin, it'll default to the page file path.
-   */
+export type ServerPage = Omit<ClientPage, 'loader' | 'layouts'> & {
+  /** Module id used by the client-side router to dynamically load this page module.  */
   id: string;
-
-  /**
-   * Absolute system file path to page file.
-   */
+  /** Absolute system file path to page file.  */
   filePath: string;
-
-  /**
-   * Client-side route to this page. If not resolved by a plugin, it'll be inferred from the page
-   * file path such as `/pages/page.html`.The client-side router is responsible for loading the
-   * page module when this route is visited.
-   */
+  /** Client-side route to this page inferred from the page file path.  */
   route: string;
-
+  /** Page layout name. */
+  layoutName: string;
+  /**
+   * Indentifies layout files that belong to this page. Each number is an index to a layout
+   * client layout file in the `layouts` store.
+   */
+  layouts: number[];
   /**
    * Additional data to be included with the page. This will be included in the client-side
    * response.
    */
-  context?: Context;
+  context: Record<string, unknown>;
 };
 
-export type ResolvedPage = Partial<ServerPage>;
+export type ServerLayout = Omit<ClientLayout, 'loader'> & {
+  /** Absolute system file path to page file. */
+  filePath: string;
+  /** The root directory that this layout belongs to. */
+  owningDir: string;
+};

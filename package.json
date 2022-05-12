@@ -15,7 +15,6 @@
     "docs:preview": "pnpm preview --filter docs",
     "example": "node .scripts/run-example.js",
     "preinstall": "node .scripts/check-for-pnpm.js && node .scripts/check-node-version.js",
-    "postinstall": "npm i --prefix docs",
     "prepare": "husky install",
     "release": "node .scripts/release.js",
     "sandbox": "node .scripts/run-sandbox.js",
