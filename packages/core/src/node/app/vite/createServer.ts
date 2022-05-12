@@ -1,6 +1,6 @@
 import { createServer as createDevServer, ViteDevServer } from 'vite';
 
-import type { App } from '../../App';
+import type { App } from '../App';
 
 export async function createServer(app: App): Promise<ViteDevServer> {
   const { host, port, https, open, strictPort } = app.options.cliArgs;

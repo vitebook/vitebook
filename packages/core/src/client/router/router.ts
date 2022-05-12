@@ -6,7 +6,7 @@ import {
   ensureLeadingSlash,
   inBrowser,
   isString,
-  SvelteModule,
+  type SvelteModule,
 } from '../../shared';
 import { pages } from '../stores/pages';
 import { route } from '../stores/route';

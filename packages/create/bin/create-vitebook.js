@@ -90,15 +90,21 @@ async function main() {
     builder.pkg.addField('description', userInput.projectDescription);
   }
 
-  ['dev', 'build', 'preview'].forEach((script) => {
+  const scripts = ['dev', 'build', 'preview'];
+  const scriptsExist = scripts.some((script) =>
+    builder.pkg.hasScriptName(script),
+  );
+  const scriptsPrefix = scriptsExist ? 'vitebook:' : '';
+  const devScript = `${scriptsPrefix}dev`;
+  for (const script of scripts) {
     builder.pkg.addScript(
-      `vitebook:${script}`,
+      `${scriptsPrefix}${script}`,
       link
         ? `node node_modules/@vitebook/core/bin/vitebook.js ${script}`
         : `vitebook ${script}`,
       { regexTest: new RegExp(`vitebook(\\.js)? ${script}`) },
     );
-  });
+  }
 
   // -------------------------------------------------------------------------------------------
   // Core Dependencies
@@ -153,6 +159,7 @@ async function main() {
   // -------------------------------------------------------------------------------------------
 
   builder.pkg.save();
+  await builder.runHooks('postBuild');
 
   console.log(kleur.bold(kleur.green(`✅ Done. Now run:\n`)));
 
@@ -164,11 +171,11 @@ async function main() {
   switch (packageManager) {
     case 'yarn':
       console.log(kleur.bold('  yarn'));
-      console.log(kleur.bold('  yarn vitebook:dev'));
+      console.log(kleur.bold(`  yarn ${devScript}`));
       break;
     case 'pnpm':
       console.log(kleur.bold('  pnpm install'));
-      console.log(kleur.bold('  pnpm vitebook:dev'));
+      console.log(kleur.bold(`  pnpm ${devScript}`));
       break;
     default:
       console.log(
@@ -176,7 +183,7 @@ async function main() {
       );
       console.log(
         kleur.bold(
-          `  ${workspace ? 'pnpm' : `${packageManager} run`} vitebook:dev`,
+          `  ${workspace ? 'pnpm' : `${packageManager} run`} ${devScript}`,
         ),
       );
       break;

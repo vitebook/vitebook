@@ -1,5 +1,6 @@
 import { CLIArgs } from '../cli/args';
 import type { Plugins } from './plugin/Plugin';
+import type { MarkdownPluginOptions } from './vite/plugins/markdownPlugin';
 
 export type AppOptions = {
   /**
@@ -11,7 +12,7 @@ export type AppOptions = {
    * Path to current working directory. The path can be absolute or relative to the current working
    * directory `process.cwd()`.
    *
-   * @default 'src'
+   * @default 'process.cwd()'
    */
   cwd: string;
 
@@ -19,7 +20,7 @@ export type AppOptions = {
    * Path to project root directory. The path can be absolute or relative to the current working
    * directory `<cwd>`.
    *
-   * @default '<cwd>/src'
+   * @default '<cwd>'
    */
   root: string;
 
@@ -44,16 +45,21 @@ export type AppOptions = {
    * The build output directory. The value can be either an absolute file system path or a path
    * relative to `<root>`.
    *
-   * @default '<cwd>/build'
+   * @default '<root>/build'
    */
   output: string;
 
   /**
    * Globs pointing to files to be included in Vitebook (relative to `<pages>`).
    *
-   * @default ['**\/*.{svelte,md}']
+   * @default ['**\/[^_]*.{svelte,md}']
    */
   include: string[];
+
+  /**
+   * Markdown options.
+   */
+  markdown: MarkdownPluginOptions;
 
   /**
    * General plugins to use and their respective configurations.

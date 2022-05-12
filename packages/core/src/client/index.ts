@@ -9,6 +9,7 @@ export * from './router/types';
 export * from './context/getRouter';
 export * from './context/getSSRContext';
 // stores
+export * from './stores/markdown';
 export * from './stores/page';
 export * from './stores/pages';
 export * from './stores/route';

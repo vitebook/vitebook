@@ -46,7 +46,7 @@ export function getRawTSConfig(compilerOptions = {}) {
       noUnusedLocals: false,
       noUnusedParameters: false,
       paths: {
-        '$lib/*': ['./src/lib/*'],
+        '$src/*': ['./src/*'],
       },
       preserveWatchOutput: true,
       resolveJsonModule: true,

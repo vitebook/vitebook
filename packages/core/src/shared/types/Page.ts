@@ -1,5 +1,6 @@
 // Client
 
+import type { MarkdownMeta } from './MarkdownContent';
 import type { SvelteConstructor } from './Svelte';
 
 export type Page<Context = DefaultPageContext> = {
@@ -19,18 +20,24 @@ export type Page<Context = DefaultPageContext> = {
 
 export type PageModule = {
   [id: string]: unknown;
-  default: SvelteConstructor;
+  readonly default: SvelteConstructor;
+  readonly markdown?: MarkdownMeta;
 };
 
 export type Pages = Page[];
 
 export type LoadedPage<Context = DefaultPageContext> = Page<Context> & {
-  mod: PageModule;
-  component: SvelteConstructor;
+  readonly module: PageModule;
+  readonly component: SvelteConstructor;
+};
+
+export type LoadedMarkdownPage = LoadedPage & {
+  type: 'md';
+  readonly meta?: MarkdownMeta;
 };
 
 export type VirtualPagesModule = {
-  default: Pages;
+  readonly default: Pages;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

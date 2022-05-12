@@ -2,7 +2,6 @@ import path from 'path';
 import minimist from 'minimist';
 import { globbySync } from 'globby';
 import { build } from 'esbuild';
-import kleur from 'kleur';
 import { readFileSync } from 'fs';
 
 const args = minimist(process.argv.slice(2));

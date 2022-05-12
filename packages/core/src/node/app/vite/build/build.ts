@@ -14,7 +14,7 @@ import {
 import { logger, LoggerIcon } from '../../../utils/logger';
 import type { App } from '../../App';
 import { resolvePages } from '../../create/resolvePages';
-import { readIndexHtmlFile } from '../dev/indexHtml';
+import { readIndexHtmlFile } from '../middleware/indexHtml';
 import { bundle } from './bundle';
 
 export async function build(app: App): Promise<void> {

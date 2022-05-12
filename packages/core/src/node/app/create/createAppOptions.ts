@@ -4,18 +4,19 @@ import type { AppConfig, AppOptions } from '../AppOptions';
 export const createAppOptions = ({
   cliArgs = { command: 'dev', '--': [] },
   cwd = process.cwd(),
-  root = 'src',
+  root = '.',
   pages = 'pages',
   output = 'build',
   public: publicdir = 'public',
   debug = false,
-  include = ['!node_modules', '**/*.{svelte,md}'],
+  include = ['!node_modules', '**/[^_]*.{svelte,md}'],
   plugins = [],
+  markdown = {},
 }: AppConfig): AppOptions => {
   const _cwd = resolveRelativePath(process.cwd(), cwd);
   const _root = resolveRelativePath(_cwd, root);
   const _pages = resolveRelativePath(_root, pages);
-  const _output = resolveRelativePath(_cwd, output);
+  const _output = resolveRelativePath(_root, output);
   const _public = resolveRelativePath(_root, publicdir);
 
   return {
@@ -28,5 +29,6 @@ export const createAppOptions = ({
     public: _public,
     include,
     plugins,
+    markdown,
   };
 };

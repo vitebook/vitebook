@@ -1,7 +1,5 @@
 import fs from 'fs-extra';
 import debounce from 'just-debounce-it';
-import MagicString from 'magic-string';
-import path from 'upath';
 import {
   DepOptimizationMetadata,
   UserConfig as ViteConfig,
@@ -16,15 +14,14 @@ import {
   resolvePages,
 } from '../../create/resolvePages';
 import type { ClientPlugin } from '../../plugin/ClientPlugin';
-import type { Plugin } from '../../plugin/Plugin';
-import { virtualModuleId, virtualModuleRequestPath } from './alias';
-import { indexHtmlMiddleware } from './indexHtml';
+import { virtualModuleId, virtualModuleRequestPath } from '../alias';
+import { indexHtmlMiddleware } from '../middleware/indexHtml';
 
 let pageChangesPending: Promise<void> | undefined;
 
 const clientPackages = ['@vitebook/core'];
 
-const DEFAULT_INCLUDE_RE = /\.(md|svelte)($|\?)/;
+const DEFAULT_INCLUDE_RE = /\.svelte($|\?)/;
 
 export function corePlugin(): ClientPlugin {
   let app: App;
@@ -37,18 +34,23 @@ export function corePlugin(): ClientPlugin {
     Object.values(virtualModuleRequestPath),
   );
 
+  const clientEntry = require.resolve(`@vitebook/core/entry-client.js`);
+  const serverEntry = require.resolve(`@vitebook/core/entry-server.js`);
+
+  const isLocal = clientEntry.includes('packages/core/dist/client');
+
   return {
     name: '@vitebook/core',
     enforce: 'pre',
     entry: {
-      client: require.resolve(`@vitebook/core/entry-client.js`),
-      server: require.resolve(`@vitebook/core/entry-server.js`),
+      client: clientEntry,
+      server: serverEntry,
     },
     config() {
       const config: ViteConfig = {
         resolve: {
           alias: {
-            $lib: app.dirs.root.resolve('lib'),
+            $src: app.dirs.root.resolve('src'),
             [virtualModuleId.app]: virtualModuleRequestPath.app,
             [virtualModuleId.noop]: virtualModuleRequestPath.noop,
             [virtualModuleId.clientEntry]: virtualModuleRequestPath.clientEntry,
@@ -60,6 +62,17 @@ export function corePlugin(): ClientPlugin {
         },
         // @ts-expect-error - .
         ssr: { noExternal: clientPackages },
+        server: {
+          fs: {
+            strict: !isLocal,
+            allow: [
+              process.cwd(),
+              `${process.cwd()}/node_modules`,
+              app.dirs.root.path,
+              app.dirs.out.path,
+            ],
+          },
+        },
       };
 
       return config;
@@ -90,12 +103,7 @@ export function corePlugin(): ClientPlugin {
       };
     },
     resolvePage({ filePath }) {
-      if (DEFAULT_INCLUDE_RE.test(filePath)) {
-        const type = path.extname(filePath).slice(1);
-        return { type };
-      }
-
-      return null;
+      return DEFAULT_INCLUDE_RE.test(filePath) ? { type: 'svelte' } : null;
     },
     resolveId(id) {
       // Vite will inject version hash into file queries, which does not work well with Vitebook.
@@ -110,7 +118,7 @@ export function corePlugin(): ClientPlugin {
       }
 
       if (id === virtualModuleRequestPath.app) {
-        const path = app.dirs.root.resolve('App.svelte');
+        const path = app.dirs.pages.resolve('_App.svelte');
         return fs.existsSync(path)
           ? { id: path }
           : { id: require.resolve('@vitebook/core/App.svelte') };
@@ -133,9 +141,6 @@ export function corePlugin(): ClientPlugin {
       }
 
       return null;
-    },
-    async handleHotUpdate() {
-      // ...
     },
   };
 }
@@ -293,60 +298,4 @@ function startWatchingPages(app: App, server: ViteDevServer) {
 
     pendingChanges = changes;
   }
-}
-
-export function ssrPlugin(): Plugin {
-  let app: App;
-
-  return {
-    name: '@vitebook/core:ssr',
-    enforce: 'post',
-    configureApp(_app) {
-      app = _app;
-    },
-    transform(code, id, { ssr } = {}) {
-      if (
-        ssr &&
-        !id.includes('@vitebook/core') && // Can't self-import.
-        !id.includes('packages/core/dist-client') && // Linked package.
-        id.endsWith('.svelte')
-      ) {
-        const mcs = new MagicString(code);
-        const matchRE = /export\sdefault\s(.*?);/;
-        const match = code.match(matchRE);
-        const componentName = match?.[1];
-
-        if (!match || !componentName) return null;
-
-        const start = code.search(match[0]);
-        const end = start + match[0].length;
-
-        const addModuleCode = `  __vitebook__getSSRContext().modules.add(${JSON.stringify(
-          app.dirs.root.relative(id),
-        )})`;
-
-        mcs.overwrite(
-          start,
-          end,
-          [
-            "import { getSSRContext as __vitebook__getSSRContext } from '@vitebook/core';",
-            `const $$render = ${componentName}.$$render;`,
-            `${componentName}.$$render = function(...args) {`,
-            addModuleCode,
-            '  return $$render(...args)',
-            '}',
-            '',
-            match[0],
-          ].join('\n'),
-        );
-
-        return {
-          code: mcs.toString(),
-          map: mcs.generateMap({ source: id }).toString(),
-        };
-      }
-
-      return null;
-    },
-  };
 }

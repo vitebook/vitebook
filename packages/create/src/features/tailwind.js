@@ -23,6 +23,16 @@ export function addTailwindFeature(builder) {
     'global.css',
     `@tailwind base;\n@tailwind components;\n@tailwind utilities;`,
   );
+
+  builder.hooks.postBuild.push(() => {
+    const appFile =
+      builder.dirs.src.template.root.readFile('pages/_App.svelte');
+    builder.dirs.dest.pages.writeFile(
+      '_App.svelte',
+      appFile.replace('<script>', `<script>\n  import '$src/global.css';\n`),
+      { overwrite: true },
+    );
+  });
 }
 
 function getPostCssConfig() {
@@ -47,7 +57,11 @@ function getTailwindConfig(builder) {
 
   const ext = getExt();
 
-  const content = [`'./pages/**/*.${ext}'`, `'./App.${ext}'`];
+  const content = [
+    './index.html',
+    `'./src/**/*.${ext}'`,
+    `'./pages/**/*.${ext}'`,
+  ];
 
   return `module.exports = {
   darkMode: 'class',

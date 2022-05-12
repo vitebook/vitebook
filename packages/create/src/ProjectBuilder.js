@@ -54,8 +54,13 @@ export class ProjectBuilder {
       dest: {
         root: new FileDirectory(targetDir),
         src: new FileDirectory(path.resolve(targetDir, 'src')),
-        pages: new FileDirectory(path.resolve(targetDir, 'src/pages')),
+        pages: new FileDirectory(path.resolve(targetDir, 'pages')),
       },
+    };
+
+    this.hooks = {
+      /** @type {(() => void | Promise<void>)[]} */
+      postBuild: [],
     };
   }
 
@@ -64,5 +69,10 @@ export class ProjectBuilder {
    */
   hasFeature(feature) {
     return this.features.includes(feature);
+  }
+
+  /** @param {'postBuild'} name */
+  async runHooks(name) {
+    await Promise.all(this.hooks[name].map((fn) => fn()));
   }
 }

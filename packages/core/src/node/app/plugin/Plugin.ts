@@ -2,6 +2,7 @@ import type { Plugin as VitePlugin } from 'vite';
 
 import type { ResolvedPage, ServerPage } from '../../../shared';
 import type { App, AppEnv } from '../App';
+import type { MarkdownParser } from '../markdown/types';
 
 export type Plugin = VitePlugin & {
   /**
@@ -12,6 +13,13 @@ export type Plugin = VitePlugin & {
    * but in parallel with the `siteData` hook.
    */
   configureApp?: (app: App, env: AppEnv) => void | Promise<void>;
+
+  /**
+   * Configure the underlying markdown parser.
+   *
+   * @param parser - MarkdownIt instance.
+   */
+  configureMarkdownParser?(parser: MarkdownParser): void | Promise<void>;
 
   /**
    * Server-side Vitebook will resolve the `include` glob array the user has provided which will

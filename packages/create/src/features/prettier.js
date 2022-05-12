@@ -9,6 +9,12 @@ export function addPrettierFeature(builder) {
   builder.pkg.addDependency('npm-run-all', '^4.0.0', { dev: true });
   builder.pkg.addDependency('prettier', '^2.0.0', { dev: true });
 
+  if (builder.hasFeature('typescript')) {
+    builder.pkg.addDependency('prettier-plugin-tailwindcss', '^^0.1.7', {
+      dev: true,
+    });
+  }
+
   builder.pkg.addScript('lint', 'run-s lint:*');
   builder.pkg.addScript(
     'lint:prettier',

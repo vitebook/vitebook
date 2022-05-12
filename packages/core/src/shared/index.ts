@@ -9,6 +9,7 @@ export * from './types/utils';
 export * from './utils/date';
 export * from './utils/html';
 export * from './utils/json';
+export * from './utils/page';
 export * from './utils/string';
 export * from './utils/support';
 export * from './utils/unit';

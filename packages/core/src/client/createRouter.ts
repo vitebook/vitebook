@@ -2,9 +2,14 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 // @ts-expect-error - .
-import * as App from ':virtual/vitebook/app';
+import { configureRouter } from ':virtual/vitebook/app';
 
-import { Page, Pages, SvelteConstructor } from '../shared';
+import {
+  isLoadedMarkdownPage,
+  Page,
+  Pages,
+  SvelteConstructor,
+} from '../shared';
 import DefaultNotFound from './components/DefaultNotFound.svelte';
 import { createMemoryHistory } from './router/history/memory';
 import { Router } from './router/router';
@@ -20,7 +25,7 @@ export async function createRouter() {
   addRoutes(router, get(pages));
   handleHMR(router);
 
-  await App.configureRouter?.(router);
+  await configureRouter?.(router);
 
   if (!router.hasRoute('/404.html')) {
     router.addRoute({
@@ -83,8 +88,13 @@ async function loadPage(
   if (!prefetch) {
     page.__set({
       ..._page,
-      mod,
-      component,
+      module: mod,
+      get component() {
+        return mod.default;
+      },
+      get meta() {
+        return isLoadedMarkdownPage(this) ? mod.meta : undefined;
+      },
     });
   }
 

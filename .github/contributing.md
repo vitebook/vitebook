@@ -108,13 +108,13 @@ $: pnpm build:all
 $: pnpm example
 
 # Shorthand without running through prompts.
-$: pnpm example svelte -- --script vitebook:dev
+$: pnpm example svelte -- --script dev
 
 # Run a script located inside a sandbox application in the `sandbox/` directory.
 $: pnpm sandbox
 
 # Shorthand without running through prompts.
-$: pnpm sandbox svelte -- --script vitebook:dev
+$: pnpm sandbox svelte -- --script dev
 ```
 
 ## 🧪 Sandbox
@@ -137,7 +137,7 @@ $: yarn create vitebook sandbox/svelte --template svelte --theme default --link 
 # 3.
 $: yarn --cwd sandbox/svelte
 # 4.
-$: yarn vitebook:dev --cwd sandbox/svelte
+$: yarn dev --cwd sandbox/svelte
 # 5. - run in another terminal session/window if we need to hack on a package.
 $: yarn build theme-default --watch
 ```
