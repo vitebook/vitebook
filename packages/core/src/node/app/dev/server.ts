@@ -3,7 +3,7 @@ import { createServer as createDevServer, ViteDevServer } from 'vite';
 import type { App } from '../App';
 
 export async function dev(app: App): Promise<ViteDevServer> {
-  const { host, port, https, open, strictPort } = app.options.cliArgs;
+  const { host, port, https, open, strictPort } = app.config.cliArgs;
 
   return createDevServer({
     root: app.dirs.root.path,

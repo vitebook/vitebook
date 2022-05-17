@@ -1,10 +1,19 @@
-import { CLIArgs } from '../cli/args';
-import type { CorePluginOptions } from './plugins/core';
-import type { MarkdownPluginOptions } from './plugins/markdown';
-import { PagesPluginOptions } from './plugins/pages';
+import type { CLIArgs } from '../cli/args';
+import type {
+  CorePluginConfig,
+  ResolvedCorePluginConfig,
+} from './plugins/core';
+import type {
+  MarkdownPluginConfig,
+  ResolvedMarkdownPluginConfig,
+} from './plugins/markdown';
+import type {
+  PagesPluginConfig,
+  ResolvedPagesPluginConfig,
+} from './plugins/pages';
 import type { Plugins } from './plugins/Plugin';
 
-export type AppOptions = {
+export type ResolvedAppConfig = {
   /**
    * Parsed CLI arguments.
    */
@@ -13,22 +22,22 @@ export type AppOptions = {
   /**
    * Application directory paths.
    */
-  dirs: AppDirsOptions;
+  dirs: ResolvedAppDirsConfig;
 
   /**
    * Core options.
    */
-  core: CorePluginOptions;
+  core: ResolvedCorePluginConfig;
 
   /**
    * Pages options.
    */
-  pages: PagesPluginOptions;
+  pages: ResolvedPagesPluginConfig;
 
   /**
    * Markdown options.
    */
-  markdown: MarkdownPluginOptions;
+  markdown: ResolvedMarkdownPluginConfig;
 
   /**
    * Vitebook plugins.
@@ -43,7 +52,7 @@ export type AppOptions = {
   debug: boolean;
 };
 
-export type AppDirsOptions = {
+export type ResolvedAppDirsConfig = {
   /**
    * Path to current working directory. The path can be absolute or relative to the current working
    * directory `process.cwd()`.
@@ -86,6 +95,14 @@ export type AppDirsOptions = {
   output: string;
 };
 
-export type AppConfig = Omit<Partial<AppOptions>, 'dirs'> & {
-  dirs?: Partial<AppDirsOptions>;
+export type AppDirsConfig = Partial<ResolvedAppDirsConfig>;
+
+export type AppConfig = Omit<
+  Partial<ResolvedAppConfig>,
+  'dirs' | 'core' | 'markdown' | 'pages'
+> & {
+  dirs?: AppDirsConfig;
+  core?: CorePluginConfig;
+  markdown?: MarkdownPluginConfig;
+  pages?: PagesPluginConfig;
 };

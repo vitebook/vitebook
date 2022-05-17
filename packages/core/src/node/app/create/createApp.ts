@@ -2,13 +2,21 @@ import { loadConfigFromFile } from 'vite';
 
 import { resolveRelativePath } from '../../utils';
 import type { App, AppEnv } from '../App';
-import type { AppConfig, AppOptions } from '../AppOptions';
+import type { AppConfig, ResolvedAppConfig } from '../AppConfig';
 import { build } from '../build';
 import { dev } from '../dev';
 import type { ClientPlugin } from '../plugins/ClientPlugin';
-import { corePlugin } from '../plugins/core';
-import { markdownPlugin } from '../plugins/markdown';
-import { Pages, pagesPlugin } from '../plugins/pages';
+import { corePlugin, type ResolvedCorePluginConfig } from '../plugins/core';
+import {
+  markdownPlugin,
+  type ResolvedMarkdownPluginConfig,
+} from '../plugins/markdown';
+import { MarkdocSchema } from '../plugins/markdown/MarkdocSchema';
+import {
+  Pages,
+  pagesPlugin,
+  type ResolvedPagesPluginConfig,
+} from '../plugins/pages';
 import type { FilteredPlugins } from '../plugins/Plugin';
 import { ssrPlugin } from '../plugins/ssr';
 import { preview } from '../preview';
@@ -28,48 +36,53 @@ export const createApp = async (
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const bookConfig = (vite?.config as any).book;
+  const bookConfig = (vite?.config as any).vitebook;
 
   const bookConfigRoot = config.dirs?.root
     ? `$${config.dirs.root}`
     : '$default';
 
-  const options = createAppOptions({
+  const __config = await resolveAppConfig({
     ...config,
     ...(bookConfig?.[bookConfigRoot] ?? bookConfig),
   });
 
-  const dirs = createAppDirs(options);
+  const dirs = createAppDirs(__config);
 
-  const env = createAppEnv({
+  const env = resolveAppEnv({
     ...envConfig,
-    isDebug: options.debug ?? envConfig?.isDebug,
+    isDebug: __config.debug ?? envConfig?.isDebug,
   });
 
-  const core = corePlugin(options.core);
+  for (const plugin of __config.plugins.flat() as FilteredPlugins) {
+    await plugin.vitebookConfig?.(__config, env);
+  }
 
-  const client = (options.plugins
+  const core = corePlugin(__config.core);
+
+  const client = (__config.plugins
     .flat()
     .find((plugin) => plugin && 'entry' in plugin) ?? core) as ClientPlugin;
 
   const plugins = [
     core,
     ssrPlugin(),
-    markdownPlugin(),
-    ...options.plugins.flat(),
-    pagesPlugin(),
+    markdownPlugin(__config.markdown),
+    ...__config.plugins.flat(),
+    pagesPlugin(__config.pages),
   ].filter((plugin) => !!plugin) as FilteredPlugins;
 
   const app: App = {
     version,
-    options,
     env,
     dirs,
     plugins,
     vite,
-    pages: new Pages(),
     context: {},
     client,
+    config: __config,
+    pages: new Pages(),
+    markdoc: new MarkdocSchema(),
     disposal: new DisposalBin(),
     dev: () => dev(app),
     build: () => build(app),
@@ -78,26 +91,13 @@ export const createApp = async (
   };
 
   for (const plugin of plugins) {
-    await plugin.configureApp?.(app, env);
+    await plugin.vitebookInit?.(app, env);
   }
-
-  await app.pages.init({
-    dirs: {
-      root: dirs.root.path,
-      pages: dirs.pages.path,
-    },
-    include: {
-      pages: options.pages.include ?? [],
-      layouts: options.pages.layouts?.include ?? [],
-    },
-  });
-
-  await app.pages.discover();
 
   return app;
 };
 
-export function createAppOptions({
+export async function resolveAppConfig({
   cliArgs = { command: 'dev', '--': [] },
   dirs = {},
   debug = false,
@@ -105,12 +105,39 @@ export function createAppOptions({
   pages = {},
   markdown = {},
   plugins = [],
-}: AppConfig): AppOptions {
+}: AppConfig): Promise<ResolvedAppConfig> {
   const _cwd = resolveRelativePath(process.cwd(), dirs.cwd ?? '.');
   const _root = resolveRelativePath(_cwd, dirs.root ?? '.');
   const _pages = resolveRelativePath(_root, dirs.pages ?? 'pages');
   const _output = resolveRelativePath(_root, dirs.output ?? 'build');
   const _public = resolveRelativePath(_root, dirs.public ?? 'public');
+
+  const __core: ResolvedCorePluginConfig = {
+    svelte: {},
+    ...core,
+  };
+
+  const __pages: ResolvedPagesPluginConfig = {
+    include: pages.include ?? ['**/*.{svelte,md}'],
+    layouts: {
+      include: ['**/@layout.{md,svelte}'],
+      ...pages.layouts,
+    },
+  };
+
+  const __markdown: ResolvedMarkdownPluginConfig = {
+    include: markdown.include ?? /\.md($|\?)/,
+    exclude: markdown.exclude ?? [],
+    markdoc: markdown.markdoc ?? {},
+    highlighter: false,
+    shiki: { theme: 'material-palenight', langs: [] },
+    hastToHtml: {},
+    includeNodes: ['**/@markdoc/**/[^_]*.{md,svelte}'],
+    transformAst: [],
+    transformContent: [],
+    transformOutput: [],
+    ...markdown,
+  };
 
   return {
     cliArgs,
@@ -122,14 +149,14 @@ export function createAppOptions({
       output: _output,
       public: _public,
     },
-    core,
-    pages,
-    markdown,
+    core: __core,
+    pages: __pages,
+    markdown: __markdown,
     plugins,
   };
 }
 
-export function createAppEnv({ isDebug = false }: Partial<AppEnv>): AppEnv {
+export function resolveAppEnv({ isDebug = false }: Partial<AppEnv>): AppEnv {
   return {
     isDebug,
   };

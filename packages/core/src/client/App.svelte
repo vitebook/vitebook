@@ -3,7 +3,10 @@
 </script>
 
 <script>
+  import PageLayouts from './components/PageLayouts.svelte';
   import PageView from './components/PageView.svelte';
 </script>
 
-<PageView />
+<PageLayouts>
+  <PageView />
+</PageLayouts>

@@ -13,9 +13,9 @@ import { sortPaths } from './sortPaths';
 
 const LAYOUT_NAME_RE = /(.*?)@layout/;
 const PAGE_LAYOUT_NAME_RE = /@(.*?)\./;
-const STRIP_VBK_PATH = /\/@vbk\/.+/;
+const STRIP_LAYOUTS_PATH = /\/@layouts\/.+/;
 
-export type PagesOptions = {
+export type PagesConfig = {
   dirs: {
     root: string;
     pages: string;
@@ -35,35 +35,31 @@ export class Pages {
 
   protected sortedLayoutPaths: string[] = [];
 
-  options!: PagesOptions;
+  protected config!: PagesConfig;
 
-  matchers: Matcher[] = [];
-  layoutMatchers: Matcher[] = [];
+  protected matchers: Matcher[] = [];
+  protected layoutMatchers: Matcher[] = [];
 
   get size() {
     return this.map.size;
   }
 
-  async init(options: PagesOptions) {
-    this.options = options;
+  async init(config: PagesConfig) {
+    this.config = config;
 
-    this.options.include.pages.push(
-      '**/[^_]*.{svelte,md}',
-      '!node_modules',
-      '!**/@vbk/**',
+    this.config.include.pages.push(
+      '!**/@layouts/**',
+      '!**/@markdoc/**',
       '!**/@*',
+      '!**/_*',
     );
 
-    this.matchers.push(...this.options.include.pages.map((i) => picomatch(i)));
+    this.matchers.push(...this.config.include.pages.map((i) => picomatch(i)));
 
-    this.options.include.layouts.push(
-      '**/@layout.{md,svelte}',
-      '**/@vbk/[^_]*@layout.{md,svelte}',
-      '**/@vbk/@layouts/[^_]*.{md,svelte}',
-    );
+    this.config.include.layouts.push('**/@layouts/**/[^_]*.{md,svelte}');
 
     this.layoutMatchers.push(
-      ...this.options.include.layouts.map((i) => picomatch(i)),
+      ...this.config.include.layouts.map((i) => picomatch(i)),
     );
   }
 
@@ -86,15 +82,16 @@ export class Pages {
     const rootPath = this.getRootPath(filePath);
     return (
       this.map.has(rootPath) ||
-      (filePath.startsWith(this.options.dirs.pages) &&
+      (filePath.startsWith(this.config.dirs.pages) &&
         this.matchers.some((test) => test(filePath)))
     );
   }
 
   isLayout(filePath: string) {
+    const rootPath = this.getRootPath(filePath);
     return (
-      this.layouts.has(this.getRootPath(filePath)) ||
-      (filePath.startsWith(this.options.dirs.pages) &&
+      this.layouts.has(rootPath) ||
+      (filePath.startsWith(this.config.dirs.pages) &&
         this.layoutMatchers.some((test) => test(filePath)))
     );
   }
@@ -105,16 +102,16 @@ export class Pages {
   }
 
   getPageFilePaths() {
-    return globbySync(this.options.include.pages, {
+    return globbySync(this.config.include.pages, {
       absolute: true,
-      cwd: this.options.dirs.pages,
+      cwd: this.config.dirs.pages,
     });
   }
 
   getLayoutFilePaths() {
-    return globbySync(this.options.include.layouts, {
+    return globbySync(this.config.include.layouts, {
       absolute: true,
-      cwd: this.options.dirs.pages,
+      cwd: this.config.dirs.pages,
     });
   }
 
@@ -169,7 +166,9 @@ export class Pages {
   async addLayout(filePath: string) {
     const name = getPageLayoutNameFromPath(filePath);
     const rootPath = this.getRootPath(filePath);
-    const owningDir = path.dirname(rootPath.replace(STRIP_VBK_PATH, '/a.md'));
+    const owningDir = path.dirname(
+      rootPath.replace(STRIP_LAYOUTS_PATH, '/root.md'),
+    );
 
     const layout: ServerLayout = {
       name,
@@ -243,12 +242,7 @@ export class Pages {
   }
 
   resolveRoutePath(pageFilePath: string) {
-    const pagesPath = this.getPagesPath(pageFilePath);
-    const route = stripPageInfoFromPath(pagesPath);
-    const url = new URL(route.toLowerCase(), 'http://fake-host.com').pathname;
-    return url
-      .replace(/\..+($|\\?)/i, '.html')
-      .replace(/\/(README|index).html($|\?)/i, '/');
+    return resolveRoute(this.config.dirs.pages, pageFilePath);
   }
 
   loadPagesModule() {
@@ -283,12 +277,12 @@ export class Pages {
     )}`;
   }
 
-  getRootPath(filePath: string) {
-    return path.relative(this.options.dirs.root, filePath);
+  protected getRootPath(filePath: string) {
+    return path.relative(this.config.dirs.root, filePath);
   }
 
-  getPagesPath(filePath: string) {
-    return path.relative(this.options.dirs.pages, filePath);
+  protected getPagesPath(filePath: string) {
+    return path.relative(this.config.dirs.pages, filePath);
   }
 }
 
@@ -308,4 +302,13 @@ export function stripPageLayoutNameFromPath(filePath: string) {
 
 export function stripPageInfoFromPath(filePath: string) {
   return stripPageLayoutNameFromPath(stripPageOrderFromPath(filePath));
+}
+
+export function resolveRoute(pagesDir: string, filePath: string) {
+  const pagesPath = path.relative(pagesDir, filePath);
+  const route = stripPageInfoFromPath(pagesPath);
+  const url = new URL(route.toLowerCase(), 'http://fake-host.com');
+  return url.pathname
+    .replace(/\..+($|\\?)/i, '.html')
+    .replace(/\/(README|index).html($|\?)/i, '/');
 }

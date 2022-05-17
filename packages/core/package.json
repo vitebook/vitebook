@@ -57,21 +57,35 @@
     "get-folder-size": "^3.1.0",
     "globby": "^13.1.1",
     "gray-matter": "^4.0.3",
+    "hast-util-to-html": "^8.0.3",
     "js-yaml": "^4.1.0",
     "kleur": "^4.1.4",
     "lru-cache": "^6.0.0",
     "magic-string": "^0.25.9",
     "ora": "^6.0.0",
     "pkg-up": "^2.0.0",
-    "shiki": "^0.10.1",
     "upath": "^2.0.1"
+  },
+  "peerDependencies": {
+    "@wooorm/starry-night": "^1.0.0",
+    "shiki": "^0.10.1"
+  },
+  "peerDependenciesMeta": {
+    "shiki": {
+      "optional": true
+    },
+    "@wooorm/starry-night": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.20.0",
+    "@wooorm/starry-night": "^1.0.0",
     "chokidar": "^3.5.2",
     "picomatch": "^2.3.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.58.0",
+    "shiki": "^0.10.1",
     "typescript": "^4.6.4",
     "vite": "^2.8.0"
   },

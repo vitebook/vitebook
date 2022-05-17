@@ -3,28 +3,49 @@ import type { App } from '../../App';
 import type { Plugin } from '../Plugin';
 import { handleHMR } from './hmr';
 
-export type PagesPluginOptions = {
+export type ResolvedPagesPluginConfig = {
   /**
    * Globs pointing to files to be included in Vitebook (relative to `<pages>`).
    */
-  include?: string[];
+  include: string[];
 
-  layouts?: {
+  layouts: {
     /**
      * Globs pointing to layout files to be included in Vitebook (relative to `<pages>`).
      */
-    include?: string[];
+    include: string[];
   };
 };
 
-export function pagesPlugin(): Plugin {
+export type PagesPluginConfig = Partial<
+  Omit<ResolvedPagesPluginConfig, 'layouts'>
+> & {
+  layouts?: Partial<ResolvedPagesPluginConfig['layouts']>;
+};
+
+export function pagesPlugin(config: ResolvedPagesPluginConfig): Plugin {
   let app: App;
+
+  const { include, layouts } = config;
 
   return {
     name: '@vitebook/pages',
     enforce: 'pre',
-    configureApp(_app: App) {
+    async vitebookInit(_app: App) {
       app = _app;
+
+      await app.pages.init({
+        dirs: {
+          root: app.dirs.root.path,
+          pages: app.dirs.pages.path,
+        },
+        include: {
+          pages: include,
+          layouts: layouts.include,
+        },
+      });
+
+      await app.pages.discover();
     },
     async configureServer(server) {
       server.watcher.add(app.dirs.pages.path);

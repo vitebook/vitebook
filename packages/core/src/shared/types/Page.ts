@@ -25,6 +25,7 @@ export type ClientPageModule = {
 };
 
 export type LoadedClientPage = Omit<ClientPage, 'layouts'> & {
+  readonly $$page: true;
   readonly module: ClientPageModule;
   readonly component: SvelteConstructor;
   readonly layouts: LoadedClientLayout[];

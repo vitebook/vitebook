@@ -3,6 +3,7 @@ import path from 'upath';
 import { build, mergeConfig, Plugin, UserConfig as ViteConfig } from 'vite';
 
 import type { App } from '../App';
+import { stripPageInfoFromPath } from '../plugins/pages';
 import { extendManualChunks } from './chunks';
 
 export type BundleResult = [
@@ -29,14 +30,14 @@ export async function bundle(app: App): Promise<BundleResult> {
   return [client as RollupOutput, server as RollupOutput];
 }
 
-type BundleOptions = {
+type BundleConfig = {
   config?: ViteConfig;
   ssr: boolean;
 };
 
 function resolveBundleConfig(
   app: App,
-  { config = {}, ssr }: BundleOptions,
+  { config = {}, ssr }: BundleConfig,
 ): ViteConfig {
   const input = {
     entry: ssr ? app.client.entry.server : app.client.entry.client,
@@ -44,14 +45,17 @@ function resolveBundleConfig(
 
   if (!ssr) {
     for (const page of app.pages.getPages()) {
-      const name = path.trimExt(app.dirs.pages.relative(page.rootPath));
+      const name = path.trimExt(
+        stripPageInfoFromPath(app.dirs.pages.relative(page.rootPath)),
+      );
+
       input[`pages/${name}`] = page.filePath;
     }
 
     for (const layout of app.pages.getLayouts()) {
       const name = path
         .trimExt(app.dirs.pages.relative(layout.rootPath))
-        .replace(/@vbk\//, '');
+        .replace(/@layouts\//, '');
 
       input[`layouts/${name}`] = layout.filePath;
     }
@@ -110,7 +114,7 @@ function resolveBundleConfig(
   return mergedConfig;
 }
 
-function buildPlugin(app: App, { ssr = false }: BundleOptions): Plugin {
+function buildPlugin(app: App, { ssr = false }: BundleConfig): Plugin {
   return {
     name: '@vitebook/core:build',
     generateBundle(_, bundle) {

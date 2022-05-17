@@ -9,7 +9,7 @@ export function ssrPlugin(): Plugin {
   return {
     name: '@vitebook/ssr',
     enforce: 'post',
-    configureApp(_app) {
+    vitebookInit(_app) {
       app = _app;
     },
     transform(code, id, { ssr } = {}) {

@@ -103,6 +103,7 @@ async function loadPage(
   if (!prefetch) {
     page.__set({
       ..._page,
+      $$page: true,
       module: mod,
       layouts,
       get component() {

@@ -1,5 +1,5 @@
 import {
-  type Options as SveltePluginOptions,
+  type Options as SveltePluginConfig,
   svelte,
 } from '@sveltejs/vite-plugin-svelte';
 import fs from 'fs-extra';
@@ -17,11 +17,13 @@ import type { ClientPlugin } from '../ClientPlugin';
 
 const clientPackages = ['@vitebook/core'];
 
-export type CorePluginOptions = {
-  svelte?: SveltePluginOptions;
+export type ResolvedCorePluginConfig = {
+  svelte: SveltePluginConfig;
 };
 
-export function corePlugin(options: CorePluginOptions = {}): ClientPlugin {
+export type CorePluginConfig = Partial<ResolvedCorePluginConfig>;
+
+export function corePlugin(config: ResolvedCorePluginConfig): ClientPlugin {
   let app: App;
 
   let server: ViteDevServer & {
@@ -75,7 +77,7 @@ export function corePlugin(options: CorePluginOptions = {}): ClientPlugin {
 
       return config;
     },
-    configureApp(_app) {
+    vitebookInit(_app) {
       app = _app;
 
       const hasSveltePlugin = app.vite?.config.plugins
@@ -88,14 +90,10 @@ export function corePlugin(options: CorePluginOptions = {}): ClientPlugin {
       if (!hasSveltePlugin) {
         app.plugins.push(
           svelte({
-            ...options.svelte,
-            extensions: [
-              '.svelte',
-              '.md',
-              ...(options.svelte?.extensions ?? []),
-            ],
+            ...config.svelte,
+            extensions: ['.svelte', '.md', ...(config.svelte.extensions ?? [])],
             compilerOptions: {
-              ...options.svelte?.compilerOptions,
+              ...config.svelte.compilerOptions,
               hydratable: true,
             },
           }),

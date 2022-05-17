@@ -2,7 +2,7 @@ import { LoadedClientMarkdownPage, LoadedClientPage } from '../types/Page';
 
 export function isLoadedPage(page: unknown): page is LoadedClientPage {
   // @ts-expect-error - .
-  return 'module' in page;
+  return typeof page === 'object' && '$$page' in page;
 }
 
 export function isLoadedMarkdownPage(

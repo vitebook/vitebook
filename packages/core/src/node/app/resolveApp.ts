@@ -1,22 +1,22 @@
 import type { CLIArgs } from '../cli/args';
 import type { App } from './App';
-import type { AppConfig } from './AppOptions';
+import type { AppConfig } from './AppConfig';
 import { createApp } from './create/createApp';
 
 export async function resolveApp(
   args: CLIArgs = { '--': [], command: 'dev' },
-  appConfig?: AppConfig,
+  config?: AppConfig,
 ): Promise<App> {
   return createApp({
     cliArgs: args,
-    ...appConfig,
+    ...config,
     dirs: {
-      ...appConfig?.dirs,
+      ...config?.dirs,
       ...args,
     },
     pages: {
-      ...appConfig?.pages,
-      ...args,
+      ...config?.pages,
+      include: args.include,
     },
   });
 }

@@ -18,19 +18,19 @@ export const LoggerIcon = Object.freeze({
 });
 
 export const formatInfoMsg = (message: string): string =>
-  LoggerColor.Info(`${LoggerIcon.Info} ${message}`);
+  LoggerColor.Info(`\n${LoggerIcon.Info} ${message}\n`);
 
 export const formatTipMsg = (message: string): string =>
-  LoggerColor.Tip(`${LoggerIcon.Tip} ${message}`);
+  LoggerColor.Tip(`\n${LoggerIcon.Tip} ${message}\n`);
 
 export const formatSuccessMsg = (message: string): string =>
-  LoggerColor.Success(`${LoggerIcon.Success} ${message}`);
+  LoggerColor.Success(`\n${LoggerIcon.Success} ${message}\n`);
 
 export const formatWarnMsg = (message: string): string =>
-  LoggerColor.Warn(`${LoggerIcon.Warn} ${message}`);
+  LoggerColor.Warn(`\n${LoggerIcon.Warn} ${message}\n`);
 
 export const formatErrorMsg = (message: string): string =>
-  LoggerColor.Error(`${LoggerIcon.Error} ${message}`);
+  LoggerColor.Error(`\n${LoggerIcon.Error} ${message}\n`);
 
 export const createError = (message?: string | undefined): Error => {
   return new Error(formatErrorMsg(message ?? ''));

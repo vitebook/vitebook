@@ -6,7 +6,7 @@ import {
   LoadModuleOptions,
 } from '../../utils/module';
 import type { AppDirs, AppDirUtils } from '../App';
-import type { AppOptions } from '../AppOptions';
+import type { ResolvedAppConfig } from '../AppConfig';
 
 export const createAppDirUtil = (
   baseDir: string,
@@ -44,13 +44,13 @@ export const createAppDirUtil = (
   };
 };
 
-export const createAppDirs = (options: AppOptions): AppDirs => {
+export const createAppDirs = (config: ResolvedAppConfig): AppDirs => {
   const tmp = createAppDirUtil(process.cwd(), 'node_modules/.vitebook/temp');
-  const cwd = createAppDirUtil(options.dirs.cwd, tmp.path);
-  const root = createAppDirUtil(options.dirs.root, tmp.path);
-  const pages = createAppDirUtil(options.dirs.pages, tmp.path);
-  const out = createAppDirUtil(options.dirs.output, tmp.path);
-  const publicDir = createAppDirUtil(options.dirs.public, tmp.path);
+  const cwd = createAppDirUtil(config.dirs.cwd, tmp.path);
+  const root = createAppDirUtil(config.dirs.root, tmp.path);
+  const pages = createAppDirUtil(config.dirs.pages, tmp.path);
+  const out = createAppDirUtil(config.dirs.output, tmp.path);
+  const publicDir = createAppDirUtil(config.dirs.public, tmp.path);
 
   return {
     tmp,

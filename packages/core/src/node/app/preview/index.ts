@@ -3,7 +3,7 @@ import { preview as vitePreview, PreviewServer } from 'vite';
 import type { App } from '../App';
 
 export async function preview(app: App): Promise<PreviewServer> {
-  const { host, port, https, open, strictPort } = app.options.cliArgs;
+  const { host, port, https, open, strictPort } = app.config.cliArgs;
 
   return vitePreview({
     root: app.dirs.cwd.path,

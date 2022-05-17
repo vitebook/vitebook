@@ -33,9 +33,9 @@ export function comparePaths(
   if (cache.has(cacheKey)) return cache.get(cacheKey)!;
 
   // `@layout` files should always come first.
-  if (path.basename(pathA) === '@layout.svelte') {
-    return pathA.includes('@vbk/')
-      ? path.basename(pathB) === 'layout.svelte' && !pathB.includes('@vbk/')
+  if (path.basename(pathA, path.extname(pathA)) === '@layout') {
+    return path.basename(pathB, path.extname(pathB)) === '@layout'
+      ? pathA.length < pathB.length
         ? -1
         : 1
       : -1;

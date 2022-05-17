@@ -1,16 +1,23 @@
 import type { Plugin as VitePlugin } from 'vite';
 
 import type { App, AppEnv } from '../App';
+import { type ResolvedAppConfig } from '../AppConfig';
 
 export type Plugin = VitePlugin & {
   /**
-   * Configure the Vitebook application. This can also be used to store a reference to the
-   * app for use in other hooks. Use the `context` property to store global data.
-   *
-   * This hook is called after the application has initialized (all options have been resolved),
-   * but in parallel with the `siteData` hook.
+   * Hook for extending the Vitebook app configuration. This is after the App config has
+   * been resolved with defaults, so all options are defined. This hook is called before Vite or
+   * any plugins have started.
    */
-  configureApp?: (app: App, env: AppEnv) => void | Promise<void>;
+  vitebookConfig?: (
+    config: ResolvedAppConfig,
+    env: AppEnv,
+  ) => void | Promise<void>;
+  /**
+   * Configure the Vitebook application instance. This can also be used to store a reference to the
+   * app for use in other hooks. This hook is called after the application has been initialized.
+   */
+  vitebookInit?: (app: App, env: AppEnv) => void | Promise<void>;
 };
 
 export type ResolvePageContext = {

@@ -1,9 +1,10 @@
 import type { loadConfigFromFile, PreviewServer, ViteDevServer } from 'vite';
 
 import type { loadModule } from '../utils/module';
-import type { AppOptions } from './AppOptions';
+import type { ResolvedAppConfig } from './AppConfig';
 import type { DisposalBin } from './create/DisposalBin';
 import type { ClientPlugin } from './plugins/ClientPlugin';
+import type { MarkdocSchema } from './plugins/markdown/MarkdocSchema';
 import type { Pages } from './plugins/pages';
 import type { FilteredPlugins } from './plugins/Plugin';
 
@@ -14,10 +15,11 @@ export type App = {
   dirs: AppDirs;
   env: AppEnv;
   client: ClientPlugin;
-  options: AppOptions;
+  config: ResolvedAppConfig;
   plugins: FilteredPlugins;
   context: Record<string, unknown>;
   pages: Pages;
+  markdoc: MarkdocSchema;
   disposal: DisposalBin;
   vite: Awaited<ReturnType<typeof loadConfigFromFile>>;
   dev: () => Promise<ViteDevServer>;
