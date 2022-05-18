@@ -39,6 +39,7 @@ export function handleHMR({ pages, markdoc, server }: MarkdownHMRConfig) {
     }
 
     markdoc.affectedFiles.delete(filePath);
+    return { reload: true };
   });
 
   function onFileEvent(

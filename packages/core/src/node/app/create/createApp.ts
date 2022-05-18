@@ -166,8 +166,10 @@ export async function resolveAppConfig({
 
   const __pages: ResolvedPagesPluginConfig = {
     include: pages.include ?? [`**/*.{${pageExts}}`],
+    exclude: pages.exclude ?? [],
     layouts: {
       include: [`**/@layout.{${pageExts}}`, `**/@layouts/**/*.{${pageExts}}`],
+      exclude: [],
       ...pages.layouts,
     },
   };

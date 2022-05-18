@@ -1,5 +1,5 @@
+import { createFilter } from '@rollup/pluginutils';
 import { globbySync } from 'globby';
-import picomatch, { type Matcher } from 'picomatch';
 import path from 'upath';
 
 import {
@@ -16,13 +16,17 @@ const PAGE_LAYOUT_NAME_RE = /@(.*?)\./;
 const STRIP_LAYOUTS_PATH = /\/@layouts\/.+/;
 
 export type PagesConfig = {
+  include: string[];
+  exclude: (string | RegExp)[];
+
   dirs: {
     root: string;
     pages: string;
   };
-  include: {
-    pages: string[];
-    layouts: string[];
+
+  layouts: {
+    include: string[];
+    exclude: (string | RegExp)[];
   };
 };
 
@@ -37,30 +41,24 @@ export class Pages {
 
   protected config!: PagesConfig;
 
-  protected matchers: Matcher[] = [];
-  protected layoutMatchers: Matcher[] = [];
+  pagesFilter!: (id: string) => boolean;
+  layoutsFilter!: (id: string) => boolean;
 
   get size() {
     return this.map.size;
   }
 
   async init(config: PagesConfig) {
+    config.exclude.push(/@layout\//, /@markdoc\//, /\/@/, /\/_/);
+    this.pagesFilter = createFilter(config.include, config.exclude);
+
+    config.layouts.exclude.push(/\/_/);
+    this.layoutsFilter = createFilter(
+      config.layouts.include,
+      config.layouts.exclude,
+    );
+
     this.config = config;
-
-    this.config.include.pages.push(
-      '!**/@layouts/**',
-      '!**/@markdoc/**',
-      '!**/@*',
-      '!**/_*',
-    );
-
-    this.matchers.push(...this.config.include.pages.map((i) => picomatch(i)));
-
-    this.config.include.layouts.push('!**/_*');
-
-    this.layoutMatchers.push(
-      ...this.config.include.layouts.map((i) => picomatch(i)),
-    );
   }
 
   async discover() {
@@ -83,7 +81,7 @@ export class Pages {
     return (
       this.map.has(rootPath) ||
       (filePath.startsWith(this.config.dirs.pages) &&
-        this.matchers.some((test) => test(filePath)))
+        this.pagesFilter(filePath))
     );
   }
 
@@ -92,7 +90,7 @@ export class Pages {
     return (
       this.layouts.has(rootPath) ||
       (filePath.startsWith(this.config.dirs.pages) &&
-        this.layoutMatchers.some((test) => test(filePath)))
+        this.layoutsFilter(filePath))
     );
   }
 
@@ -102,17 +100,17 @@ export class Pages {
   }
 
   getPageFilePaths() {
-    return globbySync(this.config.include.pages, {
+    return globbySync(this.config.include, {
       absolute: true,
       cwd: this.config.dirs.pages,
-    });
+    }).filter(this.pagesFilter);
   }
 
   getLayoutFilePaths() {
-    return globbySync(this.config.include.layouts, {
+    return globbySync(this.config.include, {
       absolute: true,
       cwd: this.config.dirs.pages,
-    });
+    }).filter(this.layoutsFilter);
   }
 
   getPage(filePath: string) {

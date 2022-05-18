@@ -5,15 +5,23 @@ import { handleHMR } from './hmr';
 
 export type ResolvedPagesPluginConfig = {
   /**
-   * Globs pointing to files to be included in Vitebook (relative to `<pages>`).
+   * Globs indicating page files to be included in Vitebook (relative to `<pages>`).
    */
   include: string[];
+  /**
+   * Globs or RegExp indicating page files to be excluded from Vitebook (relative to `<pages>`).
+   */
+  exclude: (string | RegExp)[];
 
   layouts: {
     /**
-     * Globs pointing to layout files to be included in Vitebook (relative to `<pages>`).
+     * Globs indicating layout files to be included in Vitebook (relative to `<pages>`).
      */
     include: string[];
+    /**
+     * Globs or RegExp indicating layout files to be excluded from Vitebook (relative to `<pages>`).
+     */
+    exclude: (string | RegExp)[];
   };
 };
 
@@ -26,7 +34,7 @@ export type PagesPluginConfig = Partial<
 export function pagesPlugin(config: ResolvedPagesPluginConfig): Plugin {
   let app: App;
 
-  const { include, layouts } = config;
+  const { include, exclude, layouts } = config;
 
   return {
     name: '@vitebook/pages',
@@ -35,14 +43,13 @@ export function pagesPlugin(config: ResolvedPagesPluginConfig): Plugin {
       app = _app;
 
       await app.pages.init({
+        include,
+        exclude,
         dirs: {
           root: app.dirs.root.path,
           pages: app.dirs.pages.path,
         },
-        include: {
-          pages: include,
-          layouts: layouts.include,
-        },
+        layouts,
       });
 
       await app.pages.discover();
