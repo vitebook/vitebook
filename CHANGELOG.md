@@ -1,3 +1,17 @@
+# [0.24.0](https://github.com/vitebook/vitebook/compare/v0.23.6...v0.24.0) (2022-05-18)
+
+### Bug Fixes
+
+- **create:** small create fixes ([61a0996](https://github.com/vitebook/vitebook/commit/61a0996472574cd4b5cd0e1009c5c603a336b891))
+- remove everything and refactor core ([cd39d19](https://github.com/vitebook/vitebook/commit/cd39d1938de9d8a3d11edeae1ba9e5bbf5a6e4ab))
+
+### Features
+
+- add layouts support ([eb9474a](https://github.com/vitebook/vitebook/commit/eb9474aa4945fd481d11538fb5c22358f4867fe5))
+- markdoc integration ([09de4f7](https://github.com/vitebook/vitebook/commit/09de4f7f12d5483711e8c9e2e3637861f907c94a))
+- new markdown support ([940d481](https://github.com/vitebook/vitebook/commit/940d4816bcbb831e9a0902c08fdc8382b12ebbc4))
+- refactor svelte package out of core ([6382d48](https://github.com/vitebook/vitebook/commit/6382d48503e875a4e7a46f3cfef01ffd13c2973a))
+
 ## [0.23.6](https://github.com/vitebook/vitebook/compare/v0.23.5...v0.23.6) (2022-04-21)
 
 ### Bug Fixes

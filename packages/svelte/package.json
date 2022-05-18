@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/svelte",
-  "version": "0.23.6",
+  "version": "0.24.0",
   "type": "module",
   "types": "index.d.ts",
   "sideEffects": false,
@@ -50,7 +50,7 @@
     "upath": "^2.0.1"
   },
   "peerDependencies": {
-    "@vitebook/core": "workspace:*",
+    "@vitebook/core": "0.24.0",
     "svelte": "^3.40.0"
   },
   "devDependencies": {
