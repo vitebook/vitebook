@@ -111,7 +111,11 @@ export async function build(app: App): Promise<void> {
         );
 
       const decodedRoute = decodeURI(page.route);
-      const filePath = decodedRoute === '/' ? '/index.html' : decodedRoute;
+
+      const filePath = decodedRoute.endsWith('/')
+        ? `${decodedRoute}index.html`
+        : decodedRoute;
+
       const outputPath = app.dirs.out.resolve(filePath.slice(1));
 
       await ensureFile(outputPath);
