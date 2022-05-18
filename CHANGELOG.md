@@ -1,3 +1,12 @@
+## [0.24.1](https://github.com/vitebook/vitebook/compare/v0.24.0...v0.24.1) (2022-05-18)
+
+### Bug Fixes
+
+- bundle some troublesome deps ([4fda565](https://github.com/vitebook/vitebook/commit/4fda56574d9bc17ab05e4ca3d12af8b177862d29))
+- **core:** add `exclude` option to pages config ([6c71e5a](https://github.com/vitebook/vitebook/commit/6c71e5a690e24d38541c60dbb32afa4624997775))
+- **core:** delete extra `language` prop when passed to component ([2cd8edd](https://github.com/vitebook/vitebook/commit/2cd8eddf9d48e389283a950848a0ebf1eeb5a2c6))
+- **create:** add missing `@vitebook/svelte` dep ([e075811](https://github.com/vitebook/vitebook/commit/e075811531e5bb7b1f445d6dd2cfd910bf6f2a31))
+
 # [0.24.0](https://github.com/vitebook/vitebook/compare/v0.23.6...v0.24.0) (2022-05-18)
 
 ### Bug Fixes
