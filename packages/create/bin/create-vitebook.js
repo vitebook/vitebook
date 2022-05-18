@@ -139,6 +139,10 @@ async function main() {
 
   builder.dirs.src.template.root.copyDir('.', builder.dirs.dest.root);
 
+  if (!builder.dirs.dest.root.exists('.npmrc')) {
+    builder.dirs.dest.root.writeFile('.npmrc', '');
+  }
+
   // -------------------------------------------------------------------------------------------
   // Features
   // -------------------------------------------------------------------------------------------

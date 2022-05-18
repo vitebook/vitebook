@@ -10,7 +10,7 @@ export function addPrettierFeature(builder) {
   builder.pkg.addDependency('prettier', '^2.0.0', { dev: true });
 
   if (builder.hasFeature('typescript')) {
-    builder.pkg.addDependency('prettier-plugin-tailwindcss', '^^0.1.7', {
+    builder.pkg.addDependency('prettier-plugin-tailwindcss', '^0.1.7', {
       dev: true,
     });
   }
