@@ -292,6 +292,7 @@ function highlightCodeFences(tag: Tag, highlight: HighlightCodeBlock) {
       tag.attributes.code = escapeHtml(code);
       if (highlightedCode) tag.attributes.highlightedCode = output;
       tag.children[0] = null;
+      delete tag.attributes.language;
       delete tag.attributes['data-language'];
       delete tag.attributes.content;
     } else {
