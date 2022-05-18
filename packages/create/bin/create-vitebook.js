@@ -111,6 +111,7 @@ async function main() {
   // -------------------------------------------------------------------------------------------
 
   builder.pkg.addVitebookDependency('core');
+  builder.pkg.addVitebookDependency('svelte');
 
   builder.pkg.addDependency('svelte', '^3.40.0', { dev: true });
   builder.pkg.addDependency('vite', '^2.9.0', { dev: true });
@@ -138,10 +139,6 @@ async function main() {
   // -------------------------------------------------------------------------------------------
 
   builder.dirs.src.template.root.copyDir('.', builder.dirs.dest.root);
-
-  if (!builder.dirs.dest.root.exists('.npmrc')) {
-    builder.dirs.dest.root.writeFile('.npmrc', '');
-  }
 
   // -------------------------------------------------------------------------------------------
   // Features
