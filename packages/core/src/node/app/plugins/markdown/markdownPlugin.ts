@@ -28,9 +28,18 @@ export type ResolvedMarkdownPluginConfig = {
    */
   markdoc: MarkdocConfig;
   /**
-   * Globs pointing at files which should be included as Markdoc nodes/tags.
+   * Markdoc nodes configuration.
    */
-  includeNodes: string[];
+  nodes: {
+    /**
+     * Globs pointing at files which should be included as Markdoc nodes/tags.
+     */
+    include: string[];
+    /**
+     * Globs or RegExp indicating node files which should be excluded from being Markdoc nodes/tags.
+     */
+    exclude: (string | RegExp)[];
+  };
   /**
    * Syntax highlighter configuration.
    *
@@ -87,7 +96,7 @@ export function markdownPlugin(config: ResolvedMarkdownPluginConfig): Plugin {
     exclude,
     markdoc,
     highlighter,
-    includeNodes,
+    nodes,
     hastToHtml,
     ...parseOptions
   } = config;
@@ -163,7 +172,8 @@ export function markdownPlugin(config: ResolvedMarkdownPluginConfig): Plugin {
       }
 
       await app.markdoc.init({
-        include: includeNodes,
+        include: nodes.include,
+        exclude: nodes.exclude,
         dirs: {
           root: app.dirs.root.path,
           pages: app.dirs.pages.path,

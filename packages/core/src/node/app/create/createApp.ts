@@ -181,7 +181,11 @@ export async function resolveAppConfig({
     highlighter: false,
     shiki: { theme: 'material-palenight', langs: [] },
     hastToHtml: {},
-    includeNodes: [`**/@markdoc/**/*.{${pageExts}}`],
+    nodes: {
+      include: [`**/@markdoc/**/*.{${pageExts}}`],
+      exclude: [],
+      ...markdown.nodes,
+    },
     transformAst: [],
     transformContent: [],
     transformOutput: [],

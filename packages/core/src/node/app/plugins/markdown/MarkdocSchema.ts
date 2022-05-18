@@ -1,6 +1,7 @@
 /* eslint-disable import/no-named-as-default-member */
 
 import Markdoc, { type Config as MarkdocConfig } from '@markdoc/markdoc';
+import { createFilter } from '@rollup/pluginutils';
 import { globbySync } from 'globby';
 import kleur from 'kleur';
 import path from 'upath';
@@ -12,6 +13,7 @@ const STRIP_MARKDOC_DIR_RE = /\/@markdoc\/.+/;
 
 export type MarkdocSchemaConfig = {
   include: string[];
+  exclude: (string | RegExp)[];
   dirs: {
     root: string;
     pages: string;
@@ -40,10 +42,13 @@ export class MarkdocSchema {
   /** track files for HMR. */
   affectedFiles = new Map<string, Set<string>>();
 
+  filter!: (id: string) => boolean;
+
   async init(config: MarkdocSchemaConfig) {
     this.config = config;
 
-    config.include.push('!**/_*');
+    config.exclude.push(/\/_/, /@layout/);
+    this.filter = createFilter(config.include, config.exclude);
 
     await this.discover();
   }
@@ -57,7 +62,7 @@ export class MarkdocSchema {
     return globbySync(this.config.include, {
       absolute: true,
       cwd: this.config.dirs.pages,
-    });
+    }).filter(this.filter);
   }
 
   addNode(filePath: string) {
@@ -116,7 +121,7 @@ export class MarkdocSchema {
   }
 
   isAnyNode(filePath: string) {
-    return filePath.includes('@markdoc');
+    return filePath.includes('@markdoc') && this.filter(filePath);
   }
 
   resolveImports(filePath: string) {

@@ -52,7 +52,7 @@ export class Pages {
     config.exclude.push(/@layout\//, /@markdoc\//, /\/@/, /\/_/);
     this.pagesFilter = createFilter(config.include, config.exclude);
 
-    config.layouts.exclude.push(/\/_/);
+    config.layouts.exclude.push(/\/_/, /@markdoc\//);
     this.layoutsFilter = createFilter(
       config.layouts.include,
       config.layouts.exclude,
