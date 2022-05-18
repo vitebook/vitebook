@@ -1,3 +1,10 @@
+## [0.24.2](https://github.com/vitebook/vitebook/compare/v0.24.1...v0.24.2) (2022-05-18)
+
+### Bug Fixes
+
+- **core:** add `exclude` option for markdoc nodes ([e5aff07](https://github.com/vitebook/vitebook/commit/e5aff0742c7d94bf8c1e98f15a0a9ede30853c3b))
+- **core:** index pages are not built correctly ([050c08b](https://github.com/vitebook/vitebook/commit/050c08b38684d1dc086c7bdd24f1102135a0e9b9))
+
 ## [0.24.1](https://github.com/vitebook/vitebook/compare/v0.24.0...v0.24.1) (2022-05-18)
 
 ### Bug Fixes
