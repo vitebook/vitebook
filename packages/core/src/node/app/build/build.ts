@@ -91,7 +91,12 @@ export async function build(app: App): Promise<void> {
         .map((fileName) => createLinkTag(app, 'prefetch', fileName))
         .join('\n    ');
 
-      const headTags = [head, stylesheetLinks, preloadLinks, prefetchLinks]
+      const headTags = [
+        head ?? '',
+        stylesheetLinks,
+        preloadLinks,
+        prefetchLinks,
+      ]
         .filter((t) => t.length > 0)
         .join('\n    ');
 

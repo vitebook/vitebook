@@ -1,9 +1,8 @@
 // Client
 
-import type { MarkdownMeta } from './MarkdownContent';
-import type { SvelteConstructor, SvelteModule } from './Svelte';
+import type { MarkdownMeta } from './Markdown';
 
-export type ClientPage = {
+export type ClientPage<Module extends ClientPageModule> = {
   /** Page name which can be used to identify route. */
   name?: string;
   /** Route to this page such as `/pages/page.html`. */
@@ -15,51 +14,49 @@ export type ClientPage = {
   /** Page layouts identifiers. */
   layouts: number[];
   /** Page module loader. Used to dynamically import page module client-side. */
-  loader: () => Promise<ClientPageModule>;
+  loader: () => Promise<Module>;
 };
 
-export type ClientPageModule = {
+export type ClientPageModule<DefaultExport = unknown> = {
   [id: string]: unknown;
-  readonly default: SvelteConstructor;
-  readonly markdown?: MarkdownMeta;
-};
-
-export type LoadedClientPage = Omit<ClientPage, 'layouts'> & {
-  readonly $$page: true;
-  readonly module: ClientPageModule;
-  readonly component: SvelteConstructor;
-  readonly layouts: LoadedClientLayout[];
-};
-
-export type LoadedClientMarkdownPage = LoadedClientPage & {
+  readonly default: DefaultExport;
   readonly meta?: MarkdownMeta;
 };
 
-export type ClientLayout = {
+export type LoadedClientPage<Module extends ClientPageModule> = Omit<
+  ClientPage<Module>,
+  'layouts'
+> & {
+  readonly $$loaded: true;
+  readonly module: ClientPageModule;
+  readonly component: Module['default'];
+  readonly layouts: LoadedClientLayout<Module>[];
+};
+
+export type LoadedClientMarkdownPage<Module extends ClientPageModule> =
+  LoadedClientPage<Module> & {
+    readonly meta: MarkdownMeta;
+  };
+
+export type ClientLayout<Module> = {
   /** Layout name. */
   name: string;
   /** System file path relative to `<root>`. */
   rootPath: string;
   /** Layout module loader. Used to dynamically import client-side. */
-  loader: () => Promise<SvelteModule>;
+  loader: () => Promise<Module>;
 };
 
-export type LoadedClientLayout = ClientLayout & {
-  readonly module: SvelteModule;
-  readonly component: SvelteConstructor;
-};
-
-export type VirtualClientPagesModule = {
-  readonly default: ClientPage[];
-};
-
-export type VirtualClientPageLayoutsModule = {
-  readonly default: ClientLayout[];
-};
+export type LoadedClientLayout<Module extends { default: unknown }> =
+  ClientLayout<Module> & {
+    readonly $$loaded: true;
+    readonly module: Module;
+    readonly component: Module['default'];
+  };
 
 // Server
 
-export type ServerPage = Omit<ClientPage, 'loader' | 'layouts'> & {
+export type ServerPage = Omit<ClientPage<never>, 'loader' | 'layouts'> & {
   /** Module id used by the client-side router to dynamically load this page module.  */
   id: string;
   /** Absolute system file path to page file.  */
@@ -80,7 +77,7 @@ export type ServerPage = Omit<ClientPage, 'loader' | 'layouts'> & {
   context: Record<string, unknown>;
 };
 
-export type ServerLayout = Omit<ClientLayout, 'loader'> & {
+export type ServerLayout = Omit<ClientLayout<never>, 'loader'> & {
   /** Absolute system file path to page file. */
   filePath: string;
   /** The root directory that this layout belongs to. */

@@ -1,11 +1,5 @@
 import {
-  type Options as SveltePluginConfig,
-  svelte,
-} from '@sveltejs/vite-plugin-svelte';
-import fs from 'fs-extra';
-import {
   type DepOptimizationMetadata,
-  type Plugin,
   type UserConfig as ViteConfig,
   type ViteDevServer,
 } from 'vite';
@@ -13,39 +7,27 @@ import {
 import { virtualAliases, virtualModuleRequestPath } from '../../alias';
 import type { App } from '../../App';
 import { indexHtmlMiddleware } from '../../middleware/indexHtml';
-import type { ClientPlugin } from '../ClientPlugin';
+import type { Plugin } from '../Plugin';
 
-const clientPackages = ['@vitebook/core'];
+const clientPackages = ['@vitebook/core', '@vitebook/svelte'];
 
 export type ResolvedCorePluginConfig = {
-  svelte: SveltePluginConfig;
+  // no-options
 };
 
 export type CorePluginConfig = Partial<ResolvedCorePluginConfig>;
 
-export function corePlugin(config: ResolvedCorePluginConfig): ClientPlugin {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function corePlugin(config: ResolvedCorePluginConfig): Plugin {
   let app: App;
 
   let server: ViteDevServer & {
     _optimizeDepsMetadata?: DepOptimizationMetadata;
   };
 
-  const virtualModuleRequestPaths = new Set<string>(
-    Object.values(virtualModuleRequestPath),
-  );
-
-  const clientEntry = require.resolve(`@vitebook/core/entry-client.js`);
-  const serverEntry = require.resolve(`@vitebook/core/entry-server.js`);
-
-  const isLocal = clientEntry.includes('packages/core/dist/client');
-
   return {
     name: '@vitebook/core',
     enforce: 'pre',
-    entry: {
-      client: clientEntry,
-      server: serverEntry,
-    },
     config() {
       const config: ViteConfig = {
         resolve: {
@@ -61,7 +43,6 @@ export function corePlugin(config: ResolvedCorePluginConfig): ClientPlugin {
         ssr: { noExternal: clientPackages },
         server: {
           fs: {
-            strict: !isLocal,
             allow: [
               app.dirs.cwd.path,
               app.dirs.cwd.resolve('node_modules'),
@@ -79,26 +60,6 @@ export function corePlugin(config: ResolvedCorePluginConfig): ClientPlugin {
     },
     vitebookInit(_app) {
       app = _app;
-
-      const hasSveltePlugin = app.vite?.config.plugins
-        ?.flat()
-        .some(
-          (plugin) =>
-            plugin && (plugin as Plugin).name === 'vite-plugin-svelte',
-        );
-
-      if (!hasSveltePlugin) {
-        app.plugins.push(
-          svelte({
-            ...config.svelte,
-            extensions: ['.svelte', '.md', ...(config.svelte.extensions ?? [])],
-            compilerOptions: {
-              ...config.svelte.compilerOptions,
-              hydratable: true,
-            },
-          }),
-        );
-      }
     },
     configureServer(_server) {
       server = _server;
@@ -128,14 +89,7 @@ export function corePlugin(config: ResolvedCorePluginConfig): ClientPlugin {
         return { id: app.client.entry.client };
       }
 
-      if (id === virtualModuleRequestPath.app) {
-        const path = app.dirs.pages.resolve('@app.svelte');
-        return fs.existsSync(path)
-          ? { id: path }
-          : { id: require.resolve('@vitebook/core/App.svelte') };
-      }
-
-      if (virtualModuleRequestPaths.has(id)) {
+      if (id === virtualModuleRequestPath.noop) {
         return id;
       }
 

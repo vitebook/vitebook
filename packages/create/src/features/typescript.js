@@ -59,6 +59,6 @@ export function getRawTSConfig(compilerOptions = {}) {
       types: ['node', 'vite/client'],
       ...compilerOptions,
     },
-    include: ['src'],
+    include: ['src', 'pages'],
   };
 }

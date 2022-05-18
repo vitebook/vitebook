@@ -1,7 +1,10 @@
+import { globbySync } from 'globby';
+import kleur from 'kleur';
+import path from 'upath';
 import { loadConfigFromFile } from 'vite';
 
-import { resolveRelativePath } from '../../utils';
-import type { App, AppEnv } from '../App';
+import { logger, resolveRelativePath } from '../../utils';
+import type { App, AppDirs, AppEnv } from '../App';
 import type { AppConfig, ResolvedAppConfig } from '../AppConfig';
 import { build } from '../build';
 import { dev } from '../dev';
@@ -17,8 +20,7 @@ import {
   pagesPlugin,
   type ResolvedPagesPluginConfig,
 } from '../plugins/pages';
-import type { FilteredPlugins } from '../plugins/Plugin';
-import { ssrPlugin } from '../plugins/ssr';
+import type { FilteredPlugins, Plugin } from '../plugins/Plugin';
 import { preview } from '../preview';
 import { createAppDirs } from './createAppDirs';
 import { DisposalBin } from './DisposalBin';
@@ -49,26 +51,46 @@ export const createApp = async (
 
   const dirs = createAppDirs(__config);
 
+  const discoveredPlugins = await discoverPlugins(dirs);
+
   const env = resolveAppEnv({
     ...envConfig,
     isDebug: __config.debug ?? envConfig?.isDebug,
   });
 
-  for (const plugin of __config.plugins.flat() as FilteredPlugins) {
+  const userPlugins = [
+    ...discoveredPlugins.filter(
+      (plugin) => !__config.plugins.find((p) => p.name === plugin.name),
+    ),
+    ...__config.plugins,
+  ];
+
+  for (const plugin of userPlugins) {
     await plugin.vitebookConfig?.(__config, env);
   }
 
   const core = corePlugin(__config.core);
 
-  const client = (__config.plugins
+  const client = userPlugins
     .flat()
-    .find((plugin) => plugin && 'entry' in plugin) ?? core) as ClientPlugin;
+    .find((plugin) => plugin && 'entry' in plugin) as ClientPlugin;
+
+  if (!client) {
+    logger.error(
+      logger.formatErrorMsg(
+        `Failed to find client plugin. You might not have installed a client package.\n\n${kleur.bold(
+          'npm install @vitebook/svelte',
+        )}`,
+      ),
+    );
+
+    throw Error();
+  }
 
   const plugins = [
     core,
-    ssrPlugin(),
     markdownPlugin(__config.markdown),
-    ...__config.plugins.flat(),
+    ...userPlugins,
     pagesPlugin(__config.pages),
   ].filter((plugin) => !!plugin) as FilteredPlugins;
 
@@ -97,6 +119,29 @@ export const createApp = async (
   return app;
 };
 
+async function discoverPlugins(dirs: AppDirs) {
+  const plugins: Plugin[] = [];
+
+  const packages = globbySync(['node_modules/@vitebook/*/package.json'], {
+    cwd: dirs.cwd.path,
+    absolute: true,
+  });
+
+  for (const pkg of packages) {
+    try {
+      const nodePath = `${path.dirname(pkg)}/dist/node/index.js`;
+      const mod = await import(`${nodePath}`);
+      if (typeof mod?.default === 'function') {
+        plugins.push(mod.default() as Plugin);
+      }
+    } catch (e) {
+      //  ...
+    }
+  }
+
+  return plugins;
+}
+
 export async function resolveAppConfig({
   cliArgs = { command: 'dev', '--': [] },
   dirs = {},
@@ -117,10 +162,12 @@ export async function resolveAppConfig({
     ...core,
   };
 
+  const pageExts = `md,svelte,vue,jsx,tsx`;
+
   const __pages: ResolvedPagesPluginConfig = {
-    include: pages.include ?? ['**/*.{svelte,md}'],
+    include: pages.include ?? [`**/*.{${pageExts}}`],
     layouts: {
-      include: ['**/@layout.{md,svelte}'],
+      include: [`**/@layout.{${pageExts}}`, `**/@layouts/**/*.{${pageExts}}`],
       ...pages.layouts,
     },
   };
@@ -132,10 +179,11 @@ export async function resolveAppConfig({
     highlighter: false,
     shiki: { theme: 'material-palenight', langs: [] },
     hastToHtml: {},
-    includeNodes: ['**/@markdoc/**/[^_]*.{md,svelte}'],
+    includeNodes: [`**/@markdoc/**/*.{${pageExts}}`],
     transformAst: [],
     transformContent: [],
     transformOutput: [],
+    transformTreeNode: [],
     ...markdown,
   };
 
@@ -152,7 +200,7 @@ export async function resolveAppConfig({
     core: __core,
     pages: __pages,
     markdown: __markdown,
-    plugins,
+    plugins: plugins.flat().filter(Boolean) as FilteredPlugins,
   };
 }
 

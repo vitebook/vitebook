@@ -4,7 +4,7 @@ import type { loadModule } from '../utils/module';
 import type { ResolvedAppConfig } from './AppConfig';
 import type { DisposalBin } from './create/DisposalBin';
 import type { ClientPlugin } from './plugins/ClientPlugin';
-import type { MarkdocSchema } from './plugins/markdown/MarkdocSchema';
+import type { MarkdocSchema } from './plugins/markdown';
 import type { Pages } from './plugins/pages';
 import type { FilteredPlugins } from './plugins/Plugin';
 

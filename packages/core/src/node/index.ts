@@ -1,7 +1,8 @@
-import { UserConfig as ViteConfig } from 'vite';
+import type { UserConfig as ViteConfig } from 'vite';
 
 import type { AppConfig } from './app/AppConfig';
 
+export * from './app/alias';
 export * from './app/App';
 export * from './app/AppConfig';
 export * from './app/plugins/ClientPlugin';
@@ -17,26 +18,38 @@ export function defineConfig(
 }
 
 export * from '../shared';
-export { VM_PREFIX } from './app/alias';
-export {
-  type CorePluginConfig,
-  type ResolvedCorePluginConfig,
+export type {
+  CorePluginConfig,
+  ResolvedCorePluginConfig,
 } from './app/plugins/core';
-export {
-  type HighlightCodeBlock,
-  type MarkdownPluginConfig,
-  type ParseMarkdownConfig,
-  type ResolvedMarkdownPluginConfig,
+export type {
+  HighlightCodeBlock,
+  MarkdocAstTransformer,
+  MarkdocContentTransformer,
+  MarkdocNodeFileMeta,
+  MarkdocOutputTransformer,
+  MarkdocRenderer,
+  MarkdocSchema,
+  MarkdocSchemaConfig,
+  MarkdocTreeNodeTransformer,
+  MarkdocTreeWalkStuff,
+  MarkdownPluginConfig,
+  ParseMarkdownConfig,
+  RenderMarkdocConfig,
+  ResolvedMarkdownPluginConfig,
 } from './app/plugins/markdown';
-export {
-  type MarkdocNodeFileMeta,
-  type MarkdocSchema,
-  type MarkdocSchemaConfig,
-} from './app/plugins/markdown/MarkdocSchema';
-export {
-  type Pages,
-  type PagesConfig,
-  type PagesPluginConfig,
-  type ResolvedPagesPluginConfig,
+export { renderMarkdocToHTML } from './app/plugins/markdown';
+export type {
+  Pages,
+  PagesConfig,
+  PagesPluginConfig,
+  ResolvedPagesPluginConfig,
 } from './app/plugins/pages';
 export * from './utils';
+export type {
+  Config as MarkdocConfig,
+  Node as MarkdocNode,
+  RenderableTreeNode as MarkdocRenderableTreeNode,
+  RenderableTreeNodes as MarkdocRenderableTreeNodes,
+  Tag as MarkdocTag,
+} from '@markdoc/markdoc';

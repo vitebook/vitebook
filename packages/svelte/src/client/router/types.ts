@@ -32,10 +32,9 @@ export type RouterOptions = {
   routes?: Route[];
 };
 
-export type RouteLocation = {
+export type RouteLocation = Route & {
   id: string;
   url: URL;
-  route: Route;
 };
 
 export type LoadedRouteLocation = RouteLocation & {

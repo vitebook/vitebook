@@ -1,6 +1,5 @@
+import type { VitebookSSRContext } from '@vitebook/core';
 import { getContext } from 'svelte';
-
-import type { VitebookSSRContext } from '../../shared';
 
 export const SSR_CTX_KEY = Symbol(import.meta.env.DEV ? 'VITEBOOK_SSR' : '');
 

@@ -1,5 +1,4 @@
+export * from './MarkdocSchema';
 export * from './markdownPlugin';
-export {
-  type HighlightCodeBlock,
-  type ParseMarkdownConfig,
-} from './parseMarkdown';
+export * from './parseMarkdown';
+export * from './render';

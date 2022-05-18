@@ -40,6 +40,14 @@ module.exports = {
     'import/no-unresolved': 'off',
   },
   settings: {
-    'import/resolver': { typescript: {} },
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
+    },
+    'import/resolver': {
+      typescript: {
+        project: ['tsconfig.json', 'packages/*/tsconfig.json'],
+      },
+    },
+    'svelte3/typescript': () => require('typescript'),
   },
 };

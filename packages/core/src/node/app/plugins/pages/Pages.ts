@@ -56,7 +56,7 @@ export class Pages {
 
     this.matchers.push(...this.config.include.pages.map((i) => picomatch(i)));
 
-    this.config.include.layouts.push('**/@layouts/**/[^_]*.{md,svelte}');
+    this.config.include.layouts.push('!**/_*');
 
     this.layoutMatchers.push(
       ...this.config.include.layouts.map((i) => picomatch(i)),

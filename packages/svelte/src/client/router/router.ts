@@ -1,13 +1,9 @@
+import { ensureLeadingSlash, inBrowser, isString } from '@vitebook/core';
 import { tick } from 'svelte';
 import { noop, raf } from 'svelte/internal';
 import { get } from 'svelte/store';
 
-import {
-  ensureLeadingSlash,
-  inBrowser,
-  isString,
-  type SvelteModule,
-} from '../../shared';
+import { type SvelteModule } from '../../shared';
 import { pages } from '../stores/pages';
 import { route } from '../stores/route';
 import type {
@@ -96,7 +92,7 @@ export class Router {
 
       const query = new URLSearchParams(url.search);
       const id = `${path}?${query}`;
-      return { id, route, url };
+      return { ...route, id, url };
     }
 
     return undefined;
@@ -151,9 +147,9 @@ export class Router {
   async prefetch(url: URL): Promise<void> {
     const routeLocation = this.findRoute(url);
 
-    if (routeLocation?.route.redirect) {
+    if (routeLocation?.redirect) {
       await this.prefetch(
-        new URL(routeLocation.route.redirect, getBaseUri(this.baseUrl)),
+        new URL(routeLocation.redirect, getBaseUri(this.baseUrl)),
       );
       return;
     }
@@ -164,7 +160,7 @@ export class Router {
       );
     }
 
-    await routeLocation.route.prefetch?.(routeLocation);
+    await routeLocation.prefetch?.(routeLocation);
   }
 
   protected async navigate({
@@ -175,9 +171,9 @@ export class Router {
   }: NavigationOptions) {
     const routeLocation = this.findRoute(url);
 
-    if (routeLocation?.route.redirect) {
+    if (routeLocation?.redirect) {
       // TODO: this doesn't forward hash or query string
-      await this.go(routeLocation.route.redirect, { replace: true });
+      await this.go(routeLocation.redirect, { replace: true });
       return;
     }
 
@@ -187,7 +183,7 @@ export class Router {
       );
     }
 
-    const component = await routeLocation.route.loader(routeLocation);
+    const component = await routeLocation.loader(routeLocation);
 
     if (!get(pages).find((page) => page.route === routeLocation.url.pathname)) {
       await this.go('/404.html');

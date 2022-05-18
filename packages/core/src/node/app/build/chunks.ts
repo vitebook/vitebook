@@ -8,6 +8,7 @@ export function extendManualChunks(): GetManualChunk {
 
     if (id.includes('node_modules')) {
       if (/svelte\//.test(id)) return 'svelte';
+      if (/vue\//.test(id)) return 'vue';
       if (/@vitebook/.test(id)) return 'vitebook';
     }
 

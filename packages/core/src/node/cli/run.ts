@@ -26,7 +26,7 @@ const addBaseOptions = (command: Command) =>
     )
     .option(
       '--include <globs>',
-      '[string] Specify globs to filter pages to be included (example: "**/*.md,**/*.svelte")',
+      '[string] Specify globs to filter pages to be included (example: "**/*.md")',
     );
 
 const addServerOptions = (command: Command) =>

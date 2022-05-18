@@ -1,4 +1,4 @@
-import type { ServerPage } from './types/Page';
+import type { ServerPage } from './Page';
 
 export type VitebookSSRContext = {
   modules: Set<string>;
@@ -10,8 +10,8 @@ export type ServerEntryModule = {
 
 export type ServerRenderResult = {
   ssr: VitebookSSRContext;
-  head: string;
-  css: string;
+  head?: string;
+  css?: string;
   html: string;
 };
 

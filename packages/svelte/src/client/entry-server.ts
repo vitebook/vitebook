@@ -1,4 +1,5 @@
-import type { ServerRenderFn, VitebookSSRContext } from '../shared';
+import type { ServerRenderFn, VitebookSSRContext } from '@vitebook/core';
+
 import App from './App.svelte';
 import { ROUTER_CTX_KEY } from './context/getRouter';
 import { SSR_CTX_KEY } from './context/getSSRContext';

@@ -1,10 +1,10 @@
 dist/
 dist-*/
-types/
 
 packages/*/temp
 packages/*/index.d.ts
 packages/*/node.d.ts
+packages/*/types/
 
 sandbox/*
 !sandbox/.gitkeep

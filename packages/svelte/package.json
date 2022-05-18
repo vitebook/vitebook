@@ -1,88 +1,63 @@
 {
-  "name": "@vitebook/core",
+  "name": "@vitebook/svelte",
   "version": "0.23.6",
   "type": "module",
   "types": "index.d.ts",
   "sideEffects": false,
   "license": "MIT",
+  "svelte": "./dist/client/index.js",
   "contributors": [
     "Rahim Alwer <rahim.alwer@gmail.com>"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vitebook/vitebook.git",
-    "directory": "packages/core"
+    "directory": "packages/svelte"
   },
   "bugs": {
     "url": "https://github.com/vitebook/vitebook/issues"
   },
-  "bin": {
-    "vitebook": "bin/vitebook.js"
-  },
   "files": [
-    "bin/",
     "dist/",
     "index.d.ts",
-    "node.d.ts"
+    "node.d.ts",
+    "globals.d.ts"
   ],
   "exports": {
     ".": "./dist/client/index.js",
+    "./*": "./dist/client/*",
     "./node": "./dist/node/index.js",
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "run-s clean build:client build:node build:types",
-    "build:client": "node ../../.scripts/build.js --bundle",
+    "build": "run-s clean build:client build:node copy build:types",
+    "build:client": "node ../../.scripts/build.js --entry=src/client/**/*.ts,src/shared/**/*.ts --outbase=src --outdir=dist",
     "build:node": "node ../../.scripts/build.js --platform=node --bundle",
     "build:types": "tsc -p tsconfig.json && run-p types:*",
     "types:client": "api-extractor run -c types.client.json",
     "types:node": "api-extractor run -c types.node.json",
+    "copy": "node ../../.scripts/copy-non-ts-files.js --svelte",
     "clean": "rimraf dist dist-*",
-    "dev": "pnpm clean && run-p watch:client watch:node watch:types",
+    "dev": "pnpm clean && run-p watch:copy watch:client watch:node watch:types",
     "watch:client": "pnpm build:client -- -w",
+    "watch:copy": "pnpm copy -- -w",
     "watch:node": "pnpm build:node -- -w",
     "watch:types": "node ../../.scripts/run-on-change.js --glob=\"src/**/*.ts\" --script=build:types"
   },
   "dependencies": {
-    "@markdoc/markdoc": "^0.1.2",
-    "@rollup/pluginutils": "^4.1.1",
-    "@types/lru-cache": "^5.1.1",
-    "@types/picomatch": "^2.3.0",
-    "cac": "^6.7.3",
-    "esbuild": "^0.12.24",
-    "get-folder-size": "^3.1.0",
-    "globby": "^13.1.1",
-    "gray-matter": "^4.0.3",
-    "hast-util-to-html": "^8.0.3",
-    "js-yaml": "^4.1.0",
-    "kleur": "^4.1.4",
-    "lru-cache": "^6.0.0",
+    "@sveltejs/vite-plugin-svelte": "next",
     "magic-string": "^0.25.9",
-    "ora": "^6.0.0",
-    "pkg-up": "^2.0.0",
     "upath": "^2.0.1"
   },
   "peerDependencies": {
-    "@wooorm/starry-night": "^1.0.0",
-    "shiki": "^0.10.1",
-    "vite": "^2.8.0"
-  },
-  "peerDependenciesMeta": {
-    "shiki": {
-      "optional": true
-    },
-    "@wooorm/starry-night": {
-      "optional": true
-    }
+    "@vitebook/core": "workspace:*",
+    "svelte": "^3.40.0"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.20.0",
-    "@wooorm/starry-night": "^1.0.0",
-    "chokidar": "^3.5.2",
-    "picomatch": "^2.3.1",
+    "@vitebook/core": "workspace:*",
     "rimraf": "^3.0.2",
-    "rollup": "^2.58.0",
-    "shiki": "^0.10.1",
+    "svelte": "^3.40.0",
     "typescript": "^4.6.4",
     "vite": "^2.8.0"
   },
@@ -99,6 +74,7 @@
     "lightweight",
     "modern",
     "ssg",
+    "svelte",
     "vite",
     "vitebook"
   ]

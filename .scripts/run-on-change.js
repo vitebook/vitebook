@@ -28,4 +28,5 @@ function onChange() {
   if (pending) onChange();
 }
 
+onChange();
 chokidar.watch(args.glob).on('change', onChange).on('unlink', onChange);

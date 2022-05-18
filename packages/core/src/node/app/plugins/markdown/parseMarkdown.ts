@@ -20,43 +20,58 @@ import {
 } from '../../../../shared';
 import type { App } from '../../App';
 import { resolveRoute } from '../pages';
-import { render } from './render';
+import { renderMarkdocToHTML } from './render';
 
-export type ParsedMarkdownResult = MarkdownMeta & {
+export type MarkdocTreeNodeTransformer = (data: {
+  node: RenderableTreeNode;
+  stuff: MarkdocTreeWalkStuff;
+}) => void;
+
+export type MarkdocAstTransformer = (data: {
+  ast: Node;
+  filePath: string;
+  source: string;
+}) => void;
+
+export type MarkdocContentTransformer = (data: {
+  filePath: string;
+  content: RenderableTreeNode;
+  frontmatter: MarkdownFrontmatter;
+}) => string;
+
+export type MarkdocOutputTransformer = (data: {
+  filePath: string;
+  code: string;
+  imports: string[];
+  stuff: MarkdocTreeWalkStuff;
+  meta: MarkdownMeta;
+}) => string;
+
+export type MarkdocRenderer = (data: {
+  filePath: string;
+  content: RenderableTreeNode;
+  imports: string[];
+  stuff: MarkdocTreeWalkStuff;
+  meta: MarkdownMeta;
+}) => string;
+
+export type ParseMarkdownConfig = {
+  ignoreCache?: boolean;
+  pagesDir: string;
+  highlight: HighlightCodeBlock;
+  transformAst: MarkdocAstTransformer[];
+  transformTreeNode: MarkdocTreeNodeTransformer[];
+  transformContent: MarkdocContentTransformer[];
+  transformOutput: MarkdocOutputTransformer[];
+  render: MarkdocRenderer;
+};
+
+export type ParseMarkdownResult = MarkdownMeta & {
   filePath: string;
   output: string;
 };
 
-export type ParseMarkdownConfig = {
-  ignoreCache?: boolean;
-
-  pagesDir: string;
-  highlight: HighlightCodeBlock;
-
-  transformAst?: ((data: {
-    filePath: string;
-    ast: Node;
-    source: string;
-  }) => void)[];
-
-  transformContent?: ((data: {
-    filePath: string;
-    content: RenderableTreeNode;
-    frontmatter: MarkdownFrontmatter;
-  }) => string)[];
-
-  transformOutput?: ((data: {
-    filePath: string;
-    code: string;
-    frontmatter: MarkdownFrontmatter;
-    script: string[];
-    scriptModule: string[];
-  }) =>
-    | string
-    | { code?: string; script?: string[]; scriptModule?: string[] })[];
-};
-
-const cache = new LRUCache<string, ParsedMarkdownResult>({ max: 1024 });
+const cache = new LRUCache<string, ParseMarkdownResult>({ max: 1024 });
 const cacheK = new LRUCache<string, string>({ max: 1024 });
 
 export function clearMarkdownCache(file?: string) {
@@ -75,11 +90,13 @@ export function parseMarkdown(
     ignoreCache = false,
     pagesDir,
     highlight,
+    transformTreeNode: transformRenderNode = [],
     transformAst = [],
     transformContent = [],
     transformOutput = [],
-  }: ParseMarkdownConfig,
-): ParsedMarkdownResult {
+    render,
+  }: Partial<ParseMarkdownConfig>,
+): ParseMarkdownResult {
   const cacheKey = source;
 
   if (!ignoreCache && cache.has(cacheKey)) return cache.get(source)!;
@@ -94,7 +111,7 @@ export function parseMarkdown(
     ? yaml.load(ast.attributes.frontmatter)
     : {};
 
-  const imports = app.markdoc.resolveImports(filePath);
+  const nodeImports = app.markdoc.resolveImports(filePath);
   const config = app.markdoc.getConfig(filePath);
   const lastUpdated = Math.round(fs.statSync(filePath).mtimeMs);
 
@@ -110,29 +127,28 @@ export function parseMarkdown(
     transformer({ filePath, frontmatter, content });
   }
 
-  const stuff: TreeWalkStuff = {
+  const stuff: MarkdocTreeWalkStuff = {
     filePath,
-    pagesDir,
-    highlight,
+    pagesDir: pagesDir!,
+    highlight: highlight!,
     imports: new Set(),
     links: new Set(),
     headings: [],
   };
 
-  walkRenderTree(content, stuff, forEachRenderNode);
+  walkRenderTree(content, stuff, (node) => {
+    forEachRenderNode(node, stuff);
+    for (const transformer of transformRenderNode) {
+      transformer({ node, stuff });
+    }
+  });
 
   const { headings } = stuff;
   const title = headings[0]?.level === 1 ? headings[0].title : null;
 
-  let output =
-    (stuff.head ? `<svelte:head>${stuff.head}</svelte:head>\n\n` : '') +
-    (render(content) || '');
-
-  const script: string[] = Array.from(
-    new Set([...imports, ...Array.from(stuff.imports)]),
+  const imports = Array.from(
+    new Set([...nodeImports, ...Array.from(stuff.imports)]),
   );
-
-  const scriptModule: string[] = [];
 
   const meta: MarkdownMeta = {
     title,
@@ -141,35 +157,22 @@ export function parseMarkdown(
     lastUpdated,
   };
 
-  scriptModule.push(`export const meta = ${JSON.stringify(meta)};`);
+  let output =
+    (render?.({ filePath, content, meta, imports, stuff }) ??
+      renderMarkdocToHTML(content)) ||
+    '';
 
   for (const transformer of transformOutput) {
-    const result = transformer({
+    output = transformer({
       filePath,
-      frontmatter,
+      meta,
       code: output,
-      script,
-      scriptModule,
+      imports,
+      stuff,
     });
-
-    if (typeof result === 'string') {
-      output = result;
-    } else {
-      if (result.code) output = result.code;
-      if (result.script) script.push(...result.script);
-      if (result.scriptModule) scriptModule.push(...result.scriptModule);
-    }
   }
 
-  const moduleCode = `<script context="module">\n  ${scriptModule.join(
-    '\n  ',
-  )}\n</script>\n\n`;
-
-  const scriptCode = `<script>\n  ${script.join('\n  ')}\n</script>\n\n`;
-
-  output = `${moduleCode}${scriptCode}${output}`;
-
-  const result: ParsedMarkdownResult = {
+  const result: ParseMarkdownResult = {
     ...meta,
     filePath,
     output,
@@ -187,8 +190,8 @@ export function getFrontmatter(source: string | Buffer): MarkdownFrontmatter {
 
 function walkRenderTree(
   node: RenderableTreeNode,
-  stuff: TreeWalkStuff,
-  callback: (node: RenderableTreeNode, stuff: TreeWalkStuff) => void,
+  stuff: MarkdocTreeWalkStuff,
+  callback: (node: RenderableTreeNode, stuff: MarkdocTreeWalkStuff) => void,
 ) {
   callback(node, stuff);
 
@@ -203,11 +206,11 @@ const codeNameRE = /^(code|Code)$/;
 const fenceNameRE = /^(pre|Fence)$/;
 const headingNameRE = /^(h\d|Heading)$/;
 const linkNameRE = /^(a|link|Link)$/;
-const svelteHeadNameRE = /^svelte:head$/;
 const componentNameRE = /^component$/;
 
-type TreeWalkStuff = {
-  head?: string;
+export type MarkdocTreeWalkStuff = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [id: string]: any;
   filePath: string;
   pagesDir: string;
   links: Set<string>;
@@ -216,36 +219,28 @@ type TreeWalkStuff = {
   highlight: HighlightCodeBlock;
 };
 
-function forEachRenderNode(node: RenderableTreeNode, stuff: TreeWalkStuff) {
+function forEachRenderNode(
+  node: RenderableTreeNode,
+  stuff: MarkdocTreeWalkStuff,
+) {
   if (node && typeof node !== 'string') {
     const name = node.name;
 
     if (codeNameRE.test(name)) {
-      escapeCodeContent(node, name === 'Code');
+      transformCode(node);
     } else if (fenceNameRE.test(name)) {
-      highlightCodeFences(node, stuff.highlight, name === 'Fence');
+      highlightCodeFences(node, stuff.highlight);
     } else if (headingNameRE.test(name)) {
       collectHeadings(node, stuff.headings);
     } else if (linkNameRE.test(name)) {
       resolveLinks(node, stuff);
-    } else if (svelteHeadNameRE.test(name)) {
-      resolveSvelteHead(node, stuff);
     } else if (componentNameRE.test(name)) {
       resolveComponent(node, stuff);
     }
   }
 }
 
-function resolveSvelteHead(tag: Tag, stuff: TreeWalkStuff) {
-  tag.attributes.__ignore = true;
-  if (typeof tag.children[0] === 'object') {
-    if (Array.isArray(tag.children[0]?.children)) {
-      stuff.head = tag.children[0]!.children.join('');
-    }
-  }
-}
-
-function resolveComponent(tag: Tag, stuff: TreeWalkStuff) {
+function resolveComponent(tag: Tag, stuff: MarkdocTreeWalkStuff) {
   const { name, path: filePath } = tag.attributes;
 
   tag.name = name;
@@ -256,17 +251,14 @@ function resolveComponent(tag: Tag, stuff: TreeWalkStuff) {
   delete tag.attributes.path;
 }
 
-function escapeCodeContent(tag: Tag, isComponent = false) {
+function transformCode(tag: Tag) {
+  const isComponent = tag.name === 'Code';
   const code = isComponent ? tag.attributes.content : tag.children[0];
 
-  if (typeof code === 'string') {
-    if (isComponent) {
-      tag.attributes.code = { __render: () => `code={"${escapeHtml(code)}"}` };
-      tag.children[0] = null;
-      delete tag.attributes.content;
-    } else {
-      tag.children[0] = htmlBlock(escapeHtml(code));
-    }
+  if (isComponent && typeof code === 'string') {
+    tag.attributes.code = escapeHtml(code);
+    tag.children[0] = null;
+    delete tag.attributes.content;
   }
 }
 
@@ -277,11 +269,9 @@ export type HighlightCodeBlock = (
 
 const preTagRE = /<\/?pre(.*?)>/g;
 const preTagStyleAttrRE = /<pre.*?style="(.*?)"/;
-function highlightCodeFences(
-  tag: Tag,
-  highlight: HighlightCodeBlock,
-  isComponent = false,
-) {
+function highlightCodeFences(tag: Tag, highlight: HighlightCodeBlock) {
+  const isComponent = tag.name === 'Fence';
+
   const lang = isComponent
     ? tag.attributes.language
     : tag.attributes['data-language'];
@@ -299,28 +289,18 @@ function highlightCodeFences(
 
     if (isComponent) {
       tag.attributes.lang = lang;
-      tag.attributes.code = {
-        __render: () => `code={${JSON.stringify(escapeHtml(code))}}`,
-      };
-
-      if (highlightedCode) {
-        tag.attributes.higlightedCode = {
-          __render: () => `highlightedCode={${JSON.stringify(output)}}`,
-        };
-      }
-
+      tag.attributes.code = escapeHtml(code);
+      if (highlightedCode) tag.attributes.highlightedCode = output;
       tag.children[0] = null;
       delete tag.attributes['data-language'];
       delete tag.attributes.content;
     } else {
-      tag.attributes.class = `highlight lang-${lang}`;
-      tag.children[0] = htmlBlock(output);
+      tag.attributes.class = `${
+        highlightedCode ? 'highlight ' : ''
+      }lang-${lang}`;
+      tag.children[0] = output;
     }
   }
-}
-
-function htmlBlock(text: string) {
-  return `{@html ${JSON.stringify(text)}}`;
 }
 
 function collectHeadings(tag: Tag, headings: MarkdownHeading[]) {
@@ -338,12 +318,12 @@ function collectHeadings(tag: Tag, headings: MarkdownHeading[]) {
   }
 }
 
-function resolveLinks(tag: Tag, stuff: TreeWalkStuff) {
+function resolveLinks(tag: Tag, stuff: MarkdocTreeWalkStuff) {
   const href = tag.attributes.href;
   if (!href) return;
 
   const internalLinkMatch = href.match(
-    /^((?:.*)(?:\/|\.md|\.html|\.svelte))(#.*)?$/,
+    /^((?:.*)(?:\/|\.md|\.html|\.svelte|\.vue|\.jsx|\.tsx))(#.*)?$/,
   );
 
   if (isLinkExternal(href)) {

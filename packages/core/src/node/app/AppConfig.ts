@@ -11,7 +11,7 @@ import type {
   PagesPluginConfig,
   ResolvedPagesPluginConfig,
 } from './plugins/pages';
-import type { Plugins } from './plugins/Plugin';
+import type { FilteredPlugins, Plugins } from './plugins/Plugin';
 
 export type ResolvedAppConfig = {
   /**
@@ -42,7 +42,7 @@ export type ResolvedAppConfig = {
   /**
    * Vitebook plugins.
    */
-  plugins: Plugins;
+  plugins: FilteredPlugins;
 
   /**
    * Whether to load in debug mode.
@@ -99,10 +99,11 @@ export type AppDirsConfig = Partial<ResolvedAppDirsConfig>;
 
 export type AppConfig = Omit<
   Partial<ResolvedAppConfig>,
-  'dirs' | 'core' | 'markdown' | 'pages'
+  'dirs' | 'core' | 'markdown' | 'pages' | 'plugins'
 > & {
   dirs?: AppDirsConfig;
   core?: CorePluginConfig;
   markdown?: MarkdownPluginConfig;
   pages?: PagesPluginConfig;
+  plugins?: Plugins;
 };

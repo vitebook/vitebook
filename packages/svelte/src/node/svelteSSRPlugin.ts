@@ -1,9 +1,9 @@
+import type { App, Plugin } from '@vitebook/core/node';
 import MagicString from 'magic-string';
 
-import type { App } from '../../App';
-import type { Plugin } from '../Plugin';
+const SVELTE_FILE_RE = /\.svelte($|\/)/;
 
-export function ssrPlugin(): Plugin {
+export function svelteSSRPlugin(): Plugin {
   let app: App;
 
   return {
@@ -15,9 +15,9 @@ export function ssrPlugin(): Plugin {
     transform(code, id, { ssr } = {}) {
       if (
         ssr &&
-        !id.includes('@vitebook/core') && // Can't self-import.
-        !id.includes('packages/core/dist/client') && // Linked package.
-        id.endsWith('.svelte')
+        !id.includes('@vitebook/svelte') && // Can't self-import.
+        !id.includes('packages/svelte/dist/client') && // Linked package.
+        SVELTE_FILE_RE.test(id)
       ) {
         const mcs = new MagicString(code);
         const matchRE = /export\sdefault\s(.*?);/;
@@ -37,7 +37,7 @@ export function ssrPlugin(): Plugin {
           start,
           end,
           [
-            "import { getSSRContext as __vitebook__getSSRContext } from '@vitebook/core';",
+            "import { getSSRContext as __vitebook__getSSRContext } from '@vitebook/svelte';",
             `const $$render = ${componentName}.$$render;`,
             `${componentName}.$$render = function(...args) {`,
             addModuleCode,

@@ -1,9 +1,8 @@
 // ssr
 export * from './ssr';
 // types
-export * from './types/MarkdownContent';
-export * from './types/Page';
-export * from './types/Svelte';
+export * from './Markdown';
+export * from './Page';
 // utils
 export * from './utils/date';
 export * from './utils/html';

@@ -42,6 +42,9 @@ export class MarkdocSchema {
 
   async init(config: MarkdocSchemaConfig) {
     this.config = config;
+
+    config.include.push('!**/_*');
+
     await this.discover();
   }
 
@@ -232,9 +235,6 @@ export class MarkdocSchema {
             node.transformChildren(config),
           );
         },
-      },
-      svelte_head: {
-        render: 'svelte:head',
       },
     };
   }

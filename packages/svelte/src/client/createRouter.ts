@@ -1,10 +1,11 @@
+import { isLoadedMarkdownPage } from '@vitebook/core';
 import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 // @ts-expect-error - .
 import { configureRouter } from ':virtual/vitebook/app';
 
-import { ClientPage, isLoadedMarkdownPage, SvelteConstructor } from '../shared';
+import type { ClientPage, SvelteConstructor } from '../shared';
 import DefaultNotFound from './components/DefaultNotFound.svelte';
 import { createMemoryHistory } from './router/history/memory';
 import { Router } from './router/router';
@@ -91,6 +92,7 @@ async function loadPage(
       .map(async (layout) => {
         const mod = await layout.loader();
         return {
+          $$loaded: true as const,
           ...layout,
           module: mod,
           get component() {
@@ -103,7 +105,7 @@ async function loadPage(
   if (!prefetch) {
     page.__set({
       ..._page,
-      $$page: true,
+      $$loaded: true,
       module: mod,
       layouts,
       get component() {

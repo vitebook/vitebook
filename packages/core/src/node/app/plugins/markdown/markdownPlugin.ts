@@ -1,6 +1,6 @@
 import { type Config as MarkdocConfig } from '@markdoc/markdoc';
 import { createFilter, type FilterPattern } from '@rollup/pluginutils';
-import { Options as HastToHtmlConfig, toHtml } from 'hast-util-to-html';
+import { type Options as HastToHtmlConfig, toHtml } from 'hast-util-to-html';
 import kleur from 'kleur';
 import type { HighlighterOptions as ShikiConfig } from 'shiki';
 import { logger } from 'src/node/utils';
@@ -9,7 +9,7 @@ import type { App } from '../../App';
 import { type Plugin } from '../Plugin';
 import { handleHMR } from './hmr';
 import {
-  HighlightCodeBlock,
+  type HighlightCodeBlock,
   parseMarkdown,
   type ParseMarkdownConfig,
 } from './parseMarkdown';
@@ -58,28 +58,22 @@ export type ResolvedMarkdownPluginConfig = {
    */
   transformAst: ParseMarkdownConfig['transformAst'];
   /**
+   * Called for each render node in the Markdoc renderable tree. This function can be used to
+   * transform the tree before it's rendered.
+   */
+  transformTreeNode: ParseMarkdownConfig['transformTreeNode'];
+  /**
    * Markdoc renderable tree transformers (_after_ AST is transformed into render tree).
    */
   transformContent: ParseMarkdownConfig['transformContent'];
   /**
-   * Rendered Markdown output transformers. The output should be a valid Svelte component. You
-   * can optionally return `script` and `scriptModule` lines of code to modify script content.
-   *
-   * @example
-   * ```js
-   * {
-   *   transformOutput: ({ code }) => {
-   *     // ...
-   *     return {
-   *       code: '...', // new output (optional)
-   *       script: ['import A from "...";', 'import B from "...';'],
-   *       scriptModule: ['export const something = {};'],
-   *     };
-   *   }
-   * }
-   * ```
+   * Rendered Markdown output transformers.
    */
   transformOutput: ParseMarkdownConfig['transformOutput'];
+  /**
+   * Custom Markdoc renderer which takes render tree and produces final output.
+   */
+  render?: ParseMarkdownConfig['render'];
 };
 
 export type MarkdownPluginConfig = Partial<ResolvedMarkdownPluginConfig>;
@@ -87,8 +81,6 @@ export type MarkdownPluginConfig = Partial<ResolvedMarkdownPluginConfig>;
 export function markdownPlugin(config: ResolvedMarkdownPluginConfig): Plugin {
   let app: App;
   let filter: (id: string) => boolean;
-
-  const transformed = new Set<string>();
 
   const {
     include,
@@ -103,7 +95,7 @@ export function markdownPlugin(config: ResolvedMarkdownPluginConfig): Plugin {
   let highlight: HighlightCodeBlock | null =
     typeof highlighter === 'function' ? highlighter : null;
 
-  const parseConfig: ParseMarkdownConfig = {
+  const parseConfig: Partial<ParseMarkdownConfig> = {
     ignoreCache: false,
     pagesDir: '', // set below in `appInit`
     highlight: (code, lang) => highlight?.(code, lang),
@@ -117,6 +109,7 @@ export function markdownPlugin(config: ResolvedMarkdownPluginConfig): Plugin {
       app = _app;
 
       app.markdoc.base = markdoc;
+
       filter = createFilter(include, exclude);
       parseConfig.pagesDir = app.dirs.pages.path;
 
@@ -185,7 +178,6 @@ export function markdownPlugin(config: ResolvedMarkdownPluginConfig): Plugin {
     },
     transform(content, id) {
       if (filter(id)) {
-        transformed.add(id);
         const { output } = parseMarkdown(app, id, content, parseConfig);
         return output;
       }
