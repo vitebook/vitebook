@@ -7,7 +7,7 @@ import {
 import { virtualAliases, virtualModuleRequestPath } from '../../alias';
 import type { App } from '../../App';
 import { indexHtmlMiddleware } from '../../middleware/indexHtml';
-import type { Plugin } from '../Plugin';
+import type { ClientPlugin } from '../ClientPlugin';
 
 const clientPackages = ['@vitebook/core', '@vitebook/svelte'];
 
@@ -18,16 +18,24 @@ export type ResolvedCorePluginConfig = {
 export type CorePluginConfig = Partial<ResolvedCorePluginConfig>;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function corePlugin(config: ResolvedCorePluginConfig): Plugin {
+export function corePlugin(config: ResolvedCorePluginConfig): ClientPlugin {
   let app: App;
 
   let server: ViteDevServer & {
     _optimizeDepsMetadata?: DepOptimizationMetadata;
   };
 
+  const clientEntry = require.resolve(`@vitebook/core/entry-client.js`);
+  const serverEntry = require.resolve(`@vitebook/core/entry-server.js`);
+  const isLocal = clientEntry.includes('packages/core/dist/client');
+
   return {
     name: '@vitebook/core',
     enforce: 'pre',
+    entry: {
+      client: clientEntry,
+      server: serverEntry,
+    },
     config() {
       const config: ViteConfig = {
         resolve: {
@@ -52,6 +60,7 @@ export function corePlugin(config: ResolvedCorePluginConfig): Plugin {
               app.dirs.out.path,
               app.dirs.tmp.path,
             ],
+            strict: !isLocal,
           },
         },
       };
@@ -85,8 +94,12 @@ export function corePlugin(config: ResolvedCorePluginConfig): Plugin {
         server._optimizeDepsMetadata.browserHash = '';
       }
 
-      if (id === virtualModuleRequestPath.clientEntry) {
+      if (id === virtualModuleRequestPath.client) {
         return { id: app.client.entry.client };
+      }
+
+      if (id === virtualModuleRequestPath.app) {
+        return id;
       }
 
       if (id === virtualModuleRequestPath.noop) {
@@ -98,6 +111,29 @@ export function corePlugin(config: ResolvedCorePluginConfig): Plugin {
     async load(id) {
       if (id === virtualModuleRequestPath.noop) {
         return `export default function() {};`;
+      }
+
+      if (id === virtualModuleRequestPath.app) {
+        const id = app.config.client.app;
+        const baseUrl = app.vite?.config.base ?? '/';
+        const configs = app.config.client.configFiles;
+        return [
+          `import * as App from "${id}";`,
+          '',
+          configs
+            .map(
+              (id, i) =>
+                `import { configureApp as configureApp$${i} } from "${id}";`,
+            )
+            .join('\n'),
+          '',
+          `export default {
+            id: "${id}",
+            baseUrl: "${baseUrl}",
+            module: App,
+            configs: [${configs.map((_, i) => `configureApp$${i}`).join(', ')}]
+          };`,
+        ].join('\n');
       }
 
       return null;

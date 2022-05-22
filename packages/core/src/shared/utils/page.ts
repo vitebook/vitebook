@@ -1,18 +1,12 @@
-import type {
-  ClientPageModule,
-  LoadedClientMarkdownPage,
-  LoadedClientPage,
-} from '../Page';
+import type { LoadedClientMarkdownPage, LoadedClientPage } from '../Page';
 
-export function isLoadedPage<Module extends ClientPageModule>(
-  page: unknown,
-): page is LoadedClientPage<Module> {
+export function isLoadedPage(page: unknown): page is LoadedClientPage {
   // @ts-expect-error - .
   return typeof page === 'object' && '$$loaded' in page;
 }
 
-export function isLoadedMarkdownPage<Module extends ClientPageModule>(
+export function isLoadedMarkdownPage(
   page: unknown,
-): page is LoadedClientMarkdownPage<Module> {
+): page is LoadedClientMarkdownPage {
   return isLoadedPage(page) && page.rootPath.endsWith('.md');
 }

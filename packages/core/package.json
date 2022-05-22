@@ -23,16 +23,18 @@
     "bin/",
     "dist/",
     "index.d.ts",
+    "globals.d.ts",
     "node.d.ts"
   ],
   "exports": {
     ".": "./dist/client/index.js",
+    "./*": "./dist/client/*",
     "./node": "./dist/node/index.js",
     "./package.json": "./package.json"
   },
   "scripts": {
     "build": "run-s clean build:client build:node build:types",
-    "build:client": "node ../../.scripts/build.js --bundle",
+    "build:client": "node ../../.scripts/build.js --entry=src/client/**/*.ts,src/shared/**/*.ts --outbase=src --outdir=dist",
     "build:node": "node ../../.scripts/build.js --platform=node --bundle",
     "build:types": "tsc -p tsconfig.json && run-p types:*",
     "types:client": "api-extractor run -c types.client.json",
@@ -77,6 +79,7 @@
     "@wooorm/starry-night": "^1.0.0",
     "chokidar": "^3.5.2",
     "kleur": "^4.1.4",
+    "lit": "^2.2.4",
     "rimraf": "^3.0.2",
     "rollup": "^2.58.0",
     "shiki": "^0.10.1",

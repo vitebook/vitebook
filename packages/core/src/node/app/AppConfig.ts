@@ -30,6 +30,11 @@ export type ResolvedAppConfig = {
   core: ResolvedCorePluginConfig;
 
   /**
+   * Client options.
+   */
+  client: ResolvedAppClientConfig;
+
+  /**
    * Pages options.
    */
   pages: ResolvedPagesPluginConfig;
@@ -51,6 +56,20 @@ export type ResolvedAppConfig = {
    */
   debug: boolean;
 };
+
+export type ResolvedAppClientConfig = {
+  /**
+   * Application module ID or file path relative to `<root>`.
+   */
+  app: string | undefined;
+  /**
+   * Array of module ids that will be imported to configure the client-side application. The
+   * module must export a `configureApp()` function.
+   */
+  configFiles: string[];
+};
+
+export type AppClientConfig = Partial<ResolvedAppClientConfig>;
 
 export type ResolvedAppDirsConfig = {
   /**
@@ -99,10 +118,11 @@ export type AppDirsConfig = Partial<ResolvedAppDirsConfig>;
 
 export type AppConfig = Omit<
   Partial<ResolvedAppConfig>,
-  'dirs' | 'core' | 'markdown' | 'pages' | 'plugins'
+  'dirs' | 'core' | 'client' | 'markdown' | 'pages' | 'plugins' | 'router'
 > & {
   dirs?: AppDirsConfig;
   core?: CorePluginConfig;
+  client?: AppClientConfig;
   markdown?: MarkdownPluginConfig;
   pages?: PagesPluginConfig;
   plugins?: Plugins;

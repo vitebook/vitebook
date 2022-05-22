@@ -1,4 +1,4 @@
-import { isString } from '@vitebook/core';
+import { isString } from '../../../shared';
 
 /** Used server-side.  */
 export class MemoryHistory implements History {

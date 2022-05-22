@@ -1,2 +1,2 @@
 /// <reference types="vite/client" />
-/// <reference types="@vitebook/svelte/globals" />
+/// <reference types="@vitebook/core/globals" />

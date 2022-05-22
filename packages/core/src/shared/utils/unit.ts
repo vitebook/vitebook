@@ -2,6 +2,12 @@ export function noop() {
   //
 }
 
+export function safeNotEqual(a: unknown, b: unknown) {
+  return a != a
+    ? b == b
+    : a !== b || (a && typeof a === 'object') || typeof a === 'function';
+}
+
 /**
  * Check if a value is `undefined`.
  */

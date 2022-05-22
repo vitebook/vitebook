@@ -2,11 +2,7 @@ import {
   type Options as SveltePluginOptions,
   svelte,
 } from '@sveltejs/vite-plugin-svelte';
-import {
-  type App,
-  type ClientPlugin,
-  virtualModuleRequestPath,
-} from '@vitebook/core/node';
+import { type App, type Plugin, VM_PREFIX } from '@vitebook/core/node';
 import fs from 'fs';
 import { type Plugin as VitePlugin } from 'vite';
 
@@ -17,25 +13,19 @@ export type SveltePluginConfig = {
   svelte?: SveltePluginOptions;
 };
 
-export function sveltePlugin(config: SveltePluginConfig = {}): ClientPlugin {
-  let app: App;
+const VIRTUAL_APP_ID = `${VM_PREFIX}/svelte/app` as const;
 
-  const clientEntry = require.resolve(`@vitebook/svelte/entry-client.js`);
-  const serverEntry = require.resolve(`@vitebook/svelte/entry-server.js`);
-  const isLocal = clientEntry.includes('packages/svelte/dist/client');
+export function sveltePlugin(config: SveltePluginConfig = {}): Plugin {
+  let app: App;
 
   return {
     name: '@vitebook/svelte',
     enforce: 'pre',
-    entry: {
-      client: clientEntry,
-      server: serverEntry,
-    },
     config() {
       return {
-        server: {
-          fs: {
-            strict: !isLocal,
+        resolve: {
+          alias: {
+            [VIRTUAL_APP_ID]: `/${VIRTUAL_APP_ID}`,
           },
         },
         plugins: [svelteSSRPlugin()],
@@ -48,11 +38,17 @@ export function sveltePlugin(config: SveltePluginConfig = {}): ClientPlugin {
         ...svelteMarkdocTags,
       };
 
+      config.client.configFiles.push(VIRTUAL_APP_ID);
+
       config.markdown.render = renderMarkdoc;
       config.markdown.transformTreeNode.push(transformTreeNode);
     },
     vitebookInit(_app) {
       app = _app;
+
+      if (!app.config.client.app) {
+        app.config.client.app = VIRTUAL_APP_ID;
+      }
 
       const hasSveltePlugin = app.vite?.config.plugins
         ?.flat()
@@ -79,7 +75,7 @@ export function sveltePlugin(config: SveltePluginConfig = {}): ClientPlugin {
       }
     },
     resolveId(id) {
-      if (id === virtualModuleRequestPath.app) {
+      if (id === `/${VIRTUAL_APP_ID}`) {
         const path = app.dirs.pages.resolve('@app.svelte');
         return fs.existsSync(path)
           ? { id: path }

@@ -1,14 +1,16 @@
 import { globbySync } from 'globby';
-import kleur from 'kleur';
 import path from 'upath';
 import { loadConfigFromFile } from 'vite';
 
-import { logger, resolveRelativePath } from '../../utils';
+import { resolveRelativePath } from '../../utils';
 import type { App, AppDirs, AppEnv } from '../App';
-import type { AppConfig, ResolvedAppConfig } from '../AppConfig';
+import type {
+  AppConfig,
+  ResolvedAppClientConfig,
+  ResolvedAppConfig,
+} from '../AppConfig';
 import { build } from '../build';
 import { dev } from '../dev';
-import type { ClientPlugin } from '../plugins/ClientPlugin';
 import { corePlugin, type ResolvedCorePluginConfig } from '../plugins/core';
 import {
   markdownPlugin,
@@ -71,22 +73,6 @@ export const createApp = async (
 
   const core = corePlugin(__config.core);
 
-  const client = userPlugins
-    .flat()
-    .find((plugin) => plugin && 'entry' in plugin) as ClientPlugin;
-
-  if (!client) {
-    logger.error(
-      logger.formatErrorMsg(
-        `Failed to find client plugin. You might not have installed a client package.\n\n${kleur.bold(
-          'npm install @vitebook/svelte',
-        )}`,
-      ),
-    );
-
-    throw Error();
-  }
-
   const plugins = [
     core,
     markdownPlugin(__config.markdown),
@@ -101,7 +87,7 @@ export const createApp = async (
     plugins,
     vite,
     context: {},
-    client,
+    client: core,
     config: __config,
     pages: new Pages(),
     markdoc: new MarkdocSchema(),
@@ -114,6 +100,10 @@ export const createApp = async (
 
   for (const plugin of plugins) {
     await plugin.vitebookInit?.(app, env);
+  }
+
+  if (!__config.client.app) {
+    throw Error(`No client application module was provided.`);
   }
 
   return app;
@@ -147,6 +137,7 @@ export async function resolveAppConfig({
   dirs = {},
   debug = false,
   core = {},
+  client = {},
   pages = {},
   markdown = {},
   plugins = [],
@@ -160,6 +151,11 @@ export async function resolveAppConfig({
   const __core: ResolvedCorePluginConfig = {
     svelte: {},
     ...core,
+  };
+
+  const __client: ResolvedAppClientConfig = {
+    app: client.app ? path.relative(_root, client.app) : undefined,
+    configFiles: client.configFiles ?? [],
   };
 
   const pageExts = `md,svelte,vue,jsx,tsx`;
@@ -195,7 +191,6 @@ export async function resolveAppConfig({
 
   return {
     cliArgs,
-    debug,
     dirs: {
       cwd: _cwd,
       root: _root,
@@ -204,9 +199,11 @@ export async function resolveAppConfig({
       public: _public,
     },
     core: __core,
+    client: __client,
     pages: __pages,
     markdown: __markdown,
     plugins: plugins.flat().filter(Boolean) as FilteredPlugins,
+    debug,
   };
 }
 

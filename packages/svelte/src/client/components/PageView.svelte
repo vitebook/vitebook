@@ -1,5 +1,5 @@
 <script>
-  import { page } from '../stores/page';
+  import { page } from '@vitebook/core';
 </script>
 
-<svelte:component this={$page.component} />
+<svelte:component this={$page.default} />

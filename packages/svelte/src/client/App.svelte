@@ -1,5 +1,10 @@
 <script context="module">
-  export function configureRouter() {}
+  import { createSvelteViewRenderer } from './renderer';
+
+  /** @type {import('@vitebook/core').ConfigureApp} */
+  export function configureApp({ renderers }) {
+    renderers.push(createSvelteViewRenderer());
+  }
 </script>
 
 <script>

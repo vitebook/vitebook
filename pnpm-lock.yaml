@@ -82,6 +82,7 @@ importers:
       hast-util-to-html: ^8.0.3
       js-yaml: ^4.1.0
       kleur: ^4.1.4
+      lit: ^2.2.4
       lru-cache: ^6.0.0
       magic-string: ^0.25.9
       ora: ^6.0.0
@@ -112,6 +113,7 @@ importers:
       '@wooorm/starry-night': 1.0.0
       chokidar: 3.5.3
       kleur: 4.1.4
+      lit: 2.2.4
       rimraf: 3.0.2
       rollup: 2.73.0
       shiki: 0.10.1
@@ -379,6 +381,10 @@ packages:
     engines: {node: '>=6.9.0'}
     dev: true
 
+  /@lit/reactive-element/1.3.2:
+    resolution: {integrity: sha512-A2e18XzPMrIh35nhIdE4uoqRzoIpEU5vZYuQN4S3Ee1zkGdYC27DP12pewbw/RLgPHzaE4kx/YqxMzebOpm0dA==}
+    dev: true
+
   /@markdoc/markdoc/0.1.2:
     resolution: {integrity: sha512-3p+JTC1A0eqBdrl2UOIRoy+FLKtG1mh81R3Zzdm7FJiQIMt2mJmqmVQNDf3Md62G9rTtbj0ZuxlEattMbaslbw==}
     engines: {node: '>=14.7.0'}
@@ -541,6 +547,10 @@ packages:
 
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
+    dev: true
+
+  /@types/trusted-types/2.0.2:
+    resolution: {integrity: sha512-F5DIZ36YVLE+PN+Zwws4kJogq47hNgX3Nx6WyDJ3kcplxyke3XIzB8uK5n/Lpm1HBsbGzd6nmGehL8cPekP+Tg==}
     dev: true
 
   /@types/unist/2.0.6:
@@ -2625,6 +2635,27 @@ packages:
       rxjs: 7.5.5
       through: 2.3.8
       wrap-ansi: 7.0.0
+    dev: true
+
+  /lit-element/3.2.0:
+    resolution: {integrity: sha512-HbE7yt2SnUtg5DCrWt028oaU4D5F4k/1cntAFHTkzY8ZIa8N0Wmu92PxSxucsQSOXlODFrICkQ5x/tEshKi13g==}
+    dependencies:
+      '@lit/reactive-element': 1.3.2
+      lit-html: 2.2.4
+    dev: true
+
+  /lit-html/2.2.4:
+    resolution: {integrity: sha512-IPY0V0z/QWcTduxb6DlP46Un8n6tG+mHSAijGcPozfXTjVkvFLN4/irPzthtq/eC8RU+7CUqh6h4KB7tnRPJfg==}
+    dependencies:
+      '@types/trusted-types': 2.0.2
+    dev: true
+
+  /lit/2.2.4:
+    resolution: {integrity: sha512-O7t+uizo1/Br0y+5RaWRzPkd4MsoL4XY2eq7n2wrESyCCjeagq4ERZKsyKX40jbmsz4bAAs7/0qNRX11TuXzoA==}
+    dependencies:
+      '@lit/reactive-element': 1.3.2
+      lit-element: 3.2.0
+      lit-html: 2.2.4
     dev: true
 
   /load-json-file/4.0.0:

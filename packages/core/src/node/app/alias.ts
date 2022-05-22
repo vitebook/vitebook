@@ -4,11 +4,11 @@
 export const VM_PREFIX = ':virtual/vitebook' as const;
 
 export const virtualModuleId = {
-  app: `${VM_PREFIX}/app`,
   noop: `${VM_PREFIX}/noop`,
   pages: `${VM_PREFIX}/pages`,
   layouts: `${VM_PREFIX}/layouts`,
-  clientEntry: `${VM_PREFIX}/client`,
+  client: `${VM_PREFIX}/client`,
+  app: `${VM_PREFIX}/app`,
 } as const;
 
 export const virtualModuleRequestPath = Object.keys(virtualModuleId).reduce(

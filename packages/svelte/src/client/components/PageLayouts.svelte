@@ -1,5 +1,5 @@
 <script>
-  import { page } from '../stores/page';
+  import { page } from '@vitebook/core';
 
   export let index = 0;
 
@@ -7,7 +7,7 @@
 </script>
 
 {#if index < $page.layouts.length}
-  <svelte:component this={layout.component}>
+  <svelte:component this={layout.default}>
     <svelte:self index={index + 1}>
       <slot />
     </svelte:self>

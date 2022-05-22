@@ -1,8 +1,7 @@
-import { readable } from 'svelte/store';
-
 import allPages from ':virtual/vitebook/pages';
 
 import type { ClientPage } from '../../shared';
+import { readable } from './store';
 
 export const pages = readable(allPages, (set) => {
   if (import.meta.hot) {

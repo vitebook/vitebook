@@ -1,31 +1,20 @@
-import type {
-  ClientLayout as BaseClientLayout,
-  ClientPage as BaseClientPage,
-  ClientPageModule as BaseClientPageModule,
-  LoadedClientLayout as BaseLoadedClientLayout,
-  LoadedClientPage as BaseLoadedClientPage,
-  MarkdownMeta,
-} from '@vitebook/core';
-import type { SvelteComponent } from 'svelte';
+import { type SvelteComponent } from 'svelte';
 
 export type SvelteConstructor = typeof SvelteComponent;
 
 export type SvelteModule = {
+  readonly [id: string]: unknown;
   readonly default: SvelteConstructor;
 };
 
-export type ClientPage = BaseClientPage<ClientPageModule>;
-
-export type ClientPageModule = BaseClientPageModule<SvelteConstructor>;
-
-export type LoadedClientPage = BaseLoadedClientPage<ClientPageModule>;
-
-export type LoadedClientMarkdownPage = LoadedClientPage & {
-  readonly meta: MarkdownMeta;
+export type SvelteServerModule = {
+  readonly [id: string]: unknown;
+  readonly default: {
+    render(
+      props: Record<string, unknown>,
+      options: { context: Map<string, unknown> },
+    ): { html: string; head: string; css: string };
+  };
 };
-
-export type ClientLayout = BaseClientLayout<SvelteModule>;
-
-export type LoadedClientLayout = BaseLoadedClientLayout<SvelteModule>;
 
 export {};

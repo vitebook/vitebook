@@ -1,31 +1,46 @@
-import { isLoadedMarkdownPage } from '@vitebook/core';
-import { tick } from 'svelte';
-import { get } from 'svelte/store';
+import app from ':virtual/vitebook/app';
 
-// @ts-expect-error - .
-import { configureRouter } from ':virtual/vitebook/app';
-
-import type { ClientPage, SvelteConstructor } from '../shared';
-import DefaultNotFound from './components/DefaultNotFound.svelte';
+import {
+  type ClientPage,
+  inBrowser,
+  isLoadedMarkdownPage,
+  type LoadedClientLayout,
+  type LoadedClientPage,
+} from '../shared';
+import { routerContextKey } from './context';
 import { createMemoryHistory } from './router/history/memory';
-import { Router } from './router/router';
+import { Router } from './router/Router';
 import { layouts as pageLayouts } from './stores/layouts';
 import { page } from './stores/page';
 import { pages } from './stores/pages';
+import { get } from './stores/store';
+import type { ViewRenderer } from './view/ViewRenderer';
 
-export async function createRouter() {
+export async function createRouter({
+  context = new Map<string, unknown>(),
+  renderers = [] as ViewRenderer[],
+}) {
+  const target = inBrowser ? document.getElementById('app') : null;
+
   const router = new Router({
-    baseUrl: '/',
-    history: import.meta.env.SSR ? createMemoryHistory() : window.history,
+    target,
+    context,
+    baseUrl: app.baseUrl,
+    history: inBrowser ? window.history : createMemoryHistory(),
   });
 
+  context.set(routerContextKey, router);
+
   addRoutes(router, get(pages));
+
+  await Promise.all(
+    app.configs.map((config) => config({ context, router, renderers })),
+  );
+
   handleHMR(router);
 
-  await configureRouter?.(router);
-
-  if (!import.meta.env.SSR) {
-    router.initListeners();
+  if (inBrowser) {
+    router.listen();
     await router.go(location.href, { replace: true });
   }
 
@@ -50,13 +65,6 @@ function addRoutes(router: Router, pages: Readonly<ClientPage[]>) {
       loadPage(_page);
     }
   });
-
-  if (!router.hasRoute('/404.html')) {
-    router.addRoute({
-      path: '/404.html',
-      loader: async () => DefaultNotFound,
-    });
-  }
 }
 
 function handleHMR(router: Router) {
@@ -78,16 +86,41 @@ function handleHMR(router: Router) {
   }
 }
 
-async function loadPage(
+export async function loadPage(
   _page: ClientPage,
   { prefetch = false } = {},
-): Promise<SvelteConstructor> {
-  const mod = await _page.loader();
-  const component = mod.default;
+): Promise<LoadedClientPage> {
+  const [layouts, mod] = await Promise.all([
+    loadPageLayouts(_page.layouts),
+    _page.loader(),
+  ]);
 
+  const loadedPage: LoadedClientPage = {
+    ..._page,
+    $$loaded: true,
+    module: mod,
+    layouts,
+    get default() {
+      return mod.default;
+    },
+    get meta() {
+      return isLoadedMarkdownPage(this) ? mod.meta : undefined;
+    },
+  };
+
+  if (!prefetch) {
+    page.__set(loadedPage);
+  }
+
+  return loadedPage;
+}
+
+export function loadPageLayouts(
+  layouts: number[],
+): Promise<LoadedClientLayout[]> {
   const $pageLayouts = get(pageLayouts);
-  const layouts = await Promise.all(
-    _page.layouts
+  return Promise.all(
+    layouts
       .map((i) => $pageLayouts[i])
       .map(async (layout) => {
         const mod = await layout.loader();
@@ -95,29 +128,10 @@ async function loadPage(
           $$loaded: true as const,
           ...layout,
           module: mod,
-          get component() {
+          get default() {
             return mod.default;
           },
         };
       }),
   );
-
-  if (!prefetch) {
-    page.__set({
-      ..._page,
-      $$loaded: true,
-      module: mod,
-      layouts,
-      get component() {
-        return mod.default;
-      },
-      get meta() {
-        return isLoadedMarkdownPage(this) ? mod.meta : undefined;
-      },
-    });
-  }
-
-  await tick();
-
-  return component;
 }
