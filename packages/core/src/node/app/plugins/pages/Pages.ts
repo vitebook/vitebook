@@ -3,10 +3,10 @@ import { globbySync } from 'globby';
 import path from 'upath';
 
 import {
-  ensureLeadingSlash,
   prettyJsonStr,
   type ServerLayout,
   type ServerPage,
+  slash,
   stripImportQuotesFromJson,
 } from '../../../../shared';
 import { sortPaths } from './sortPaths';
@@ -124,7 +124,7 @@ export class Pages {
 
   async addPage(filePath: string) {
     const rootPath = this.getRootPath(filePath);
-    const id = ensureLeadingSlash(rootPath);
+    const id = slash(rootPath);
     const route = this.resolveRoutePath(filePath);
     const layouts = this.resolveLayouts(filePath);
     const layoutName = this.getPageLayoutName(filePath);

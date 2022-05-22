@@ -5,11 +5,11 @@ import type { OutputAsset, OutputChunk, RollupOutput } from 'rollup';
 import { ensureFile } from 'src/node/utils';
 
 import {
-  ensureLeadingSlash,
-  removeEndingSlash,
-  removeLeadingSlash,
+  noendslash,
+  noslash,
   ServerEntryModule,
   ServerPage,
+  slash,
 } from '../../../shared';
 import { logger, LoggerIcon } from '../../utils/logger';
 import type { App } from '../App';
@@ -185,11 +185,9 @@ function logRoutes(app: App) {
   app.pages.getPages().forEach((page) => {
     logs.push(
       kleur.white(
-        `- ${removeLeadingSlash(
+        `- ${noslash(
           page.route === '/' ? 'index.html' : decodeURI(page.route),
-        )} ${kleur.dim(
-          page.rootPath ? `(${removeLeadingSlash(page.rootPath)})` : '',
-        )}`,
+        )} ${kleur.dim(page.rootPath ? `(${noslash(page.rootPath)})` : '')}`,
       ),
     );
   });
@@ -231,16 +229,16 @@ async function findPreviewScriptName(app: App): Promise<string | undefined> {
 
 function createLinkTag(app: App, rel: string, fileName?: string) {
   if (!fileName) return '';
-  const baseUrl = removeEndingSlash('/');
-  const href = `${baseUrl}${ensureLeadingSlash(fileName)}`;
+  const baseUrl = noendslash('/');
+  const href = `${baseUrl}${slash(fileName)}`;
   return `<link rel="${rel}" href="${href}">`;
 }
 
 function createPreloadTag(app: App, fileName?: string) {
   if (!fileName) return '';
 
-  const base = removeEndingSlash('/');
-  const href = `${base}${ensureLeadingSlash(fileName)}`;
+  const baseUrl = noendslash('/');
+  const href = `${baseUrl}${slash(fileName)}`;
 
   if (fileName.endsWith('.js')) {
     return `<link rel="modulepreload" crossorigin href="${href}">`;
@@ -269,7 +267,7 @@ function resolveImportsFromManifest(
 
   for (const filename of modules) {
     manifest[filename]?.forEach((file) => {
-      imports.add(removeLeadingSlash(file));
+      imports.add(noslash(file));
     });
   }
 

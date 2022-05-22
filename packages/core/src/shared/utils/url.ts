@@ -3,26 +3,28 @@ export const EXTERNAL_URL_RE = /^https?:/i;
 /**
  * Ensure a url `string` has an ending slash `/`.
  */
-export const ensureEndingSlash = (str: string): string =>
+export const endslash = (str: string): string =>
   /(\.html|\/)$/.test(str) ? str : str + '/';
 
 /**
  * Ensure a url `string` has a leading slash `/`.
  */
-export const ensureLeadingSlash = (str: string): string =>
-  str.replace(/^\/?/, '/');
+export const slash = (str: string): string => str.replace(/^\/?/, '/');
 
 /**
  * Remove leading slash `/` from a `string`.
  */
-export const removeLeadingSlash = (str: string): string =>
-  str.replace(/^\//, '');
+export const noslash = (str: string): string => str.replace(/^\//, '');
 
 /**
  * Remove ending slash `/` from a `string`.
  */
-export const removeEndingSlash = (str: string): string =>
-  str.replace(/\/$/, '');
+export const noendslash = (str: string): string => str.replace(/\/$/, '');
+
+/**
+ * Normalize slashes by ensuring a leading slash and no trailing slash.
+ */
+export const slashes = (str: string) => slash(noendslash(str));
 
 /**
  * Determine if a link is a http link or not.

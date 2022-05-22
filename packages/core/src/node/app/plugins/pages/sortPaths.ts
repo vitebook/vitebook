@@ -1,7 +1,7 @@
 import LRUCache from 'lru-cache';
 import path from 'upath';
 
-import { removeLeadingSlash } from '../../../../shared';
+import { noslash } from '../../../../shared';
 
 // Splits route by `/` and retain splitter.
 const splitRouteRE = /(.*?\/)/g;
@@ -41,8 +41,8 @@ export function comparePaths(
       : -1;
   }
 
-  const tokensA = splitRoute(`<root>/${removeLeadingSlash(pathA)}`);
-  const tokensB = splitRoute(`<root>/${removeLeadingSlash(pathB)}`);
+  const tokensA = splitRoute(`<root>/${noslash(pathA)}`);
+  const tokensB = splitRoute(`<root>/${noslash(pathB)}`);
   const len = Math.max(tokensA.length, tokensB.length);
 
   for (let i = 0; i < len; i++) {

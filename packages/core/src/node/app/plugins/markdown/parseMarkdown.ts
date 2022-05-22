@@ -128,6 +128,7 @@ export function parseMarkdown(
   }
 
   const stuff: MarkdocTreeWalkStuff = {
+    baseUrl: app.vite?.config.base ?? '/',
     filePath,
     pagesDir: pagesDir!,
     highlight: highlight!,
@@ -211,6 +212,7 @@ const componentNameRE = /^component$/;
 export type MarkdocTreeWalkStuff = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [id: string]: any;
+  baseUrl: string;
   filePath: string;
   pagesDir: string;
   links: Set<string>;
@@ -327,7 +329,7 @@ function resolveLinks(tag: Tag, stuff: MarkdocTreeWalkStuff) {
     /^((?:.*)(?:\/|\.md|\.html|\.svelte|\.vue|\.jsx|\.tsx))(#.*)?$/,
   );
 
-  if (isLinkExternal(href)) {
+  if (isLinkExternal(href, stuff.baseUrl)) {
     tag.attributes.target = '_blank';
     tag.attributes.rel = 'noopener noreferrer';
     return;

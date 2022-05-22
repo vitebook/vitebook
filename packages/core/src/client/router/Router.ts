@@ -1,9 +1,4 @@
-import {
-  ensureLeadingSlash,
-  inBrowser,
-  isBoolean,
-  isString,
-} from '../../shared';
+import { inBrowser, isBoolean, isString,slash } from '../../shared';
 import { pages as pagesStore } from '../stores/pages';
 import { route as routeStore } from '../stores/route';
 import { get } from '../stores/store';
@@ -85,7 +80,7 @@ export class Router {
     this.target = target;
     this.context = context;
     this._history = history;
-    this.baseUrl = ensureLeadingSlash(baseUrl);
+    this.baseUrl = slash(baseUrl);
 
     routes?.forEach((route) => {
       this.addRoute(route);
@@ -104,7 +99,7 @@ export class Router {
    * Returns a route declaration given a URL pathname such as `/` or `/getting-started/intro.html`.
    */
   getRoute(path: string) {
-    return this._routes.get(decodeURI(ensureLeadingSlash(path)));
+    return this._routes.get(decodeURI(slash(path)));
   }
 
   /**
@@ -112,9 +107,7 @@ export class Router {
    * declaration.
    */
   hasRoute(pathOrRoute: string | RouteDeclaration) {
-    const path = ensureLeadingSlash(
-      isString(pathOrRoute) ? pathOrRoute : pathOrRoute.path,
-    );
+    const path = slash(isString(pathOrRoute) ? pathOrRoute : pathOrRoute.path);
     return this._routes.has(decodeURI(path));
   }
 
@@ -122,7 +115,7 @@ export class Router {
    * Registers a new route given a declaration.
    */
   addRoute(route: RouteDeclaration) {
-    route.path = ensureLeadingSlash(route.path);
+    route.path = slash(route.path);
     this._routes.set(decodeURI(route.path), route);
   }
 
@@ -130,9 +123,7 @@ export class Router {
    * Deregisters a route given a URL pathname or route declaration.
    */
   removeRoute(pathOrRoute: string | RouteDeclaration) {
-    const path = ensureLeadingSlash(
-      isString(pathOrRoute) ? pathOrRoute : pathOrRoute.path,
-    );
+    const path = slash(isString(pathOrRoute) ? pathOrRoute : pathOrRoute.path);
     this._routes.delete(decodeURI(path));
   }
 
@@ -166,9 +157,7 @@ export class Router {
     const url = isString(pathOrURL) ? this.buildURL(pathOrURL) : pathOrURL;
 
     if (this.owns(url)) {
-      const path = ensureLeadingSlash(
-        url.pathname.slice(this.baseUrl.length) || '/',
-      );
+      const path = slash(url.pathname.slice(this.baseUrl.length) || '/');
       const route =
         this._routes.get(decodeURI(path)) ?? this._routes.get('/404.html')!;
       const query = new URLSearchParams(url.search);
