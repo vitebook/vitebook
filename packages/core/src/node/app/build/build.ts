@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 import fs from 'fs';
 import kleur from 'kleur';
 import ora from 'ora';
@@ -5,8 +6,10 @@ import type { OutputAsset, OutputChunk, RollupOutput } from 'rollup';
 import path from 'upath';
 
 import {
+  DATA_ASSET_BASE_URL,
   noendslash,
   noslash,
+  type ServerContext,
   type ServerEntryModule,
   type ServerPage,
   slash,
@@ -22,20 +25,32 @@ import { bundle, getAppBundleEntries } from './bundle';
 export async function build(app: App): Promise<void> {
   installFetch();
 
-  const startTime = Date.now();
-  const spinner = ora();
-
-  logger.info(kleur.bold(kleur.cyan(`vitebook@${app.version}\n`)));
+  logger.info(kleur.bold(kleur.cyan(`\nvitebook@${app.version}\n`)));
 
   if (app.pages.size === 0) {
     logger.info(kleur.bold(`❓ No pages were resolved\n`));
     return;
   }
 
-  // Render pages
-  spinner.start(kleur.bold(`Rendering ${app.pages.size} pages...`));
+  const startTime = Date.now();
+  const spinner = ora();
+
+  const appEntries = getAppBundleEntries(app);
+  const appEntryFilenames = Object.keys(appEntries);
+
+  const pages = app.pages.getPages();
+  const outputFiles: [filePath: string, content: string][] = [];
+  const pageData: WeakMap<ServerPage, ServerContext['data']> = new WeakMap();
+  const dataHashTable: Record<string, string> = {};
 
   try {
+    // -------------------------------------------------------------------------------------------
+    // BUNDLE
+    // -------------------------------------------------------------------------------------------
+
+    const bundleStartTime = Date.now();
+    spinner.start(kleur.bold('Bundling application...'));
+
     const [clientBundle] = await bundle(app);
 
     const ENTRY_CHUNK = clientBundle.output.find(
@@ -65,27 +80,81 @@ export async function build(app: App): Promise<void> {
       ),
     );
 
+    const bundleEndTime = ((Date.now() - bundleStartTime) / 1000).toFixed(2);
+    spinner.stopAndPersist({
+      symbol: LoggerIcon.Success,
+      text: kleur.bold(
+        `Bundled application in ${kleur.underline(`${bundleEndTime}s`)}`,
+      ),
+    });
+
+    // -------------------------------------------------------------------------------------------
+    // LOAD DATA
+    // -------------------------------------------------------------------------------------------
+
+    spinner.start(kleur.bold('Loading data...'));
+
+    const loadStartTime = Date.now();
+
+    await Promise.all(
+      pages.map(async (page) => {
+        const data = await loadPageDataMap(app, page, (filePath) => {
+          const path = app.dirs.out.resolve(
+            'server',
+            `${appEntryFilenames.find(
+              (name) => appEntries[name] === filePath,
+            )}.cjs`,
+          );
+
+          return require(path);
+        });
+
+        for (const key of data.keys()) {
+          const content = JSON.stringify(data.get(key)!);
+
+          if (content !== '{}') {
+            const hash = createHash('sha1')
+              .update(content)
+              .digest('hex')
+              .substring(0, 8);
+
+            dataHashTable[key] = hash;
+
+            outputFiles.push([
+              path.join(
+                app.dirs.out.path,
+                `${DATA_ASSET_BASE_URL}/${hash}.json`,
+              ),
+              content,
+            ]);
+          }
+        }
+
+        pageData.set(page, data);
+      }),
+    );
+
+    const dataHashTableString = JSON.stringify(dataHashTable);
+
+    const loadEndTime = ((Date.now() - loadStartTime) / 1000).toFixed(2);
+    spinner.stopAndPersist({
+      symbol: LoggerIcon.Success,
+      text: kleur.bold(`Loaded data in ${kleur.underline(`${loadEndTime}s`)}`),
+    });
+
+    // -------------------------------------------------------------------------------------------
+    // RENDER
+    // -------------------------------------------------------------------------------------------
+
+    spinner.start(kleur.bold(`Rendering ${app.pages.size} pages...`));
+
     const serverEntryPath = app.dirs.out.resolve('server', 'entry.cjs');
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { render } = require(serverEntryPath) as ServerEntryModule;
 
-    const pages = app.pages.getPages();
-
-    const appEntries = getAppBundleEntries(app);
-    const appEntryFilenames = Object.keys(appEntries);
-
     for (const page of pages) {
-      const data = await loadPageDataMap(app, page, (filePath) => {
-        const path = app.dirs.out.resolve(
-          'server',
-          `${appEntryFilenames.find(
-            (name) => appEntries[name] === filePath,
-          )}.cjs`,
-        );
-
-        return require(path);
-      });
+      const data = pageData.get(page) ?? new Map();
 
       const { ssr, html, head } = await render(page, { data });
 
@@ -128,11 +197,17 @@ export async function build(app: App): Promise<void> {
         .join('\n    ');
 
       const appScriptTag = `<script type="module" src="/${ENTRY_CHUNK.fileName}" defer></script>`;
-      const dataScriptTag = buildDataLoaderScriptTag(data);
+
+      const dataScriptTag = buildDataLoaderScriptTag(data, dataHashTable);
+
+      const dataHashScriptTag = `<script>window.__VBK_DATA_HASH_MAP__ = ${dataHashTableString};</script>`;
 
       const pageHtml = HTML_TEMPLATE.replace(`<!--@vitebook/head-->`, headTags)
         .replace(`<!--@vitebook/app-->`, html)
-        .replace('<!--@vitebook/body-->', dataScriptTag + appScriptTag)
+        .replace(
+          '<!--@vitebook/body-->',
+          dataHashScriptTag + dataScriptTag + appScriptTag,
+        )
         .replace(
           '<script type="module" src="/:virtual/vitebook/client"></script>',
           '',
@@ -146,22 +221,35 @@ export async function build(app: App): Promise<void> {
 
       const pageHtmlFilePath = app.dirs.out.resolve(filePath.slice(1));
 
-      const outputFiles = [[pageHtmlFilePath, pageHtml]];
-
-      for (const filename of data.keys()) {
-        outputFiles.push([
-          path.join(app.dirs.out.path, filename),
-          JSON.stringify(data.get(filename)!),
-        ]);
-      }
-
-      await Promise.all(
-        outputFiles.map(async ([filePath, fileContent]) => {
-          await ensureFile(filePath);
-          await fs.promises.writeFile(filePath, fileContent);
-        }),
-      );
+      outputFiles.push([pageHtmlFilePath, pageHtml]);
     }
+
+    spinner.stopAndPersist({
+      symbol: LoggerIcon.Success,
+      text: kleur.bold(`Rendered ${kleur.underline(app.pages.size)} pages`),
+    });
+
+    // -------------------------------------------------------------------------------------------
+    // WRITE OUTPUT
+    // -------------------------------------------------------------------------------------------
+
+    spinner.start(`Writing HTML and JSON files...`);
+
+    await Promise.all(
+      outputFiles.map(async ([filePath, fileContent]) => {
+        await ensureFile(filePath);
+        await fs.promises.writeFile(filePath, fileContent);
+      }),
+    );
+
+    spinner.stopAndPersist({
+      symbol: LoggerIcon.Success,
+      text: kleur.bold(`Written files`),
+    });
+
+    // -------------------------------------------------------------------------------------------
+    // CLEAN UP
+    // -------------------------------------------------------------------------------------------
 
     if (!app.env.isDebug) {
       await fs.promises.rm(app.dirs.out.resolve('server'), {
@@ -180,14 +268,9 @@ export async function build(app: App): Promise<void> {
     // ...
   }
 
-  spinner.stopAndPersist({
-    symbol: LoggerIcon.Success,
-    text: kleur.bold(`Rendered ${kleur.underline(app.pages.size)} pages`),
-  });
-
-  logRoutes(app);
-
   const endTime = ((Date.now() - startTime) / 1000).toFixed(2);
+
+  logRoutes(app, pageData, dataHashTable);
 
   const speedIcon = {
     2: '🤯',
@@ -220,18 +303,51 @@ export async function build(app: App): Promise<void> {
   );
 }
 
-function logRoutes(app: App) {
-  const logs: string[] = [''];
+export function logRoutes(
+  app: App,
+  pageData?: WeakMap<ServerPage, ServerContext['data']>,
+  dataHashTable?: Record<string, string>,
+) {
+  const logs: string[] = ['', kleur.bold(kleur.underline('ROUTES')), ''];
 
-  app.pages.getPages().forEach((page) => {
+  for (const page of app.pages.getPages()) {
     logs.push(
       kleur.white(
         `- ${noslash(
           page.route === '/' ? 'index.html' : decodeURI(page.route),
-        )} ${kleur.dim(page.rootPath ? `(${noslash(page.rootPath)})` : '')}`,
+        )} ${kleur.dim(
+          page.rootPath
+            ? `(${noslash(app.dirs.pages.relative(page.rootPath))})`
+            : '',
+        )}`,
       ),
     );
-  });
+
+    if (pageData && dataHashTable) {
+      const data = pageData.get(page);
+
+      if (data && data.size > 0) {
+        for (const id of data.keys()) {
+          const hashedId = dataHashTable[id];
+          if (hashedId) {
+            const file = app.dirs.pages.relative(
+              id.split('/')[0].replace(/_/g, '/'),
+            );
+
+            logs.push(
+              kleur.dim(
+                `  - [${hashedId}] ${file} ${kleur.underline(
+                  humanReadableFileSize(
+                    Buffer.byteLength(JSON.stringify(data.get(id))!, 'utf8'),
+                  ),
+                )}`,
+              ),
+            );
+          }
+        }
+      }
+    }
+  }
 
   logger.info(logs.join('\n'), '\n');
 }
@@ -388,4 +504,32 @@ function isPageChunk(fileName: string, bundle: RollupOutput) {
 
   cache.set(fileName, !!is);
   return is;
+}
+
+/**
+ * @see {@link https://stackoverflow.com/a/14919494}
+ */
+function humanReadableFileSize(bytes, si = false, dp = 1) {
+  const thresh = si ? 1000 : 1024;
+
+  if (Math.abs(bytes) < thresh) {
+    return bytes + 'B';
+  }
+
+  const units = si
+    ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+
+  let u = -1;
+  const r = 10 ** dp;
+
+  do {
+    bytes /= thresh;
+    ++u;
+  } while (
+    Math.round(Math.abs(bytes) * r) / r >= thresh &&
+    u < units.length - 1
+  );
+
+  return bytes.toFixed(dp) + ' ' + units[u];
 }

@@ -90,7 +90,7 @@ async function main() {
     builder.pkg.addField('description', userInput.projectDescription);
   }
 
-  const scripts = ['dev', 'build', 'preview'];
+  const scripts = ['dev', 'build', 'preview', 'routes'];
   const scriptsExist = scripts.some((script) =>
     builder.pkg.hasScriptName(script),
   );

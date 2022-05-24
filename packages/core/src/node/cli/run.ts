@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 import { cac, Command } from 'cac';
+import kleur from 'kleur';
 
+import { logRoutes } from '../app/build';
+import { resolveApp } from '../app/resolveApp';
 import { logger } from '../utils/logger';
 import { esmRequire } from '../utils/module';
 import { buildCommand } from './commands/buildCommand';
@@ -101,6 +104,19 @@ export function cliRun() {
       process.exit(1);
     });
   });
+
+  // Routes
+  program
+    .command('routes [root]', 'Log all application routes')
+    .action(async function runRoutesCommand(root) {
+      const app = await resolveApp(
+        { '--': [], command: 'dev' },
+        { dirs: { root } },
+      );
+
+      logger.info(kleur.bold(kleur.cyan(`\nvitebook@${app.version}`)));
+      logRoutes(app);
+    });
 
   program.parse(process.argv);
 }

@@ -13,11 +13,13 @@ export function isLoadedMarkdownPage(
 
 const separatorRE = /\//g;
 const htmlExtRE = /\.html$/;
-export const DATA_ASSET_URL_BASE = '/assets/data/';
-export function buildDataAssetUrl(fileRootPath: string, urlPath: string) {
-  const asset = `${fileRootPath.replace(separatorRE, '_')}/${urlPath
-    .replace(separatorRE, '_')
-    .replace(htmlExtRE, '')}.json`;
 
-  return `${DATA_ASSET_URL_BASE}${asset}`;
+export const DATA_ASSET_BASE_URL = '/assets/data';
+
+export function buildDataAssetID(fileRootPath: string, urlPath: string) {
+  const id = `${fileRootPath.replace(separatorRE, '_')}/${urlPath
+    .replace(separatorRE, '_')
+    .replace(htmlExtRE, '')}`;
+
+  return id;
 }

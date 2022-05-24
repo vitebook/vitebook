@@ -1,8 +1,7 @@
 import kleur from 'kleur';
 
 import {
-  buildDataAssetUrl,
-  DATA_ASSET_URL_BASE,
+  buildDataAssetID,
   type ServerContext,
   type ServerLoadedData,
   type ServerLoader,
@@ -11,13 +10,18 @@ import {
 import { logger } from '../utils';
 import { type App } from './App';
 
-export function buildDataLoaderScriptTag(map: ServerContext['data']) {
+export function buildDataLoaderScriptTag(
+  map: ServerContext['data'],
+  hashTable?: Record<string, string>,
+) {
   const output = {};
 
-  for (const assetUrl of map.keys()) {
-    const data = map.get(assetUrl)!;
+  for (const id of map.keys()) {
+    const hashedId = hashTable?.[id] ?? id;
+    const data = map.get(id)!;
+
     if (Object.keys(data).length > 0) {
-      output[assetUrl.replace(DATA_ASSET_URL_BASE, '')] = data;
+      output[hashedId] = data;
     }
   }
 
@@ -44,7 +48,7 @@ export async function loadPageDataMap(
           moduleLoader,
         );
 
-        map.set(buildDataAssetUrl(layout.rootPath, page.route), data);
+        map.set(buildDataAssetID(layout.rootPath, page.route), data);
       }),
     (async () => {
       const data = await loadModuleData(
@@ -53,7 +57,7 @@ export async function loadPageDataMap(
         page.route,
         moduleLoader,
       );
-      map.set(buildDataAssetUrl(page.rootPath, page.route), data);
+      map.set(buildDataAssetID(page.rootPath, page.route), data);
     })(),
   ]);
 

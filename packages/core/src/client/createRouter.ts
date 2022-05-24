@@ -2,12 +2,12 @@ import app from ':virtual/vitebook/app';
 
 import {
   type AppContextMap,
-  buildDataAssetUrl,
+  buildDataAssetID,
   type ClientLayoutModule,
   type ClientLoadedData,
   type ClientPage,
   type ClientPageModule,
-  DATA_ASSET_URL_BASE,
+  DATA_ASSET_BASE_URL,
   inBrowser,
   isLoadedMarkdownPage,
   type LoadedClientLayout,
@@ -103,20 +103,20 @@ function handleHMR(router: Router) {
 
 export async function loadPage(
   router: Router,
-  _page: ClientPage,
+  page: ClientPage,
   { prefetch = false } = {},
 ): Promise<LoadedClientPage> {
   const [layouts, pageModule] = await Promise.all([
-    loadPageLayouts(router, _page.layouts),
-    _page.loader(),
+    loadPageLayouts(router, page, page.layouts),
+    page.loader(),
   ]);
 
   const loadedPage: LoadedClientPage = {
-    ..._page,
+    ...page,
     $$loaded: true,
     module: pageModule,
     layouts,
-    data: await loadData(router, _page.rootPath, pageModule),
+    data: await loadData(router, page, page.rootPath, pageModule),
     get default() {
       return pageModule.default;
     },
@@ -126,8 +126,8 @@ export async function loadPage(
   };
 
   if (!prefetch) {
-    const page = getContext(router.context, PAGE_CTX_KEY);
-    page.__set(loadedPage);
+    const store = getContext(router.context, PAGE_CTX_KEY);
+    store.__set(loadedPage);
   }
 
   return loadedPage;
@@ -135,6 +135,7 @@ export async function loadPage(
 
 export function loadPageLayouts(
   router: Router,
+  page: ClientPage,
   layouts: number[],
 ): Promise<LoadedClientLayout[]> {
   const $pageLayouts = get(pageLayouts);
@@ -148,7 +149,7 @@ export function loadPageLayouts(
           $$loaded: true as const,
           ...layout,
           module: mod,
-          data: await loadData(router, layout.rootPath, mod),
+          data: await loadData(router, page, layout.rootPath, mod),
           get default() {
             return mod.default;
           },
@@ -163,28 +164,40 @@ const dataCache = new LRUMap(100);
 
 export async function loadData(
   router: Router,
+  page: ClientPage,
   file: string,
   module: ClientPageModule | ClientLayoutModule,
 ): Promise<ClientLoadedData> {
   if (!module.loader) return {};
 
-  const assetUrl = buildDataAssetUrl(file, router.url.pathname);
+  const id = buildDataAssetID(
+    file,
+    import.meta.env.SSR ? router.url.pathname : page.route,
+  );
+
+  const hashId =
+    import.meta.env.PROD && !import.meta.env.SSR
+      ? // @ts-expect-error - .
+        window.__VBK_DATA_HASH_MAP__[id]
+      : id;
+
+  if (!hashId) return {};
 
   if (import.meta.env.SSR) {
     const { data } = getContext(router.context, SERVER_CTX_KEY);
-    return data.get(assetUrl) ?? {};
+    return data.get(hashId) ?? {};
   }
 
-  if (import.meta.env.PROD && dataCache.has(assetUrl)) {
-    return dataCache.get(assetUrl)!;
+  if (import.meta.env.PROD && dataCache.has(hashId)) {
+    return dataCache.get(hashId)!;
   }
 
   try {
     const json = !router.started
-      ? getDataFromScript(assetUrl)
-      : await (await fetch(assetUrl)).json();
+      ? getDataFromScript(hashId)
+      : await (await fetch(`${DATA_ASSET_BASE_URL}/${hashId}.json`)).json();
 
-    dataCache.set(assetUrl, json);
+    dataCache.set(hashId, json);
 
     return json;
   } catch (e) {
@@ -195,16 +208,12 @@ export async function loadData(
   return {};
 }
 
-let dataScript: HTMLElement | null;
-function getDataFromScript(assetUrl: string) {
-  if (!dataScript) {
-    dataScript = document.getElementById('__VBK_DATA__');
-  }
+function getDataFromScript(id: string) {
+  const dataScript = document.getElementById('__VBK_DATA__');
 
   try {
-    const content = JSON.parse(dataScript?.textContent ?? '{}');
-    const key = assetUrl.replace(DATA_ASSET_URL_BASE, '');
-    return content[key] ?? {};
+    const content = JSON.parse(dataScript!.textContent!);
+    return content[id] ?? {};
   } catch (e) {
     if (import.meta.env.DEV) {
       //
