@@ -1,3 +1,4 @@
+import type { AppContextMap } from '../shared';
 import type { Router } from './router/Router';
 import type { ViewRenderer } from './view/ViewRenderer';
 
@@ -20,7 +21,7 @@ export * from './stores/store';
 export * from './stores/types';
 
 export type ConfigureApp = (app: {
-  context: Map<string, unknown>;
+  context: AppContextMap;
   router: Router;
   renderers: ViewRenderer[];
 }) => void | Promise<void>;

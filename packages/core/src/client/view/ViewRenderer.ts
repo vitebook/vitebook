@@ -1,4 +1,4 @@
-import { type ServerRenderResult } from '../../shared';
+import { type AppContextMap, type ServerRenderResult } from '../../shared';
 
 export type ViewModule = {
   readonly [id: string]: unknown;
@@ -12,7 +12,7 @@ export type ViewRenderer<
 
   attach(options: {
     target: HTMLElement;
-    context: Map<string, unknown>;
+    context: AppContextMap;
     module: ClientModule;
     hydrate: boolean;
   }): void | Promise<void>;
@@ -23,7 +23,7 @@ export type ViewRenderer<
 
   ssr(options: {
     module: ServerModule;
-    context: Map<string, unknown>;
+    context: AppContextMap;
   }):
     | Omit<ServerRenderResult, 'ssr'>
     | Promise<Omit<ServerRenderResult, 'ssr'>>;

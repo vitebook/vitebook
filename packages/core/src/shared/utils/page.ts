@@ -10,3 +10,14 @@ export function isLoadedMarkdownPage(
 ): page is LoadedClientMarkdownPage {
   return isLoadedPage(page) && page.rootPath.endsWith('.md');
 }
+
+const separatorRE = /\//g;
+const htmlExtRE = /\.html$/;
+export const DATA_ASSET_URL_BASE = '/assets/data/';
+export function buildDataAssetUrl(fileRootPath: string, urlPath: string) {
+  const asset = `${fileRootPath.replace(separatorRE, '_')}/${urlPath
+    .replace(separatorRE, '_')
+    .replace(htmlExtRE, '')}.json`;
+
+  return `${DATA_ASSET_URL_BASE}${asset}`;
+}

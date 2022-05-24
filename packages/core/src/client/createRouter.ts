@@ -1,24 +1,38 @@
 import app from ':virtual/vitebook/app';
 
 import {
+  type AppContextMap,
+  buildDataAssetUrl,
+  type ClientLayoutModule,
+  type ClientLoadedData,
   type ClientPage,
+  type ClientPageModule,
+  DATA_ASSET_URL_BASE,
   inBrowser,
   isLoadedMarkdownPage,
   type LoadedClientLayout,
   type LoadedClientPage,
 } from '../shared';
-import { routerContextKey } from './context';
+import {
+  getContext,
+  PAGE_CTX_KEY,
+  ROUTER_CTX_KEY,
+  SERVER_CTX_KEY,
+} from './context';
+import { LRUMap } from './LRUMap.js';
 import { createMemoryHistory } from './router/history/memory';
 import { Router } from './router/Router';
 import { layouts as pageLayouts } from './stores/layouts';
-import { page } from './stores/page';
 import { pages } from './stores/pages';
 import { get } from './stores/store';
 import type { ViewRenderer } from './view/ViewRenderer';
 
 export async function createRouter({
-  context = new Map<string, unknown>(),
-  renderers = [] as ViewRenderer[],
+  context,
+  renderers,
+}: {
+  context: AppContextMap;
+  renderers: ViewRenderer[];
 }) {
   const target = inBrowser ? document.getElementById('app') : null;
 
@@ -29,7 +43,7 @@ export async function createRouter({
     history: inBrowser ? window.history : createMemoryHistory(),
   });
 
-  context.set(routerContextKey, router);
+  context.set(ROUTER_CTX_KEY, router);
 
   addRoutes(router, get(pages));
 
@@ -53,16 +67,17 @@ function addRoutes(router: Router, pages: Readonly<ClientPage[]>) {
   pages.forEach((_page) => {
     router.addRoute({
       path: _page.route,
-      loader: () => loadPage(_page),
+      loader: () => loadPage(router, _page),
       prefetch: async () => {
-        await loadPage(_page, { prefetch: true });
+        await loadPage(router, _page, { prefetch: true });
       },
     });
 
     routes.push(_page.route);
 
+    const page = getContext(router.context, PAGE_CTX_KEY);
     if (import.meta.hot && get(page)?.route === decodeURI(_page.route)) {
-      loadPage(_page);
+      loadPage(router, _page);
     }
   });
 }
@@ -87,28 +102,31 @@ function handleHMR(router: Router) {
 }
 
 export async function loadPage(
+  router: Router,
   _page: ClientPage,
   { prefetch = false } = {},
 ): Promise<LoadedClientPage> {
-  const [layouts, mod] = await Promise.all([
-    loadPageLayouts(_page.layouts),
+  const [layouts, pageModule] = await Promise.all([
+    loadPageLayouts(router, _page.layouts),
     _page.loader(),
   ]);
 
   const loadedPage: LoadedClientPage = {
     ..._page,
     $$loaded: true,
-    module: mod,
+    module: pageModule,
     layouts,
+    data: await loadData(router, _page.rootPath, pageModule),
     get default() {
-      return mod.default;
+      return pageModule.default;
     },
     get meta() {
-      return isLoadedMarkdownPage(this) ? mod.meta : undefined;
+      return isLoadedMarkdownPage(this) ? pageModule.meta : undefined;
     },
   };
 
   if (!prefetch) {
+    const page = getContext(router.context, PAGE_CTX_KEY);
     page.__set(loadedPage);
   }
 
@@ -116,9 +134,11 @@ export async function loadPage(
 }
 
 export function loadPageLayouts(
+  router: Router,
   layouts: number[],
 ): Promise<LoadedClientLayout[]> {
   const $pageLayouts = get(pageLayouts);
+
   return Promise.all(
     layouts
       .map((i) => $pageLayouts[i])
@@ -128,10 +148,68 @@ export function loadPageLayouts(
           $$loaded: true as const,
           ...layout,
           module: mod,
+          data: await loadData(router, layout.rootPath, mod),
           get default() {
             return mod.default;
           },
         };
       }),
   );
+}
+
+// TODO: let's figure out a better number of entries because 100 is random. Probably best to
+// let user configure this.
+const dataCache = new LRUMap(100);
+
+export async function loadData(
+  router: Router,
+  file: string,
+  module: ClientPageModule | ClientLayoutModule,
+): Promise<ClientLoadedData> {
+  if (!module.loader) return {};
+
+  const assetUrl = buildDataAssetUrl(file, router.url.pathname);
+
+  if (import.meta.env.SSR) {
+    const { data } = getContext(router.context, SERVER_CTX_KEY);
+    return data.get(assetUrl) ?? {};
+  }
+
+  if (import.meta.env.PROD && dataCache.has(assetUrl)) {
+    return dataCache.get(assetUrl)!;
+  }
+
+  try {
+    const json = !router.started
+      ? getDataFromScript(assetUrl)
+      : await (await fetch(assetUrl)).json();
+
+    dataCache.set(assetUrl, json);
+
+    return json;
+  } catch (e) {
+    // TODO: handle this with error boundaries.
+    console.error(e);
+  }
+
+  return {};
+}
+
+let dataScript: HTMLElement | null;
+function getDataFromScript(assetUrl: string) {
+  if (!dataScript) {
+    dataScript = document.getElementById('__VBK_DATA__');
+  }
+
+  try {
+    const content = JSON.parse(dataScript?.textContent ?? '{}');
+    const key = assetUrl.replace(DATA_ASSET_URL_BASE, '');
+    return content[key] ?? {};
+  } catch (e) {
+    if (import.meta.env.DEV) {
+      //
+    }
+  }
+
+  return {};
 }

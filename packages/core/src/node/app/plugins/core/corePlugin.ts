@@ -1,13 +1,21 @@
 import {
   type DepOptimizationMetadata,
+  type ModuleNode,
   type UserConfig as ViteConfig,
   type ViteDevServer,
 } from 'vite';
 
+import { type ServerContext, type ServerEntryModule } from '../../../../shared';
 import { virtualAliases, virtualModuleRequestPath } from '../../alias';
 import type { App } from '../../App';
-import { indexHtmlMiddleware } from '../../middleware/indexHtml';
+import { installFetch } from '../../installFetch';
+import {
+  buildDataLoaderScriptTag,
+  loadModuleData,
+  loadPageDataMap,
+} from '../../loader';
 import type { ClientPlugin } from '../ClientPlugin';
+import { readIndexHtmlFile } from './indexHtml';
 
 const clientPackages = ['@vitebook/core', '@vitebook/svelte'];
 
@@ -70,20 +78,115 @@ export function corePlugin(config: ResolvedCorePluginConfig): ClientPlugin {
     vitebookInit(_app) {
       app = _app;
     },
-    configureServer(_server) {
-      server = _server;
+    configureServer(vite) {
+      installFetch();
+
+      server = vite;
 
       app.disposal.add(() => {
-        _server.close.bind(_server);
+        vite.close.bind(vite);
       });
 
-      _server.httpServer?.on('close', () => {
+      vite.httpServer?.on('close', () => {
         app.close();
       });
 
-      // Serve our index.html after Vite history fallback.
       return () => {
-        server.middlewares.use(indexHtmlMiddleware(app, server));
+        server.middlewares.use(async (req, res, next) => {
+          const base = `${vite.config.server.https ? 'https' : 'http'}://${
+            req.headers[':authority'] || req.headers.host
+          }`;
+
+          const url = decodeURI(new URL(base + req.url).pathname);
+
+          if (url.endsWith('.html')) {
+            try {
+              const index = readIndexHtmlFile(app);
+
+              const transformedIndex = await server.transformIndexHtml(
+                url,
+                index,
+                req.originalUrl,
+              );
+
+              const { render } = (await vite.ssrLoadModule(
+                serverEntry,
+              )) as ServerEntryModule;
+
+              const route = decodeURI(url).replace('/index.html', '/');
+
+              const page =
+                app.pages.getPages().find((page) => page.route === route) ??
+                app.pages.getPages().find((page) => page.route === '/404.html');
+
+              if (!page) {
+                res.statusCode = 404;
+                res.end('Not found.');
+                return;
+              }
+
+              const data: ServerContext['data'] = await loadPageDataMap(
+                app,
+                page,
+                server.ssrLoadModule,
+              );
+
+              const dataScript = buildDataLoaderScriptTag(data);
+
+              const { html: appHtml, head } = await render(page, { data });
+
+              const stylesMap = await Promise.all(
+                [
+                  ...page.layouts.map(
+                    (layout) => app.pages.getLayoutByIndex(layout)!.filePath,
+                  ),
+                  page.filePath,
+                ].map((file) => getStylesByFile(vite, file)),
+              );
+
+              // Prevent FOUC during development.
+              const styles = `<style type="text/css">${Object.values(
+                stylesMap.map(Object.values),
+              ).join('')}</style>`;
+
+              const html = transformedIndex
+                .replace(`<!--@vitebook/head-->`, head + styles)
+                .replace(`<!--@vitebook/app-->`, appHtml)
+                .replace('<!--@vitebook/body-->', dataScript);
+
+              res.statusCode = 200;
+              res.setHeader('Content-Type', 'text/html');
+              res.end(html);
+            } catch (e) {
+              vite.ssrFixStacktrace(e as Error);
+              next(e);
+            }
+          }
+
+          if (url.startsWith('/assets/data/pages')) {
+            try {
+              const [file, path] = url.replace('/assets/data/', '').split('/');
+              const modulePath = file.replace(/_/g, '/');
+              const route = path.replace(/_/g, '/').replace(/\.json$/, '');
+
+              const data = await loadModuleData(
+                app,
+                modulePath,
+                route,
+                server.ssrLoadModule,
+              );
+
+              res.statusCode = 200;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify(data));
+            } catch (e) {
+              vite.ssrFixStacktrace(e as Error);
+              next(e);
+            }
+          }
+
+          next();
+        });
       };
     },
     resolveId(id) {
@@ -109,10 +212,6 @@ export function corePlugin(config: ResolvedCorePluginConfig): ClientPlugin {
       return null;
     },
     async load(id) {
-      if (id === virtualModuleRequestPath.noop) {
-        return `export default function() {};`;
-      }
-
       if (id === virtualModuleRequestPath.app) {
         const id = app.config.client.app;
         const baseUrl = app.vite?.config.base ?? '/';
@@ -136,7 +235,74 @@ export function corePlugin(config: ResolvedCorePluginConfig): ClientPlugin {
         ].join('\n');
       }
 
+      if (id === virtualModuleRequestPath.noop) {
+        return `export default function() {};`;
+      }
+
       return null;
     },
   };
+}
+
+// Vite doesn't expose this so we just copy the list for now
+const styleRE = /\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/;
+export async function getStylesByFile(vite: ViteDevServer, file: string) {
+  const files = await vite.moduleGraph.getModulesByFile(file);
+  const node = Array.from(files ?? [])[0];
+
+  if (!node) throw new Error(`Could not find node for ${file}`);
+
+  const deps = new Set<ModuleNode>();
+  await findModuleDeps(vite, node, deps);
+
+  const styles: Record<string, string> = {};
+
+  for (const dep of deps) {
+    const parsed = new URL(dep.url, 'http://localhost/');
+    const query = parsed.searchParams;
+
+    if (
+      styleRE.test(dep.file!) ||
+      (query.has('svelte') && query.get('type') === 'style')
+    ) {
+      try {
+        const mod = await vite.ssrLoadModule(dep.url, { fixStacktrace: false });
+        styles[dep.url] = mod.default;
+      } catch {
+        // no-op
+      }
+    }
+  }
+
+  return styles;
+}
+
+export async function findModuleDeps(
+  vite: ViteDevServer,
+  node: ModuleNode,
+  deps: Set<ModuleNode>,
+) {
+  const edges: Promise<void>[] = [];
+
+  async function add(node: ModuleNode) {
+    if (!deps.has(node)) {
+      deps.add(node);
+      await findModuleDeps(vite, node, deps);
+    }
+  }
+
+  async function addByUrl(url: string) {
+    const node = await vite.moduleGraph.getModuleByUrl(url);
+    if (node) await add(node);
+  }
+
+  if (node.ssrTransformResult) {
+    if (node.ssrTransformResult.deps) {
+      node.ssrTransformResult.deps.forEach((url) => edges.push(addByUrl(url)));
+    }
+  } else {
+    node.importedModules.forEach((node) => edges.push(add(node)));
+  }
+
+  await Promise.all(edges);
 }

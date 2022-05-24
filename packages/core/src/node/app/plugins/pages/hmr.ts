@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { normalizePath, type ViteDevServer } from 'vite';
 
 import { virtualModuleRequestPath } from '../../alias';
@@ -25,9 +26,17 @@ export function handleHMR({ pages, server }: PagesHMRConfig) {
   onFileEvent(isPage, 'change', async (filePath) => {
     const page = pages.getPage(filePath);
     const layoutName = pages.getPageLayoutName(filePath);
+    const hasLoader = pages.hasLoader(
+      fs.readFileSync(filePath, { encoding: 'utf-8' }),
+    );
 
     if (page && page?.layoutName !== layoutName) {
       page.layouts = pages.resolveLayouts(filePath);
+      return { reload: true };
+    }
+
+    if (page && page.hasLoader !== hasLoader) {
+      page.hasLoader = hasLoader;
       return { reload: true };
     }
 
@@ -37,6 +46,20 @@ export function handleHMR({ pages, server }: PagesHMRConfig) {
   onFileEvent(isLayout, 'add', async (filePath) => {
     pages.addLayout(filePath);
     return { reload: true };
+  });
+
+  onFileEvent(isLayout, 'change', async (filePath) => {
+    const layout = pages.getLayout(filePath);
+    const hasLoader = pages.hasLoader(
+      fs.readFileSync(filePath, { encoding: 'utf-8' }),
+    );
+
+    if (layout && layout.hasLoader !== hasLoader) {
+      layout.hasLoader = hasLoader;
+      return { reload: true };
+    }
+
+    return null;
   });
 
   onFileEvent(isLayout, 'unlink', async (filePath) => {

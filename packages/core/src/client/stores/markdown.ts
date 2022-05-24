@@ -1,12 +1,17 @@
-import { isLoadedMarkdownPage } from '../../shared';
-import { page } from './page';
+import { isLoadedMarkdownPage, type MarkdownMeta } from '../../shared';
+import { type PageStore } from './page';
 import { derived } from './store';
+import { type ReadableStore } from './types';
 
-export const markdown = derived(page, ($page) =>
-  isLoadedMarkdownPage($page) ? $page.meta : undefined,
-);
+export type MarkdownStore = ReadableStore<MarkdownMeta | undefined>;
 
-export const frontmatter = derived(
-  markdown,
-  ($meta) => $meta?.frontmatter ?? {},
-);
+export type FrontmatterStore = ReadableStore<MarkdownMeta['frontmatter']>;
+
+export const createMarkdownStore = (page: PageStore): MarkdownStore =>
+  derived(page, ($page) =>
+    isLoadedMarkdownPage($page) ? $page.meta : undefined,
+  );
+
+export const createFrontmatterStore = (
+  markdown: MarkdownStore,
+): FrontmatterStore => derived(markdown, ($meta) => $meta?.frontmatter ?? {});

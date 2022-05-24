@@ -1,4 +1,5 @@
 import { createFilter } from '@rollup/pluginutils';
+import fs from 'fs';
 import { globbySync } from 'globby';
 import path from 'upath';
 
@@ -9,11 +10,14 @@ import {
   slash,
   stripImportQuotesFromJson,
 } from '../../../../shared';
+import { getFrontmatter } from '../markdown';
 import { sortPaths } from './sortPaths';
 
+const MD_FILE_RE = /\.md($|\/)/;
 const LAYOUT_NAME_RE = /(.*?)@layout/;
 const PAGE_LAYOUT_NAME_RE = /@(.*?)\./;
 const STRIP_LAYOUTS_PATH = /\/@layouts\/.+/;
+const HAS_LOADER_RE = /(export function loader|export const loader)/;
 
 export type PagesConfig = {
   include: string[];
@@ -49,10 +53,10 @@ export class Pages {
   }
 
   async init(config: PagesConfig) {
-    config.exclude.push(/@layout\//, /@markdoc\//, /\/@/, /\/_/);
+    config.exclude.push(/@layout\//, /@markdoc\//, /\/@/, /\/_/, /@server/);
     this.pagesFilter = createFilter(config.include, config.exclude);
 
-    config.layouts.exclude.push(/\/_/, /@markdoc\//);
+    config.layouts.exclude.push(/\/_/, /@markdoc\//, /@server/);
     this.layoutsFilter = createFilter(
       config.layouts.include,
       config.layouts.exclude,
@@ -126,8 +130,12 @@ export class Pages {
     const rootPath = this.getRootPath(filePath);
     const id = slash(rootPath);
     const route = this.resolveRoutePath(filePath);
+
+    const fileContent = fs.readFileSync(filePath, { encoding: 'utf-8' });
+
     const layouts = this.resolveLayouts(filePath);
-    const layoutName = this.getPageLayoutName(filePath);
+    const layoutName = this.getPageLayoutName(filePath, fileContent);
+    const hasLoader = this.hasLoader(fileContent);
 
     const page: ServerPage = {
       id,
@@ -136,11 +144,16 @@ export class Pages {
       route,
       layouts,
       layoutName,
+      hasLoader,
       context: {},
     };
 
     this.map.set(rootPath, page);
     return page;
+  }
+
+  hasLoader(fileContent: string) {
+    return HAS_LOADER_RE.test(fileContent);
   }
 
   removePage(filePath: string) {
@@ -168,11 +181,16 @@ export class Pages {
       rootPath.replace(STRIP_LAYOUTS_PATH, '/root.md'),
     );
 
+    const fileContent = fs.readFileSync(filePath, { encoding: 'utf-8' });
+    const hasLoader = HAS_LOADER_RE.test(fileContent);
+
     const layout: ServerLayout = {
+      id: `/${rootPath}`,
       name,
       filePath,
       rootPath,
       owningDir,
+      hasLoader,
     };
 
     this.layouts.set(rootPath, layout);
@@ -223,8 +241,16 @@ export class Pages {
     return this.sortedLayoutPaths.findIndex((f) => f === rootPath);
   }
 
-  getPageLayoutName(pageFilePath: string) {
-    return pageFilePath.match(PAGE_LAYOUT_NAME_RE)?.[1] ?? '';
+  getPageLayoutName(pageFilePath: string, fileContent?: string) {
+    const frontmatter = MD_FILE_RE.test(pageFilePath)
+      ? getFrontmatter(
+          fileContent ?? fs.readFileSync(pageFilePath, { encoding: 'utf-8' }),
+        )
+      : {};
+
+    return (
+      pageFilePath.match(PAGE_LAYOUT_NAME_RE)?.[1] ?? frontmatter.layout ?? ''
+    );
   }
 
   layoutBelongsTo(pageFilePath: string, layoutFilePath: string) {
@@ -247,12 +273,12 @@ export class Pages {
     return `export default ${stripImportQuotesFromJson(
       prettyJsonStr(
         Array.from(this.map.values()).map((page) => ({
-          ...page,
+          route: page.route,
+          rootPath: page.rootPath,
+          layoutName: page.layoutName,
+          layouts: page.layouts,
+          context: page.context,
           loader: `() => import('${page.id}')`,
-          // Not included client-side.
-          id: undefined,
-          filePath: undefined,
-          layoutName: undefined,
         })),
       ),
     )}`;
@@ -264,11 +290,9 @@ export class Pages {
         this.sortedLayoutPaths.map((rootPath) => {
           const layout = this.layouts.get(rootPath)!;
           return {
-            ...layout,
-            loader: `() => import('/${layout.rootPath}')`,
-            // Not included client-side.
-            filePath: undefined,
-            owningDir: undefined,
+            name: layout.name,
+            rootPath: layout.rootPath,
+            loader: `() => import('${layout.id}')`,
           };
         }),
       ),

@@ -1,5 +1,7 @@
 <script>
-  import { page } from '@vitebook/core';
+  import { getPage } from '../context';
+
+  const page = getPage();
 </script>
 
-<svelte:component this={$page.default} />
+<svelte:component this={$page.default} {...$page.data} />

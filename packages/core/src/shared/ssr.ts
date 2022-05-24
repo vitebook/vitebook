@@ -1,18 +1,24 @@
 import type { ServerPage } from './Page';
 
-export type VitebookSSRContext = {
+export type AppContextMap = Map<string, unknown>;
+
+export type ServerContext = {
   modules: Set<string>;
+  data: Map<string, Record<string, unknown>>;
 };
 
 export type ServerEntryModule = {
-  render: ServerRenderFn;
+  render: ServerRenderer;
 };
 
 export type ServerRenderResult = {
-  ssr: VitebookSSRContext;
+  ssr: ServerContext;
   head?: string;
   css?: string;
   html: string;
 };
 
-export type ServerRenderFn = (page: ServerPage) => Promise<ServerRenderResult>;
+export type ServerRenderer = (
+  page: ServerPage,
+  context: { data: ServerContext['data'] },
+) => Promise<ServerRenderResult>;

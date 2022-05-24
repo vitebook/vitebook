@@ -1,7 +1,13 @@
 import type { RollupOutput } from 'rollup';
 import path from 'upath';
-import { build, mergeConfig, Plugin, UserConfig as ViteConfig } from 'vite';
+import {
+  build,
+  mergeConfig,
+  Plugin,
+  type UserConfig as ViteConfig,
+} from 'vite';
 
+import type { ServerLayout, ServerPage } from '../../../shared';
 import type { App } from '../App';
 import { stripPageInfoFromPath } from '../plugins/pages';
 import { extendManualChunks } from './chunks';
@@ -41,25 +47,11 @@ function resolveBundleConfig(
 ): ViteConfig {
   const input = {
     entry: ssr ? app.client.entry.server : app.client.entry.client,
+    // TODO: hardcoding app entry for now until we can use alias (app.config.client.app).
+    // https://github.com/rollup/plugins/issues/1190
+    app: '@vitebook/svelte/App.svelte',
+    ...getAppBundleEntries(app),
   };
-
-  if (!ssr) {
-    for (const page of app.pages.getPages()) {
-      const name = path.trimExt(
-        stripPageInfoFromPath(app.dirs.pages.relative(page.rootPath)),
-      );
-
-      input[`pages/${name}`] = page.filePath;
-    }
-
-    for (const layout of app.pages.getLayouts()) {
-      const name = path
-        .trimExt(app.dirs.pages.relative(layout.rootPath))
-        .replace(/@layouts\//, '');
-
-      input[`layouts/${name}`] = layout.filePath;
-    }
-  }
 
   const baseBundleConfig: ViteConfig = {
     root: app.dirs.root.path,
@@ -116,7 +108,7 @@ function resolveBundleConfig(
 
 function buildPlugin(app: App, { ssr = false }: BundleConfig): Plugin {
   return {
-    name: '@vitebook/core:build',
+    name: '@vitebook/build',
     generateBundle(_, bundle) {
       if (ssr) {
         // SSR build - delete all asset chunks.
@@ -128,4 +120,40 @@ function buildPlugin(app: App, { ssr = false }: BundleConfig): Plugin {
       }
     },
   };
+}
+
+let savedEntries: Record<string, string>;
+export function getAppBundleEntries(app: App) {
+  if (savedEntries) return savedEntries;
+
+  const entries: Record<string, string> = {};
+
+  for (const page of app.pages.getPages()) {
+    const filename = buildPageOutputFilename(app, page);
+    entries[filename] = page.filePath;
+  }
+
+  for (const layout of app.pages.getLayouts()) {
+    const filename = buildLayoutOutputFilename(app, layout);
+    entries[filename] = layout.filePath;
+  }
+
+  savedEntries = entries;
+  return entries;
+}
+
+function buildPageOutputFilename(app: App, page: ServerPage) {
+  const name = path.trimExt(
+    stripPageInfoFromPath(app.dirs.pages.relative(page.rootPath)),
+  );
+
+  return `pages/${name}`;
+}
+
+function buildLayoutOutputFilename(app: App, layout: ServerLayout) {
+  const name = path
+    .trimExt(app.dirs.pages.relative(layout.rootPath))
+    .replace(/@layouts\//, '');
+
+  return `layouts/${name}`;
 }

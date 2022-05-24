@@ -10,8 +10,8 @@ export type PageStore = {
 
 const store = writable<LoadedClientPage>();
 
-export const page: PageStore = {
+export const createPageStore: () => PageStore = () => ({
   subscribe: store.subscribe,
   __update: store.update,
   __set: store.set,
-};
+});

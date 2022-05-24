@@ -29,7 +29,7 @@ export function svelteSSRPlugin(): Plugin {
         const start = code.search(match[0]);
         const end = start + match[0].length;
 
-        const addModuleCode = `  __vitebook__getSSRContext().modules.add(${JSON.stringify(
+        const addModuleCode = `  __vitebook__getServerContext().modules.add(${JSON.stringify(
           app.dirs.root.relative(id),
         )})`;
 
@@ -37,7 +37,7 @@ export function svelteSSRPlugin(): Plugin {
           start,
           end,
           [
-            "import { getSSRContext as __vitebook__getSSRContext } from '@vitebook/svelte';",
+            "import { getServerContext as __vitebook__getServerContext } from '@vitebook/svelte';",
             `const $$render = ${componentName}.$$render;`,
             `${componentName}.$$render = function(...args) {`,
             addModuleCode,

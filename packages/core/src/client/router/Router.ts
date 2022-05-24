@@ -1,6 +1,12 @@
-import { inBrowser, isBoolean, isString,slash } from '../../shared';
+import {
+  type AppContextMap,
+  inBrowser,
+  isBoolean,
+  isString,
+  slash,
+} from '../../shared';
+import { getContext, ROUTE_CTX_KEY } from '../context';
 import { pages as pagesStore } from '../stores/pages';
-import { route as routeStore } from '../stores/route';
 import { get } from '../stores/store';
 import type {
   GoToRouteOptions,
@@ -15,12 +21,13 @@ import type {
 } from './types';
 
 export class Router {
+  protected _url!: URL;
+  protected _started = false;
+  protected _currentRoute?: LoadedRoute;
+  protected _savedScrollPosition?: ScrollToOptions;
+
   protected readonly _history: History;
   protected readonly _routes: Map<string, RouteDeclaration> = new Map();
-
-  protected _currentRoute?: LoadedRoute;
-
-  protected _savedScrollPosition?: ScrollToOptions;
 
   /**
    * The DOM node on which routes will be mounted on.
@@ -30,7 +37,7 @@ export class Router {
   /**
    * Application context that's passed to the route handler.
    */
-  readonly context: Map<string, unknown>;
+  readonly context: AppContextMap;
 
   /**
    * Whether the router is disabled. Disabling the router means the browser will handle all
@@ -70,6 +77,20 @@ export class Router {
   afterNavigate?: RouterAfterNavigateHook;
 
   /**
+   * The current URL.
+   */
+  get url() {
+    return this._url;
+  }
+
+  /**
+   * Whether the router has started (i.e., loaded first page).
+   */
+  get started() {
+    return this._started;
+  }
+
+  /**
    * The currently loaded route.
    */
   get currentRoute() {
@@ -89,6 +110,8 @@ export class Router {
     if (inBrowser) {
       // make it possible to reset focus
       document.body.setAttribute('tabindex', '-1');
+
+      this._url = new URL(location.href);
 
       // create initial history entry, so we can return here
       this._history.replaceState(this._history.state || {}, '', location.href);
@@ -190,6 +213,7 @@ export class Router {
     const url = this.buildURL(path);
 
     if (!this.disabled && this.owns(url)) {
+      this._url = url;
       this._history[replace ? 'replaceState' : 'pushState'](state, '', path);
 
       await this._navigate({
@@ -198,6 +222,8 @@ export class Router {
         keepfocus,
         hash: url.hash,
       });
+
+      this._started = true;
 
       return;
     }
@@ -267,7 +293,7 @@ export class Router {
     const toRoute = { ...route, page };
 
     this._currentRoute = toRoute;
-    routeStore.__set(toRoute);
+    getContext(this.context, ROUTE_CTX_KEY).__set(toRoute);
 
     if (inBrowser) {
       await new Promise((res) => window.requestAnimationFrame(res));
@@ -506,6 +532,6 @@ function getHrefURL(node: HTMLAnchorElement | SVGAElement): URL {
 
 function getBaseUri(baseUrl = '/') {
   return import.meta.env.SSR
-    ? `https://ssr.com${baseUrl}` // protocol/host irrelevant during SSR
+    ? `http://ssr.com${baseUrl}` // protocol/host irrelevant during SSR
     : `${location.protocol}//${location.host}${baseUrl === '/' ? '' : baseUrl}`;
 }

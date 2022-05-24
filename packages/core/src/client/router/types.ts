@@ -1,4 +1,4 @@
-import { type LoadedClientPage } from '../../shared';
+import { type AppContextMap, type LoadedClientPage } from '../../shared';
 
 export type RoutePrefetch = (route: Route) => void | Promise<void>;
 
@@ -15,7 +15,7 @@ export type RouteDeclaration = {
 
 export type RouterOptions = {
   target: HTMLElement | null;
-  context: Map<string, unknown>;
+  context: AppContextMap;
   baseUrl: string;
   history: History;
   routes?: RouteDeclaration[];

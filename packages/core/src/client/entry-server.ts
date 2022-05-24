@@ -1,17 +1,18 @@
 import app from ':virtual/vitebook/app';
 
-import type { ServerRenderFn, VitebookSSRContext } from '../shared';
-import { renderersContextKey, ssrContextKey } from './context';
+import type { ServerContext, ServerRenderer } from '../shared';
+import { initAppContext, RENDERERS_CTX_KEY, SERVER_CTX_KEY } from './context';
 import { createRouter } from './createRouter';
 import { findViewRenderer, type ViewRenderer } from './view/ViewRenderer';
 
-export const render: ServerRenderFn = async (page) => {
-  const context = new Map();
-  const renderers: ViewRenderer[] = [];
-  const ssr: VitebookSSRContext = { modules: new Set() };
+export const render: ServerRenderer = async (page, { data }) => {
+  const context = initAppContext();
 
-  context.set(ssrContextKey, ssr);
-  context.set(renderersContextKey, renderers);
+  const renderers: ViewRenderer[] = [];
+  context.set(RENDERERS_CTX_KEY, renderers);
+
+  const ssr: ServerContext = { modules: new Set(), data };
+  context.set(SERVER_CTX_KEY, ssr);
 
   const router = await createRouter({ context, renderers });
   await router.go(page.route);
