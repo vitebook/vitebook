@@ -1,3 +1,12 @@
+# [0.25.0](https://github.com/vitebook/vitebook/compare/v0.24.2...v0.25.0) (2022-05-26)
+
+### Features
+
+- **core:** add dynamic routes support ([f5fe291](https://github.com/vitebook/vitebook/commit/f5fe2911b8e07aed1bbddbcd562c0324bd034c77))
+- **core:** hash and flatten data in production ([ae77531](https://github.com/vitebook/vitebook/commit/ae77531d8e22de8e231764888529b429b545f04a))
+- **core:** new server `loader` for layouts/pages ([c46d44d](https://github.com/vitebook/vitebook/commit/c46d44d797729c8c852480b1c4e7cb8c9b6c5b5c))
+- refactor core to be library agnostic ([6dccaaf](https://github.com/vitebook/vitebook/commit/6dccaaf61efdffd3ac8ae6310a43223ac4638b69))
+
 ## [0.24.2](https://github.com/vitebook/vitebook/compare/v0.24.1...v0.24.2) (2022-05-18)
 
 ### Bug Fixes
