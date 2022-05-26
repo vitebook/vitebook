@@ -1,3 +1,4 @@
+import { type PageRouteMatcherConfig } from '../../shared';
 import type { CLIArgs } from '../cli/args';
 import type {
   CorePluginConfig,
@@ -35,6 +36,11 @@ export type ResolvedAppConfig = {
   client: ResolvedAppClientConfig;
 
   /**
+   * Routing options.
+   */
+  routes: ResolvedRouteConfig;
+
+  /**
    * Pages options.
    */
   pages: ResolvedPagesPluginConfig;
@@ -56,6 +62,34 @@ export type ResolvedAppConfig = {
    */
   debug: boolean;
 };
+
+export type ResolvedRouteConfig = {
+  /**
+   * An array of pages to crawl from. The given path must be a valid route such as
+   * `/getting-started/` or `/getting-started/intro.html` and a page must match.
+   */
+  entries: string[];
+  /**
+   * Route matchers are used to inject pattern matching into file paths. For example, a file
+   * named `foo{int}.md` has a matcher named `int` which can then be defined at `routes.matchers`
+   * in your Vitebook config. The `{int}` will be replaced with the string or Regex you provide.
+   * You can provide multiple placeholders for a single file name or path.
+   *
+   * @example
+   * ```js
+   * const config = {
+   *   routes: {
+   *     matchers: {
+   *       int: /\d+/,
+   *     },
+   *   },
+   * };
+   * ```
+   */
+  matchers: PageRouteMatcherConfig;
+};
+
+export type RoutesConfig = Partial<ResolvedRouteConfig>;
 
 export type ResolvedAppClientConfig = {
   /**
@@ -118,12 +152,13 @@ export type AppDirsConfig = Partial<ResolvedAppDirsConfig>;
 
 export type AppConfig = Omit<
   Partial<ResolvedAppConfig>,
-  'dirs' | 'core' | 'client' | 'markdown' | 'pages' | 'plugins' | 'router'
+  'dirs' | 'core' | 'client' | 'markdown' | 'pages' | 'plugins' | 'routes'
 > & {
   dirs?: AppDirsConfig;
   core?: CorePluginConfig;
   client?: AppClientConfig;
-  markdown?: MarkdownPluginConfig;
+  routes?: RoutesConfig;
   pages?: PagesPluginConfig;
+  markdown?: MarkdownPluginConfig;
   plugins?: Plugins;
 };

@@ -1,10 +1,13 @@
 import app from ':virtual/vitebook/app';
 
+import { installURLPattern } from '../shared';
 import { initAppContext, RENDERERS_CTX_KEY } from './context';
 import { createRouter } from './createRouter';
 import { findViewRenderer, ViewRenderer } from './view/ViewRenderer';
 
 async function mount() {
+  await installURLPattern();
+
   const context = initAppContext();
 
   const renderers: ViewRenderer[] = [];

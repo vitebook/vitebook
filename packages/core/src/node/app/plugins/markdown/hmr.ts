@@ -16,7 +16,7 @@ export function handleHMR({ pages, markdoc, server }: MarkdownHMRConfig) {
   onFileEvent(isNode, 'add', async (filePath) => {
     markdoc.addNode(filePath);
 
-    for (const page of pages.getPages()) {
+    for (const page of pages.all) {
       if (markdoc.nodeBelongsTo(filePath, page.filePath)) {
         clearMarkdownCache(page.filePath);
         invalidateFile(page.filePath);

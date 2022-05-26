@@ -1,13 +1,15 @@
 import {
   type AppContextMap,
+  calcRoutePathScore,
+  compareRoutes,
   inBrowser,
   isBoolean,
   isString,
+  matchRoute,
   slash,
+  WithRouteMatch,
 } from '../../shared';
 import { getContext, ROUTE_CTX_KEY } from '../context';
-import { pages as pagesStore } from '../stores/pages';
-import { get } from '../stores/store';
 import type {
   GoToRouteOptions,
   LoadedRoute,
@@ -18,16 +20,18 @@ import type {
   RouterBeforeNavigateHook,
   RouterOptions,
   RouterScrollBehaviorHook,
+  ScoredRouteDeclaration,
 } from './types';
 
 export class Router {
   protected _url!: URL;
+  protected _navigatingURL!: URL;
+  protected _navigating = false;
   protected _started = false;
   protected _currentRoute?: LoadedRoute;
   protected _savedScrollPosition?: ScrollToOptions;
-
+  protected _routes: ScoredRouteDeclaration[] = [];
   protected readonly _history: History;
-  protected readonly _routes: Map<string, RouteDeclaration> = new Map();
 
   /**
    * The DOM node on which routes will be mounted on.
@@ -84,6 +88,20 @@ export class Router {
   }
 
   /**
+   * Whether the router is in the process of navigating to another page.
+   */
+  get navigating() {
+    return this._navigating;
+  }
+
+  /**
+   * The URL being navigated to.
+   */
+  get navigatingURL() {
+    return this._navigatingURL;
+  }
+
+  /**
    * Whether the router has started (i.e., loaded first page).
    */
   get started() {
@@ -121,33 +139,42 @@ export class Router {
   /**
    * Returns a route declaration given a URL pathname such as `/` or `/getting-started/intro.html`.
    */
-  getRoute(path: string) {
-    return this._routes.get(decodeURI(slash(path)));
+  getRoute(pathname: string) {
+    const url = this.buildURL(pathname);
+    return matchRoute(url, this._routes);
   }
 
   /**
-   * Returns whether a route has been declared and registered given a URL pathname or a route
-   * declaration.
+   * Returns whether the given pathname matches any route.
    */
-  hasRoute(pathOrRoute: string | RouteDeclaration) {
-    const path = slash(isString(pathOrRoute) ? pathOrRoute : pathOrRoute.path);
-    return this._routes.has(decodeURI(path));
+  hasRoute(pathnameOrRoute: string | RouteDeclaration) {
+    if (!isString(pathnameOrRoute)) {
+      return this._routes.some((route) => route === pathnameOrRoute);
+    }
+
+    const url = this.buildURL(pathnameOrRoute);
+    return !!matchRoute(url, this._routes);
   }
 
   /**
    * Registers a new route given a declaration.
    */
   addRoute(route: RouteDeclaration) {
-    route.path = slash(route.path);
-    this._routes.set(decodeURI(route.path), route);
+    if (!this.hasRoute(route)) {
+      this._routes.push({
+        ...route,
+        score: route.score ?? calcRoutePathScore(route.pathname),
+      });
+
+      this._routes = this._routes.sort(compareRoutes);
+    }
   }
 
   /**
-   * Deregisters a route given a URL pathname or route declaration.
+   * Deregisters a route given it's declaration.
    */
-  removeRoute(pathOrRoute: string | RouteDeclaration) {
-    const path = slash(isString(pathOrRoute) ? pathOrRoute : pathOrRoute.path);
-    this._routes.delete(decodeURI(path));
+  removeRoute(route: RouteDeclaration) {
+    this._routes = this._routes.filter((r) => r !== route);
   }
 
   /**
@@ -176,15 +203,23 @@ export class Router {
   /**
    * Attempts to find, build, and return a `Route` object given a pathname or URL.
    */
-  findRoute(pathOrURL: string | URL): Route | undefined {
-    const url = isString(pathOrURL) ? this.buildURL(pathOrURL) : pathOrURL;
+  findRoute(pathnameOrURL: string | URL): WithRouteMatch<Route> | undefined {
+    const url = isString(pathnameOrURL)
+      ? this.buildURL(pathnameOrURL)
+      : pathnameOrURL;
 
     if (this.owns(url)) {
-      const path = slash(url.pathname.slice(this.baseUrl.length) || '/');
-      const route =
-        this._routes.get(decodeURI(path)) ?? this._routes.get('/404.html')!;
+      const route = matchRoute(url, this._routes);
+
+      if (!route) return undefined;
+
+      const pathname = decodeURI(
+        slash(url.pathname.slice(this.baseUrl.length)),
+      );
+
       const query = new URLSearchParams(url.search);
-      const id = `${path}?${query}`;
+      const id = `${pathname}?${query}`;
+
       return { ...route, id, url };
     }
 
@@ -213,7 +248,6 @@ export class Router {
     const url = this.buildURL(path);
 
     if (!this.disabled && this.owns(url)) {
-      this._url = url;
       this._history[replace ? 'replaceState' : 'pushState'](state, '', path);
 
       await this._navigate({
@@ -223,8 +257,8 @@ export class Router {
         hash: url.hash,
       });
 
+      this._url = url;
       this._started = true;
-
       return;
     }
 
@@ -258,6 +292,9 @@ export class Router {
     scroll,
     hash,
   }: NavigationOptions) {
+    this._navigating = true;
+    this._navigatingURL = url;
+
     const route = this.findRoute(url);
 
     if (route?.redirect) {
@@ -272,7 +309,11 @@ export class Router {
     }
 
     const beforeNavigate = this._currentRoute
-      ? await this.beforeNavigate?.(this._currentRoute, route)
+      ? await this.beforeNavigate?.({
+          from: this._currentRoute,
+          to: route,
+          match: route.match,
+        })
       : undefined;
 
     if (isBoolean(beforeNavigate) && !beforeNavigate) return;
@@ -283,12 +324,6 @@ export class Router {
     }
 
     const page = await route.loader(route);
-
-    if (!get(pagesStore).find((page) => page.route === route.url.pathname)) {
-      await this.go('/404.html');
-      return;
-    }
-
     const fromRoute = this._currentRoute;
     const toRoute = { ...route, page };
 
@@ -313,8 +348,14 @@ export class Router {
     }
 
     if (fromRoute) {
-      await this.afterNavigate?.(fromRoute, toRoute);
+      await this.afterNavigate?.({
+        from: fromRoute,
+        to: toRoute,
+        match: route.match,
+      });
     }
+
+    this._navigating = false;
   }
 
   protected async _scrollToPosition({

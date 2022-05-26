@@ -5,7 +5,7 @@ import { initAppContext, RENDERERS_CTX_KEY, SERVER_CTX_KEY } from './context';
 import { createRouter } from './createRouter';
 import { findViewRenderer, type ViewRenderer } from './view/ViewRenderer';
 
-export const render: ServerRenderer = async (page, { data }) => {
+export const render: ServerRenderer = async (url, { data }) => {
   const context = initAppContext();
 
   const renderers: ViewRenderer[] = [];
@@ -15,7 +15,7 @@ export const render: ServerRenderer = async (page, { data }) => {
   context.set(SERVER_CTX_KEY, ssr);
 
   const router = await createRouter({ context, renderers });
-  await router.go(page.route);
+  await router.go(decodeURI(url.pathname));
 
   const renderer = findViewRenderer(app.id, app.module, renderers);
 

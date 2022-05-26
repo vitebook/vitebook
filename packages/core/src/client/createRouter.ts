@@ -22,6 +22,7 @@ import {
 import { LRUMap } from './LRUMap.js';
 import { createMemoryHistory } from './router/history/memory';
 import { Router } from './router/Router';
+import { RouteDeclaration } from './router/types';
 import { layouts as pageLayouts } from './stores/layouts';
 import { pages } from './stores/pages';
 import { get } from './stores/store';
@@ -61,24 +62,20 @@ export async function createRouter({
   return router;
 }
 
-let routes: string[] = [];
+let routes: RouteDeclaration[] = [];
 
 function addRoutes(router: Router, pages: Readonly<ClientPage[]>) {
-  pages.forEach((_page) => {
-    router.addRoute({
-      path: _page.route,
-      loader: () => loadPage(router, _page),
+  pages.forEach((page) => {
+    const route = {
+      ...page.route,
+      loader: () => loadPage(router, page),
       prefetch: async () => {
-        await loadPage(router, _page, { prefetch: true });
+        await loadPage(router, page, { prefetch: true });
       },
-    });
+    };
 
-    routes.push(_page.route);
-
-    const page = getContext(router.context, PAGE_CTX_KEY);
-    if (import.meta.hot && get(page)?.route === decodeURI(_page.route)) {
-      loadPage(router, _page);
-    }
+    router.addRoute(route);
+    routes.push(route);
   });
 }
 
@@ -107,7 +104,7 @@ export async function loadPage(
   { prefetch = false } = {},
 ): Promise<LoadedClientPage> {
   const [layouts, pageModule] = await Promise.all([
-    loadPageLayouts(router, page, page.layouts),
+    loadPageLayouts(router, page),
     page.loader(),
   ]);
 
@@ -116,7 +113,7 @@ export async function loadPage(
     $$loaded: true,
     module: pageModule,
     layouts,
-    data: await loadData(router, page, page.rootPath, pageModule),
+    data: await loadData(router, pageModule),
     get default() {
       return pageModule.default;
     },
@@ -136,25 +133,23 @@ export async function loadPage(
 export function loadPageLayouts(
   router: Router,
   page: ClientPage,
-  layouts: number[],
 ): Promise<LoadedClientLayout[]> {
   const $pageLayouts = get(pageLayouts);
 
   return Promise.all(
-    layouts
-      .map((i) => $pageLayouts[i])
-      .map(async (layout) => {
-        const mod = await layout.loader();
-        return {
-          $$loaded: true as const,
-          ...layout,
-          module: mod,
-          data: await loadData(router, page, layout.rootPath, mod),
-          get default() {
-            return mod.default;
-          },
-        };
-      }),
+    page.layouts.map(async (index) => {
+      const layout = $pageLayouts[index];
+      const mod = await layout.loader();
+      return {
+        $$loaded: true as const,
+        ...layout,
+        module: mod,
+        data: await loadData(router, mod, index),
+        get default() {
+          return mod.default;
+        },
+      };
+    }),
   );
 }
 
@@ -164,15 +159,16 @@ const dataCache = new LRUMap(100);
 
 export async function loadData(
   router: Router,
-  page: ClientPage,
-  file: string,
   module: ClientPageModule | ClientLayoutModule,
+  layoutIndex?: number,
 ): Promise<ClientLoadedData> {
   if (!module.loader) return {};
 
   const id = buildDataAssetID(
-    file,
-    import.meta.env.SSR ? router.url.pathname : page.route,
+    decodeURI(
+      import.meta.env.SSR ? router.navigatingURL.pathname : location.pathname,
+    ),
+    layoutIndex,
   );
 
   const hashId =

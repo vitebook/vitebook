@@ -2,12 +2,60 @@
 
 import type { MarkdownMeta } from './Markdown';
 
-export type ClientPage = {
+export type WithRouteMatch<T> = T & { match: URLPatternComponentResult };
+
+export type PageRouteMatcher = string | RegExp | null | undefined | void;
+
+export type PageRouteMatcherFn = (input: {
+  filePath: string;
+  pagePath: string;
+}) => PageRouteMatcher;
+
+export type PageRouteMatcherName = string;
+
+export type PageRouteMatcherConfig = Record<
+  PageRouteMatcherName,
+  PageRouteMatcher | PageRouteMatcherFn
+>;
+
+export type PageRoute = {
   /** Page name which can be used to identify route. */
   readonly name?: string;
-  /** Route to this page such as `/pages/page.html`. */
-  readonly route: string;
-  /** System file path relative to `<root>`. */
+  /** The page order number if declared (e.g., `[1]page.md` would be 1). */
+  readonly order?: number;
+  /**
+   * A positive integer representing the path match ranking. The route with the highest score
+   * will win if the path matches multiple routes.
+   */
+  readonly score: number;
+  /**
+   * `URLPattern` used to match a pattern against a route.
+   *
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/URL_Pattern_API}
+   */
+  readonly pattern: URLPattern;
+  /**
+   * The pathname used to construct the `URLPattern`.
+   */
+  readonly pathname: string;
+  /**
+   * Whether the route pattern is dynamic. This includes wildcards `*`,
+   * named groups `/:id`, non-capturing groups `{/path}` and RegExp groups `(\\d+)`.
+   *
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/URL_Pattern_API#pattern_syntax}
+   */
+  readonly dynamic: boolean;
+  /**
+   * Redirect path if route is matched. When building the site, any routes with `redirect` will
+   * use `<meta http-equiv="refresh">`. No other content will be rendered.
+   */
+  readonly redirect?: string;
+};
+
+export type ClientPage = {
+  /** Page route object. */
+  readonly route: PageRoute;
+  /** System file path relative to `<root>` to associated page file. */
   readonly rootPath: string;
   /** Additional page metadata. */
   readonly context: Record<string, unknown>;
@@ -63,8 +111,8 @@ export type ServerPage = Omit<ClientPage, 'loader' | 'layouts'> & {
   id: string;
   /** Absolute system file path to page file.  */
   filePath: string;
-  /** Client-side route to this page inferred from the page file path.  */
-  route: string;
+  /** Page route object. */
+  route: PageRoute;
   /** Page layout name. */
   layoutName: string;
   /**
@@ -95,7 +143,11 @@ export type ServerLayout = Omit<ClientLayout, 'loader'> & {
 export type ServerLoadedData = Record<string, unknown>;
 
 export type ServerLoaderInput = {
-  route: string;
+  pathname: string;
+  page: ServerPage;
+  route: PageRoute;
+  /** Result from running `URLPattern.exec().pathname`. */
+  match: URLPatternComponentResult;
 };
 
 export type ServerLoaderOutput = void | undefined | null | ServerLoadedData;

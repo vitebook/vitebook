@@ -1,4 +1,8 @@
-import { type AppContextMap, type LoadedClientPage } from '../../shared';
+import {
+  type AppContextMap,
+  type LoadedClientPage,
+  type PageRoute,
+} from '../../shared';
 
 export type RoutePrefetch = (route: Route) => void | Promise<void>;
 
@@ -6,11 +10,14 @@ export type RouteLoader = (
   route: Route,
 ) => LoadedClientPage | Promise<LoadedClientPage>;
 
-export type RouteDeclaration = {
-  path: string;
-  redirect?: string;
+export type RouteDeclaration = Omit<PageRoute, 'score'> & {
+  score?: number;
   prefetch?: RoutePrefetch;
   loader: RouteLoader;
+};
+
+export type ScoredRouteDeclaration = RouteDeclaration & {
+  readonly score: number;
 };
 
 export type RouterOptions = {
@@ -22,8 +29,9 @@ export type RouterOptions = {
 };
 
 export type Route = RouteDeclaration & {
-  id: string;
-  url: URL;
+  readonly id: string;
+  readonly url: URL;
+  readonly match: URLPatternComponentResult;
 };
 
 export type LoadedRoute = Route & {
@@ -57,12 +65,18 @@ export type RouterScrollBehaviorHook = (
   savedPosition?: { top?: number; left?: number },
 ) => RouterScrollOptions | Promise<RouterScrollOptions>;
 
-export type RouterBeforeNavigateHook = (
-  from: RouteDeclaration,
-  to: RouteDeclaration,
-) => void | false | { redirect: string } | Promise<void | { redirect: string }>;
+export type RouterBeforeNavigateHook = (navigation: {
+  from: RouteDeclaration;
+  to: RouteDeclaration;
+  match: URLPatternComponentResult;
+}) =>
+  | void
+  | false
+  | { redirect: string }
+  | Promise<void | { redirect: string }>;
 
-export type RouterAfterNavigateHook = (
-  from: LoadedRoute,
-  to: LoadedRoute,
-) => void | Promise<void>;
+export type RouterAfterNavigateHook = (navigation: {
+  from: LoadedRoute;
+  to: LoadedRoute;
+  match: URLPatternComponentResult;
+}) => void | Promise<void>;

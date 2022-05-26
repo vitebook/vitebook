@@ -17,7 +17,7 @@ export type App = {
   client: ClientPlugin;
   config: ResolvedAppConfig;
   plugins: FilteredPlugins;
-  context: Record<string, unknown>;
+  context: Map<string, unknown>;
   pages: Pages;
   markdoc: MarkdocSchema;
   disposal: DisposalBin;

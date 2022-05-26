@@ -1,5 +1,3 @@
-import type { ServerPage } from './Page';
-
 export type AppContextMap = Map<string, unknown>;
 
 export type ServerContext = {
@@ -19,6 +17,6 @@ export type ServerRenderResult = {
 };
 
 export type ServerRenderer = (
-  page: ServerPage,
+  url: URL,
   context: { data: ServerContext['data'] },
 ) => Promise<ServerRenderResult>;

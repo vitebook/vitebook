@@ -128,12 +128,12 @@ export function getAppBundleEntries(app: App) {
 
   const entries: Record<string, string> = {};
 
-  for (const page of app.pages.getPages()) {
+  for (const page of app.pages.all) {
     const filename = buildPageOutputFilename(app, page);
     entries[filename] = page.filePath;
   }
 
-  for (const layout of app.pages.getLayouts()) {
+  for (const layout of app.pages.layouts) {
     const filename = buildLayoutOutputFilename(app, layout);
     entries[filename] = layout.filePath;
   }

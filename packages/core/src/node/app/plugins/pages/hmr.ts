@@ -15,7 +15,7 @@ export function handleHMR({ pages, server }: PagesHMRConfig) {
 
   onFileEvent(isPage, 'add', async (filePath) => {
     pages.addPage(filePath);
-    invalidateModule(virtualModuleRequestPath.pages);
+    return { reload: true };
   });
 
   onFileEvent(isPage, 'unlink', async (filePath) => {

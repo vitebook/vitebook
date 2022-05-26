@@ -9,5 +9,13 @@ export const stripImportQuotesRE = /"\(\) => import\((.+)\)"/g;
  * dynamic import again.
  */
 export function stripImportQuotesFromJson(json: string): string {
-  return json.replace(stripImportQuotesRE, '() => import($1)');
+  return json.replace(stripImportQuotesRE, `() => import($1)`);
+}
+
+/**
+ * `upath` is normalizing paths to posix but messing up regex in filepath so they don't match by
+ * converting `\` to `/`.
+ */
+export function fixRegexInPath(filePath: string) {
+  return filePath.replace(/\(.*\)/, (m) => m.replace(/\//g, '\\'));
 }

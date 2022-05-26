@@ -2,12 +2,14 @@ import { globbySync } from 'globby';
 import path from 'upath';
 import { loadConfigFromFile } from 'vite';
 
+import { installURLPattern } from '../../../shared';
 import { resolveRelativePath } from '../../utils';
 import type { App, AppDirs, AppEnv } from '../App';
 import type {
   AppConfig,
   ResolvedAppClientConfig,
   ResolvedAppConfig,
+  ResolvedRouteConfig,
 } from '../AppConfig';
 import { build } from '../build';
 import { dev } from '../dev';
@@ -32,6 +34,8 @@ export const createApp = async (
   config: AppConfig,
   envConfig?: Partial<AppEnv>,
 ): Promise<App> => {
+  await installURLPattern();
+
   const version = getAppVersion();
 
   const vite = await loadConfigFromFile({
@@ -86,7 +90,7 @@ export const createApp = async (
     dirs,
     plugins,
     vite,
-    context: {},
+    context: new Map(),
     client: core,
     config: __config,
     pages: new Pages(),
@@ -138,6 +142,7 @@ export async function resolveAppConfig({
   debug = false,
   core = {},
   client = {},
+  routes = {},
   pages = {},
   markdown = {},
   plugins = [],
@@ -158,8 +163,17 @@ export async function resolveAppConfig({
     configFiles: client.configFiles ?? [],
   };
 
-  const pageExts = `md,svelte,vue,jsx,tsx`;
+  const __routes: ResolvedRouteConfig = {
+    entries: routes.entries ?? [],
+    matchers: {
+      int: /\d+/,
+      str: /\w+/,
+      bool: /(true|false|0|1)/,
+      ...routes.matchers,
+    },
+  };
 
+  const pageExts = `md,svelte,vue,jsx,tsx`;
   const __pages: ResolvedPagesPluginConfig = {
     include: pages.include ?? [`**/*.{${pageExts}}`],
     exclude: pages.exclude ?? [],
@@ -200,6 +214,7 @@ export async function resolveAppConfig({
     },
     core: __core,
     client: __client,
+    routes: __routes,
     pages: __pages,
     markdown: __markdown,
     plugins: plugins.flat().filter(Boolean) as FilteredPlugins,

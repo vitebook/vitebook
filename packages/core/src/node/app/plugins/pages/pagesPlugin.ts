@@ -45,6 +45,7 @@ export function pagesPlugin(config: ResolvedPagesPluginConfig): Plugin {
       await app.pages.init({
         include,
         exclude,
+        matchers: app.config.routes.matchers,
         dirs: {
           root: app.dirs.root.path,
           pages: app.dirs.pages.path,

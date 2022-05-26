@@ -7,6 +7,8 @@ import path from 'upath';
 
 import {
   DATA_ASSET_BASE_URL,
+  isLinkExternal,
+  matchRouteInfo,
   noendslash,
   noslash,
   type ServerContext,
@@ -18,8 +20,11 @@ import { ensureFile } from '../../utils';
 import { logger, LoggerIcon } from '../../utils/logger';
 import type { App } from '../App';
 import { installFetch } from '../installFetch';
-import { buildDataLoaderScriptTag, loadPageDataMap } from '../loader';
-import { readIndexHtmlFile } from '../plugins/core';
+import {
+  buildDataScriptTag,
+  loadPageDataMap,
+  readIndexHtmlFile,
+} from '../plugins/core';
 import { bundle, getAppBundleEntries } from './bundle';
 
 export async function build(app: App): Promise<void> {
@@ -35,13 +40,18 @@ export async function build(app: App): Promise<void> {
   const startTime = Date.now();
   const spinner = ora();
 
+  const baseUrl = app.vite?.config.base ?? '/';
+
   const appEntries = getAppBundleEntries(app);
   const appEntryFilenames = Object.keys(appEntries);
 
-  const pages = app.pages.getPages();
+  const pages = app.pages.all;
   const outputFiles: [filePath: string, content: string][] = [];
-  const pageData: WeakMap<ServerPage, ServerContext['data']> = new WeakMap();
   const dataHashTable: Record<string, string> = {};
+  const pageData: Map<string, ServerContext['data']> = new Map();
+
+  const hrefRE = /href="(.*?)"/g;
+  const seenHref = new Map<string, ServerPage>();
 
   try {
     // -------------------------------------------------------------------------------------------
@@ -92,55 +102,44 @@ export async function build(app: App): Promise<void> {
     // LOAD DATA
     // -------------------------------------------------------------------------------------------
 
-    spinner.start(kleur.bold('Loading data...'));
+    // eslint-disable-next-line no-inner-declarations
+    async function loadData(url: URL, page: ServerPage) {
+      if (pageData.has(url.pathname)) {
+        return pageData.get(url.pathname)!;
+      }
 
-    const loadStartTime = Date.now();
+      const data = await loadPageDataMap(url, app, page, (filePath) => {
+        const path = app.dirs.out.resolve(
+          'server',
+          `${appEntryFilenames
+            .find((name) => appEntries[name] === filePath)
+            ?.replace(/:/g, '_')}.cjs`,
+        );
 
-    await Promise.all(
-      pages.map(async (page) => {
-        const data = await loadPageDataMap(app, page, (filePath) => {
-          const path = app.dirs.out.resolve(
-            'server',
-            `${appEntryFilenames.find(
-              (name) => appEntries[name] === filePath,
-            )}.cjs`,
-          );
+        return require(path);
+      });
 
-          return require(path);
-        });
+      for (const key of data.keys()) {
+        const content = JSON.stringify(data.get(key)!);
 
-        for (const key of data.keys()) {
-          const content = JSON.stringify(data.get(key)!);
+        if (content !== '{}') {
+          const hash = createHash('sha1')
+            .update(content)
+            .digest('hex')
+            .substring(0, 8);
 
-          if (content !== '{}') {
-            const hash = createHash('sha1')
-              .update(content)
-              .digest('hex')
-              .substring(0, 8);
+          dataHashTable[key] = hash;
 
-            dataHashTable[key] = hash;
-
-            outputFiles.push([
-              path.join(
-                app.dirs.out.path,
-                `${DATA_ASSET_BASE_URL}/${hash}.json`,
-              ),
-              content,
-            ]);
-          }
+          outputFiles.push([
+            path.join(app.dirs.out.path, `${DATA_ASSET_BASE_URL}/${hash}.json`),
+            content,
+          ]);
         }
+      }
 
-        pageData.set(page, data);
-      }),
-    );
-
-    const dataHashTableString = JSON.stringify(dataHashTable);
-
-    const loadEndTime = ((Date.now() - loadStartTime) / 1000).toFixed(2);
-    spinner.stopAndPersist({
-      symbol: LoggerIcon.Success,
-      text: kleur.bold(`Loaded data in ${kleur.underline(`${loadEndTime}s`)}`),
-    });
+      pageData.set(url.pathname, data);
+      return data;
+    }
 
     // -------------------------------------------------------------------------------------------
     // RENDER
@@ -153,10 +152,14 @@ export async function build(app: App): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { render } = require(serverEntryPath) as ServerEntryModule;
 
-    for (const page of pages) {
-      const data = pageData.get(page) ?? new Map();
+    // eslint-disable-next-line no-inner-declarations
+    async function buildPage(url: URL, page: ServerPage) {
+      if (seenHref.has(url.pathname)) return;
+      seenHref.set(url.pathname, page);
 
-      const { ssr, html, head } = await render(page, { data });
+      const data = await loadData(url, page);
+
+      const { ssr, html, head } = await render(url, { data });
 
       const stylesheetLinks = [CSS_CHUNK?.fileName]
         .filter(Boolean)
@@ -198,9 +201,9 @@ export async function build(app: App): Promise<void> {
 
       const appScriptTag = `<script type="module" src="/${ENTRY_CHUNK.fileName}" defer></script>`;
 
-      const dataScriptTag = buildDataLoaderScriptTag(data, dataHashTable);
+      const dataScriptTag = buildDataScriptTag(data, dataHashTable);
 
-      const dataHashScriptTag = `<script>window.__VBK_DATA_HASH_MAP__ = ${dataHashTableString};</script>`;
+      const dataHashScriptTag = `<script>window.__VBK_DATA_HASH_MAP__ = __VBK_DATA__;</script>`;
 
       const pageHtml = HTML_TEMPLATE.replace(`<!--@vitebook/head-->`, headTags)
         .replace(`<!--@vitebook/app-->`, html)
@@ -213,7 +216,7 @@ export async function build(app: App): Promise<void> {
           '',
         );
 
-      const decodedRoute = decodeURI(page.route);
+      const decodedRoute = decodeURI(url.pathname);
 
       const filePath = decodedRoute.endsWith('/')
         ? `${decodedRoute}index.html`
@@ -222,6 +225,60 @@ export async function build(app: App): Promise<void> {
       const pageHtmlFilePath = app.dirs.out.resolve(filePath.slice(1));
 
       outputFiles.push([pageHtmlFilePath, pageHtml]);
+
+      // Attempt to crawl for additional links.
+      for (let href of pageHtml.match(hrefRE) ?? []) {
+        href = href.slice(6, -1);
+
+        if (
+          !href.startsWith('/assets') &&
+          !isLinkExternal(href, baseUrl) &&
+          !seenHref.has(href)
+        ) {
+          const url = new URL(`http://ssr.com${slash(href)}`);
+
+          const { index } = matchRouteInfo(url, app.pages.all) ?? {};
+
+          if (index) {
+            const page = app.pages.all[index];
+            await buildPage(url, page);
+          } else {
+            logger.warn(
+              logger.formatWarnMsg(
+                [
+                  `${kleur.bold('(404)')} Found link matching no page.`,
+                  '',
+                  `${kleur.bold('Link:')} ${href}`,
+                  `${kleur.bold('File Path:')} ${page.rootPath}`,
+                ].join('\n'),
+              ),
+            );
+          }
+        }
+      }
+    }
+
+    // Start with static paths and then crawl additional links.
+    for (const page of pages.filter((page) => !page.route.dynamic).reverse()) {
+      await buildPage(new URL(`http://ssr.com${page.route.pathname}`), page);
+    }
+
+    for (const entry of app.config.routes.entries) {
+      const url = new URL(`http://ssr.com${slash(entry)}`);
+      const { index } = matchRouteInfo(url, app.pages.all) ?? {};
+
+      if (index) {
+        const page = app.pages.all[index];
+        await buildPage(url, page);
+      } else {
+        logger.warn(
+          logger.formatWarnMsg(
+            `${kleur.bold(
+              '(404)',
+            )} No matching route for entry ${kleur.underline(entry)}.\n`,
+          ),
+        );
+      }
     }
 
     spinner.stopAndPersist({
@@ -233,10 +290,17 @@ export async function build(app: App): Promise<void> {
     // WRITE OUTPUT
     // -------------------------------------------------------------------------------------------
 
-    spinner.start(`Writing HTML and JSON files...`);
+    spinner.start(`Writing files...`);
+
+    const dataInsertRE = /__VBK_DATA__/;
+    const dataHashTableString = JSON.stringify(dataHashTable);
 
     await Promise.all(
       outputFiles.map(async ([filePath, fileContent]) => {
+        if (filePath.endsWith('.html')) {
+          fileContent = fileContent.replace(dataInsertRE, dataHashTableString);
+        }
+
         await ensureFile(filePath);
         await fs.promises.writeFile(filePath, fileContent);
       }),
@@ -244,11 +308,11 @@ export async function build(app: App): Promise<void> {
 
     spinner.stopAndPersist({
       symbol: LoggerIcon.Success,
-      text: kleur.bold(`Written files`),
+      text: kleur.bold(`Committed files`),
     });
 
     // -------------------------------------------------------------------------------------------
-    // CLEAN UP
+    // CLEAN + LOG
     // -------------------------------------------------------------------------------------------
 
     if (!app.env.isDebug) {
@@ -270,7 +334,7 @@ export async function build(app: App): Promise<void> {
 
   const endTime = ((Date.now() - startTime) / 1000).toFixed(2);
 
-  logRoutes(app, pageData, dataHashTable);
+  logRoutes(app, seenHref);
 
   const speedIcon = {
     2: '🤯',
@@ -303,50 +367,21 @@ export async function build(app: App): Promise<void> {
   );
 }
 
-export function logRoutes(
-  app: App,
-  pageData?: WeakMap<ServerPage, ServerContext['data']>,
-  dataHashTable?: Record<string, string>,
-) {
+export function logRoutes(app: App, seenHref: Map<string, ServerPage>) {
   const logs: string[] = ['', kleur.bold(kleur.underline('ROUTES')), ''];
 
-  for (const page of app.pages.getPages()) {
+  for (const href of seenHref.keys()) {
+    const page = seenHref.get(href)!;
+
     logs.push(
       kleur.white(
-        `- ${noslash(
-          page.route === '/' ? 'index.html' : decodeURI(page.route),
-        )} ${kleur.dim(
+        `- ${href === '/' ? href : noslash(href)} ${kleur.dim(
           page.rootPath
             ? `(${noslash(app.dirs.pages.relative(page.rootPath))})`
             : '',
         )}`,
       ),
     );
-
-    if (pageData && dataHashTable) {
-      const data = pageData.get(page);
-
-      if (data && data.size > 0) {
-        for (const id of data.keys()) {
-          const hashedId = dataHashTable[id];
-          if (hashedId) {
-            const file = app.dirs.pages.relative(
-              id.split('/')[0].replace(/_/g, '/'),
-            );
-
-            logs.push(
-              kleur.dim(
-                `  - [${hashedId}] ${file} ${kleur.underline(
-                  humanReadableFileSize(
-                    Buffer.byteLength(JSON.stringify(data.get(id))!, 'utf8'),
-                  ),
-                )}`,
-              ),
-            );
-          }
-        }
-      }
-    }
   }
 
   logger.info(logs.join('\n'), '\n');
@@ -504,32 +539,4 @@ function isPageChunk(fileName: string, bundle: RollupOutput) {
 
   cache.set(fileName, !!is);
   return is;
-}
-
-/**
- * @see {@link https://stackoverflow.com/a/14919494}
- */
-function humanReadableFileSize(bytes, si = false, dp = 1) {
-  const thresh = si ? 1000 : 1024;
-
-  if (Math.abs(bytes) < thresh) {
-    return bytes + 'B';
-  }
-
-  const units = si
-    ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
-
-  let u = -1;
-  const r = 10 ** dp;
-
-  do {
-    bytes /= thresh;
-    ++u;
-  } while (
-    Math.round(Math.abs(bytes) * r) / r >= thresh &&
-    u < units.length - 1
-  );
-
-  return bytes.toFixed(dp) + ' ' + units[u];
 }

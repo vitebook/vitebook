@@ -60,7 +60,8 @@
     "magic-string": "^0.25.9",
     "node-fetch": "^3.2.4",
     "ora": "^6.0.0",
-    "pkg-up": "^2.0.0"
+    "pkg-up": "^2.0.0",
+    "urlpattern-polyfill": "^5.0.0"
   },
   "peerDependencies": {
     "@wooorm/starry-night": "^1.0.0",

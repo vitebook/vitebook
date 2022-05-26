@@ -2,15 +2,17 @@ import kleur from 'kleur';
 
 import {
   buildDataAssetID,
+  execRouteMatch,
   type ServerContext,
   type ServerLoadedData,
   type ServerLoader,
+  type ServerLoaderInput,
   type ServerPage,
-} from '../../shared';
-import { logger } from '../utils';
-import { type App } from './App';
+} from '../../../../shared';
+import { logger } from '../../../utils';
+import { type App } from '../../App';
 
-export function buildDataLoaderScriptTag(
+export function buildDataScriptTag(
   map: ServerContext['data'],
   hashTable?: Record<string, string>,
 ) {
@@ -30,34 +32,52 @@ export function buildDataLoaderScriptTag(
   )}</script>`;
 }
 
+export function buildServerLoaderInput(
+  url: URL,
+  page: ServerPage,
+): ServerLoaderInput {
+  const match = execRouteMatch(url, page.route)!;
+
+  return {
+    pathname: url.pathname,
+    page,
+    route: page.route,
+    match,
+  };
+}
+
 export async function loadPageDataMap(
+  url: URL,
   app: App,
   page: ServerPage,
   moduleLoader: (filePath: string) => unknown | Promise<unknown>,
 ) {
   const map: ServerContext['data'] = new Map();
 
-  await Promise.all([
-    ...page.layouts
-      .map((layout) => app.pages.getLayoutByIndex(layout)!)
-      .map(async (layout) => {
-        const data = await loadModuleData(
-          app,
-          layout.rootPath,
-          page.route,
-          moduleLoader,
-        );
+  const pathname = decodeURI(url.pathname);
+  const input = buildServerLoaderInput(url, page);
 
-        map.set(buildDataAssetID(layout.rootPath, page.route), data);
-      }),
+  await Promise.all([
+    ...page.layouts.map(async (index) => {
+      const layout = app.pages.getLayoutByIndex(index)!;
+
+      const data = await loadModuleData(
+        app,
+        layout.filePath,
+        input,
+        moduleLoader,
+      );
+
+      map.set(buildDataAssetID(pathname, index), data);
+    }),
     (async () => {
       const data = await loadModuleData(
         app,
-        page.rootPath,
-        page.route,
+        page.filePath,
+        input,
         moduleLoader,
       );
-      map.set(buildDataAssetID(page.rootPath, page.route), data);
+      map.set(buildDataAssetID(pathname), data);
     })(),
   ]);
 
@@ -66,15 +86,15 @@ export async function loadPageDataMap(
 
 export async function loadModuleData(
   app: App,
-  fileRootPath: string | null,
-  route: string | null,
+  filePath: string | null,
+  input: ServerLoaderInput,
   moduleLoader: (filePath: string) => unknown | Promise<unknown>,
 ): Promise<ServerLoadedData> {
-  if (!fileRootPath || !route) return {};
+  if (!filePath) return {};
 
-  const module = app.pages.isLayout(fileRootPath)
-    ? app.pages.getLayout(fileRootPath)
-    : app.pages.getPage(fileRootPath);
+  const module = app.pages.isLayout(filePath)
+    ? app.pages.getLayout(filePath)
+    : app.pages.getPage(filePath);
 
   if (!module || !module.hasLoader) return {};
 
@@ -83,15 +103,15 @@ export async function loadModuleData(
   };
 
   try {
-    const data = await loader?.({ route });
+    const data = await loader?.(input);
 
     if (typeof data !== 'object') {
       logger.warn(
         logger.formatWarnMsg(
           [
             'Received invalid data object.\n',
-            `${kleur.bold('File Path:')} ${fileRootPath}`,
-            `${kleur.bold('Route:')} ${route}`,
+            `${kleur.bold('File Path:')} ${filePath}`,
+            `${kleur.bold('Input:')} ${input}`,
             `${kleur.bold('Data:')} ${data}`,
             `${kleur.bold('Data Type:')} ${typeof data}`,
           ].join('\n'),
@@ -108,8 +128,8 @@ export async function loadModuleData(
       logger.formatErrorMsg(
         [
           'Error was thrown by data loader.\n',
-          `${kleur.bold('File Path:')} ${fileRootPath}`,
-          `${kleur.bold('URL Path:')} ${route}`,
+          `${kleur.bold('File Path:')} ${filePath}`,
+          `${kleur.bold('Input:')} ${input}`,
         ].join('\n'),
       ),
       `\n${e}`,

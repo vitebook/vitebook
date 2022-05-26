@@ -1,3 +1,5 @@
+/// <reference types="urlpattern-polyfill" />
+
 declare module '*.md' {
   const meta: import('./index').MarkdownMeta;
   export { meta };
