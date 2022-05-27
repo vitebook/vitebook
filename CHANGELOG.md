@@ -1,3 +1,9 @@
+# [0.26.0](https://github.com/vitebook/vitebook/compare/v0.25.3...v0.26.0) (2022-05-27)
+
+### Features
+
+- **svelte:** new stores for easier app context access ([aacb232](https://github.com/vitebook/vitebook/commit/aacb232b1b925c579a57e0777d898259bc2ebde9))
+
 ## [0.25.3](https://github.com/vitebook/vitebook/compare/v0.25.2...v0.25.3) (2022-05-27)
 
 ### Bug Fixes
