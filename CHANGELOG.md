@@ -1,3 +1,9 @@
+# [0.27.0](https://github.com/vitebook/vitebook/compare/v0.26.2...v0.27.0) (2022-05-27)
+
+### Features
+
+- **core:** new router navigation store ([8cc5ee8](https://github.com/vitebook/vitebook/commit/8cc5ee80cdd4cbcb9a72b297855a485f469cc4a4))
+
 ## [0.26.2](https://github.com/vitebook/vitebook/compare/v0.26.1...v0.26.2) (2022-05-27)
 
 ### Bug Fixes
