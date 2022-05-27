@@ -1,7 +1,7 @@
 {
   "name": "create-vitebook",
   "type": "module",
-  "version": "0.25.0",
+  "version": "0.25.2",
   "license": "MIT",
   "main": "bin/create-vitebook.js",
   "engines": {

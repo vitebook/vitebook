@@ -1,3 +1,13 @@
+## [0.25.2](https://github.com/vitebook/vitebook/compare/v0.25.0...v0.25.2) (2022-05-27)
+
+### Bug Fixes
+
+- **core:** add workspace root `node_modules` to allowed files ([4350e8d](https://github.com/vitebook/vitebook/commit/4350e8dbba7f5e59ada9d536bfacb13f92a42e1c))
+- **core:** do not crawl links inside `<head>` ([91be5f2](https://github.com/vitebook/vitebook/commit/91be5f2078ba70b94662d98835f205274cf6b9b8))
+- **create:** add markdown files to tailwind content ([c787350](https://github.com/vitebook/vitebook/commit/c78735071d3f68b4b5dc8b1e5bb09b91a9a5e515))
+- **create:** add missing svelte globals to `shim.d.ts` ([76327fd](https://github.com/vitebook/vitebook/commit/76327fd8b69c7f2cc390558b3bcb416d20b69481))
+- **create:** inject global css file in root `index.html` to avoid FOUC ([dcae9ab](https://github.com/vitebook/vitebook/commit/dcae9ab7f14dd1cd85622b9d60bc1af0920586fd))
+
 # [0.25.0](https://github.com/vitebook/vitebook/compare/v0.24.2...v0.25.0) (2022-05-26)
 
 ### Features
