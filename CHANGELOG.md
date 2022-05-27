@@ -1,3 +1,9 @@
+## [0.26.2](https://github.com/vitebook/vitebook/compare/v0.26.1...v0.26.2) (2022-05-27)
+
+### Bug Fixes
+
+- **core:** router context return type is incorrect ([67d2fac](https://github.com/vitebook/vitebook/commit/67d2face134ff2443483e9e37d5770dacac79c0d))
+
 ## [0.26.1](https://github.com/vitebook/vitebook/compare/v0.26.0...v0.26.1) (2022-05-27)
 
 ### Bug Fixes
