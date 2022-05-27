@@ -23,18 +23,6 @@ export function addTailwindFeature(builder) {
     'global.css',
     `@tailwind base;\n@tailwind components;\n@tailwind utilities;`,
   );
-
-  builder.hooks.postBuild.push(() => {
-    const indexFile = builder.dirs.src.template.root.readFile('index.html');
-    builder.dirs.dest.root.writeFile(
-      'index.html',
-      indexFile.replace(
-        '<!--@vitebook/head-->',
-        `<link rel="stylesheet" href="/src/global.css" />\n    <!--@vitebook/head-->`,
-      ),
-      { overwrite: true },
-    );
-  });
 }
 
 function getPostCssConfig() {
