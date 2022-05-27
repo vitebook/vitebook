@@ -59,8 +59,8 @@ function getTailwindConfig(builder) {
 
   const content = [
     `'./index.html'`,
-    `'./src/**/*.${ext}'`,
-    `'./pages/**/*.${ext}'`,
+    `'./src/**/*.{md,${ext}}'`,
+    `'./pages/**/*.{md,${ext}}'`,
   ];
 
   return `module.exports = {
