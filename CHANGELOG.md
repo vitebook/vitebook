@@ -1,3 +1,9 @@
+## [0.26.1](https://github.com/vitebook/vitebook/compare/v0.26.0...v0.26.1) (2022-05-27)
+
+### Bug Fixes
+
+- **core:** init page patterns late so polyfill can be installed ([d56d055](https://github.com/vitebook/vitebook/commit/d56d0553809abc8c07d2f7f954b11ec7478e385e))
+
 # [0.26.0](https://github.com/vitebook/vitebook/compare/v0.25.3...v0.26.0) (2022-05-27)
 
 ### Features
