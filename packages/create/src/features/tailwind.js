@@ -25,11 +25,13 @@ export function addTailwindFeature(builder) {
   );
 
   builder.hooks.postBuild.push(() => {
-    const appFile =
-      builder.dirs.src.template.root.readFile('pages/@app.svelte');
-    builder.dirs.dest.pages.writeFile(
-      '@app.svelte',
-      appFile.replace('<script>', `<script>\n  import '$src/global.css';\n`),
+    const indexFile = builder.dirs.src.template.root.readFile('index.html');
+    builder.dirs.dest.root.writeFile(
+      'index.html',
+      indexFile.replace(
+        '<!--@vitebook/head-->',
+        `<link rel="stylesheet" href="/src/global.css" />\n    <!--@vitebook/head-->`,
+      ),
       { overwrite: true },
     );
   });
