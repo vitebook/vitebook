@@ -299,7 +299,8 @@ export class Pages {
         this._pages.map((page) => ({
           route: {
             ...page.route,
-            pattern: `new URLPattern({ pathname: '${page.route.pathname}' })`,
+            // initialized late on client to allow polyfill to be installed.
+            pattern: undefined,
           },
           rootPath: page.rootPath,
           layoutName: page.layoutName,
