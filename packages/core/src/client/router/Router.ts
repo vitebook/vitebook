@@ -7,15 +7,18 @@ import {
   isString,
   matchRoute,
   slash,
-  WithRouteMatch,
+  type WithRouteMatch,
 } from '../../shared';
 import { getContext, ROUTE_CTX_KEY } from '../context';
+import { get, writable } from '../stores/store';
+import type { ReadableStore } from '../stores/types';
 import type {
   GoToRouteOptions,
   LoadedRoute,
   NavigationOptions,
   Route,
   RouteDeclaration,
+  RouteNavigation,
   RouterAfterNavigateHook,
   RouterBeforeNavigateHook,
   RouterOptions,
@@ -25,13 +28,17 @@ import type {
 
 export class Router {
   protected _url!: URL;
-  protected _navigatingURL!: URL;
-  protected _navigating = false;
   protected _started = false;
   protected _currentRoute?: LoadedRoute;
   protected _savedScrollPosition?: ScrollToOptions;
   protected _routes: ScoredRouteDeclaration[] = [];
+
   protected readonly _history: History;
+
+  protected readonly _navigation = writable<RouteNavigation>({
+    url: new URL('http:v'),
+    loading: false,
+  });
 
   /**
    * The DOM node on which routes will be mounted on.
@@ -88,17 +95,26 @@ export class Router {
   }
 
   /**
+   * Route navigation store.
+   */
+  get navigation(): ReadableStore<RouteNavigation> {
+    return {
+      subscribe: this._navigation.subscribe,
+    };
+  }
+
+  /**
    * Whether the router is in the process of navigating to another page.
    */
   get navigating() {
-    return this._navigating;
+    return get(this._navigation).loading;
   }
 
   /**
    * The URL being navigated to.
    */
   get navigatingURL() {
-    return this._navigatingURL;
+    return get(this._navigation).url;
   }
 
   /**
@@ -292,8 +308,11 @@ export class Router {
     scroll,
     hash,
   }: NavigationOptions) {
-    this._navigating = true;
-    this._navigatingURL = url;
+    this._navigation.set({ url, loading: true });
+
+    const onNavigationEnd = () => {
+      this._navigation.set({ url, loading: false });
+    };
 
     const route = this.findRoute(url);
 
@@ -303,6 +322,7 @@ export class Router {
     }
 
     if (!route) {
+      onNavigationEnd();
       throw new Error(
         'Attempted to navigate to a URL that does not belong to this app',
       );
@@ -316,7 +336,10 @@ export class Router {
         })
       : undefined;
 
-    if (isBoolean(beforeNavigate) && !beforeNavigate) return;
+    if (isBoolean(beforeNavigate) && !beforeNavigate) {
+      onNavigationEnd();
+      return;
+    }
 
     if (beforeNavigate?.redirect) {
       await this.go(beforeNavigate.redirect, { replace: true });
@@ -355,7 +378,7 @@ export class Router {
       });
     }
 
-    this._navigating = false;
+    onNavigationEnd();
   }
 
   protected async _scrollToPosition({

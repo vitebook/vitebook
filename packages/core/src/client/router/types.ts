@@ -34,6 +34,11 @@ export type Route = RouteDeclaration & {
   readonly match: URLPatternComponentResult;
 };
 
+export type RouteNavigation = {
+  url: URL;
+  loading: boolean;
+};
+
 export type LoadedRoute = Route & {
   page: LoadedClientPage;
 };

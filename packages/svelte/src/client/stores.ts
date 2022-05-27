@@ -3,14 +3,28 @@ import type {
   LoadedRoute,
   MarkdownFrontmatter,
   MarkdownMeta,
+  RouteNavigation,
 } from '@vitebook/core';
 import type { Readable } from 'svelte/store';
 
-import { getFrontmatter, getMarkdown, getPage, getRoute } from './context';
+import {
+  getFrontmatter,
+  getMarkdown,
+  getPage,
+  getRoute,
+  getRouter,
+} from './context';
 
 export const page: Readable<LoadedClientPage> = {
   subscribe(fn) {
     return getPage().subscribe(fn);
+  },
+};
+
+export const navigation: Readable<RouteNavigation> = {
+  subscribe(fn) {
+    const router = getRouter();
+    return router.navigation.subscribe(fn);
   },
 };
 
