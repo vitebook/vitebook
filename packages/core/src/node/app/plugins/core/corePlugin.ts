@@ -1,5 +1,7 @@
+import path from 'upath';
 import {
   type DepOptimizationMetadata,
+  searchForWorkspaceRoot,
   type UserConfig as ViteConfig,
   type ViteDevServer,
 } from 'vite';
@@ -60,12 +62,16 @@ export function corePlugin(config: ResolvedCorePluginConfig): ClientPlugin {
           fs: {
             allow: [
               app.dirs.cwd.path,
-              app.dirs.cwd.resolve('node_modules'),
               app.dirs.root.path,
               app.dirs.pages.path,
               app.dirs.public.path,
               app.dirs.out.path,
               app.dirs.tmp.path,
+              app.dirs.cwd.resolve('node_modules'),
+              path.resolve(
+                searchForWorkspaceRoot(app.dirs.cwd.path),
+                'node_modules',
+              ),
             ],
             strict: !isLocal,
           },
