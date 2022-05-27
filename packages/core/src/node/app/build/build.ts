@@ -226,22 +226,20 @@ export async function build(app: App): Promise<void> {
 
       outputFiles.push([pageHtmlFilePath, pageHtml]);
 
+      const notFoundRE = /\/404\./;
+
       // Attempt to crawl for additional links.
-      for (let href of pageHtml.match(hrefRE) ?? []) {
+      for (let href of html.match(hrefRE) ?? []) {
         href = href.slice(6, -1);
 
-        if (
-          !href.startsWith('/assets') &&
-          !isLinkExternal(href, baseUrl) &&
-          !seenHref.has(href)
-        ) {
+        if (!isLinkExternal(href, baseUrl) && !seenHref.has(href)) {
           const url = new URL(`http://ssr.com${slash(href)}`);
 
           const { index } = matchRouteInfo(url, app.pages.all) ?? {};
+          const foundPage = index ? app.pages.all[index] : null;
 
-          if (index) {
-            const page = app.pages.all[index];
-            await buildPage(url, page);
+          if (foundPage && !notFoundRE.test(foundPage.id)) {
+            await buildPage(url, foundPage);
           } else {
             logger.warn(
               logger.formatWarnMsg(
