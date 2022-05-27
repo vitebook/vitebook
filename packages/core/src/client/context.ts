@@ -22,7 +22,7 @@ export const FRONTMATTER_CTX_KEY = 'vitebook::frontmatter';
 export type ContextTypes = {
   [SERVER_CTX_KEY]: ServerContext;
   [RENDERERS_CTX_KEY]: ViewRenderer[];
-  [ROUTER_CTX_KEY]: Router[];
+  [ROUTER_CTX_KEY]: Router;
   [ROUTE_CTX_KEY]: RouteStore;
   [PAGE_CTX_KEY]: PageStore;
   [MARKDOWN_CTX_KEY]: MarkdownStore;
