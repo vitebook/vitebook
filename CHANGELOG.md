@@ -1,3 +1,9 @@
+## [0.25.3](https://github.com/vitebook/vitebook/compare/v0.25.2...v0.25.3) (2022-05-27)
+
+### Bug Fixes
+
+- **create:** output global styles file by default ([fa6fda0](https://github.com/vitebook/vitebook/commit/fa6fda056c5ea58fff173ba7535537a6f682a0f1))
+
 ## [0.25.2](https://github.com/vitebook/vitebook/compare/v0.25.0...v0.25.2) (2022-05-27)
 
 ### Bug Fixes
