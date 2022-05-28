@@ -390,7 +390,7 @@ export function resolvePageRouteFromFilePath(
   const resolveStaticPath = () => {
     if (isNotFound) return '(.*?)';
 
-    const url = new URL(route.toLowerCase(), 'http://fake-host.com');
+    const url = new URL(route.toLowerCase(), 'http://localhost/');
     return url.pathname
       .replace(/\..+($|\\?)/i, '.html')
       .replace(/\/(README|index).html($|\?)/i, '/');

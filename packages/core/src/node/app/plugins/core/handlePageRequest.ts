@@ -61,9 +61,11 @@ export async function handlePageRequest(
   );
 
   // Prevent FOUC during development.
-  const styles = `<style type="text/css">${Object.values(
-    stylesMap.map(Object.values),
-  ).join('')}</style>`;
+  const styles = [
+    '<style type="text/css">',
+    stylesMap.map(Object.values).flat().join('\n'),
+    '</style>',
+  ].join('\n');
 
   const html = transformedIndex
     .replace(`<!--@vitebook/head-->`, head + styles)

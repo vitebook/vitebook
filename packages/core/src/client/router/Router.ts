@@ -596,6 +596,6 @@ function getHrefURL(node: HTMLAnchorElement | SVGAElement): URL {
 
 function getBaseUri(baseUrl = '/') {
   return import.meta.env.SSR
-    ? `http://ssr.com${baseUrl}` // protocol/host irrelevant during SSR
+    ? `http://ssr${baseUrl}` // protocol/host irrelevant during SSR
     : `${location.protocol}//${location.host}${baseUrl === '/' ? '' : baseUrl}`;
 }

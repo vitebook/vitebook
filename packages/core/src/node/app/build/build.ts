@@ -233,7 +233,7 @@ export async function build(app: App): Promise<void> {
         href = href.slice(6, -1);
 
         if (!isLinkExternal(href, baseUrl) && !seenHref.has(href)) {
-          const url = new URL(`http://ssr.com${slash(href)}`);
+          const url = new URL(`http://ssr${slash(href)}`);
 
           const { index } = matchRouteInfo(url, app.pages.all) ?? {};
           const foundPage = index ? app.pages.all[index] : null;
@@ -258,11 +258,11 @@ export async function build(app: App): Promise<void> {
 
     // Start with static paths and then crawl additional links.
     for (const page of pages.filter((page) => !page.route.dynamic).reverse()) {
-      await buildPage(new URL(`http://ssr.com${page.route.pathname}`), page);
+      await buildPage(new URL(`http://ssr${page.route.pathname}`), page);
     }
 
     for (const entry of app.config.routes.entries) {
-      const url = new URL(`http://ssr.com${slash(entry)}`);
+      const url = new URL(`http://ssr${slash(entry)}`);
       const { index } = matchRouteInfo(url, app.pages.all) ?? {};
 
       if (index) {
