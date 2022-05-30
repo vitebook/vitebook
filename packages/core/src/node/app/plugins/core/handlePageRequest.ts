@@ -69,7 +69,7 @@ export async function handlePageRequest(
 
   // Prevent FOUC during development.
   const styles = [
-    '<style type="text/css">',
+    '<style id="__VBK_SSR_STYLES__" type="text/css">',
     stylesMap.map(Object.values).flat().join('\n'),
     '</style>',
   ].join('\n');

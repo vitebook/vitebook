@@ -273,6 +273,11 @@ export class Router {
         hash: url.hash,
       });
 
+      if (!this.started && import.meta.env.DEV && !import.meta.env.SSR) {
+        const styles = document.getElementById('__VBK_SSR_STYLES__');
+        styles?.remove();
+      }
+
       this._url = url;
       this._started = true;
       return;
