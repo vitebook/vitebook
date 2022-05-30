@@ -52,6 +52,7 @@ export async function build(app: App): Promise<void> {
 
   const hrefRE = /href="(.*?)"/g;
   const seenHref = new Map<string, ServerPage>();
+  const notFoundHref = new Set<string>();
 
   try {
     // -------------------------------------------------------------------------------------------
@@ -240,7 +241,7 @@ export async function build(app: App): Promise<void> {
 
           if (foundPage && !notFoundRE.test(foundPage.id)) {
             await buildPage(url, foundPage);
-          } else {
+          } else if (!notFoundHref.has(url.pathname)) {
             logger.warn(
               logger.formatWarnMsg(
                 [
@@ -251,6 +252,8 @@ export async function build(app: App): Promise<void> {
                 ].join('\n'),
               ),
             );
+
+            notFoundHref.add(url.pathname);
           }
         }
       }
