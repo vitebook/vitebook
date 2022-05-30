@@ -7,6 +7,7 @@ import path from 'upath';
 
 import {
   DATA_ASSET_BASE_URL,
+  isFunction,
   isLinkExternal,
   matchRouteInfo,
   noendslash,
@@ -307,6 +308,8 @@ export async function build(app: App): Promise<void> {
       }),
     );
 
+    await buildSitemap(app, seenHref);
+
     spinner.stopAndPersist({
       symbol: LoggerIcon.Success,
       text: kleur.bold(`Committed files`),
@@ -540,4 +543,56 @@ function isPageChunk(fileName: string, bundle: RollupOutput) {
 
   cache.set(fileName, !!is);
   return is;
+}
+
+async function buildSitemap(app: App, seenHref: Map<string, ServerPage>) {
+  const config = app.config.sitemap;
+  const baseUrl = config.baseUrl;
+
+  if (!baseUrl) return;
+
+  const changefreq = isFunction(config.changefreq)
+    ? config.changefreq
+    : () => config.changefreq;
+
+  const priority = isFunction(config.priority)
+    ? config.priority
+    : () => config.priority;
+
+  const lastmodCache = new Map<string, string>();
+  const lastmod = async (pathname: string) => {
+    if (lastmodCache.has(pathname)) return lastmodCache.get(pathname);
+    const filePath = seenHref.get(pathname)!.filePath;
+    const mtime = (await fs.promises.stat(filePath)).mtime;
+    const date = mtime.toISOString().split('T')[0];
+    lastmodCache.set(pathname, date);
+    return date;
+  };
+
+  const urls = (
+    await Promise.all(
+      Array.from(seenHref.keys()).map(
+        async (pathname) => `<url>
+    <loc>${baseUrl}${slash(pathname)}</loc>
+    <lastmod>${await lastmod(pathname)}</lastmod>
+    <changefreq>${await changefreq(new URL(pathname, baseUrl))}</changefreq>
+    <priority>${await priority(new URL(pathname, baseUrl))}</priority>
+  </url>`,
+      ),
+    )
+  ).join('\n  ');
+
+  const content = `<?xml version="1.0" encoding="UTF-8" ?>
+<urlset
+  xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="https://www.w3.org/1999/xhtml"
+  xmlns:mobile="https://www.google.com/schemas/sitemap-mobile/1.0"
+  xmlns:news="https://www.google.com/schemas/sitemap-news/0.9"
+  xmlns:image="https://www.google.com/schemas/sitemap-image/1.1"
+  xmlns:video="https://www.google.com/schemas/sitemap-video/1.1"
+>
+  ${urls}
+</urlset>`;
+
+  await app.dirs.out.write('sitemap.xml', content);
 }

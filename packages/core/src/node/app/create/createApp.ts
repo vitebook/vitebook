@@ -10,6 +10,7 @@ import type {
   ResolvedAppClientConfig,
   ResolvedAppConfig,
   ResolvedRouteConfig,
+  ResolvedSitemapConfig,
 } from '../AppConfig';
 import { build } from '../build';
 import { dev } from '../dev';
@@ -145,6 +146,7 @@ export async function resolveAppConfig({
   routes = {},
   pages = {},
   markdown = {},
+  sitemap = {},
   plugins = [],
 }: AppConfig): Promise<ResolvedAppConfig> {
   const _cwd = resolveRelativePath(process.cwd(), dirs.cwd ?? '.');
@@ -208,6 +210,13 @@ export async function resolveAppConfig({
     ...markdown,
   };
 
+  const __sitemap: ResolvedSitemapConfig = {
+    baseUrl: null,
+    changefreq: 'weekly',
+    priority: 0.5,
+    ...sitemap,
+  };
+
   return {
     cliArgs,
     dirs: {
@@ -222,6 +231,7 @@ export async function resolveAppConfig({
     routes: __routes,
     pages: __pages,
     markdown: __markdown,
+    sitemap: __sitemap,
     plugins: plugins.flat().filter(Boolean) as FilteredPlugins,
     debug,
   };

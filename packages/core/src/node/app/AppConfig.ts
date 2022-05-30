@@ -51,6 +51,11 @@ export type ResolvedAppConfig = {
   markdown: ResolvedMarkdownPluginConfig;
 
   /**
+   * Sitemap options.
+   */
+  sitemap: ResolvedSitemapConfig;
+
+  /**
    * Vitebook plugins.
    */
   plugins: FilteredPlugins;
@@ -150,9 +155,60 @@ export type ResolvedAppDirsConfig = {
 
 export type AppDirsConfig = Partial<ResolvedAppDirsConfig>;
 
+export type SitemapChangeFrequency =
+  | 'never'
+  | 'yearly'
+  | 'monthly'
+  | 'weekly'
+  | 'daily'
+  | 'hourly'
+  | 'always';
+
+export type SitemapPriority = number;
+
+export type ResolvedSitemapConfig = {
+  /**
+   * The base url to use when building sitemap URL entries.
+   *
+   * @example 'http://mysite.com'
+   * @defaultValue `null`
+   */
+  baseUrl: string | null;
+  /**
+   * How frequently the page is likely to change. This value provides general information to
+   * search engines and may not correlate exactly to how often they crawl the page.
+   *
+   * @defaultValue `'weekly'`
+   * @see {@link https://www.sitemaps.org/protocol.html}
+   */
+  changefreq:
+    | SitemapChangeFrequency
+    | ((url: URL) => SitemapChangeFrequency | Promise<SitemapChangeFrequency>);
+  /**
+   * The priority of this URL relative to other URLs on your site. Valid values range from `0.0` to
+   * `1.0`. This value does not affect how your pages are compared to pages on other sites — it
+   * only lets the search engines know which pages you deem most important for the crawlers.
+   *
+   * @defaultValue `0.5`
+   * @see {@link https://www.sitemaps.org/protocol.html}
+   */
+  priority:
+    | SitemapPriority
+    | ((url: URL) => SitemapPriority | Promise<SitemapPriority>);
+};
+
+export type SitemapConfig = Partial<ResolvedSitemapConfig>;
+
 export type AppConfig = Omit<
   Partial<ResolvedAppConfig>,
-  'dirs' | 'core' | 'client' | 'markdown' | 'pages' | 'plugins' | 'routes'
+  | 'dirs'
+  | 'core'
+  | 'client'
+  | 'markdown'
+  | 'pages'
+  | 'plugins'
+  | 'routes'
+  | 'sitemap'
 > & {
   dirs?: AppDirsConfig;
   core?: CorePluginConfig;
@@ -161,4 +217,5 @@ export type AppConfig = Omit<
   pages?: PagesPluginConfig;
   markdown?: MarkdownPluginConfig;
   plugins?: Plugins;
+  sitemap?: SitemapConfig;
 };
