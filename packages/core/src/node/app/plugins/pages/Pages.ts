@@ -69,10 +69,10 @@ export class Pages {
   }
 
   async init(config: PagesConfig) {
-    config.exclude.push(/@layout\//, /@markdoc\//, /\/@/, /\/_/, /@server/);
+    config.exclude.push(/@layout/, /@markdoc/, /\/@/, /\/_/, /@server/);
     this.pagesFilter = createFilter(config.include, config.exclude);
 
-    config.layouts.exclude.push(/\/_/, /@markdoc\//, /@server/);
+    config.layouts.exclude.push(/\/_/, /@markdoc/, /@server/);
     this.layoutsFilter = createFilter(
       config.layouts.include,
       config.layouts.exclude,
@@ -203,6 +203,7 @@ export class Pages {
 
     const fileContent = fs.readFileSync(filePath, { encoding: 'utf-8' });
     const hasLoader = HAS_LOADER_RE.test(fileContent);
+    const reset = rootPath.includes(`.reset${path.extname(rootPath)}`);
 
     const layout: ServerLayout = {
       id: `/${rootPath}`,
@@ -211,6 +212,7 @@ export class Pages {
       rootPath,
       owningDir,
       hasLoader,
+      reset,
     };
 
     this._layouts.push(layout);
@@ -247,10 +249,14 @@ export class Pages {
   }
 
   resolveLayouts(pageFilePath: string) {
-    const layouts: number[] = [];
+    let layouts: number[] = [];
 
     this._layouts.forEach((layout, i) => {
       if (this.layoutBelongsTo(pageFilePath, layout.filePath)) {
+        if (layout.reset) {
+          layouts = [];
+        }
+
         layouts.push(i);
       }
     });
@@ -336,7 +342,9 @@ export class Pages {
 }
 
 export function getPageLayoutNameFromPath(filePath: string) {
-  const filename = path.basename(filePath, path.extname(filePath));
+  const filename = path
+    .basename(filePath, path.extname(filePath))
+    .replace(/\.reset($|\/)/, '');
   const match = filename.match(LAYOUT_NAME_RE)?.[1];
   return match && match.length > 0 ? match : filename;
 }

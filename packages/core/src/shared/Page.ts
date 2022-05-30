@@ -138,6 +138,8 @@ export type ServerLayout = Omit<ClientLayout, 'loader'> & {
   owningDir: string;
   /** Whether the layout has a data `loader` function. */
   hasLoader: boolean;
+  /** Whether the current layout resets the layout stack.  */
+  reset: boolean;
 };
 
 export type ServerLoadedData = Record<string, unknown>;

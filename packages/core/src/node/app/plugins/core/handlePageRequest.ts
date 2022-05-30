@@ -6,6 +6,7 @@ import {
   type ServerContext,
   type ServerEntryModule,
 } from '../../../../shared';
+import { virtualModuleId } from '../../alias';
 import { type App } from '../../App';
 import { buildDataScriptTag, loadPageDataMap } from './dataLoader';
 import { readIndexHtmlFile } from './indexHtml';
@@ -51,8 +52,14 @@ export async function handlePageRequest(
 
   const { html: appHtml, head } = await render(url, { data });
 
+  const appFilePath = server.moduleGraph
+    .getModuleById(`/${virtualModuleId.app}`)!
+    .importedModules.values()
+    .next().value.file;
+
   const stylesMap = await Promise.all(
     [
+      appFilePath,
       ...page.layouts.map(
         (layout) => app.pages.getLayoutByIndex(layout)!.filePath,
       ),

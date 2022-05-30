@@ -178,7 +178,12 @@ export async function resolveAppConfig({
     include: pages.include ?? [`**/*.{${pageExts}}`],
     exclude: pages.exclude ?? [],
     layouts: {
-      include: [`**/@layout.{${pageExts}}`, `**/@layouts/**/*.{${pageExts}}`],
+      include: [
+        `**/*@layout.{${pageExts}}`,
+        `**/*@layout.reset.{${pageExts}}`,
+        `**/@layouts/**/*.{${pageExts}}`,
+        `**/@layouts/**/*.reset.{${pageExts}}`,
+      ],
       exclude: [],
       ...pages.layouts,
     },

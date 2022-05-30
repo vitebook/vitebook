@@ -8,6 +8,8 @@
 </script>
 
 <script>
+  import '$src/global.css';
+
   import { PageLayouts, PageView } from '@vitebook/svelte';
 </script>
 
