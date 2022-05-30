@@ -1,3 +1,15 @@
+# [0.28.0](https://github.com/vitebook/vitebook/compare/v0.27.0...v0.28.0) (2022-05-30)
+
+### Bug Fixes
+
+- **core:** do not log same 404 warning twice ([f9bfe26](https://github.com/vitebook/vitebook/commit/f9bfe26329aaa9dba368dfbdc07b41e1e2f9af4d))
+- **core:** styles are not inlined correctly to avoid fouc ([6604fdc](https://github.com/vitebook/vitebook/commit/6604fdc26c8ffef3dcbe09f6056836e077dc4585))
+
+### Features
+
+- **core:** add sitemap support ([f2d2551](https://github.com/vitebook/vitebook/commit/f2d255132b81908c7450cac12283a296e01d70ad))
+- **core:** support layout resets ([758e675](https://github.com/vitebook/vitebook/commit/758e675a901a3f0b6a651ba40b0c4d4656e5fede))
+
 # [0.27.0](https://github.com/vitebook/vitebook/compare/v0.26.2...v0.27.0) (2022-05-27)
 
 ### Features
