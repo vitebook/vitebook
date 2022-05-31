@@ -189,7 +189,7 @@ export type ResolvedSitemapConfig = {
    * `1.0`. This value does not affect how your pages are compared to pages on other sites — it
    * only lets the search engines know which pages you deem most important for the crawlers.
    *
-   * @defaultValue `0.5`
+   * @defaultValue `0.7`
    * @see {@link https://www.sitemaps.org/protocol.html}
    */
   priority:

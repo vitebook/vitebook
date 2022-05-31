@@ -213,7 +213,7 @@ export async function resolveAppConfig({
   const __sitemap: ResolvedSitemapConfig = {
     baseUrl: null,
     changefreq: 'weekly',
-    priority: 0.5,
+    priority: 0.7,
     ...sitemap,
   };
 
