@@ -169,6 +169,7 @@ export type ServerLoaderCacheKeyBuilder = (
 
 export type ServerLoadedOutput<Data = ServerLoadedData> = {
   data?: Data;
+  redirect?: string;
   cache?: ServerLoaderCacheKeyBuilder;
 };
 

@@ -4,6 +4,7 @@ import {
   buildDataAssetID,
   execRouteMatch,
   isFunction,
+  isLinkExternal,
   type ServerLoadedDataMap,
   type ServerLoadedOutput,
   type ServerLoadedOutputMap,
@@ -12,6 +13,7 @@ import {
   type ServerLoaderCacheMap,
   type ServerLoaderInput,
   type ServerPage,
+  slash,
 } from '../../../../shared';
 import { logger } from '../../../utils';
 import { type App } from '../../App';
@@ -71,8 +73,32 @@ export async function loadPageServerOutput(
   const pathname = decodeURI(url.pathname);
   const input = buildServerLoaderInput(url, page);
 
-  await Promise.all([
-    ...page.layouts.map(async (index) => {
+  let redirect: string | undefined;
+
+  // Load page first - if it has a redirect we'll skip loading layouts.
+  await (async () => {
+    const id = buildDataAssetID(pathname);
+
+    const output = await runModuleServerLoader(
+      app,
+      page.filePath,
+      input,
+      moduleLoader,
+    );
+
+    map.set(id, output);
+
+    redirect =
+      output.redirect &&
+      !isLinkExternal(output.redirect, app.vite?.config.base ?? '/')
+        ? slash(output.redirect)
+        : output.redirect;
+  })();
+
+  if (redirect) return { output: map, redirect };
+
+  await Promise.all(
+    page.layouts.map(async (index) => {
       const id = buildDataAssetID(pathname, index);
       const layout = app.pages.getLayoutByIndex(index)!;
 
@@ -85,21 +111,9 @@ export async function loadPageServerOutput(
 
       map.set(id, output);
     }),
-    (async () => {
-      const id = buildDataAssetID(pathname);
+  );
 
-      const output = await runModuleServerLoader(
-        app,
-        page.filePath,
-        input,
-        moduleLoader,
-      );
-
-      map.set(id, output);
-    })(),
-  ]);
-
-  return map;
+  return { output: map, redirect };
 }
 
 const loadedCache = new Map<string, ServerLoaderCacheMap>();

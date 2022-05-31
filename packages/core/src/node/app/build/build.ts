@@ -7,8 +7,10 @@ import path from 'upath';
 
 import {
   DATA_ASSET_BASE_URL,
+  escapeHtml,
   isFunction,
   isLinkExternal,
+  isString,
   matchRouteInfo,
   noendslash,
   noslash,
@@ -50,11 +52,13 @@ export async function build(app: App): Promise<void> {
   const pages = app.pages.all;
   const outputFiles: [filePath: string, content: string][] = [];
   const dataHashTable: Record<string, string> = {};
-  const pageServerOutput: Map<string, ServerLoadedOutputMap> = new Map();
+  const pageServerOutput: Map<string, string | ServerLoadedOutputMap> =
+    new Map();
 
   const hrefRE = /href="(.*?)"/g;
   const seenHref = new Map<string, ServerPage>();
   const notFoundHref = new Set<string>();
+  const redirectsTable: Record<string, string> = {};
 
   try {
     // -------------------------------------------------------------------------------------------
@@ -111,16 +115,27 @@ export async function build(app: App): Promise<void> {
         return pageServerOutput.get(url.pathname)!;
       }
 
-      const output = await loadPageServerOutput(url, app, page, (filePath) => {
-        const path = app.dirs.out.resolve(
-          'server',
-          `${appEntryFilenames
-            .find((name) => appEntries[name] === filePath)
-            ?.replace(/:/g, '_')}.cjs`,
-        );
+      const { output, redirect } = await loadPageServerOutput(
+        url,
+        app,
+        page,
+        (filePath) => {
+          const path = app.dirs.out.resolve(
+            'server',
+            `${appEntryFilenames
+              .find((name) => appEntries[name] === filePath)
+              ?.replace(/:/g, '_')}.cjs`,
+          );
 
-        return require(path);
-      });
+          return require(path);
+        },
+      );
+
+      if (redirect) {
+        redirectsTable[url.pathname] = redirect;
+        pageServerOutput.set(url.pathname, redirect);
+        return redirect;
+      }
 
       for (const id of output.keys()) {
         const data = output.get(id)!.data ?? {};
@@ -162,8 +177,23 @@ export async function build(app: App): Promise<void> {
       seenHref.set(url.pathname, page);
 
       const serverOutput = await loadServerOutput(url, page);
-      const serverData = buildServerLoadedDataMap(serverOutput);
 
+      // Redirect.
+      if (isString(serverOutput)) {
+        const location = serverOutput;
+
+        const html = `<meta http-equiv="refresh" content="${escapeHtml(
+          `0;url=${location}`,
+        )}">`;
+
+        outputFiles.push([getHTMLFilePath(url), html]);
+
+        await buildPageFromHref(page, location);
+
+        return;
+      }
+
+      const serverData = buildServerLoadedDataMap(serverOutput);
       const { ssr, html, head } = await render(url, { data: serverData });
 
       const stylesheetLinks = [CSS_CHUNK?.fileName]
@@ -209,57 +239,74 @@ export async function build(app: App): Promise<void> {
       const dataScriptTag = buildDataScriptTag(serverData, dataHashTable);
 
       const dataHashScriptTag = `<script id="__VBK_DATA_HASH_MAP__">window.__VBK_DATA_HASH_MAP__ = __VBK_DATA__;</script>`;
+      const redirectsScriptTag = `<script id="__VBK_REDIRECTS_MAP__">window.__VBK_REDIRECTS_MAP__ = __VBK_REDIRECTS__;</script>`;
 
       const pageHtml = HTML_TEMPLATE.replace(`<!--@vitebook/head-->`, headTags)
         .replace(`<!--@vitebook/app-->`, html)
         .replace(
           '<!--@vitebook/body-->',
-          dataHashScriptTag + dataScriptTag + appScriptTag,
+          redirectsScriptTag + dataHashScriptTag + dataScriptTag + appScriptTag,
         )
         .replace(
           '<script type="module" src="/:virtual/vitebook/client"></script>',
           '',
         );
 
+      outputFiles.push([getHTMLFilePath(url), pageHtml]);
+
+      await crawlHtml(page, html);
+    }
+
+    // eslint-disable-next-line no-inner-declarations
+    function getHTMLFilePath(url: URL) {
       const decodedRoute = decodeURI(url.pathname);
 
       const filePath = decodedRoute.endsWith('/')
         ? `${decodedRoute}index.html`
         : decodedRoute;
 
-      const pageHtmlFilePath = app.dirs.out.resolve(filePath.slice(1));
+      return app.dirs.out.resolve(filePath.slice(1));
+    }
 
-      outputFiles.push([pageHtmlFilePath, pageHtml]);
-
-      const notFoundRE = /\/404\./;
-
+    const notFoundRE = /\/404\./;
+    // eslint-disable-next-line no-inner-declarations
+    async function crawlHtml(page: ServerPage, html: string) {
       // Attempt to crawl for additional links.
       for (let href of html.match(hrefRE) ?? []) {
         href = href.slice(6, -1);
+        await buildPageFromHref(page, href);
+      }
+    }
 
-        if (!isLinkExternal(href, baseUrl) && !seenHref.has(href)) {
-          const url = new URL(`http://ssr${slash(href)}`);
+    // eslint-disable-next-line no-inner-declarations
+    async function buildPageFromHref(page: ServerPage, href: string) {
+      if (isLinkExternal(href, baseUrl) || seenHref.has(href)) return;
 
-          const { index } = matchRouteInfo(url, app.pages.all) ?? {};
-          const foundPage = index ? app.pages.all[index] : null;
+      const url = new URL(`http://ssr${slash(href)}`);
 
-          if (foundPage && !notFoundRE.test(foundPage.id)) {
-            await buildPage(url, foundPage);
-          } else if (!notFoundHref.has(url.pathname)) {
-            logger.warn(
-              logger.formatWarnMsg(
-                [
-                  `${kleur.bold('(404)')} Found link matching no page.`,
-                  '',
-                  `${kleur.bold('Link:')} ${href}`,
-                  `${kleur.bold('File Path:')} ${page.rootPath}`,
-                ].join('\n'),
-              ),
-            );
+      const { index } = matchRouteInfo(url, app.pages.all) ?? {};
+      const foundPage = index ? app.pages.all[index] : null;
 
-            notFoundHref.add(url.pathname);
-          }
-        }
+      if (foundPage && !notFoundRE.test(foundPage.id)) {
+        await buildPage(url, foundPage);
+        return;
+      }
+
+      if (!notFoundHref.has(url.pathname)) {
+        if (notFoundHref.size === 0) console.log();
+
+        logger.warn(
+          logger.formatWarnMsg(
+            [
+              `${kleur.bold('(404)')} Found link matching no page.`,
+              '',
+              `${kleur.bold('Link:')} ${href}`,
+              `${kleur.bold('File Path:')} ${page.rootPath}`,
+            ].join('\n'),
+          ),
+        );
+
+        notFoundHref.add(url.pathname);
       }
     }
 
@@ -288,7 +335,7 @@ export async function build(app: App): Promise<void> {
 
     spinner.stopAndPersist({
       symbol: LoggerIcon.Success,
-      text: kleur.bold(`Rendered ${kleur.underline(app.pages.size)} pages`),
+      text: kleur.bold(`Rendered ${kleur.underline(seenHref.size)} pages`),
     });
 
     // -------------------------------------------------------------------------------------------
@@ -300,10 +347,15 @@ export async function build(app: App): Promise<void> {
     const dataInsertRE = /__VBK_DATA__/;
     const dataHashTableString = JSON.stringify(dataHashTable);
 
+    const redirectsInsertRE = /__VBK_REDIRECTS__/;
+    const redirectsString = JSON.stringify(redirectsTable);
+
     await Promise.all(
       outputFiles.map(async ([filePath, fileContent]) => {
         if (filePath.endsWith('.html')) {
-          fileContent = fileContent.replace(dataInsertRE, dataHashTableString);
+          fileContent = fileContent
+            .replace(dataInsertRE, dataHashTableString)
+            .replace(redirectsInsertRE, redirectsString);
         }
 
         await ensureFile(filePath);
@@ -342,6 +394,7 @@ export async function build(app: App): Promise<void> {
   const endTime = ((Date.now() - startTime) / 1000).toFixed(2);
 
   logRoutes(app, seenHref);
+  logRedirects(redirectsTable);
 
   const speedIcon = {
     2: '🤯',
@@ -387,6 +440,23 @@ export function logRoutes(app: App, seenHref: Map<string, ServerPage>) {
             ? `(${noslash(app.dirs.pages.relative(page.rootPath))})`
             : '',
         )}`,
+      ),
+    );
+  }
+
+  logger.info(logs.join('\n'), '\n');
+}
+
+function logRedirects(redirects: Record<string, string>) {
+  const logs: string[] = [kleur.bold(kleur.underline('REDIRECTS')), ''];
+
+  for (const href of Object.keys(redirects)) {
+    const to = redirects[href]!;
+    logs.push(
+      kleur.white(
+        `- ${href === '/' ? href : noslash(href)} ${kleur.bold('->')} ${
+          to === '/' ? to : noslash(to)
+        }`,
       ),
     );
   }

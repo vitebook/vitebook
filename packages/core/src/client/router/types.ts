@@ -4,11 +4,15 @@ import {
   type PageRoute,
 } from '../../shared';
 
-export type RoutePrefetch = (route: Route) => void | Promise<void>;
+export type RoutePrefetch = (info: { url: URL; route: Route }) =>
+  | string // redirect
+  | void
+  | Promise<string | void>;
 
-export type RouteLoader = (
-  route: Route,
-) => LoadedClientPage | Promise<LoadedClientPage>;
+export type RouteLoader = (route: Route) =>
+  | string // redirect
+  | LoadedClientPage
+  | Promise<string | LoadedClientPage>;
 
 export type RouteDeclaration = Omit<PageRoute, 'score'> & {
   score?: number;

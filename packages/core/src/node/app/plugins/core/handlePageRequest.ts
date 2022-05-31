@@ -41,12 +41,19 @@ export async function handlePageRequest(
     return;
   }
 
-  const serverOutput = await loadPageServerOutput(
+  const { output: serverOutput, redirect } = await loadPageServerOutput(
     url,
     app,
     page,
     server.ssrLoadModule,
   );
+
+  if (redirect) {
+    res.statusCode = 307;
+    res.setHeader('Location', redirect).end();
+    return;
+  }
+
   const serverData = buildServerLoadedDataMap(serverOutput);
   const dataScript = buildDataScriptTag(serverData);
 

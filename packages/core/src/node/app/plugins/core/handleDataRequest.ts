@@ -32,6 +32,10 @@ export async function handleDataRequest(
     server.ssrLoadModule,
   );
 
+  if (output.redirect) {
+    output.data = { ...output.data, __redirect__: output.redirect };
+  }
+
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify(output.data ?? {}));

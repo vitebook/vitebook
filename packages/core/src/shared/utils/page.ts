@@ -40,8 +40,11 @@ export function parseDataAssetURL(url: URL): {
     ? pathname.slice(1).split(':') //slice $ off
     : [-1, pathname];
 
+  let routePath = route.replace(/_/g, '/').replace(/\.json$/, '');
+  if (!routePath.endsWith('/')) routePath += '.html';
+
   return {
-    url: new URL(route.replace(/_/g, '/').replace(/\.json$/, ''), url.href),
+    url: new URL(routePath, url.href),
     layoutIndex: Number(layoutIndex),
   };
 }

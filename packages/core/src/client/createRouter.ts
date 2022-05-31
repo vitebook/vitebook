@@ -9,7 +9,9 @@ import {
   type ClientPageModule,
   DATA_ASSET_BASE_URL,
   inBrowser,
+  isBoolean,
   isLoadedMarkdownPage,
+  isString,
   type LoadedClientLayout,
   type LoadedClientPage,
 } from '../shared';
@@ -44,6 +46,15 @@ export async function createRouter({
     history: inBrowser ? window.history : createMemoryHistory(),
   });
 
+  if (inBrowser && import.meta.env.PROD) {
+    // @ts-expect-error - .
+    const redirects = window.__VBK_REDIRECTS_MAP__;
+    for (const from of Object.keys(redirects)) {
+      const to = redirects[from];
+      router.addRedirect(from, to);
+    }
+  }
+
   context.set(ROUTER_CTX_KEY, router);
 
   addRoutes(router, get(pages));
@@ -66,11 +77,12 @@ let routes: RouteDeclaration[] = [];
 
 function addRoutes(router: Router, pages: Readonly<ClientPage[]>) {
   pages.forEach((page) => {
-    const route = {
+    const route: RouteDeclaration = {
       ...page.route,
       loader: () => loadPage(router, page),
-      prefetch: async () => {
-        await loadPage(router, page, { prefetch: true });
+      prefetch: async ({ url }) => {
+        const redirect = await loadPage(router, page, { prefetch: url });
+        return isString(redirect) ? redirect : undefined;
       },
     };
 
@@ -101,19 +113,45 @@ function handleHMR(router: Router) {
 export async function loadPage(
   router: Router,
   page: ClientPage,
-  { prefetch = false } = {},
-): Promise<LoadedClientPage> {
-  const [layouts, pageModule] = await Promise.all([
-    loadPageLayouts(router, page),
-    page.loader(),
-  ]);
+  { prefetch = false }: { prefetch?: boolean | URL } = {},
+): Promise<string | LoadedClientPage> {
+  const prefetchURL = isBoolean(prefetch) ? undefined : prefetch;
+
+  let pageModule: ClientPageModule;
+  let pageData: ClientLoadedData;
+  let layouts: LoadedClientLayout[];
+
+  /**
+   * Loading is slightly different during dev because we need to check for a page redirect which
+   * is returned from the `/assets/data` endpoint. This is not needed in prod because the
+   * complete redirect table is injected into the rendered HTML.
+   */
+  if (import.meta.env.DEV) {
+    pageModule = await page.loader();
+    pageData = await loadData(router, pageModule, undefined, prefetchURL);
+
+    if (import.meta.env.DEV && isString(pageData.__redirect__)) {
+      return pageData.__redirect__;
+    }
+
+    layouts = await loadPageLayouts(router, page, prefetchURL);
+  } else {
+    [pageModule, layouts] = await Promise.all([
+      (async () => {
+        const mod = await page.loader();
+        pageData = await loadData(router, mod, undefined, prefetchURL);
+        return mod;
+      })(),
+      loadPageLayouts(router, page, prefetchURL),
+    ]);
+  }
 
   const loadedPage: LoadedClientPage = {
     ...page,
     $$loaded: true,
     module: pageModule,
     layouts,
-    data: await loadData(router, pageModule),
+    data: pageData!,
     get default() {
       return pageModule.default;
     },
@@ -133,6 +171,7 @@ export async function loadPage(
 export function loadPageLayouts(
   router: Router,
   page: ClientPage,
+  prefetchURL?: URL,
 ): Promise<LoadedClientLayout[]> {
   const $pageLayouts = get(pageLayouts);
 
@@ -144,7 +183,7 @@ export function loadPageLayouts(
         $$loaded: true as const,
         ...layout,
         module: mod,
-        data: await loadData(router, mod, index),
+        data: await loadData(router, mod, index, prefetchURL),
         get default() {
           return mod.default;
         },
@@ -161,12 +200,16 @@ export async function loadData(
   router: Router,
   module: ClientPageModule | ClientLayoutModule,
   layoutIndex?: number,
+  prefetchURL?: URL,
 ): Promise<ClientLoadedData> {
   if (!module.loader) return {};
 
   const id = buildDataAssetID(
     decodeURI(
-      import.meta.env.SSR ? router.navigatingURL.pathname : location.pathname,
+      prefetchURL?.pathname ??
+        (import.meta.env.SSR
+          ? router.navigatingURL.pathname
+          : location.pathname),
     ),
     layoutIndex,
   );

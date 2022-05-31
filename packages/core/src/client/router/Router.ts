@@ -32,11 +32,12 @@ export class Router {
   protected _currentRoute?: LoadedRoute;
   protected _savedScrollPosition?: ScrollToOptions;
   protected _routes: ScoredRouteDeclaration[] = [];
+  protected _redirects = new Map<string, string>();
 
   protected readonly _history: History;
 
   protected readonly _navigation = writable<RouteNavigation>({
-    url: new URL('http:v'),
+    url: new URL(inBrowser ? location.href : 'http://ssr/'),
     loading: false,
   });
 
@@ -150,6 +151,13 @@ export class Router {
       // create initial history entry, so we can return here
       this._history.replaceState(this._history.state || {}, '', location.href);
     }
+  }
+
+  /**
+   * Redirect from a given pathname to another.
+   */
+  addRedirect(from: string, to: string) {
+    this._redirects.set(from, to);
   }
 
   /**
@@ -286,10 +294,17 @@ export class Router {
    * Attempts to find a route given a pathname or URL and call it's prefetch handler.
    */
   async prefetch(pathOrURL: string | URL): Promise<void> {
-    const route = this.findRoute(pathOrURL);
+    const url = isString(pathOrURL) ? this.buildURL(pathOrURL) : pathOrURL;
 
+    const redirect = this._redirects.get(url.pathname);
+    if (redirect) {
+      await this.prefetch(redirect);
+      return;
+    }
+
+    const route = this.findRoute(url);
     if (route?.redirect) {
-      await this.prefetch(this.buildURL(route?.redirect));
+      await this.prefetch(route.redirect);
       return;
     }
 
@@ -299,7 +314,8 @@ export class Router {
       );
     }
 
-    await route.prefetch?.(route);
+    const prefetchRedirect = await route.prefetch?.({ route, url });
+    if (isString(prefetchRedirect)) await this.prefetch(prefetchRedirect);
   }
 
   protected async _navigate({
@@ -308,6 +324,16 @@ export class Router {
     scroll,
     hash,
   }: NavigationOptions) {
+    const redirectTo = async (to: string) => {
+      this._redirects.set(url.pathname, to);
+      await this.go(to, { replace: true });
+    };
+
+    if (this._redirects.has(url.pathname)) {
+      await redirectTo(this._redirects.get(url.pathname)!);
+      return;
+    }
+
     this._navigation.set({ url, loading: true });
 
     const onNavigationEnd = () => {
@@ -317,7 +343,7 @@ export class Router {
     const route = this.findRoute(url);
 
     if (route?.redirect) {
-      await this.go(route.redirect, { replace: true });
+      await redirectTo(route.redirect);
       return;
     }
 
@@ -342,11 +368,17 @@ export class Router {
     }
 
     if (beforeNavigate?.redirect) {
-      await this.go(beforeNavigate.redirect, { replace: true });
+      await redirectTo(beforeNavigate.redirect);
       return;
     }
 
     const page = await route.loader(route);
+
+    if (isString(page)) {
+      await redirectTo(page);
+      return;
+    }
+
     const fromRoute = this._currentRoute;
     const toRoute = { ...route, page };
 
