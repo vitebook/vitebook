@@ -143,6 +143,10 @@ export class MarkdocSchema {
       ...this.base,
       variables: {
         ...this.base.variables,
+        file: {
+          ...this.base.variables?.file,
+          path: pageFilePath,
+        },
         vite: {
           ...this.base.variables?.vite,
           ...this.vite,
