@@ -1,8 +1,10 @@
+import type { ServerLoadedDataMap } from './Page';
+
 export type AppContextMap = Map<string, unknown>;
 
 export type ServerContext = {
   modules: Set<string>;
-  data: Map<string, Record<string, unknown>>;
+  data: ServerLoadedDataMap;
 };
 
 export type ServerEntryModule = {

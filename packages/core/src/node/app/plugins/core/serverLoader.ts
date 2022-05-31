@@ -3,8 +3,9 @@ import kleur from 'kleur';
 import {
   buildDataAssetID,
   execRouteMatch,
-  type ServerContext,
-  type ServerLoadedData,
+  type ServerLoadedDataMap,
+  type ServerLoadedOutput,
+  type ServerLoadedOutputMap,
   type ServerLoader,
   type ServerLoaderInput,
   type ServerPage,
@@ -13,7 +14,7 @@ import { logger } from '../../../utils';
 import { type App } from '../../App';
 
 export function buildDataScriptTag(
-  map: ServerContext['data'],
+  map: ServerLoadedDataMap,
   hashTable?: Record<string, string>,
 ) {
   const output = {};
@@ -22,7 +23,7 @@ export function buildDataScriptTag(
     const hashedId = hashTable?.[id] ?? id;
     const data = map.get(id)!;
 
-    if (Object.keys(data).length > 0) {
+    if (data && Object.keys(data).length > 0) {
       output[hashedId] = data;
     }
   }
@@ -30,6 +31,16 @@ export function buildDataScriptTag(
   return `<script id="__VBK_DATA__" type="application/json">${JSON.stringify(
     output,
   )}</script>`;
+}
+
+export function buildServerLoadedDataMap(map: ServerLoadedOutputMap) {
+  const data: ServerLoadedDataMap = new Map();
+
+  for (const id of map.keys()) {
+    data.set(id, map.get(id)!.data ?? {});
+  }
+
+  return data;
 }
 
 export function buildServerLoaderInput(
@@ -46,13 +57,13 @@ export function buildServerLoaderInput(
   };
 }
 
-export async function loadPageDataMap(
+export async function loadPageServerOutput(
   url: URL,
   app: App,
   page: ServerPage,
   moduleLoader: (filePath: string) => unknown | Promise<unknown>,
 ) {
-  const map: ServerContext['data'] = new Map();
+  const map: ServerLoadedOutputMap = new Map();
 
   const pathname = decodeURI(url.pathname);
   const input = buildServerLoaderInput(url, page);
@@ -61,35 +72,36 @@ export async function loadPageDataMap(
     ...page.layouts.map(async (index) => {
       const layout = app.pages.getLayoutByIndex(index)!;
 
-      const data = await loadModuleData(
+      const output = await runModuleServerLoader(
         app,
         layout.filePath,
         input,
         moduleLoader,
       );
 
-      map.set(buildDataAssetID(pathname, index), data);
+      map.set(buildDataAssetID(pathname, index), output);
     }),
     (async () => {
-      const data = await loadModuleData(
+      const output = await runModuleServerLoader(
         app,
         page.filePath,
         input,
         moduleLoader,
       );
-      map.set(buildDataAssetID(pathname), data);
+
+      map.set(buildDataAssetID(pathname), output);
     })(),
   ]);
 
   return map;
 }
 
-export async function loadModuleData(
+export async function runModuleServerLoader(
   app: App,
   filePath: string | null,
   input: ServerLoaderInput,
   moduleLoader: (filePath: string) => unknown | Promise<unknown>,
-): Promise<ServerLoadedData> {
+): Promise<ServerLoadedOutput> {
   if (!filePath) return {};
 
   const module = app.pages.isLayout(filePath)
@@ -103,17 +115,15 @@ export async function loadModuleData(
   };
 
   try {
-    const data = await loader?.(input);
+    const output = (await loader?.(input)) ?? {};
 
-    if (typeof data !== 'object') {
+    if (output.data && typeof output.data !== 'object') {
       logger.warn(
         logger.formatWarnMsg(
           [
-            'Received invalid data object.\n',
+            'Received invalid data from loader.\n',
             `${kleur.bold('File Path:')} ${filePath}`,
-            `${kleur.bold('Input:')} ${input}`,
-            `${kleur.bold('Data:')} ${data}`,
-            `${kleur.bold('Data Type:')} ${typeof data}`,
+            `${kleur.bold('Data Type:')} ${typeof output.data}`,
           ].join('\n'),
         ),
       );
@@ -121,7 +131,7 @@ export async function loadModuleData(
       return {};
     }
 
-    return data!;
+    return output;
   } catch (e) {
     // TODO: handle this with error boundaries.
     logger.error(

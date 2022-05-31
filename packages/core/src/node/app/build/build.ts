@@ -12,8 +12,8 @@ import {
   matchRouteInfo,
   noendslash,
   noslash,
-  type ServerContext,
   type ServerEntryModule,
+  type ServerLoadedOutputMap,
   type ServerPage,
   slash,
 } from '../../../shared';
@@ -23,7 +23,8 @@ import type { App } from '../App';
 import { installFetch } from '../installFetch';
 import {
   buildDataScriptTag,
-  loadPageDataMap,
+  buildServerLoadedDataMap,
+  loadPageServerOutput,
   readIndexHtmlFile,
 } from '../plugins/core';
 import { bundle, getAppBundleEntries } from './bundle';
@@ -49,7 +50,7 @@ export async function build(app: App): Promise<void> {
   const pages = app.pages.all;
   const outputFiles: [filePath: string, content: string][] = [];
   const dataHashTable: Record<string, string> = {};
-  const pageData: Map<string, ServerContext['data']> = new Map();
+  const pageServerOutput: Map<string, ServerLoadedOutputMap> = new Map();
 
   const hrefRE = /href="(.*?)"/g;
   const seenHref = new Map<string, ServerPage>();
@@ -105,12 +106,12 @@ export async function build(app: App): Promise<void> {
     // -------------------------------------------------------------------------------------------
 
     // eslint-disable-next-line no-inner-declarations
-    async function loadData(url: URL, page: ServerPage) {
-      if (pageData.has(url.pathname)) {
-        return pageData.get(url.pathname)!;
+    async function loadServerOutput(url: URL, page: ServerPage) {
+      if (pageServerOutput.has(url.pathname)) {
+        return pageServerOutput.get(url.pathname)!;
       }
 
-      const data = await loadPageDataMap(url, app, page, (filePath) => {
+      const output = await loadPageServerOutput(url, app, page, (filePath) => {
         const path = app.dirs.out.resolve(
           'server',
           `${appEntryFilenames
@@ -121,8 +122,9 @@ export async function build(app: App): Promise<void> {
         return require(path);
       });
 
-      for (const key of data.keys()) {
-        const content = JSON.stringify(data.get(key)!);
+      for (const id of output.keys()) {
+        const data = output.get(id)!.data ?? {};
+        const content = JSON.stringify(data);
 
         if (content !== '{}') {
           const hash = createHash('sha1')
@@ -130,7 +132,7 @@ export async function build(app: App): Promise<void> {
             .digest('hex')
             .substring(0, 8);
 
-          dataHashTable[key] = hash;
+          dataHashTable[id] = hash;
 
           outputFiles.push([
             path.join(app.dirs.out.path, `${DATA_ASSET_BASE_URL}/${hash}.json`),
@@ -139,8 +141,8 @@ export async function build(app: App): Promise<void> {
         }
       }
 
-      pageData.set(url.pathname, data);
-      return data;
+      pageServerOutput.set(url.pathname, output);
+      return output;
     }
 
     // -------------------------------------------------------------------------------------------
@@ -159,9 +161,10 @@ export async function build(app: App): Promise<void> {
       if (seenHref.has(url.pathname)) return;
       seenHref.set(url.pathname, page);
 
-      const data = await loadData(url, page);
+      const serverOutput = await loadServerOutput(url, page);
+      const serverData = buildServerLoadedDataMap(serverOutput);
 
-      const { ssr, html, head } = await render(url, { data });
+      const { ssr, html, head } = await render(url, { data: serverData });
 
       const stylesheetLinks = [CSS_CHUNK?.fileName]
         .filter(Boolean)
@@ -203,7 +206,7 @@ export async function build(app: App): Promise<void> {
 
       const appScriptTag = `<script type="module" src="/${ENTRY_CHUNK.fileName}" defer></script>`;
 
-      const dataScriptTag = buildDataScriptTag(data, dataHashTable);
+      const dataScriptTag = buildDataScriptTag(serverData, dataHashTable);
 
       const dataHashScriptTag = `<script>window.__VBK_DATA_HASH_MAP__ = __VBK_DATA__;</script>`;
 

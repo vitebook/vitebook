@@ -142,8 +142,6 @@ export type ServerLayout = Omit<ClientLayout, 'loader'> & {
   reset: boolean;
 };
 
-export type ServerLoadedData = Record<string, unknown>;
-
 export type ServerLoaderInput = {
   pathname: string;
   page: ServerPage;
@@ -152,8 +150,24 @@ export type ServerLoaderInput = {
   match: URLPatternComponentResult;
 };
 
-export type ServerLoaderOutput = void | undefined | null | ServerLoadedData;
+export type ServerLoadedData = Record<string, unknown>;
 
-export type ServerLoader = (
+/** Map of data asset id to server loaded data object. */
+export type ServerLoadedDataMap = Map<string, ServerLoadedData>;
+
+export type ServerLoadedOutput<Data = ServerLoadedData> = {
+  data?: Data;
+};
+
+/** Map of data asset id to server loaded output object. */
+export type ServerLoadedOutputMap = Map<string, ServerLoadedOutput>;
+
+export type MaybeServerLoadedOutput<Data = ServerLoadedData> =
+  | void
+  | undefined
+  | null
+  | ServerLoadedOutput<Data>;
+
+export type ServerLoader<Data = ServerLoadedData> = (
   input: ServerLoaderInput,
-) => ServerLoaderOutput | Promise<ServerLoaderOutput>;
+) => MaybeServerLoadedOutput<Data> | Promise<MaybeServerLoadedOutput<Data>>;

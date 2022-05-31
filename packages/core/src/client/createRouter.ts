@@ -22,7 +22,7 @@ import {
 import { LRUMap } from './LRUMap.js';
 import { createMemoryHistory } from './router/history/memory';
 import { Router } from './router/Router';
-import { RouteDeclaration } from './router/types';
+import type { RouteDeclaration } from './router/types';
 import { layouts as pageLayouts } from './stores/layouts';
 import { pages } from './stores/pages';
 import { get } from './stores/store';

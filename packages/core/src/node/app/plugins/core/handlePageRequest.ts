@@ -1,15 +1,15 @@
 import { type ServerResponse } from 'http';
 import { type Connect, type ModuleNode, type ViteDevServer } from 'vite';
 
-import {
-  matchRouteInfo,
-  type ServerContext,
-  type ServerEntryModule,
-} from '../../../../shared';
+import { matchRouteInfo, type ServerEntryModule } from '../../../../shared';
 import { virtualModuleId } from '../../alias';
 import { type App } from '../../App';
-import { buildDataScriptTag, loadPageDataMap } from './dataLoader';
 import { readIndexHtmlFile } from './indexHtml';
+import {
+  buildDataScriptTag,
+  buildServerLoadedDataMap,
+  loadPageServerOutput,
+} from './serverLoader';
 
 export async function handlePageRequest(
   url: URL,
@@ -41,16 +41,16 @@ export async function handlePageRequest(
     return;
   }
 
-  const data: ServerContext['data'] = await loadPageDataMap(
+  const serverOutput = await loadPageServerOutput(
     url,
     app,
     page,
     server.ssrLoadModule,
   );
+  const serverData = buildServerLoadedDataMap(serverOutput);
+  const dataScript = buildDataScriptTag(serverData);
 
-  const dataScript = buildDataScriptTag(data);
-
-  const { html: appHtml, head } = await render(url, { data });
+  const { html: appHtml, head } = await render(url, { data: serverData });
 
   const appFilePath = server.moduleGraph
     .getModuleById(`/${virtualModuleId.app}`)!

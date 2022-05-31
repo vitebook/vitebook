@@ -1,9 +1,9 @@
-import { ServerResponse } from 'http';
+import { type ServerResponse } from 'http';
 import { type ViteDevServer } from 'vite';
 
 import { matchRouteInfo, parseDataAssetURL } from '../../../../shared';
 import { type App } from '../../App';
-import { buildServerLoaderInput, loadModuleData } from './dataLoader';
+import { buildServerLoaderInput, runModuleServerLoader } from './serverLoader';
 
 export async function handleDataRequest(
   url: URL,
@@ -25,7 +25,7 @@ export async function handleDataRequest(
     return;
   }
 
-  const data = await loadModuleData(
+  const output = await runModuleServerLoader(
     app,
     module.filePath,
     buildServerLoaderInput(route, page),
@@ -34,5 +34,5 @@ export async function handleDataRequest(
 
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(data));
+  res.end(JSON.stringify(output.data ?? {}));
 }

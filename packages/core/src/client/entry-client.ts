@@ -24,6 +24,11 @@ async function mount() {
     module: app.module,
     hydrate: true,
   });
+
+  if (import.meta.env.DEV && !import.meta.env.SSR) {
+    const styles = document.getElementById('__VBK_SSR_STYLES__');
+    styles?.remove();
+  }
 }
 
 mount();
