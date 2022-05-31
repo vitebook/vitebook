@@ -208,7 +208,7 @@ export async function build(app: App): Promise<void> {
 
       const dataScriptTag = buildDataScriptTag(serverData, dataHashTable);
 
-      const dataHashScriptTag = `<script>window.__VBK_DATA_HASH_MAP__ = __VBK_DATA__;</script>`;
+      const dataHashScriptTag = `<script id="__VBK_DATA_HASH_MAP__">window.__VBK_DATA_HASH_MAP__ = __VBK_DATA__;</script>`;
 
       const pageHtml = HTML_TEMPLATE.replace(`<!--@vitebook/head-->`, headTags)
         .replace(`<!--@vitebook/app-->`, html)

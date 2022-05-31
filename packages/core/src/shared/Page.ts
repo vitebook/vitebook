@@ -155,8 +155,21 @@ export type ServerLoadedData = Record<string, unknown>;
 /** Map of data asset id to server loaded data object. */
 export type ServerLoadedDataMap = Map<string, ServerLoadedData>;
 
+/** Key can be anything but only truthy values are used to cache. */
+export type ServerLoaderCacheKey = unknown;
+
+export type ServerLoaderCacheMap = Map<
+  ServerLoaderCacheKey,
+  ServerLoadedOutput
+>;
+
+export type ServerLoaderCacheKeyBuilder = (
+  input: ServerLoaderInput,
+) => ServerLoaderCacheKey | Promise<ServerLoaderCacheKey>;
+
 export type ServerLoadedOutput<Data = ServerLoadedData> = {
   data?: Data;
+  cache?: ServerLoaderCacheKeyBuilder;
 };
 
 /** Map of data asset id to server loaded output object. */

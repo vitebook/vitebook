@@ -3,10 +3,13 @@ import kleur from 'kleur';
 import {
   buildDataAssetID,
   execRouteMatch,
+  isFunction,
   type ServerLoadedDataMap,
   type ServerLoadedOutput,
   type ServerLoadedOutputMap,
   type ServerLoader,
+  type ServerLoaderCacheKeyBuilder,
+  type ServerLoaderCacheMap,
   type ServerLoaderInput,
   type ServerPage,
 } from '../../../../shared';
@@ -70,6 +73,7 @@ export async function loadPageServerOutput(
 
   await Promise.all([
     ...page.layouts.map(async (index) => {
+      const id = buildDataAssetID(pathname, index);
       const layout = app.pages.getLayoutByIndex(index)!;
 
       const output = await runModuleServerLoader(
@@ -79,9 +83,11 @@ export async function loadPageServerOutput(
         moduleLoader,
       );
 
-      map.set(buildDataAssetID(pathname, index), output);
+      map.set(id, output);
     }),
     (async () => {
+      const id = buildDataAssetID(pathname);
+
       const output = await runModuleServerLoader(
         app,
         page.filePath,
@@ -89,12 +95,15 @@ export async function loadPageServerOutput(
         moduleLoader,
       );
 
-      map.set(buildDataAssetID(pathname), output);
+      map.set(id, output);
     })(),
   ]);
 
   return map;
 }
+
+const loadedCache = new Map<string, ServerLoaderCacheMap>();
+const cacheKeyBuilder = new Map<string, ServerLoaderCacheKeyBuilder>();
 
 export async function runModuleServerLoader(
   app: App,
@@ -108,7 +117,20 @@ export async function runModuleServerLoader(
     ? app.pages.getLayout(filePath)
     : app.pages.getPage(filePath);
 
-  if (!module || !module.hasLoader) return {};
+  if (!module || !module.hasLoader) {
+    cacheKeyBuilder.delete(filePath);
+    loadedCache.delete(filePath);
+    return {};
+  }
+
+  if (cacheKeyBuilder.has(filePath)) {
+    const buildCacheKey = cacheKeyBuilder.get(filePath)!;
+    const cacheKey = await buildCacheKey(input);
+    const cache = loadedCache.get(filePath);
+    if (cacheKey && cache && cache.has(cacheKey)) {
+      return cache.get(cacheKey)!;
+    }
+  }
 
   const { loader } = (await moduleLoader(module.filePath)) as {
     loader?: ServerLoader;
@@ -117,18 +139,46 @@ export async function runModuleServerLoader(
   try {
     const output = (await loader?.(input)) ?? {};
 
-    if (output.data && typeof output.data !== 'object') {
+    const data = output.data;
+    const buildCacheKey = output.cache;
+    const isDataValid = !data || typeof data === 'object';
+
+    if (isDataValid && isFunction(buildCacheKey)) {
+      const cacheKey = await buildCacheKey(input);
+
+      if (cacheKey) {
+        const cache = loadedCache.get(filePath) ?? new Map();
+        cache.set(cacheKey, output);
+        loadedCache.set(filePath, cache);
+      }
+
+      cacheKeyBuilder.set(filePath, buildCacheKey);
+    }
+
+    if (!isDataValid) {
       logger.warn(
         logger.formatWarnMsg(
           [
-            'Received invalid data from loader.\n',
+            'Received invalid data from loader (expected object).\n',
             `${kleur.bold('File Path:')} ${filePath}`,
             `${kleur.bold('Data Type:')} ${typeof output.data}`,
           ].join('\n'),
         ),
       );
 
-      return {};
+      output.data = {};
+    }
+
+    if (buildCacheKey && !isFunction(buildCacheKey)) {
+      logger.warn(
+        logger.formatWarnMsg(
+          [
+            'Received invalid cache builder from loader (expected function).\n',
+            `${kleur.bold('File Path:')} ${filePath}`,
+            `${kleur.bold('Cache Type:')} ${typeof buildCacheKey}`,
+          ].join('\n'),
+        ),
+      );
     }
 
     return output;
