@@ -1,3 +1,17 @@
+# [0.29.0](https://github.com/vitebook/vitebook/compare/v0.28.0...v0.29.0) (2022-05-31)
+
+### Bug Fixes
+
+- **core:** bump default sitemap priority from `0.5` to `0.7` ([f382414](https://github.com/vitebook/vitebook/commit/f382414ac67058cae5a31e27ba6306cc9afd6721))
+- **core:** loader props should return as `data` ([a7a06c9](https://github.com/vitebook/vitebook/commit/a7a06c9644bab97902833a1622b2a230ad944881))
+- **core:** remove dev ssr styles after page load ([7462998](https://github.com/vitebook/vitebook/commit/7462998567b9c163e0461075a0bb94b22bae7d05))
+
+### Features
+
+- **core:** add `$file.path` markdoc var ([02f19b7](https://github.com/vitebook/vitebook/commit/02f19b7d4c220ce10226f7a53f5ed28cb22c22c3))
+- **core:** new `cache` loader option ([5d475aa](https://github.com/vitebook/vitebook/commit/5d475aa21a6a7979403e7638f92f43507c1997fe))
+- **core:** support redirects from server loader ([8007c13](https://github.com/vitebook/vitebook/commit/8007c13f5c666b9df112ad6f508286104c440cc5))
+
 # [0.28.0](https://github.com/vitebook/vitebook/compare/v0.27.0...v0.28.0) (2022-05-30)
 
 ### Bug Fixes
