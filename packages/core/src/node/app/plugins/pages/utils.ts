@@ -59,8 +59,10 @@ export function resolvePageRouteFromFilePath(
     let value = isFunction(matcher) ? matcher({ filePath, pagePath }) : matcher;
 
     if (value instanceof RegExp) {
-      // slice off `/` from start and end.
-      value = `(${value.toString().slice(1, -1)})`;
+      const regexStr = value.toString();
+      value = regexStr.startsWith('/(')
+        ? regexStr.slice(1, -1)
+        : `(${regexStr.slice(1, -1)})`;
     }
 
     route = route.replace(`{${matcherName}}`, `${value ?? ''}`);
