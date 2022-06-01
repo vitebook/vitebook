@@ -1,3 +1,15 @@
+# [0.31.0](https://github.com/vitebook/vitebook/compare/v0.30.0...v0.31.0) (2022-06-01)
+
+### Bug Fixes
+
+- **core:** grouped regex matcher not serialized correctly ([84c8868](https://github.com/vitebook/vitebook/commit/84c88686a0ca41119e86561c4df0f4c1173de3a7))
+- **core:** page order is not stripped out of route pathname ([118d6aa](https://github.com/vitebook/vitebook/commit/118d6aa51d20df1f5fcfc8f8bff0b58d8e6e9064))
+- **core:** remove redundant data from client-side pages ([97039e6](https://github.com/vitebook/vitebook/commit/97039e655ba51899b2475793d5506066bde86b77))
+
+### Features
+
+- **core:** multi sitemap support with filtering ([24fb844](https://github.com/vitebook/vitebook/commit/24fb844a8dc9f4c5fdc7b39bac4109c89099824d))
+
 # [0.30.0](https://github.com/vitebook/vitebook/compare/v0.29.0...v0.30.0) (2022-06-01)
 
 ### Bug Fixes
