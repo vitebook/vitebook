@@ -448,6 +448,8 @@ export function logRoutes(app: App, seenHref: Map<string, ServerPage>) {
 }
 
 function logRedirects(redirects: Record<string, string>) {
+  if (Object.keys(redirects).length === 0) return;
+
   const logs: string[] = [kleur.bold(kleur.underline('REDIRECTS')), ''];
 
   for (const href of Object.keys(redirects)) {
