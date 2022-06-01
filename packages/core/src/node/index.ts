@@ -45,6 +45,7 @@ export type {
   PagesPluginConfig,
   ResolvedPagesPluginConfig,
 } from './app/plugins/pages';
+export * from './app/plugins/pages/utils';
 export * from './utils';
 export type {
   Config as MarkdocConfig,
