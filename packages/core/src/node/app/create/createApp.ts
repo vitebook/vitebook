@@ -2,7 +2,7 @@ import { globbySync } from 'globby';
 import path from 'upath';
 import { loadConfigFromFile } from 'vite';
 
-import { installURLPattern } from '../../../shared';
+import { installURLPattern, isArray } from '../../../shared';
 import { resolveRelativePath } from '../../utils';
 import type { App, AppDirs, AppEnv } from '../App';
 import type {
@@ -146,7 +146,7 @@ export async function resolveAppConfig({
   routes = {},
   pages = {},
   markdown = {},
-  sitemap = {},
+  sitemap,
   plugins = [],
 }: AppConfig): Promise<ResolvedAppConfig> {
   const _cwd = resolveRelativePath(process.cwd(), dirs.cwd ?? '.');
@@ -210,12 +210,20 @@ export async function resolveAppConfig({
     ...markdown,
   };
 
-  const __sitemap: ResolvedSitemapConfig = {
+  const __sitemapConfig: ResolvedSitemapConfig = {
     baseUrl: null,
+    filename: 'sitemap.xml',
     changefreq: 'weekly',
     priority: 0.7,
-    ...sitemap,
+    include: /.*/,
+    exclude: null,
   };
+
+  const __sitemap: ResolvedSitemapConfig[] = (
+    isArray(sitemap) ? sitemap : [sitemap]
+  )
+    .filter(Boolean)
+    .map((config) => ({ ...__sitemapConfig, ...config }));
 
   return {
     cliArgs,

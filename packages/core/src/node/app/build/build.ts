@@ -1,3 +1,4 @@
+import { createFilter } from '@rollup/pluginutils';
 import { createHash } from 'crypto';
 import fs from 'fs';
 import kleur from 'kleur';
@@ -22,6 +23,7 @@ import {
 import { ensureFile } from '../../utils';
 import { logger, LoggerIcon } from '../../utils/logger';
 import type { App } from '../App';
+import type { ResolvedSitemapConfig } from '../AppConfig';
 import { installFetch } from '../installFetch';
 import {
   buildDataScriptTag,
@@ -363,7 +365,11 @@ export async function build(app: App): Promise<void> {
       }),
     );
 
-    await buildSitemap(app, seenHref);
+    if (app.config.sitemap.length > 0) {
+      await Promise.all(
+        app.config.sitemap.map((config) => buildSitemap(app, seenHref, config)),
+      );
+    }
 
     spinner.stopAndPersist({
       symbol: LoggerIcon.Success,
@@ -620,11 +626,16 @@ function isPageChunk(fileName: string, bundle: RollupOutput) {
   return is;
 }
 
-async function buildSitemap(app: App, seenHref: Map<string, ServerPage>) {
-  const config = app.config.sitemap;
+async function buildSitemap(
+  app: App,
+  seenHref: Map<string, ServerPage>,
+  config: ResolvedSitemapConfig,
+) {
   const baseUrl = config.baseUrl;
 
   if (!baseUrl) return;
+
+  const filter = createFilter(config.include, config.exclude);
 
   const changefreq = isFunction(config.changefreq)
     ? config.changefreq
@@ -646,14 +657,16 @@ async function buildSitemap(app: App, seenHref: Map<string, ServerPage>) {
 
   const urls = (
     await Promise.all(
-      Array.from(seenHref.keys()).map(
-        async (pathname) => `<url>
+      Array.from(seenHref.keys())
+        .filter(filter)
+        .map(
+          async (pathname) => `<url>
     <loc>${baseUrl}${slash(pathname)}</loc>
     <lastmod>${await lastmod(pathname)}</lastmod>
     <changefreq>${await changefreq(new URL(pathname, baseUrl))}</changefreq>
     <priority>${await priority(new URL(pathname, baseUrl))}</priority>
   </url>`,
-      ),
+        ),
     )
   ).join('\n  ');
 
@@ -669,5 +682,5 @@ async function buildSitemap(app: App, seenHref: Map<string, ServerPage>) {
   ${urls}
 </urlset>`;
 
-  await app.dirs.out.write('sitemap.xml', content);
+  await app.dirs.out.write(config.filename, content);
 }

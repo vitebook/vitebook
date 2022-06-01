@@ -1,3 +1,5 @@
+import type { FilterPattern } from '@rollup/pluginutils';
+
 import { type PageRouteMatcherConfig } from '../../shared';
 import type { CLIArgs } from '../cli/args';
 import type {
@@ -15,51 +17,24 @@ import type {
 import type { FilteredPlugins, Plugins } from './plugins/Plugin';
 
 export type ResolvedAppConfig = {
-  /**
-   * Parsed CLI arguments.
-   */
+  /** Parsed CLI arguments. */
   cliArgs: CLIArgs;
-
-  /**
-   * Application directory paths.
-   */
+  /** Application directory paths. */
   dirs: ResolvedAppDirsConfig;
-
-  /**
-   * Core options.
-   */
+  /** Core options. */
   core: ResolvedCorePluginConfig;
-
-  /**
-   * Client options.
-   */
+  /** Client options. */
   client: ResolvedAppClientConfig;
-
-  /**
-   * Routing options.
-   */
+  /** Routing options. */
   routes: ResolvedRouteConfig;
-
-  /**
-   * Pages options.
-   */
+  /** Pages options. */
   pages: ResolvedPagesPluginConfig;
-
-  /**
-   * Markdown options.
-   */
+  /** Markdown options. */
   markdown: ResolvedMarkdownPluginConfig;
-
-  /**
-   * Sitemap options.
-   */
-  sitemap: ResolvedSitemapConfig;
-
-  /**
-   * Vitebook plugins.
-   */
+  /** Sitemap options. */
+  sitemap: ResolvedSitemapConfig[];
+  /** Vitebook plugins. */
   plugins: FilteredPlugins;
-
   /**
    * Whether to load in debug mode.
    *
@@ -175,6 +150,24 @@ export type ResolvedSitemapConfig = {
    */
   baseUrl: string | null;
   /**
+   * Filtern pattern used to determine which HTML pages to include in final sitemap.
+   *
+   * @defaultValue `.*`
+   */
+  include: FilterPattern;
+  /**
+   * Filtern pattern used to determine which HTML pages to exclude from final sitemap.
+   *
+   * @defaultValue `null`
+   */
+  exclude: FilterPattern;
+  /**
+   * Sitemap file name which is output relative to application `<output>` directory.
+   *
+   * @defaultValue `sitemap.xml`
+   */
+  filename: string;
+  /**
    * How frequently the page is likely to change. This value provides general information to
    * search engines and may not correlate exactly to how often they crawl the page.
    *
@@ -210,12 +203,20 @@ export type AppConfig = Omit<
   | 'routes'
   | 'sitemap'
 > & {
+  /** Application directory paths. */
   dirs?: AppDirsConfig;
+  /** Core options. */
   core?: CorePluginConfig;
+  /** Client options. */
   client?: AppClientConfig;
+  /** Routing options. */
   routes?: RoutesConfig;
+  /** Pages options. */
   pages?: PagesPluginConfig;
+  /** Markdown options. */
   markdown?: MarkdownPluginConfig;
+  /** Vitebook plugins. */
   plugins?: Plugins;
-  sitemap?: SitemapConfig;
+  /** One or many sitemap configurations. */
+  sitemap?: SitemapConfig | SitemapConfig[];
 };
