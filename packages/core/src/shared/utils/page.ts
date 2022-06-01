@@ -10,7 +10,7 @@ export function isLoadedPage(page: unknown): page is LoadedClientPage {
 export function isLoadedMarkdownPage(
   page: unknown,
 ): page is LoadedClientMarkdownPage {
-  return isLoadedPage(page) && page.rootPath.endsWith('.md');
+  return isLoadedPage(page) && page.ext === '.md';
 }
 
 const splitRE = /\//g;

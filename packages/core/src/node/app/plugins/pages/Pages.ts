@@ -136,6 +136,7 @@ export class Pages {
 
     const rootPath = this.getRootPath(filePath);
     const id = slash(rootPath);
+    const ext = path.extname(rootPath);
     const route = this.resolvePageRoute(filePath);
     const fileContent = fs.readFileSync(filePath, { encoding: 'utf-8' });
     const layouts = this.resolveLayouts(filePath);
@@ -146,6 +147,7 @@ export class Pages {
       id,
       filePath,
       rootPath,
+      ext,
       route,
       layouts,
       layoutName,
@@ -264,7 +266,10 @@ export class Pages {
     return this._layouts.findIndex((l) => l.filePath === filePath);
   }
 
-  getPageLayoutName(pageFilePath: string, fileContent?: string) {
+  getPageLayoutName(
+    pageFilePath: string,
+    fileContent?: string,
+  ): string | undefined {
     const frontmatter = MD_FILE_RE.test(pageFilePath)
       ? getFrontmatter(
           fileContent ?? fs.readFileSync(pageFilePath, { encoding: 'utf-8' }),
@@ -272,7 +277,9 @@ export class Pages {
       : {};
 
     return (
-      pageFilePath.match(PAGE_LAYOUT_NAME_RE)?.[1] ?? frontmatter.layout ?? ''
+      pageFilePath.match(PAGE_LAYOUT_NAME_RE)?.[1] ??
+      frontmatter.layout ??
+      undefined
     );
   }
 
@@ -304,10 +311,11 @@ export class Pages {
             // initialized late on client to allow polyfill to be installed.
             pattern: undefined,
           },
-          rootPath: page.rootPath,
+          ext: page.ext,
           layoutName: page.layoutName,
           layouts: page.layouts,
-          context: page.context,
+          context:
+            Object.keys(page.context).length > 0 ? page.context : undefined,
           loader: `() => import('${page.id}')`,
         })),
       ),

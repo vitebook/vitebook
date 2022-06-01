@@ -55,10 +55,12 @@ export type PageRoute = {
 export type ClientPage = {
   /** Page route object. */
   readonly route: PageRoute;
-  /** System file path relative to `<root>` to associated page file. */
-  readonly rootPath: string;
+  /** Page file extension.  */
+  readonly ext: string;
   /** Additional page metadata. */
-  readonly context: Record<string, unknown>;
+  readonly context?: Record<string, unknown>;
+  /** Page layout name. */
+  readonly layoutName?: string;
   /** Page layouts identifiers. */
   readonly layouts: number[];
   /** Page module loader. Used to dynamically import page module client-side. */
@@ -110,11 +112,13 @@ export type ServerPage = Omit<ClientPage, 'loader' | 'layouts'> & {
   /** Module id used by the client-side router to dynamically load this page module.  */
   id: string;
   /** Absolute system file path to page file.  */
-  filePath: string;
+  readonly filePath: string;
+  /** System file path relative to `<root>` to associated page file. */
+  readonly rootPath: string;
   /** Page route object. */
   route: PageRoute;
   /** Page layout name. */
-  layoutName: string;
+  layoutName?: string;
   /**
    * Indentifies layout files that belong to this page. Each number is an index to a layout
    * client layout file in the `layouts` store.
@@ -133,22 +137,22 @@ export type ServerLayout = Omit<ClientLayout, 'loader'> & {
   /** Module id used by the client-side router to dynamically load this layout module.  */
   id: string;
   /** Absolute system file path to page file. */
-  filePath: string;
+  readonly filePath: string;
   /** The root directory that this layout belongs to. */
-  owningDir: string;
+  readonly owningDir: string;
   /** Whether the layout has a data `loader` function. */
   hasLoader: boolean;
   /** Whether the current layout resets the layout stack.  */
   reset: boolean;
 };
 
-export type ServerLoaderInput = {
+export type ServerLoaderInput = Readonly<{
   pathname: string;
   page: ServerPage;
   route: PageRoute;
   /** Result from running `URLPattern.exec().pathname`. */
   match: URLPatternComponentResult;
-};
+}>;
 
 export type ServerLoadedData = Record<string, unknown>;
 
@@ -169,8 +173,8 @@ export type ServerLoaderCacheKeyBuilder = (
 
 export type ServerLoadedOutput<Data = ServerLoadedData> = {
   data?: Data;
-  redirect?: string;
-  cache?: ServerLoaderCacheKeyBuilder;
+  readonly redirect?: string;
+  readonly cache?: ServerLoaderCacheKeyBuilder;
 };
 
 /** Map of data asset id to server loaded output object. */
