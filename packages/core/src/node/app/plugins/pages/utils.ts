@@ -12,7 +12,7 @@ import {
 const ROUTE_MATCHERS_RE = /{(.*?)}/g;
 const LAYOUT_NAME_RE = /(.*?)@layout/;
 const PAGE_ORDER_RE = /^\[(\d*)\]/;
-const STRIP_PAGE_ORDER_RE = /^\[(\d*)\]/g;
+const STRIP_PAGE_ORDER_RE = /\/\[(\d*)\]/g;
 
 export function getPageLayoutNameFromPath(filePath: string) {
   const filename = path
@@ -23,7 +23,7 @@ export function getPageLayoutNameFromPath(filePath: string) {
 }
 
 export function stripPageOrderFromPath(filePath: string) {
-  return filePath.replace(STRIP_PAGE_ORDER_RE, '');
+  return filePath.replace(STRIP_PAGE_ORDER_RE, '/');
 }
 
 export function stripRouteMatchersFromPath(filePath: string) {
