@@ -1,3 +1,13 @@
+# [0.30.0](https://github.com/vitebook/vitebook/compare/v0.29.0...v0.30.0) (2022-06-01)
+
+### Bug Fixes
+
+- **core:** do not log redirects on build if there are none ([5842787](https://github.com/vitebook/vitebook/commit/584278705b02d9def42e74cc619a0cda12dd70c6))
+
+### Features
+
+- **core:** export node page utils ([363c29d](https://github.com/vitebook/vitebook/commit/363c29d90a49b9ee96fb0356ce60e9ec0a0482e4))
+
 # [0.29.0](https://github.com/vitebook/vitebook/compare/v0.28.0...v0.29.0) (2022-05-31)
 
 ### Bug Fixes
