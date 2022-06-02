@@ -34,7 +34,8 @@ export const renderMarkdoc: MarkdocRenderer = ({
     '</script>',
   ].join('\n');
 
-  const script = ['<script>', ...imports, '</script>'].join('\n');
+  const script =
+    imports.length > 0 ? ['<script>', ...imports, '</script>'].join('\n') : '';
 
   const svelteHead = stuff.head
     ? `<svelte:head>\n${stuff.head}\n</svelte:head>\n\n`

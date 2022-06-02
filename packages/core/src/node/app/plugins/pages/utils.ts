@@ -9,7 +9,6 @@ import {
   slash,
 } from '../../../../shared';
 
-const ROUTE_MATCHERS_RE = /{(.*?)}/g;
 const LAYOUT_NAME_RE = /(.*?)@layout/;
 const PAGE_ORDER_RE = /^\[(\d*)\]/;
 const STRIP_PAGE_ORDER_RE = /\/\[(\d*)\]/g;
@@ -26,35 +25,28 @@ export function stripPageOrderFromPath(filePath: string) {
   return filePath.replace(STRIP_PAGE_ORDER_RE, '/');
 }
 
-export function stripRouteMatchersFromPath(filePath: string) {
-  return filePath.replace(ROUTE_MATCHERS_RE, '');
-}
-
 export function stripPageLayoutNameFromPath(filePath: string) {
   const ext = path.extname(filePath);
   return filePath.replace(new RegExp(`@\\w+\\.${ext.slice(1)}$`, 'i'), ext);
 }
 
 export function stripPageInfoFromPath(filePath: string) {
-  return stripRouteMatchersFromPath(
-    stripPageLayoutNameFromPath(stripPageOrderFromPath(filePath)),
-  );
+  return stripPageLayoutNameFromPath(stripPageOrderFromPath(filePath));
 }
 
 export function resolvePageRouteFromFilePath(
   pagesDir: string,
   filePath: string,
-  config: PageRouteMatcherConfig = {},
+  matchers: PageRouteMatcherConfig = {},
 ): PageRoute {
   const pagePath = path.relative(pagesDir, filePath);
   const orderMatch = path.basename(pagePath).match(PAGE_ORDER_RE)?.[1];
   const order = orderMatch ? Number(orderMatch) : undefined;
 
-  let route = stripPageLayoutNameFromPath(stripPageOrderFromPath(pagePath));
+  let route = stripPageInfoFromPath(pagePath);
 
-  for (const match of pagePath.match(ROUTE_MATCHERS_RE) ?? []) {
-    const matcherName = match.slice(1, -1); // slice off `{` and `}`
-    const matcher = config[matcherName];
+  for (const matcherName of Object.keys(matchers)) {
+    const matcher = matchers[matcherName];
 
     let value = isFunction(matcher) ? matcher({ filePath, pagePath }) : matcher;
 
@@ -65,7 +57,7 @@ export function resolvePageRouteFromFilePath(
         : `(${regexStr.slice(1, -1)})`;
     }
 
-    route = route.replace(`{${matcherName}}`, `${value ?? ''}`);
+    route = route.replace(`[${matcherName}]`, `${value ?? ''}`);
   }
 
   const isNotFound = route.startsWith('404');

@@ -111,6 +111,8 @@ export async function build(app: App): Promise<void> {
     // LOAD DATA
     // -------------------------------------------------------------------------------------------
 
+    const specialCharsRE = /\$|#|\[|\]|{|}|:/g;
+
     // eslint-disable-next-line no-inner-declarations
     async function loadServerOutput(url: URL, page: ServerPage) {
       if (pageServerOutput.has(url.pathname)) {
@@ -126,7 +128,7 @@ export async function build(app: App): Promise<void> {
             'server',
             `${appEntryFilenames
               .find((name) => appEntries[name] === filePath)
-              ?.replace(/:/g, '_')}.cjs`,
+              ?.replace(specialCharsRE, '_')}.cjs`,
           );
 
           return require(path);
