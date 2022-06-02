@@ -1,3 +1,9 @@
+## [0.31.2](https://github.com/vitebook/vitebook/compare/v0.31.1...v0.31.2) (2022-06-02)
+
+### Bug Fixes
+
+- **core:** url path ending with `#` is not matched ([a05752a](https://github.com/vitebook/vitebook/commit/a05752acf5b59280cbb52cac5400b67537d9a517))
+
 ## [0.31.1](https://github.com/vitebook/vitebook/compare/v0.31.0...v0.31.1) (2022-06-02)
 
 ### Bug Fixes
