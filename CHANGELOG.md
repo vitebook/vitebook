@@ -1,3 +1,10 @@
+## [0.31.1](https://github.com/vitebook/vitebook/compare/v0.31.0...v0.31.1) (2022-06-02)
+
+### Bug Fixes
+
+- **core:** router improvements ([e98472d](https://github.com/vitebook/vitebook/commit/e98472dd36e4cb981c99d93acc01e791715ccf1a))
+- **core:** use safe matcher naming convention ([73fd9cd](https://github.com/vitebook/vitebook/commit/73fd9cdd43512cc88cadcd32207656d6cbee55c8))
+
 # [0.31.0](https://github.com/vitebook/vitebook/compare/v0.30.0...v0.31.0) (2022-06-01)
 
 ### Bug Fixes
