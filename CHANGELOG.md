@@ -1,3 +1,13 @@
+# [0.32.0](https://github.com/vitebook/vitebook/compare/v0.31.2...v0.32.0) (2022-06-02)
+
+### Bug Fixes
+
+- **core:** dynamic url paths are not cleaned correctly ([a320e3c](https://github.com/vitebook/vitebook/commit/a320e3c0fb40ed31860cce6176655af685de9782))
+
+### Features
+
+- **core:** add hmr support for markdown meta ([f7d67a5](https://github.com/vitebook/vitebook/commit/f7d67a5e8d8fcc7735a9b867c7f44fa338d2a2a0))
+
 ## [0.31.2](https://github.com/vitebook/vitebook/compare/v0.31.1...v0.31.2) (2022-06-02)
 
 ### Bug Fixes
