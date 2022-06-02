@@ -144,5 +144,5 @@ export function execRouteMatch<T extends PageRoute>(url: URL, route?: T) {
 
 export function cleanRouteMatchingURL(url: URL) {
   const path = url.toString();
-  return path === '/' ? path : path.replace(/(\.html|\/)($|\?)/, '');
+  return path === '/' ? path : path.replace(/(\.html|\/)($|\?|#)/, '');
 }
