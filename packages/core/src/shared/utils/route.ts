@@ -121,13 +121,11 @@ export function matchRouteInfo<T extends PageRoute>(
   url: URL,
   routes: T[] | { route: T }[],
 ): WithRouteMatch<{ index: number; route: T }> | undefined {
-  const cleanUrl = cleanRouteMatchingURL(url);
-
   const normalized: T[] =
     'route' in routes[0] ? routes.map((r) => r.route) : routes;
 
   const index = normalized.findIndex((route) =>
-    route.pattern.test(route.dynamic ? cleanUrl : url),
+    route.pattern.test(cleanRouteMatchingURL(url, route)),
   );
 
   const route = normalized[index];
@@ -138,11 +136,11 @@ export function matchRouteInfo<T extends PageRoute>(
 }
 
 export function execRouteMatch<T extends PageRoute>(url: URL, route?: T) {
-  return route?.pattern.exec(route.dynamic ? cleanRouteMatchingURL(url) : url)
-    ?.pathname;
+  return route?.pattern.exec(cleanRouteMatchingURL(url, route))?.pathname;
 }
 
-export function cleanRouteMatchingURL(url: URL) {
-  const path = url.toString();
-  return path === '/' ? path : path.replace(/(\.html|\/)($|\?|#)/, '');
+export function cleanRouteMatchingURL(url: URL, route: PageRoute) {
+  return `http://test${
+    route.dynamic ? url.pathname.replace(/\.html$/, '') : url.pathname
+  }`;
 }
