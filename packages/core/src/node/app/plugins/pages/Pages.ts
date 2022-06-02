@@ -306,6 +306,7 @@ export class Pages {
     return `export default ${stripImportQuotesFromJson(
       prettyJsonStr(
         this._pages.map((page) => ({
+          rootPath: page.rootPath,
           route: {
             ...page.route,
             // initialized late on client to allow polyfill to be installed.

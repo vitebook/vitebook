@@ -48,6 +48,8 @@ export type PageRoute = {
 };
 
 export type ClientPage = {
+  /** System file path relative to `<root>`. */
+  readonly rootPath: string;
   /** Page route object. */
   readonly route: PageRoute;
   /** Page file extension.  */

@@ -195,11 +195,24 @@ export function markdownPlugin(config: ResolvedMarkdownPluginConfig): Plugin {
       return null;
     },
     async handleHotUpdate(ctx) {
-      const { file, read } = ctx;
+      const { file, server, read } = ctx;
 
       if (filter(file)) {
         const content = await read();
-        const { output } = await parseMarkdown(app, file, content, parseConfig);
+
+        const { output, ...meta } = await parseMarkdown(
+          app,
+          file,
+          content,
+          parseConfig,
+        );
+
+        server.ws.send({
+          type: 'custom',
+          event: 'vitebook::md_meta',
+          data: meta,
+        });
+
         ctx.read = () => output;
       }
     },
