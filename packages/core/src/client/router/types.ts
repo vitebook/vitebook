@@ -4,15 +4,18 @@ import {
   type PageRoute,
 } from '../../shared';
 
-export type RoutePrefetch = (info: { url: URL; route: Route }) =>
-  | string // redirect
-  | void
-  | Promise<string | void>;
+export type RedirectRoute = (pathnameOrURL: string | URL) => void;
 
-export type RouteLoader = (route: Route) =>
-  | string // redirect
-  | LoadedClientPage
-  | Promise<string | LoadedClientPage>;
+export type RoutePrefetch = (info: {
+  url: URL;
+  route: Route;
+  redirect: RedirectRoute;
+}) => void | Promise<void>;
+
+export type RouteLoader = (info: {
+  route: Route;
+  redirect: RedirectRoute;
+}) => void | LoadedClientPage | Promise<void | LoadedClientPage>;
 
 export type RouteDeclaration = Omit<PageRoute, 'score'> & {
   score?: number;
@@ -39,50 +42,52 @@ export type Route = RouteDeclaration & {
 };
 
 export type RouteNavigation = {
-  url: URL;
-  loading: boolean;
-};
+  from: URL;
+  to: URL;
+} | null;
 
 export type LoadedRoute = Route & {
   page: LoadedClientPage;
 };
 
-export type NavigationOptions = {
-  url: URL;
-  scroll?: RouterScrollOptions;
+export type GoToRouteOptions = {
+  scroll?: ScrollToTarget | null;
   keepfocus?: boolean;
   hash?: string;
-};
-
-export type GoToRouteOptions = {
-  scroll?: RouterScrollOptions;
   replace?: boolean;
-  keepfocus?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   state?: any;
 };
 
-export type RouterScrollOptions =
-  | false
+export type NavigationOptions = GoToRouteOptions & {
+  accepted?: () => void;
+  blocked?: () => void;
+};
+
+export type ScrollTarget =
   | null
-  | undefined
   | (ScrollToOptions & { el?: string | HTMLElement });
 
-export type RouterScrollBehaviorHook = (
-  from: LoadedRoute,
-  to: LoadedRoute,
-  savedPosition?: { top?: number; left?: number },
-) => RouterScrollOptions | Promise<RouterScrollOptions>;
+export type ScrollToTarget = (info: { cancel: ScrollCancel }) => ScrollTarget;
+
+export type ScrollCancel = () => void;
+
+export type RouterScrollBehaviorHook = (info: {
+  from: LoadedRoute;
+  to: LoadedRoute;
+  cancel: ScrollCancel;
+  savedPosition?: { top?: number; left?: number };
+}) => ScrollTarget | Promise<ScrollTarget>;
+
+export type CancelNavigation = () => void;
 
 export type RouterBeforeNavigateHook = (navigation: {
   from: RouteDeclaration;
   to: RouteDeclaration;
   match: URLPatternComponentResult;
-}) =>
-  | void
-  | false
-  | { redirect: string }
-  | Promise<void | { redirect: string }>;
+  cancel: CancelNavigation;
+  redirect: RedirectRoute;
+}) => void;
 
 export type RouterAfterNavigateHook = (navigation: {
   from: LoadedRoute;

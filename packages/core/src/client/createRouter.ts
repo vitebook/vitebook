@@ -76,19 +76,24 @@ export async function createRouter({
 let routes: RouteDeclaration[] = [];
 
 function addRoutes(router: Router, pages: Readonly<ClientPage[]>) {
-  pages.forEach((page) => {
+  for (const page of pages) {
     const route: RouteDeclaration = {
       ...page.route,
-      loader: () => loadPage(router, page),
-      prefetch: async ({ url }) => {
-        const redirect = await loadPage(router, page, { prefetch: url });
-        return isString(redirect) ? redirect : undefined;
+      loader: async ({ redirect }) => {
+        const pageOrRedirect = await loadPage(router, page);
+        return isString(pageOrRedirect)
+          ? redirect(pageOrRedirect)
+          : pageOrRedirect;
+      },
+      prefetch: async ({ url, redirect }) => {
+        const redirectTo = await loadPage(router, page, { prefetch: url });
+        return isString(redirectTo) ? redirect(redirectTo) : undefined;
       },
     };
 
     router.addRoute(route);
     routes.push(route);
-  });
+  }
 }
 
 function handleHMR(router: Router) {
@@ -204,15 +209,9 @@ export async function loadData(
 ): Promise<ClientLoadedData> {
   if (!module.loader) return {};
 
-  const id = buildDataAssetID(
-    decodeURI(
-      prefetchURL?.pathname ??
-        (import.meta.env.SSR
-          ? router.navigatingURL.pathname
-          : location.pathname),
-    ),
-    layoutIndex,
-  );
+  const pathname = prefetchURL?.pathname ?? get(router.navigation)!.to.pathname;
+
+  const id = buildDataAssetID(decodeURI(pathname), layoutIndex);
 
   const hashId =
     import.meta.env.PROD && !import.meta.env.SSR

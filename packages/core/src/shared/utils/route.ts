@@ -6,8 +6,9 @@ const PATH_SCORE = {
   Group: 3, // /:id or /{:id} or /something{:id}
   Dynamic: 2,
   Root: 1, // /
-  BonusRegExp: 1, // /:id(\\d+)
-  PenaltyOptional: -1, // /:id? or {id}?
+  BonusRegExp: 1, // /:id(\d+)
+  BonusExt: 3, // .html
+  PenaltyOptional: -1, // /:id? or {id}? or (\d)?
   PenaltyWildcard: -7, // /posts/* or /:id*
   PenaltyRepeatable: -8, // /:id+ or /:id* or {id}+
   PenaltyRegexWildcard: -10, // /(.*)
@@ -17,8 +18,9 @@ const splitPathRE = /\//g;
 const dynamicPathRE = /(\*|\((?!\/).*\)|{(?!\/).*}|\/:)/;
 
 const bonusRegexRE = /\(.*?\)/;
+const bonusExt = /\.html$/;
 
-const penaltyOptionalRE = /(^\/:(\w|\.)+\?)|({:?.*?}\?)/;
+const penaltyOptionalRE = /(^\/:(\w|\.)+\?)|({:?.*?}\?)|(\(.*?\)\?)/;
 const penaltyWildcardRE = /^\/(\*|(:?\w*?\*))/;
 const penaltyRepeatableRE = /^\/(:(\w|\.)+(\+|\*))|({:?.*?}(\+|\*))/;
 const penaltyRegexWildcardRE = /(\(\.\*\??\)|(\.\+\??))/;
@@ -34,16 +36,20 @@ export function calcRoutePathScore(pathname: string): number {
 
   let score = 0;
 
-  for (const segment of segments) {
-    score += PATH_SCORE.Segment;
+  if (bonusExt.test(pathname)) {
+    score += PATH_SCORE.BonusExt;
+  }
 
+  for (const segment of segments) {
     if (segment === '/') {
-      score += PATH_SCORE.Root;
+      score += PATH_SCORE.Root + PATH_SCORE.Segment;
       continue;
     }
 
     const isDynamic = isRoutePathDynamic(segment);
     const isNamedGroup = segment.startsWith('/:') || segment.startsWith('/{:');
+
+    let isSegment = true;
 
     if (isNamedGroup) {
       score += PATH_SCORE.Group;
@@ -58,22 +64,28 @@ export function calcRoutePathScore(pathname: string): number {
 
       if (penaltyOptionalRE.test(segment)) {
         score += PATH_SCORE.PenaltyOptional;
+        isSegment = false;
       }
 
       if (penaltyWildcardRE.test(segment)) {
         score += PATH_SCORE.PenaltyWildcard;
+        isSegment = false;
       }
 
       if (penaltyRepeatableRE.test(segment)) {
         score += PATH_SCORE.PenaltyRepeatable;
+        isSegment = false;
       }
 
       if (penaltyRegexWildcardRE.test(segment)) {
         score += PATH_SCORE.PenaltyRegexWildcard;
+        isSegment = false;
       }
     } else {
       score += PATH_SCORE.Static;
     }
+
+    if (isSegment) score += PATH_SCORE.Segment;
   }
 
   scoreCache.set(pathname, score);

@@ -1,9 +1,14 @@
+/**
+ * Heavily inspired by:
+ * - SvelteKit Router: https://github.com/sveltejs/kit
+ * - Vue Router: https://github.com/vuejs/router
+ */
+
 import {
   type AppContextMap,
   calcRoutePathScore,
   compareRoutes,
   inBrowser,
-  isBoolean,
   isString,
   matchRoute,
   slash,
@@ -16,6 +21,7 @@ import type {
   GoToRouteOptions,
   LoadedRoute,
   NavigationOptions,
+  RedirectRoute,
   Route,
   RouteDeclaration,
   RouteNavigation,
@@ -24,22 +30,28 @@ import type {
   RouterOptions,
   RouterScrollBehaviorHook,
   ScoredRouteDeclaration,
+  ScrollTarget,
 } from './types';
 
 export class Router {
   protected _url!: URL;
   protected _started = false;
-  protected _currentRoute?: LoadedRoute;
-  protected _savedScrollPosition?: ScrollToOptions;
+  protected _currentRoute: LoadedRoute | null = null;
   protected _routes: ScoredRouteDeclaration[] = [];
-  protected _redirects = new Map<string, string>();
 
   protected readonly _history: History;
+  protected readonly _redirects = new Map<string, string>();
 
-  protected readonly _navigation = writable<RouteNavigation>({
-    url: new URL(inBrowser ? location.href : 'http://ssr/'),
-    loading: false,
-  });
+  protected _historyIndex: number;
+  protected readonly _historyIndexKey = 'vitebook::index';
+
+  protected readonly _scrollKey = 'vitebook:scroll';
+  protected readonly _scrollPositions: Record<
+    string,
+    { top: number; left: number }
+  > = {};
+
+  protected readonly _navigation = writable<RouteNavigation>(null);
 
   /**
    * The DOM node on which routes will be mounted on.
@@ -73,20 +85,28 @@ export class Router {
    */
   scrollBehavior?: RouterScrollBehaviorHook;
 
+  _beforeNavigate: RouterBeforeNavigateHook[] = [];
+
   /**
    * Called when navigating to a new route and right before a new page is loaded. Returning a
    * redirect path will navigate to the matching route declaration.
    *
    * @defaultValue undefined
    */
-  beforeNavigate?: RouterBeforeNavigateHook;
+  beforeNavigate(hook: RouterBeforeNavigateHook) {
+    this._beforeNavigate.push(hook);
+  }
+
+  _afterNavigate: RouterAfterNavigateHook[] = [];
 
   /**
    * Called after navigating to a new route and it's respective page has loaded.
    *
    * @defaultValue undefined
    */
-  afterNavigate?: RouterAfterNavigateHook;
+  afterNavigate(hook: RouterAfterNavigateHook) {
+    this._afterNavigate.push(hook);
+  }
 
   /**
    * The current URL.
@@ -108,14 +128,7 @@ export class Router {
    * Whether the router is in the process of navigating to another page.
    */
   get navigating() {
-    return get(this._navigation).loading;
-  }
-
-  /**
-   * The URL being navigated to.
-   */
-  get navigatingURL() {
-    return get(this._navigation).url;
+    return !!get(this._navigation);
   }
 
   /**
@@ -142,22 +155,57 @@ export class Router {
       this.addRoute(route);
     });
 
-    if (inBrowser) {
-      // make it possible to reset focus
-      document.body.setAttribute('tabindex', '-1');
+    if (!inBrowser) {
+      this._url = new URL('http://ssr');
+      this._historyIndex = Date.now();
+      return;
+    }
 
-      this._url = new URL(location.href);
+    // make it possible to reset focus
+    document.body.setAttribute('tabindex', '-1');
+
+    this._url = new URL(location.href);
+
+    // Keeping track of the history index in order to prevent popstate navigation events if needed.
+    this._historyIndex = this._history.state?.[this._historyIndexKey];
+
+    if (!this._historyIndex) {
+      // We use Date.now() as an offset so that cross-document navigations within the app don't
+      // result in data loss.
+      this._historyIndex = Date.now();
 
       // create initial history entry, so we can return here
-      this._history.replaceState(this._history.state || {}, '', location.href);
+      this._history.replaceState(
+        {
+          ...this._history.state,
+          [this._historyIndexKey]: this._historyIndex,
+        },
+        '',
+        location.href,
+      );
+    }
+
+    try {
+      this._scrollPositions = JSON.parse(sessionStorage[this._scrollKey]);
+    } catch {
+      // no-op
+    }
+
+    // Recover scroll position if we reload the page, or Cmd-Shift-T back to it.
+    const scroll = this._scrollPositions[this._historyIndex];
+    if (scroll) {
+      this._history.scrollRestoration = 'manual';
+      window.scrollTo(scroll.left, scroll.top);
     }
   }
 
   /**
    * Redirect from a given pathname to another.
    */
-  addRedirect(from: string, to: string) {
-    this._redirects.set(from, to);
+  addRedirect(from: string | URL, to: string | URL) {
+    const fromURL = isString(from) ? this.buildURL(from) : from;
+    const toURL = isString(to) ? this.buildURL(to) : to;
+    this._redirects.set(fromURL.href, toURL.href);
   }
 
   /**
@@ -204,10 +252,12 @@ export class Router {
   /**
    * Builds and returns an application URL given a pathname.
    */
-  buildURL(path: string) {
+  buildURL(pathnameOrURL: string | URL) {
+    if (!isString(pathnameOrURL)) return new URL(pathnameOrURL);
+
     return new URL(
-      path,
-      path.startsWith('#')
+      pathnameOrURL,
+      pathnameOrURL.startsWith('#')
         ? /(.*?)(#|$)/.exec(location.href)![1]
         : getBaseUri(this.baseUrl),
     );
@@ -227,7 +277,7 @@ export class Router {
   /**
    * Attempts to find, build, and return a `Route` object given a pathname or URL.
    */
-  findRoute(pathnameOrURL: string | URL): WithRouteMatch<Route> | undefined {
+  findRoute(pathnameOrURL: string | URL): WithRouteMatch<Route> | null {
     const url = isString(pathnameOrURL)
       ? this.buildURL(pathnameOrURL)
       : pathnameOrURL;
@@ -235,7 +285,7 @@ export class Router {
     if (this.owns(url)) {
       const route = matchRoute(url, this._routes);
 
-      if (!route) return undefined;
+      if (!route) return null;
 
       const pathname = decodeURI(
         slash(url.pathname.slice(this.baseUrl.length)),
@@ -247,7 +297,7 @@ export class Router {
       return { ...route, id, url };
     }
 
-    return undefined;
+    return null;
   }
 
   /**
@@ -261,52 +311,51 @@ export class Router {
    * Attempts to match the given path to a declared route and navigate to it.
    */
   async go(
-    path: string,
+    pathnameOrURL: string | URL,
     {
-      scroll = undefined,
+      scroll,
       replace = false,
       keepfocus = false,
       state = {},
     }: GoToRouteOptions = {},
   ) {
-    const url = this.buildURL(path);
+    const url = this.buildURL(pathnameOrURL);
 
-    if (!this.disabled && this.owns(url)) {
-      this._history[replace ? 'replaceState' : 'pushState'](state, '', path);
-
-      await this._navigate({
-        url,
+    if (!this.disabled) {
+      return this._navigate(url, {
         scroll,
         keepfocus,
         hash: url.hash,
+        replace,
+        state,
       });
-
-      this._url = url;
-      this._started = true;
-      return;
     }
 
-    location.href = url.href;
-    return Promise.resolve();
+    await this.goLocation(url);
   }
 
   /**
-   * Attempts to find a route given a pathname or URL and call it's prefetch handler.
+   * Loads `href` the old-fashioned way, with a full page reload. Returns a `Promise` that never
+   * resolves to prevent any subsequent work (e.g., history manipulation).
    */
-  async prefetch(pathOrURL: string | URL): Promise<void> {
-    const url = isString(pathOrURL) ? this.buildURL(pathOrURL) : pathOrURL;
+  async goLocation(url: URL): Promise<void> {
+    location.href = url.href;
+    return new Promise(() => {
+      /** no-op */
+    });
+  }
 
-    const redirect = this._redirects.get(url.pathname);
-    if (redirect) {
-      await this.prefetch(redirect);
-      return;
-    }
+  /**
+   * Attempts to find a route given a pathname or URL and call it's prefetch handler. This method
+   * will throw if no route matches the given pathname.
+   */
+  async prefetch(pathnameOrURL: string | URL): Promise<void> {
+    const url = this.buildURL(pathnameOrURL);
+
+    let redirecting = this._redirect(url, (url) => this.prefetch(url));
+    if (redirecting) return redirecting;
 
     const route = this.findRoute(url);
-    if (route?.redirect) {
-      await this.prefetch(route.redirect);
-      return;
-    }
 
     if (!route) {
       throw new Error(
@@ -314,106 +363,197 @@ export class Router {
       );
     }
 
-    const prefetchRedirect = await route.prefetch?.({ route, url });
-    if (isString(prefetchRedirect)) await this.prefetch(prefetchRedirect);
+    const redirect = this._buildRedirect(pathnameOrURL, (redirectURL) => {
+      redirecting = this.prefetch(redirectURL);
+    });
+
+    await route.prefetch?.({
+      route,
+      url,
+      redirect,
+    });
+
+    if (redirecting) return redirecting;
   }
 
-  protected async _navigate({
-    url,
-    keepfocus,
-    scroll,
-    hash,
-  }: NavigationOptions) {
-    const redirectTo = async (to: string) => {
-      this._redirects.set(url.pathname, to);
-      await this.go(to, { replace: true });
+  protected _redirect(
+    url: URL,
+    handle: (url: URL) => Promise<void>,
+  ): null | Promise<void> {
+    if (!this._redirects.has(url.href)) return null;
+
+    const redirectHref = this._redirects.get(url.href)!;
+    const redirectURL = new URL(redirectHref);
+
+    if (this.owns(redirectURL)) {
+      return handle(redirectURL);
+    } else {
+      return this.goLocation(redirectURL);
+    }
+  }
+
+  protected _buildRedirect(
+    from: string | URL,
+    handleRedirect: (url: URL) => void | Promise<void>,
+  ): RedirectRoute {
+    const fromURL = this.buildURL(from);
+    return async (pathOrURL) => {
+      const redirectURL = this.buildURL(pathOrURL);
+      this.addRedirect(fromURL, redirectURL);
+      await handleRedirect(redirectURL);
+    };
+  }
+
+  protected async _navigate(
+    url: URL,
+    {
+      scroll,
+      hash,
+      accepted,
+      blocked,
+      state = {},
+      keepfocus = false,
+      replace = false,
+    }: NavigationOptions,
+  ): Promise<void> {
+    let cancelled = false;
+    const cancel = () => {
+      this._navigation.set(null);
+      if (!cancelled) blocked?.();
+      cancelled = true;
     };
 
-    if (this._redirects.has(url.pathname)) {
-      await redirectTo(this._redirects.get(url.pathname)!);
+    const redirectNavigation = (url: URL) =>
+      this._navigate(url, {
+        keepfocus,
+        replace,
+        state,
+        accepted,
+        blocked: cancel,
+      });
+
+    let redirecting = this._redirect(url, redirectNavigation);
+    if (redirecting) return redirecting;
+
+    if (!this.owns(url)) {
+      cancel();
       return;
     }
-
-    this._navigation.set({ url, loading: true });
-
-    const onNavigationEnd = () => {
-      this._navigation.set({ url, loading: false });
-    };
 
     const route = this.findRoute(url);
 
-    if (route?.redirect) {
-      await redirectTo(route.redirect);
-      return;
-    }
-
     if (!route) {
-      onNavigationEnd();
+      cancel();
       throw new Error(
         'Attempted to navigate to a URL that does not belong to this app',
       );
     }
 
-    const beforeNavigate = this._currentRoute
-      ? await this.beforeNavigate?.({
+    const redirect = this._buildRedirect(url, (redirectURL) => {
+      redirecting = redirectNavigation(redirectURL);
+    });
+
+    if (this._currentRoute) {
+      for (const hook of this._beforeNavigate) {
+        hook({
           from: this._currentRoute,
           to: route,
           match: route.match,
-        })
-      : undefined;
-
-    if (isBoolean(beforeNavigate) && !beforeNavigate) {
-      onNavigationEnd();
-      return;
+          cancel,
+          redirect,
+        });
+      }
     }
 
-    if (beforeNavigate?.redirect) {
-      await redirectTo(beforeNavigate.redirect);
-      return;
-    }
+    if (cancelled) return;
+    if (redirecting) return redirecting;
 
-    const page = await route.loader(route);
+    this._updateScrollPosition();
 
-    if (isString(page)) {
-      await redirectTo(page);
+    accepted?.();
+
+    this._navigation.set({ from: this._url, to: url });
+
+    const page = await route.loader({ route, redirect });
+
+    if (redirecting) return redirecting;
+
+    if (!page) {
+      cancel();
       return;
     }
 
     const fromRoute = this._currentRoute;
     const toRoute = { ...route, page };
-
     this._currentRoute = toRoute;
+
     getContext(this.context, ROUTE_CTX_KEY).__set(toRoute);
 
     if (inBrowser) {
+      // Wait a tick so page is rendered before updating history.
       await new Promise((res) => window.requestAnimationFrame(res));
-
-      if (!keepfocus) {
-        document.body.focus();
-      }
-
-      if (scroll !== false) {
-        await this._scrollToPosition({
-          from: fromRoute,
-          to: toRoute,
-          scroll,
-          hash,
-        });
-      }
     }
 
-    if (fromRoute) {
-      await this.afterNavigate?.({
-        from: fromRoute,
+    const change = replace ? 0 : 1;
+    state[this._historyIndexKey] = this._historyIndex += change;
+    this._history[replace ? 'replaceState' : 'pushState'](state, '', url);
+
+    if (inBrowser) {
+      if (!keepfocus) {
+        // Reset page selection and focus.
+        // We try to mimic browsers' behaviour as closely as possible by targeting the
+        // first scrollable region, but unfortunately it's not a perfect match — e.g.
+        // shift-tabbing won't immediately cycle up from the end of the page on Chromium
+        // See https://html.spec.whatwg.org/multipage/interaction.html#get-the-focusable-area
+        const root = document.body;
+        const tabindex = root.getAttribute('tabindex');
+
+        getSelection()?.removeAllRanges();
+        root.tabIndex = -1;
+        root.focus({ preventScroll: true });
+
+        // restore `tabindex` as to prevent `root` from stealing input from elements
+        if (tabindex !== null) {
+          root.setAttribute('tabindex', tabindex);
+        } else {
+          root.removeAttribute('tabindex');
+        }
+      }
+
+      // Need to render the DOM before we can scroll to the rendered elements.
+      await new Promise((res) => window.requestAnimationFrame(res));
+
+      await this._scroll({
+        from: fromRoute!,
         to: toRoute,
-        match: route.match,
+        scroll,
+        hash,
       });
     }
 
-    onNavigationEnd();
+    if (fromRoute) {
+      await Promise.all(
+        this._afterNavigate.map((hook) =>
+          hook({
+            from: fromRoute,
+            to: toRoute,
+            match: route.match,
+          }),
+        ),
+      );
+    }
+
+    this._url = url;
+    this._started = true;
+    this._navigation.set(null);
   }
 
-  protected async _scrollToPosition({
+  protected _updateScrollPosition() {
+    if (!inBrowser) return;
+    this._scrollPositions[this._historyIndex] = scrollState();
+  }
+
+  protected async _scroll({
     scroll,
     hash,
     from,
@@ -424,12 +564,24 @@ export class Router {
   >) {
     if (!inBrowser) return;
 
-    const scrollToOptions =
-      scroll !== false && from && to && this.scrollBehavior
-        ? await this.scrollBehavior(from, to, this._savedScrollPosition)
-        : scroll;
+    let cancelled = false;
+    const cancel = () => {
+      cancelled = true;
+    };
 
-    if (scrollToOptions === false) return;
+    let scrollTarget: ScrollTarget = null;
+    if (scroll) {
+      scrollTarget = await scroll({ cancel });
+    } else if (from && to && this.scrollBehavior) {
+      scrollTarget = await this.scrollBehavior({
+        from,
+        to,
+        cancel,
+        savedPosition: this._scrollPositions[this._historyIndex],
+      });
+    }
+
+    if (cancelled) return;
 
     const deepLinked = hash
       ? document.getElementById(decodeURI(hash).slice(1))
@@ -443,18 +595,16 @@ export class Router {
       }
     };
 
-    await new Promise((res) => window.requestAnimationFrame(res));
-
-    if (scrollToOptions || deepLinked) {
-      const el = isString(scrollToOptions?.el)
-        ? document.querySelector(scrollToOptions!.el)
-        : scrollToOptions?.el ?? deepLinked;
+    if (scrollTarget || deepLinked) {
+      const el = isString(scrollTarget?.el)
+        ? document.querySelector(scrollTarget!.el)
+        : scrollTarget?.el ?? deepLinked;
 
       const docRect = document.documentElement.getBoundingClientRect();
       const elRect = el?.getBoundingClientRect() ?? { top: 0, left: 0 };
-      const offsetTop = scrollToOptions?.top ?? 0;
-      const offsetLeft = scrollToOptions?.left ?? 0;
-      const behavior = scrollToOptions?.behavior ?? 'auto';
+      const offsetTop = scrollTarget?.top ?? 0;
+      const offsetLeft = scrollTarget?.left ?? 0;
+      const behavior = scrollTarget?.behavior ?? 'auto';
 
       scrollTo({
         left: elRect.left - docRect.left - offsetLeft,
@@ -467,9 +617,7 @@ export class Router {
   }
 
   listen() {
-    if ('scrollRestoration' in this._history) {
-      this._history.scrollRestoration = 'manual';
-    }
+    this._history.scrollRestoration = 'manual';
 
     // Adopted from Nuxt.js
     // Reset scrollRestoration to auto when leaving page, allowing page reload
@@ -484,45 +632,18 @@ export class Router {
       this._history.scrollRestoration = 'manual';
     });
 
-    // There's no API to capture the scroll location right before the user
-    // hits the back/forward button, so we listen for scroll events
-
-    let scrollTimer;
-    addEventListener('scroll', () => {
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(() => {
-        // Store the scroll location in the history
-        // This will persist even if we navigate away from the site and come back
-        const newState = {
-          ...(this._history.state || {}),
-          'vitebook:scroll': scrollState(),
-        };
-
-        this._history.replaceState(
-          newState,
-          document.title,
-          window.location.href,
-        );
-      }, 50);
-    });
-
     const prefetched = new Set();
     const triggerPrefetch = (event: MouseEvent | TouchEvent) => {
       const a = findAnchor(event.target as Node | null);
-      const href = a && a.href ? getHref(a) : '';
-
       if (
-        !a ||
-        !a.href ||
-        prefetched.has(href) ||
-        !href.startsWith(getBaseUri(this.baseUrl)) ||
-        !this.hasRoute(getHrefURL(a).pathname)
+        a &&
+        a.href &&
+        a.hasAttribute('data-prefetch') &&
+        !prefetched.has(a.href)
       ) {
-        return;
+        this.prefetch(getHref(a));
+        prefetched.add(a.href);
       }
-
-      this.prefetch(getHrefURL(a));
-      prefetched.add(href);
     };
 
     let mouseMoveTimeout;
@@ -530,11 +651,15 @@ export class Router {
       clearTimeout(mouseMoveTimeout);
       mouseMoveTimeout = setTimeout(() => {
         triggerPrefetch(event);
-      }, 20);
+      }, 30);
     };
 
     addEventListener('touchstart', triggerPrefetch);
     addEventListener('mousemove', handleMouseMove);
+
+    // Set this flag to distinguish between navigations triggered by clicking a hash link and
+    // those triggered by popstate.
+    let hashNavigation = false;
 
     addEventListener('click', (event: MouseEvent) => {
       if (this.disabled) return;
@@ -549,56 +674,98 @@ export class Router {
       const a = findAnchor(event.target as Node | null);
       if (!a || !a.href) return;
 
-      const url = getHrefURL(a);
-      const urlString = url.toString();
+      const url = getHref(a);
+      const isSvgAEl = a instanceof SVGAElement;
 
-      if (urlString === location.href) {
-        event.preventDefault();
+      // Ignore if url does not have origin (e.g. `mailto:`, `tel:`.).
+      if (!isSvgAEl && url.origin === 'null') return;
 
-        if (location.hash) {
-          this._scrollToPosition({ hash: location.hash });
+      // Ignore if tag has:
+      // 1. 'download' attribute
+      // 2. 'rel' attribute includes external
+      const rel = (a.getAttribute('rel') || '').split(/\s+/);
+
+      if (a.hasAttribute('download') || rel.includes('external')) return;
+
+      // Ignore if `<a>` has a target.
+      if (isSvgAEl ? a.target.baseVal : a.target) return;
+
+      // Check if new URL only differs by hash and use the browser default behavior in that case.
+      // This will ensure the `hashchange` event is fired. Removing the hash does a full page
+      // navigation in the browser, so make sure a hash is present.
+      const [base, hash] = url.href.split('#');
+
+      if (hash !== undefined && base === location.href.split('#')[0]) {
+        hashNavigation = true;
+
+        this._updateScrollPosition();
+
+        if (this._currentRoute) {
+          getContext(this.context, ROUTE_CTX_KEY).__set({
+            ...this.currentRoute!,
+            url,
+          });
         }
 
         return;
       }
 
-      // Ignore if tag has
-      // 1. 'download' attribute
-      // 2. 'rel' attribute includes external
-      const rel = (a.getAttribute('rel') || '').split(/\s+/);
+      this._navigate(url, {
+        scroll: a.hasAttribute('data-noscroll') ? () => scrollState() : null,
+        replace: url.href === location.href,
+        keepfocus: false,
+        accepted: () => event.preventDefault(),
+        blocked: () => event.preventDefault(),
+      });
+    });
 
-      if (a.hasAttribute('download') || (rel && rel.includes('external'))) {
-        return;
+    addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        this._updateScrollPosition();
+
+        try {
+          sessionStorage[this._scrollKey] = JSON.stringify(
+            this._scrollPositions,
+          );
+        } catch {
+          // no-op
+        }
       }
-
-      // Ignore if <a> has a target
-      if (a instanceof SVGAElement ? a.target.baseVal : a.target) return;
-
-      if (!this.owns(url)) return;
-
-      const i1 = urlString.indexOf('#');
-      const i2 = location.href.indexOf('#');
-      const u1 = i1 >= 0 ? urlString.substring(0, i1) : urlString;
-      const u2 = i2 >= 0 ? location.href.substring(0, i2) : location.href;
-
-      if (u1 === u2) {
-        this.go(decodeURI(url.hash), { replace: true });
-        return;
-      }
-
-      this.go(url.href);
-
-      event.preventDefault();
     });
 
     addEventListener('popstate', (event) => {
-      if (event.state && !this.disabled) {
-        const url = new URL(location.href);
-        this._savedScrollPosition = event.state['vitebook:scroll'];
-        this._navigate({
-          url,
-          scroll: this._savedScrollPosition,
-        });
+      if (!event.state || this.disabled) return;
+
+      // If a popstate-driven navigation is cancelled, we need to counteract it with `history.go`,
+      // which means we end up back here.
+      if (event.state[this._historyIndexKey] === this._historyIndex) return;
+
+      this._navigate(new URL(location.href), {
+        scroll: () => this._scrollPositions[event.state[this._scrollKey]],
+        keepfocus: false,
+        accepted: () => {
+          this._historyIndex = event.state[this._historyIndexKey];
+        },
+        blocked: () => {
+          const delta = this._historyIndex - event.state[this._historyIndexKey];
+          this._history.go(delta);
+        },
+      });
+    });
+
+    addEventListener('hashchange', () => {
+      // We need to update history if the `hashchange` happened as a result of clicking on a link,
+      // otherwise we leave it alone.
+      if (hashNavigation) {
+        hashNavigation = false;
+        this._history.replaceState(
+          {
+            ...this._history.state,
+            [this._historyIndexKey]: ++this._historyIndex,
+          },
+          '',
+          location.href,
+        );
       }
     });
   }
@@ -611,16 +778,7 @@ function scrollState() {
   };
 }
 
-function findAnchor(node: Node | null): HTMLAnchorElement | SVGAElement | null {
-  while (node && node.nodeName.toUpperCase() !== 'A') node = node.parentNode; // SVG <a> elements have a lowercase name
-  return node as HTMLAnchorElement | SVGAElement;
-}
-
-function getHref(node: HTMLAnchorElement | SVGAElement): string {
-  return node instanceof SVGAElement ? node.href.baseVal : node.href;
-}
-
-function getHrefURL(node: HTMLAnchorElement | SVGAElement): URL {
+function getHref(node: HTMLAnchorElement | SVGAElement) {
   return node instanceof SVGAElement
     ? new URL(node.href.baseVal, document.baseURI)
     : new URL(node.href);
@@ -630,4 +788,9 @@ function getBaseUri(baseUrl = '/') {
   return import.meta.env.SSR
     ? `http://ssr${baseUrl}` // protocol/host irrelevant during SSR
     : `${location.protocol}//${location.host}${baseUrl === '/' ? '' : baseUrl}`;
+}
+
+function findAnchor(node: Node | null): HTMLAnchorElement | SVGAElement | null {
+  while (node && node.nodeName.toUpperCase() !== 'A') node = node.parentNode; // SVG <a> elements have a lowercase name
+  return node as HTMLAnchorElement | SVGAElement;
 }

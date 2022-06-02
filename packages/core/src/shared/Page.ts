@@ -45,11 +45,6 @@ export type PageRoute = {
    * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/URL_Pattern_API#pattern_syntax}
    */
   readonly dynamic: boolean;
-  /**
-   * Redirect path if route is matched. When building the site, any routes with `redirect` will
-   * use `<meta http-equiv="refresh">`. No other content will be rendered.
-   */
-  readonly redirect?: string;
 };
 
 export type ClientPage = {
