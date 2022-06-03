@@ -1,3 +1,9 @@
+## [0.32.1](https://github.com/vitebook/vitebook/compare/v0.32.0...v0.32.1) (2022-06-03)
+
+### Bug Fixes
+
+- **core:** scroll target can be void ([c49b721](https://github.com/vitebook/vitebook/commit/c49b721f98037fe0ba5c8004f566e3336537868c))
+
 # [0.32.0](https://github.com/vitebook/vitebook/compare/v0.31.2...v0.32.0) (2022-06-02)
 
 ### Bug Fixes
