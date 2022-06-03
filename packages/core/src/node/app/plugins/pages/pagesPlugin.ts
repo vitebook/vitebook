@@ -57,7 +57,7 @@ export function pagesPlugin(config: ResolvedPagesPluginConfig): Plugin {
     },
     async configureServer(server) {
       server.watcher.add(app.dirs.pages.path);
-      handleHMR({ pages: app.pages, server });
+      handleHMR({ app, server });
     },
     async load(id) {
       if (id === virtualModuleRequestPath.pages) {

@@ -2,14 +2,17 @@ import fs from 'fs';
 import { normalizePath, type ViteDevServer } from 'vite';
 
 import { virtualModuleRequestPath } from '../../alias';
-import { type Pages } from './Pages';
+import type { App } from '../../App';
+import { clearServerLoaderCache } from '../core/serverLoader';
 
 export type PagesHMRConfig = {
-  pages: Pages;
+  app: App;
   server: ViteDevServer;
 };
 
-export function handleHMR({ pages, server }: PagesHMRConfig) {
+export function handleHMR({ app, server }: PagesHMRConfig) {
+  const pages = app.pages;
+
   const isPage = (filePath) => pages.isPage(filePath);
   const isLayout = (filePath) => pages.isLayout(filePath);
 
@@ -40,6 +43,10 @@ export function handleHMR({ pages, server }: PagesHMRConfig) {
       return { reload: true };
     }
 
+    if (hasLoader) {
+      clearServerLoaderCache(filePath);
+    }
+
     return null;
   });
 
@@ -57,6 +64,10 @@ export function handleHMR({ pages, server }: PagesHMRConfig) {
     if (layout && layout.hasLoader !== hasLoader) {
       layout.hasLoader = hasLoader;
       return { reload: true };
+    }
+
+    if (hasLoader) {
+      clearServerLoaderCache(filePath);
     }
 
     return null;

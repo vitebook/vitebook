@@ -119,6 +119,11 @@ export async function loadPageServerOutput(
 const loadedCache = new Map<string, ServerLoaderCacheMap>();
 const cacheKeyBuilder = new Map<string, ServerLoaderCacheKeyBuilder>();
 
+export function clearServerLoaderCache(filePath: string) {
+  cacheKeyBuilder.delete(filePath);
+  loadedCache.delete(filePath);
+}
+
 export async function runModuleServerLoader(
   app: App,
   filePath: string | null,
@@ -132,8 +137,7 @@ export async function runModuleServerLoader(
     : app.pages.getPage(filePath);
 
   if (!module || !module.hasLoader) {
-    cacheKeyBuilder.delete(filePath);
-    loadedCache.delete(filePath);
+    clearServerLoaderCache(filePath);
     return {};
   }
 
