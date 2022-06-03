@@ -1,3 +1,9 @@
+## [0.32.3](https://github.com/vitebook/vitebook/compare/v0.32.2...v0.32.3) (2022-06-03)
+
+### Bug Fixes
+
+- **core:** resolve dynamic route with index file correctly ([bc3add8](https://github.com/vitebook/vitebook/commit/bc3add8b651676ae2e39d44e028ac9bebc6ad412))
+
 ## [0.32.2](https://github.com/vitebook/vitebook/compare/v0.32.1...v0.32.2) (2022-06-03)
 
 ### Bug Fixes
