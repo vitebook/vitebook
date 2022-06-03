@@ -1,3 +1,13 @@
+## [0.32.2](https://github.com/vitebook/vitebook/compare/v0.32.1...v0.32.2) (2022-06-03)
+
+### Bug Fixes
+
+- **core:** clear server loaded cache on file change ([9fdb6b5](https://github.com/vitebook/vitebook/commit/9fdb6b5f3629ee66f0fcc97c7e5a2f4d45becedc))
+
+### Features
+
+- **core:** export ordered page utils ([79a519e](https://github.com/vitebook/vitebook/commit/79a519e066cd4e954f761071e4f6d750a02be254))
+
 ## [0.32.1](https://github.com/vitebook/vitebook/compare/v0.32.0...v0.32.1) (2022-06-03)
 
 ### Bug Fixes
