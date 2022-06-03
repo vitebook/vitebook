@@ -70,7 +70,9 @@ export function resolvePageRouteFromFilePath(
   const dynamic = isNotFound || isRoutePathDynamic(slash(route));
 
   const pathname =
-    dynamic && !isNotFound ? slash(path.trimExt(route)) : resolveStaticPath();
+    dynamic && !isNotFound
+      ? slash(path.trimExt(route).replace(/\/index$/, '/'))
+      : resolveStaticPath();
 
   const score = calcRoutePathScore(pathname);
   const pattern = new URLPattern({ pathname });
