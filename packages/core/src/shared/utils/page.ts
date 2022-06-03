@@ -1,6 +1,30 @@
 import type { LoadedClientMarkdownPage, LoadedClientPage } from '../Page';
 import { isNumber } from './unit';
-import { noslash } from './url';
+import { noslash, slash } from './url';
+
+const STRIP_PAGE_ORDER_RE = /\/\[(\d*)\]/g;
+export function stripPageOrderFromPath(filePath: string) {
+  return filePath.replace(STRIP_PAGE_ORDER_RE, '/');
+}
+
+function calcPageOrderScore(filePath: string): number {
+  let score = 1;
+
+  for (const matches of filePath.matchAll(STRIP_PAGE_ORDER_RE) ?? []) {
+    score *= Number(matches[1]);
+  }
+
+  return score;
+}
+
+export function sortOrderedPageFiles(files: string[]): string[] {
+  return files
+    .map(slash)
+    .sort(
+      (fileA, fileB) => calcPageOrderScore(fileA) - calcPageOrderScore(fileB),
+    )
+    .map(stripPageOrderFromPath);
+}
 
 export function isLoadedPage(page: unknown): page is LoadedClientPage {
   // @ts-expect-error - .
