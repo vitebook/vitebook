@@ -65,6 +65,7 @@ export type NavigationOptions = GoToRouteOptions & {
 };
 
 export type ScrollTarget =
+  | void
   | null
   | (ScrollToOptions & { el?: string | HTMLElement });
 
