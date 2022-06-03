@@ -1,6 +1,7 @@
 import fs from 'fs';
-import { normalizePath, type ViteDevServer } from 'vite';
+import { type ViteDevServer } from 'vite';
 
+import { normalizePath } from '../../../utils';
 import { virtualModuleRequestPath } from '../../alias';
 import type { App } from '../../App';
 import { clearServerLoaderCache } from '../core/serverLoader';

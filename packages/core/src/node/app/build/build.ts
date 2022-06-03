@@ -401,8 +401,7 @@ export async function build(app: App): Promise<void> {
 
   const endTime = ((Date.now() - startTime) / 1000).toFixed(2);
 
-  logRoutes(app, seenHref);
-  logRedirects(redirectsTable);
+  logRoutes(app, seenHref, redirectsTable);
 
   const speedIcon = {
     2: '🤯',
@@ -435,43 +434,102 @@ export async function build(app: App): Promise<void> {
   );
 }
 
-export function logRoutes(app: App, seenHref: Map<string, ServerPage>) {
-  const logs: string[] = ['', kleur.bold(kleur.underline('ROUTES')), ''];
+export function logRoutes(
+  app: App,
+  seenHref: Map<string, ServerPage>,
+  redirectsTable: Record<string, string>,
+) {
+  console.log(`\n${kleur.bold(kleur.underline('ROUTES'))}\n`);
+
+  type TreeDir = {
+    name: string;
+    path: TreeDir[];
+    file: Set<{ name: string; href: string; page: ServerPage }>;
+  };
+
+  const newDir = (name: string): TreeDir => ({
+    name,
+    path: [],
+    file: new Set(),
+  });
+
+  const tree = newDir('.');
 
   for (const href of seenHref.keys()) {
+    const segments = noslash(href).split('/');
+
+    let current = tree;
+    for (const segment of segments.slice(0, -1)) {
+      let nextDir = current.path.find((dir) => dir.name === segment);
+
+      if (!nextDir) {
+        nextDir = newDir(segment);
+        current.path.push(nextDir);
+      }
+
+      current = nextDir;
+    }
+
+    const name = href.endsWith('/') ? 'index.html' : path.basename(href);
     const page = seenHref.get(href)!;
-
-    logs.push(
-      kleur.white(
-        `- ${href === '/' ? href : noslash(href)} ${kleur.dim(
-          page.rootPath
-            ? `(${noslash(app.dirs.pages.relative(page.rootPath))})`
-            : '',
-        )}`,
-      ),
-    );
+    current.file.add({ name, href, page });
   }
 
-  logger.info(logs.join('\n'), '\n');
-}
+  const PRINT_SYMBOLS = {
+    BRANCH: '├── ',
+    EMPTY: '',
+    INDENT: '    ',
+    LAST_BRANCH: '└── ',
+    VERTICAL: '│   ',
+  };
 
-function logRedirects(redirects: Record<string, string>) {
-  if (Object.keys(redirects).length === 0) return;
+  const redirects = new Set(Object.keys(redirectsTable));
 
-  const logs: string[] = [kleur.bold(kleur.underline('REDIRECTS')), ''];
+  const print = (tree: TreeDir, depth: number, precedingSymbols: string) => {
+    const lines: string[] = [];
 
-  for (const href of Object.keys(redirects)) {
-    const to = redirects[href]!;
-    logs.push(
-      kleur.white(
-        `- ${href === '/' ? href : noslash(href)} ${kleur.bold('->')} ${
-          to === '/' ? to : noslash(to)
-        }`,
-      ),
-    );
-  }
+    const files = Array.from(tree.file).sort((a, b) => {
+      if (a.name === 'index.html') return -1;
+      if (b.name === 'index.html') return 1;
+      return a.name.localeCompare(b.name, undefined, { numeric: true });
+    });
 
-  logger.info(logs.join('\n'), '\n');
+    for (const [index, file] of files.entries()) {
+      const isLast = index === files.length - 1 && tree.path.length === 0;
+      const line = [precedingSymbols];
+      const isRedirect = redirects.has(file.href);
+      line.push(isLast ? PRINT_SYMBOLS.LAST_BRANCH : PRINT_SYMBOLS.BRANCH);
+      line.push(isRedirect ? kleur.yellow(file.name) : file.name);
+      if (isRedirect) line.push(kleur.dim(` -> ${redirectsTable[file.href]}`));
+      lines.push(line.join(''));
+    }
+
+    for (const [index, child] of tree.path.entries()) {
+      const line = [precedingSymbols];
+      const isLast = index === tree.path.length - 1 && child.path.length === 0;
+      line.push(isLast ? PRINT_SYMBOLS.LAST_BRANCH : PRINT_SYMBOLS.BRANCH);
+      line.push(kleur.bold(kleur.cyan(child.name)));
+      lines.push(line.join(''));
+      const dirLines = print(
+        child,
+        depth + 1,
+        precedingSymbols +
+          (depth >= 1
+            ? isLast
+              ? PRINT_SYMBOLS.INDENT
+              : PRINT_SYMBOLS.VERTICAL
+            : PRINT_SYMBOLS.EMPTY),
+      );
+
+      lines.push(...dirLines);
+    }
+
+    return lines;
+  };
+
+  console.log(kleur.bold(kleur.cyan('.')));
+  console.log(print(tree, 1, '').join('\n'));
+  console.log('\n');
 }
 
 function guessPackageManager(app: App): 'npm' | 'yarn' | 'pnpm' {

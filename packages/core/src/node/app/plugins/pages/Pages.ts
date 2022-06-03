@@ -12,6 +12,7 @@ import {
   slash,
   stripImportQuotesFromJson,
 } from '../../../../shared';
+import { normalizePath } from '../../../utils';
 import { getFrontmatter } from '../markdown';
 import {
   getPageLayoutNameFromPath,
@@ -117,14 +118,18 @@ export class Pages {
     return globbySync(this._config.include, {
       absolute: true,
       cwd: this._config.dirs.pages,
-    }).filter(this.pagesFilter);
+    })
+      .filter(this.pagesFilter)
+      .map(normalizePath);
   }
 
   getLayoutFilePaths() {
     return globbySync(this._config.include, {
       absolute: true,
       cwd: this._config.dirs.pages,
-    }).filter(this.layoutsFilter);
+    })
+      .filter(this.layoutsFilter)
+      .map(normalizePath);
   }
 
   getPage(filePath: string) {

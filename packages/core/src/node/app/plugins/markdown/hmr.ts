@@ -1,5 +1,6 @@
-import { normalizePath, type ViteDevServer } from 'vite';
+import { type ViteDevServer } from 'vite';
 
+import { normalizePath } from '../../../utils';
 import { Pages } from '../pages';
 import { type MarkdocSchema } from './MarkdocSchema';
 import { clearMarkdownCache } from './parseMarkdown';

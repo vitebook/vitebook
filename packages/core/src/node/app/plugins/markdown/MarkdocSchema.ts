@@ -7,7 +7,7 @@ import kleur from 'kleur';
 import path from 'upath';
 
 import { uppercaseFirstLetter } from '../../../../shared';
-import { logger } from '../../../utils';
+import { logger, normalizePath } from '../../../utils';
 
 const STRIP_MARKDOC_DIR_RE = /\/@markdoc\/.+/;
 
@@ -62,7 +62,9 @@ export class MarkdocSchema {
     return globbySync(this.config.include, {
       absolute: true,
       cwd: this.config.dirs.pages,
-    }).filter(this.filter);
+    })
+      .filter(this.filter)
+      .map(normalizePath);
   }
 
   addNode(filePath: string) {
