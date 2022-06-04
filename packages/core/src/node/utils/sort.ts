@@ -1,10 +1,6 @@
 import LRUCache from 'lru-cache';
 
-import { noslash } from '../../shared';
-
-// Splits route by `/` and retain splitter.
-const splitRouteRE = /(.*?\/)/g;
-const splitRoute = (route: string) => route.split(splitRouteRE).slice(3);
+import { slashedSplit } from '../../shared';
 
 const orderedPageTokenRE = /^\[(\d)\]/;
 
@@ -20,8 +16,8 @@ export function comparePaths(
   if (sortCache.has(cacheKey)) return sortCache.get(cacheKey)!;
 
   const compare = () => {
-    const tokensA = splitRoute(`<root>/${noslash(pathA)}`);
-    const tokensB = splitRoute(`<root>/${noslash(pathB)}`);
+    const tokensA = slashedSplit(pathA);
+    const tokensB = slashedSplit(pathB);
     const len = Math.max(tokensA.length, tokensB.length);
 
     for (let i = 0; i < len; i++) {

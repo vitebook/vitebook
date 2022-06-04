@@ -19,7 +19,7 @@ import {
   type MarkdownMeta,
 } from '../../../../shared';
 import type { App } from '../../App';
-import { resolvePageRouteFromFilePath } from '../pages';
+import { resolveStaticRouteFromFilePath } from '../pages';
 import { renderMarkdocToHTML } from './render';
 
 export type MarkdocTreeNodeTransformer = (data: {
@@ -343,10 +343,7 @@ function resolveLinks(tag: Tag, stuff: MarkdocTreeWalkStuff) {
       ? '.' + rawPath
       : path.resolve(path.dirname(stuff.filePath), rawPath);
 
-    const route = resolvePageRouteFromFilePath(
-      stuff.pagesDir,
-      absolutePath,
-    ).pathname;
+    const route = resolveStaticRouteFromFilePath(stuff.pagesDir, absolutePath);
 
     const resolvedHref = `${route}${rawHash}`;
     tag.attributes.href = resolvedHref;

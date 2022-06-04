@@ -6,6 +6,13 @@ export const EXTERNAL_URL_RE = /^https?:/i;
 export const endslash = (str: string): string =>
   /(\.html|\/)$/.test(str) ? str : str + '/';
 
+const slashSplitRE = /(?=\/)/g;
+
+/**
+ * Split string and keep `/` at the start of each path.
+ */
+export const slashedSplit = (path: string) => slash(path).split(slashSplitRE);
+
 /**
  * Ensure a url `string` has a leading slash `/`.
  */

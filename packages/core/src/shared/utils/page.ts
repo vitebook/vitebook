@@ -38,7 +38,7 @@ export function isLoadedMarkdownPage(
 }
 
 const splitRE = /\//g;
-const htmlExtRE = /\.html$/;
+const htmlExtRE = /(?:index)?\.html$/;
 
 export const DATA_ASSET_BASE_URL = '/assets/data';
 

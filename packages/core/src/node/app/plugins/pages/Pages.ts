@@ -15,7 +15,7 @@ import {
 import { normalizePath } from '../../../utils';
 import { getFrontmatter } from '../markdown';
 import {
-  getPageLayoutNameFromPath,
+  getPageLayoutNameFromFilePath,
   resolvePageRouteFromFilePath,
 } from './utils';
 
@@ -198,7 +198,7 @@ export class Pages {
   }
 
   async addLayout(filePath: string) {
-    const name = getPageLayoutNameFromPath(filePath);
+    const name = getPageLayoutNameFromFilePath(filePath);
     const rootPath = this.getRootPath(filePath);
     const owningDir = path.dirname(
       rootPath.replace(STRIP_LAYOUTS_PATH, '/root.md'),

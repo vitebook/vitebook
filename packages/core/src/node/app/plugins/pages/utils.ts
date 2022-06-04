@@ -13,7 +13,7 @@ import {
 const LAYOUT_NAME_RE = /(.*?)@layout/;
 const PAGE_ORDER_RE = /^\[(\d*)\]/;
 
-export function getPageLayoutNameFromPath(filePath: string) {
+export function getPageLayoutNameFromFilePath(filePath: string) {
   const filename = path
     .basename(filePath, path.extname(filePath))
     .replace(/\.reset($|\/)/, '');
@@ -21,13 +21,13 @@ export function getPageLayoutNameFromPath(filePath: string) {
   return match && match.length > 0 ? match : filename;
 }
 
-export function stripPageLayoutNameFromPath(filePath: string) {
+export function stripPageLayoutNameFromFilePath(filePath: string) {
   const ext = path.extname(filePath);
   return filePath.replace(new RegExp(`@\\w+\\.${ext.slice(1)}$`, 'i'), ext);
 }
 
-export function stripPageInfoFromPath(filePath: string) {
-  return stripPageLayoutNameFromPath(stripPageOrderFromPath(filePath));
+export function stripPageInfoFromFilePath(filePath: string) {
+  return stripPageLayoutNameFromFilePath(stripPageOrderFromPath(filePath));
 }
 
 export function resolvePageRouteFromFilePath(
@@ -39,7 +39,7 @@ export function resolvePageRouteFromFilePath(
   const orderMatch = path.basename(pagePath).match(PAGE_ORDER_RE)?.[1];
   const order = orderMatch ? Number(orderMatch) : undefined;
 
-  let route = stripPageInfoFromPath(pagePath);
+  let route = stripPageInfoFromFilePath(pagePath);
 
   for (const matcherName of Object.keys(matchers)) {
     const matcher = matchers[matcherName];
@@ -61,13 +61,13 @@ export function resolvePageRouteFromFilePath(
   const resolveStaticPath = () => {
     if (isNotFound) return '(.*?)';
 
-    const url = new URL(route.toLowerCase(), 'http://localhost/');
+    const url = new URL(route.toLowerCase(), 'http://v/');
     return url.pathname
-      .replace(/\..+($|\\?)/i, '.html')
-      .replace(/\/(README|index).html($|\?)/i, '/');
+      .replace(/\..+($|\\?)/i, '{.html}?')
+      .replace(/\/(README|index){.html}\?($|\?)/i, '{/}?{index}?{.html}?');
   };
 
-  const dynamic = isNotFound || isRoutePathDynamic(slash(route));
+  const dynamic = isNotFound || isRoutePathDynamic(route);
 
   const pathname =
     dynamic && !isNotFound
@@ -84,4 +84,20 @@ export function resolvePageRouteFromFilePath(
     order,
     score,
   };
+}
+
+export function resolveStaticRouteFromFilePath(
+  pagesDir: string,
+  filePath: string,
+) {
+  const pagePath = path.relative(pagesDir, filePath);
+
+  const url = new URL(
+    stripPageInfoFromFilePath(pagePath).toLowerCase(),
+    'http://localhost',
+  );
+
+  return url.pathname
+    .replace(/\..+($|\\?)/i, '.html')
+    .replace(/\/(README|index).html($|\\?)/i, '/');
 }

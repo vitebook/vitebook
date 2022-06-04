@@ -7,6 +7,7 @@ import type { OutputAsset, OutputChunk, RollupOutput } from 'rollup';
 import path from 'upath';
 
 import {
+  cleanRoutePath,
   DATA_ASSET_BASE_URL,
   escapeHtml,
   isFunction,
@@ -177,8 +178,10 @@ export async function build(app: App): Promise<void> {
 
     // eslint-disable-next-line no-inner-declarations
     async function buildPage(url: URL, page: ServerPage) {
-      if (seenHref.has(url.pathname)) return;
-      seenHref.set(url.pathname, page);
+      const normalizedPathname = url.pathname.replace(/\/$/, '/index.html');
+
+      if (seenHref.has(normalizedPathname)) return;
+      seenHref.set(normalizedPathname, page);
 
       const serverOutput = await loadServerOutput(url, page);
 
@@ -316,7 +319,10 @@ export async function build(app: App): Promise<void> {
 
     // Start with static paths and then crawl additional links.
     for (const page of pages.filter((page) => !page.route.dynamic).reverse()) {
-      await buildPage(new URL(`http://ssr${page.route.pathname}`), page);
+      await buildPage(
+        new URL(`http://ssr${cleanRoutePath(page.route.pathname)}`),
+        page,
+      );
     }
 
     for (const entry of app.config.routes.entries) {
@@ -401,7 +407,7 @@ export async function build(app: App): Promise<void> {
 
   const endTime = ((Date.now() - startTime) / 1000).toFixed(2);
 
-  logRoutes(app, seenHref, redirectsTable);
+  logRoutes(seenHref, redirectsTable);
 
   const speedIcon = {
     2: '🤯',
@@ -435,7 +441,6 @@ export async function build(app: App): Promise<void> {
 }
 
 export function logRoutes(
-  app: App,
   seenHref: Map<string, ServerPage>,
   redirectsTable: Record<string, string>,
 ) {

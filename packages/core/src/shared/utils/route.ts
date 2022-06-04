@@ -1,4 +1,5 @@
 import type { PageRoute, WithRouteMatch } from '../Page';
+import { noslash, slash } from './url';
 
 const PATH_SCORE = {
   Segment: 6,
@@ -14,12 +15,8 @@ const PATH_SCORE = {
   PenaltyRegexWildcard: -10, // /(.*)
 };
 
-const splitPathRE = /\//g;
-const dynamicPathRE = /(\*|\((?!\/).*\)|{(?!\/).*}|\/:)/;
-
 const bonusRegexRE = /\(.*?\)/;
-const bonusExt = /\.html$/;
-
+const bonusExtRE = /\.html$/;
 const penaltyOptionalRE = /(^\/:(\w|\.)+\?)|({:?.*?}\?)|(\(.*?\)\?)/;
 const penaltyWildcardRE = /^\/(\*|(:?\w*?\*))/;
 const penaltyRepeatableRE = /^\/(:(\w|\.)+(\+|\*))|({:?.*?}(\+|\*))/;
@@ -29,16 +26,9 @@ const scoreCache = new Map<string, number>();
 export function calcRoutePathScore(pathname: string): number {
   if (scoreCache.has(pathname)) return scoreCache.get(pathname)!;
 
-  const segments =
-    pathname === '/'
-      ? pathname
-      : pathname.split(splitPathRE).map((s) => `/${s}`);
+  const segments = splitRoutePath(pathname);
 
   let score = 0;
-
-  if (bonusExt.test(pathname)) {
-    score += PATH_SCORE.BonusExt;
-  }
 
   for (const segment of segments) {
     if (segment === '/') {
@@ -50,6 +40,10 @@ export function calcRoutePathScore(pathname: string): number {
     const isNamedGroup = segment.startsWith('/:') || segment.startsWith('/{:');
 
     let isSegment = true;
+
+    if (bonusExtRE.test(segment)) {
+      score += PATH_SCORE.BonusExt;
+    }
 
     if (isNamedGroup) {
       score += PATH_SCORE.Group;
@@ -97,16 +91,32 @@ export function compareRoutes(routeA: PageRoute, routeB: PageRoute) {
     return routeB.score - routeA.score; // higher score first
   }
 
-  const segmentsA = routeA.pathname.split(splitPathRE).length;
-  const segmentsB = routeA.pathname.split(splitPathRE).length;
+  const segmentsA = splitRoutePath(routeA.pathname).length;
+  const segmentsB = splitRoutePath(routeB.pathname).length;
 
   return segmentsA != segmentsB
     ? segmentsB - segmentsA // deeper path first
     : routeB.pathname.length - routeA.pathname.length; // longer path first
 }
 
-export function isRoutePathDynamic(path: string) {
-  return path.startsWith('/:') || dynamicPathRE.test(path);
+const trailingHtmlExtGroupRE = /{\.html}\?$/;
+const trailingSlashGroupRE = /{\/}\?{index}\?{\.html}\?$/;
+export function cleanRoutePath(pathname: string) {
+  return pathname
+    .replace(trailingSlashGroupRE, '/index.html')
+    .replace(trailingHtmlExtGroupRE, '.html');
+}
+
+const routeSplitRE = /\/(?![^{(]*}|\))/g; // split by / but ignore if inside () or {}
+export function splitRoutePath(pathname: string) {
+  return noslash(cleanRoutePath(pathname)).split(routeSplitRE).map(slash);
+}
+
+const dynamicPathRE = /(\*|\(.*\)|{.*}|\/:)/;
+export function isRoutePathDynamic(pathname: string) {
+  return (
+    pathname.startsWith('/:') || dynamicPathRE.test(cleanRoutePath(pathname))
+  );
 }
 
 export function matchRoute<T extends PageRoute>(
@@ -125,7 +135,7 @@ export function matchRouteInfo<T extends PageRoute>(
     'route' in routes[0] ? routes.map((r) => r.route) : routes;
 
   const index = normalized.findIndex((route) =>
-    route.pattern.test(cleanRouteMatchingURL(url, route)),
+    route.pattern.test(cleanRouteMatchingURL(url)),
   );
 
   const route = normalized[index];
@@ -136,11 +146,10 @@ export function matchRouteInfo<T extends PageRoute>(
 }
 
 export function execRouteMatch<T extends PageRoute>(url: URL, route?: T) {
-  return route?.pattern.exec(cleanRouteMatchingURL(url, route))?.pathname;
+  return route?.pattern.exec(cleanRouteMatchingURL(url))?.pathname;
 }
 
-export function cleanRouteMatchingURL(url: URL, route: PageRoute) {
-  return `http://test${
-    route.dynamic ? url.pathname.replace(/\.html$/, '') : url.pathname
-  }`;
+const htmlExtRE = /\.html$/;
+export function cleanRouteMatchingURL(url: URL) {
+  return `http://test${url.pathname.replace(htmlExtRE, '')}`;
 }

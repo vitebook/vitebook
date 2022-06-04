@@ -9,7 +9,7 @@ import {
 
 import type { ServerLayout, ServerPage } from '../../../shared';
 import type { App } from '../App';
-import { stripPageInfoFromPath } from '../plugins/pages';
+import { stripPageInfoFromFilePath } from '../plugins/pages';
 import { extendManualChunks } from './chunks';
 
 export type BundleResult = [
@@ -144,7 +144,7 @@ export function getAppBundleEntries(app: App) {
 
 function buildPageOutputFilename(app: App, page: ServerPage) {
   const name = path.trimExt(
-    stripPageInfoFromPath(app.dirs.pages.relative(page.rootPath)),
+    stripPageInfoFromFilePath(app.dirs.pages.relative(page.rootPath)),
   );
 
   return `pages/${name}`;
