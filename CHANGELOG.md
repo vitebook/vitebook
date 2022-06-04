@@ -1,3 +1,9 @@
+## [0.33.1](https://github.com/vitebook/vitebook/compare/v0.33.0...v0.33.1) (2022-06-04)
+
+### Bug Fixes
+
+- **core:** normalize url pathnames during build ([c00d5ae](https://github.com/vitebook/vitebook/commit/c00d5ae19036c25ec0087b79a88b3a4ce038a22c))
+
 # [0.33.0](https://github.com/vitebook/vitebook/compare/v0.32.3...v0.33.0) (2022-06-04)
 
 ### Features
