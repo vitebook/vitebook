@@ -6,10 +6,9 @@ const PATH_SCORE = {
   Static: 5,
   Group: 3, // /:id or /{:id} or /something{:id}
   Dynamic: 2,
-  Root: 1, // /
   BonusRegExp: 1, // /:id(\d+)
   BonusExt: 3, // .html
-  PenaltyOptional: -1, // /:id? or {id}? or (\d)?
+  PenaltyOptional: -4, // /:id? or {id}? or (\d)?
   PenaltyWildcard: -7, // /posts/* or /:id*
   PenaltyRepeatable: -8, // /:id+ or /:id* or {id}+
   PenaltyRegexWildcard: -10, // /(.*)
@@ -31,11 +30,6 @@ export function calcRoutePathScore(pathname: string): number {
   let score = 0;
 
   for (const segment of segments) {
-    if (segment === '/') {
-      score += PATH_SCORE.Root + PATH_SCORE.Segment;
-      continue;
-    }
-
     const isDynamic = isRoutePathDynamic(segment);
     const isNamedGroup = segment.startsWith('/:') || segment.startsWith('/{:');
 
