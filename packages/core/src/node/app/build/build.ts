@@ -63,6 +63,10 @@ export async function build(app: App): Promise<void> {
   const notFoundHref = new Set<string>();
   const redirectsTable: Record<string, string> = {};
 
+  function normalizedURLPathname(url: URL) {
+    return url.pathname.replace(/\/$/, '/index.html');
+  }
+
   try {
     // -------------------------------------------------------------------------------------------
     // BUNDLE
@@ -116,8 +120,10 @@ export async function build(app: App): Promise<void> {
 
     // eslint-disable-next-line no-inner-declarations
     async function loadServerOutput(url: URL, page: ServerPage) {
-      if (pageServerOutput.has(url.pathname)) {
-        return pageServerOutput.get(url.pathname)!;
+      const pathname = normalizedURLPathname(url);
+
+      if (pageServerOutput.has(pathname)) {
+        return pageServerOutput.get(pathname)!;
       }
 
       const { output, redirect } = await loadPageServerOutput(
@@ -137,8 +143,9 @@ export async function build(app: App): Promise<void> {
       );
 
       if (redirect) {
-        redirectsTable[url.pathname] = redirect;
-        pageServerOutput.set(url.pathname, redirect);
+        const pathname = normalizedURLPathname(url);
+        redirectsTable[pathname] = redirect;
+        pageServerOutput.set(pathname, redirect);
         return redirect;
       }
 
@@ -161,7 +168,7 @@ export async function build(app: App): Promise<void> {
         }
       }
 
-      pageServerOutput.set(url.pathname, output);
+      pageServerOutput.set(pathname, output);
       return output;
     }
 
@@ -178,10 +185,10 @@ export async function build(app: App): Promise<void> {
 
     // eslint-disable-next-line no-inner-declarations
     async function buildPage(url: URL, page: ServerPage) {
-      const normalizedPathname = url.pathname.replace(/\/$/, '/index.html');
+      const pathname = normalizedURLPathname(url);
 
-      if (seenHref.has(normalizedPathname)) return;
-      seenHref.set(normalizedPathname, page);
+      if (seenHref.has(pathname)) return;
+      seenHref.set(pathname, page);
 
       const serverOutput = await loadServerOutput(url, page);
 
@@ -299,7 +306,9 @@ export async function build(app: App): Promise<void> {
         return;
       }
 
-      if (!notFoundHref.has(url.pathname)) {
+      const pathname = normalizedURLPathname(url);
+
+      if (!notFoundHref.has(pathname)) {
         if (notFoundHref.size === 0) console.log();
 
         logger.warn(
@@ -313,7 +322,7 @@ export async function build(app: App): Promise<void> {
           ),
         );
 
-        notFoundHref.add(url.pathname);
+        notFoundHref.add(pathname);
       }
     }
 
