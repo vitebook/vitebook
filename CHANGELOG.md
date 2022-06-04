@@ -1,3 +1,9 @@
+## [0.33.2](https://github.com/vitebook/vitebook/compare/v0.33.1...v0.33.2) (2022-06-04)
+
+### Bug Fixes
+
+- **core:** trailing slash support for dynamic index files ([39681b8](https://github.com/vitebook/vitebook/commit/39681b80b72fd8f42a0055c04e94d6a76d06754a))
+
 ## [0.33.1](https://github.com/vitebook/vitebook/compare/v0.33.0...v0.33.1) (2022-06-04)
 
 ### Bug Fixes
