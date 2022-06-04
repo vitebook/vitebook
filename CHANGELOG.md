@@ -1,3 +1,10 @@
+# [0.33.0](https://github.com/vitebook/vitebook/compare/v0.32.3...v0.33.0) (2022-06-04)
+
+### Features
+
+- **core:** prettier routes print on build ([3dd2e7a](https://github.com/vitebook/vitebook/commit/3dd2e7ad7ef10e5edae09ee8fd0c8c283cd33770))
+- **core:** support clean urls and opt trailing slashes ([a3a7245](https://github.com/vitebook/vitebook/commit/a3a72451580402c12511cddbc39088eb038407ae))
+
 ## [0.32.3](https://github.com/vitebook/vitebook/compare/v0.32.2...v0.32.3) (2022-06-03)
 
 ### Bug Fixes
