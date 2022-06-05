@@ -1,3 +1,9 @@
+# [0.34.0](https://github.com/vitebook/vitebook/compare/v0.33.2...v0.34.0) (2022-06-05)
+
+### Features
+
+- **core:** merge page layout markdown metadata ([3c223f2](https://github.com/vitebook/vitebook/commit/3c223f2b78fbc3c77221cdf1e28f00badeb8eed0))
+
 ## [0.33.2](https://github.com/vitebook/vitebook/compare/v0.33.1...v0.33.2) (2022-06-04)
 
 ### Bug Fixes
