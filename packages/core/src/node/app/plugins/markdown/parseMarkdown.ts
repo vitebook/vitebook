@@ -327,7 +327,8 @@ function collectHeadings(tag: Tag, headings: MarkdownHeading[]) {
 
   if (typeof title === 'string') {
     const id = tag.attributes.id ?? slugify(title);
-    const level = Number(tag.name.match(/h(\d+)/)?.[1] ?? 0);
+    const level =
+      tag.attributes.level ?? Number(tag.name.match(/h(\d+)/)?.[1] ?? 0);
 
     tag.attributes.id = id;
     tag.attributes.level = level;
