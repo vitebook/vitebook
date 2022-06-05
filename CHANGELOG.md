@@ -1,3 +1,9 @@
+## [0.34.2](https://github.com/vitebook/vitebook/compare/v0.34.1...v0.34.2) (2022-06-05)
+
+### Bug Fixes
+
+- **core:** markdown heading level is defaulting to 0 ([b85590a](https://github.com/vitebook/vitebook/commit/b85590a0bcfdd7657dd14e6ef2e4051d896492f9))
+
 ## [0.34.1](https://github.com/vitebook/vitebook/compare/v0.34.0...v0.34.1) (2022-06-05)
 
 ### Bug Fixes
