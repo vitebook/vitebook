@@ -155,7 +155,7 @@ export function parseMarkdown(
       (layout) => app.pages.getLayoutByIndex(layout).filePath,
     );
 
-    for (const layoutFile of layoutFiles) {
+    for (const layoutFile of layoutFiles.reverse()) {
       if (!opts.filter?.(layoutFile) ?? !layoutFile.endsWith('.md')) continue;
 
       const layoutMeta = parseMarkdown(
