@@ -5,6 +5,7 @@ import { normalizePath } from '../../../utils';
 import { virtualModuleRequestPath } from '../../alias';
 import type { App } from '../../App';
 import { clearServerLoaderCache } from '../core/serverLoader';
+import { clearMarkdownCache } from '../markdown';
 
 export type PagesHMRConfig = {
   app: App;
@@ -16,6 +17,22 @@ export function handleHMR({ app, server }: PagesHMRConfig) {
 
   const isPage = (filePath) => pages.isPage(filePath);
   const isLayout = (filePath) => pages.isLayout(filePath);
+
+  function clearLayoutChildrenMarkdownCaches(layoutFilePath: string) {
+    const layoutIndex = app.pages.getLayoutIndex(layoutFilePath);
+    for (const page of app.pages.all) {
+      if (page.layouts.includes(layoutIndex)) {
+        clearMarkdownCache(page.filePath);
+
+        const module = server.moduleGraph
+          .getModulesByFile(page.filePath)
+          ?.values()
+          .next();
+
+        if (module?.value) server.moduleGraph.invalidateModule(module.value);
+      }
+    }
+  }
 
   onFileEvent(isPage, 'add', async (filePath) => {
     pages.addPage(filePath);
@@ -53,6 +70,7 @@ export function handleHMR({ app, server }: PagesHMRConfig) {
 
   onFileEvent(isLayout, 'add', async (filePath) => {
     pages.addLayout(filePath);
+    clearLayoutChildrenMarkdownCaches(filePath);
     return { reload: true };
   });
 
@@ -75,6 +93,7 @@ export function handleHMR({ app, server }: PagesHMRConfig) {
   });
 
   onFileEvent(isLayout, 'unlink', async (filePath) => {
+    clearLayoutChildrenMarkdownCaches(filePath);
     pages.removeLayout(filePath);
     return { reload: true };
   });

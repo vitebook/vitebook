@@ -57,7 +57,7 @@ export type MarkdocRenderer = (data: {
 
 export type ParseMarkdownConfig = {
   ignoreCache?: boolean;
-  pagesDir: string;
+  filter: (id: string) => boolean;
   highlight: HighlightCodeBlock;
   transformAst: MarkdocAstTransformer[];
   transformTreeNode: MarkdocTreeNodeTransformer[];
@@ -86,24 +86,15 @@ export function parseMarkdown(
   app: App,
   filePath: string,
   source: string,
-  {
-    ignoreCache = false,
-    pagesDir,
-    highlight,
-    transformTreeNode: transformRenderNode = [],
-    transformAst = [],
-    transformContent = [],
-    transformOutput = [],
-    render,
-  }: Partial<ParseMarkdownConfig>,
+  opts: Partial<ParseMarkdownConfig> = {},
 ): ParseMarkdownResult {
   const cacheKey = source;
 
-  if (!ignoreCache && cache.has(cacheKey)) return cache.get(source)!;
+  if (!opts.ignoreCache && cache.has(cacheKey)) return cache.get(source)!;
 
   const ast = Markdoc.parse(source, filePath);
 
-  for (const transformer of transformAst) {
+  for (const transformer of opts.transformAst ?? []) {
     transformer({ filePath, ast, source });
   }
 
@@ -123,15 +114,15 @@ export function parseMarkdown(
     },
   });
 
-  for (const transformer of transformContent) {
+  for (const transformer of opts.transformContent ?? []) {
     transformer({ filePath, frontmatter, content });
   }
 
   const stuff: MarkdocTreeWalkStuff = {
     baseUrl: app.vite?.config.base ?? '/',
     filePath,
-    pagesDir: pagesDir!,
-    highlight: highlight!,
+    pagesDir: app.dirs.pages.path,
+    highlight: opts.highlight!,
     imports: new Set(),
     links: new Set(),
     headings: [],
@@ -139,7 +130,7 @@ export function parseMarkdown(
 
   walkRenderTree(content, stuff, (node) => {
     forEachRenderNode(node, stuff);
-    for (const transformer of transformRenderNode) {
+    for (const transformer of opts.transformTreeNode ?? []) {
       transformer({ node, stuff });
     }
   });
@@ -158,12 +149,37 @@ export function parseMarkdown(
     lastUpdated,
   };
 
+  const page = app.pages.getPage(filePath);
+  if (page) {
+    const layoutFiles = page.layouts.map(
+      (layout) => app.pages.getLayoutByIndex(layout).filePath,
+    );
+
+    for (const layoutFile of layoutFiles) {
+      if (!opts.filter?.(layoutFile) ?? !layoutFile.endsWith('.md')) continue;
+
+      const layoutMeta = parseMarkdown(
+        app,
+        layoutFile,
+        fs.readFileSync(layoutFile, { encoding: 'utf-8' }),
+        opts,
+      );
+
+      meta.title = meta.title ?? layoutMeta.title;
+      meta.headings = [...layoutMeta.headings, ...meta.headings];
+      meta.frontmatter = { ...layoutMeta.frontmatter, ...meta.frontmatter };
+      if (layoutMeta.lastUpdated < meta.lastUpdated) {
+        meta.lastUpdated = layoutMeta.lastUpdated;
+      }
+    }
+  }
+
   let output =
-    (render?.({ filePath, content, meta, imports, stuff }) ??
+    (opts.render?.({ filePath, content, meta, imports, stuff }) ??
       renderMarkdocToHTML(content)) ||
     '';
 
-  for (const transformer of transformOutput) {
+  for (const transformer of opts.transformOutput ?? []) {
     output = transformer({
       filePath,
       meta,
@@ -311,12 +327,15 @@ function collectHeadings(tag: Tag, headings: MarkdownHeading[]) {
 
   if (typeof title === 'string') {
     const id = tag.attributes.id ?? slugify(title);
+    const level = Number(tag.name.match(/h(\d+)/)?.[1] ?? 0);
+
     tag.attributes.id = id;
+    tag.attributes.level = level;
 
     headings.push({
       title,
       id,
-      level: tag.attributes.level,
+      level,
     });
   }
 }

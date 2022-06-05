@@ -1,5 +1,5 @@
 export type MarkdownMeta = {
-  title: string | null;
+  title?: string | null;
   headings: MarkdownHeading[];
   frontmatter: MarkdownFrontmatter;
   lastUpdated: number;

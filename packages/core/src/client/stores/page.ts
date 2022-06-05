@@ -23,4 +23,10 @@ if (import.meta.hot) {
       store.update((page) => ({ ...page, meta }));
     }
   });
+
+  store.subscribe((page) => {
+    import.meta.hot!.send('vitebook::page_change', {
+      rootPath: page?.rootPath ?? '',
+    });
+  });
 }

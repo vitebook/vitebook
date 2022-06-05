@@ -1,14 +1,18 @@
 import { type Config as MarkdocConfig } from '@markdoc/markdoc';
 import { createFilter, type FilterPattern } from '@rollup/pluginutils';
+import { readFile } from 'fs/promises';
 import { type Options as HastToHtmlConfig, toHtml } from 'hast-util-to-html';
 import kleur from 'kleur';
 import type { HighlighterOptions as ShikiConfig } from 'shiki';
 import { logger } from 'src/node/utils';
+import type { ViteDevServer } from 'vite';
 
+import type { MarkdownMeta, ServerPage } from '../../../../shared';
 import type { App } from '../../App';
 import { type Plugin } from '../Plugin';
 import { handleHMR } from './hmr';
 import {
+  clearMarkdownCache,
   type HighlightCodeBlock,
   parseMarkdown,
   type ParseMarkdownConfig,
@@ -90,6 +94,7 @@ export type MarkdownPluginConfig = Partial<ResolvedMarkdownPluginConfig>;
 export function markdownPlugin(config: ResolvedMarkdownPluginConfig): Plugin {
   let app: App;
   let filter: (id: string) => boolean;
+  let currentPage: ServerPage | undefined = undefined;
 
   const {
     include,
@@ -104,12 +109,13 @@ export function markdownPlugin(config: ResolvedMarkdownPluginConfig): Plugin {
   let highlight: HighlightCodeBlock | null =
     typeof highlighter === 'function' ? highlighter : null;
 
-  const parseConfig: Partial<ParseMarkdownConfig> = {
-    ignoreCache: false,
-    pagesDir: '', // set below in `appInit`
-    highlight: (code, lang) => highlight?.(code, lang),
-    ...parseOptions,
-  };
+  const parse = (filePath: string, content: string) =>
+    parseMarkdown(app, filePath, content, {
+      ignoreCache: false,
+      filter,
+      highlight: (code, lang) => highlight?.(code, lang),
+      ...parseOptions,
+    });
 
   return {
     name: '@vitebook/markdown',
@@ -120,7 +126,6 @@ export function markdownPlugin(config: ResolvedMarkdownPluginConfig): Plugin {
       app.markdoc.base = markdoc;
 
       filter = createFilter(include, exclude);
-      parseConfig.pagesDir = app.dirs.pages.path;
 
       if (highlighter === 'starry-night') {
         try {
@@ -185,10 +190,15 @@ export function markdownPlugin(config: ResolvedMarkdownPluginConfig): Plugin {
     },
     async configureServer(server) {
       handleHMR({ pages: app.pages, markdoc: app.markdoc, server });
+
+      server.ws.on('vitebook::page_change', ({ rootPath }) => {
+        const filePath = app.dirs.root.resolve(rootPath);
+        currentPage = app.pages.getPage(filePath);
+      });
     },
     transform(content, id) {
       if (filter(id)) {
-        const { output } = parseMarkdown(app, id, content, parseConfig);
+        const { output } = parse(id, content);
         return output;
       }
 
@@ -200,21 +210,33 @@ export function markdownPlugin(config: ResolvedMarkdownPluginConfig): Plugin {
       if (filter(file)) {
         const content = await read();
 
-        const { output, ...meta } = await parseMarkdown(
-          app,
-          file,
-          content,
-          parseConfig,
-        );
+        const layoutIndex = app.pages.getLayoutIndex(file);
+        const isLayoutFile = layoutIndex >= 0;
 
-        server.ws.send({
-          type: 'custom',
-          event: 'vitebook::md_meta',
-          data: meta,
-        });
+        if (isLayoutFile && currentPage?.layouts.includes(layoutIndex)) {
+          clearMarkdownCache(currentPage.filePath);
 
+          const { output: _, ...meta } = parse(
+            currentPage.filePath,
+            await readFile(currentPage.filePath, { encoding: 'utf-8' }),
+          );
+
+          handleMetaHMR(server, meta);
+        }
+
+        const { output, ...meta } = parse(file, content);
         ctx.read = () => output;
+
+        if (!isLayoutFile) handleMetaHMR(server, meta);
       }
     },
   };
+}
+
+function handleMetaHMR(server: ViteDevServer, meta: MarkdownMeta) {
+  server.ws.send({
+    type: 'custom',
+    event: 'vitebook::md_meta',
+    data: meta,
+  });
 }
