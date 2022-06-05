@@ -1,3 +1,9 @@
+## [0.34.1](https://github.com/vitebook/vitebook/compare/v0.34.0...v0.34.1) (2022-06-05)
+
+### Bug Fixes
+
+- **core:** merge markdown layout metadata in right order ([ada1a80](https://github.com/vitebook/vitebook/commit/ada1a80ea4a4a26886546b5586139b644f16fe76))
+
 # [0.34.0](https://github.com/vitebook/vitebook/compare/v0.33.2...v0.34.0) (2022-06-05)
 
 ### Features
