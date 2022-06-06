@@ -54,7 +54,6 @@ export type LoadedRoute = Route & {
 export type GoToRouteOptions = {
   scroll?: ScrollToTarget | null;
   keepfocus?: boolean;
-  hash?: string;
   replace?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   state?: any;

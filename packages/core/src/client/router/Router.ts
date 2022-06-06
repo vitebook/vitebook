@@ -32,6 +32,7 @@ import type {
   RouterScrollBehaviorHook,
   ScoredRouteDeclaration,
   ScrollTarget,
+  ScrollToTarget,
 } from './types';
 
 export class Router {
@@ -326,7 +327,6 @@ export class Router {
       return this._navigate(url, {
         scroll,
         keepfocus,
-        hash: url.hash,
         replace,
         state,
       });
@@ -409,7 +409,6 @@ export class Router {
     url: URL,
     {
       scroll,
-      hash,
       accepted,
       blocked,
       state = {},
@@ -526,7 +525,7 @@ export class Router {
         from: fromRoute,
         to: toRoute,
         scroll,
-        hash,
+        hash: url.hash,
       });
     }
 
@@ -554,10 +553,12 @@ export class Router {
     hash,
     from,
     to,
-  }: { from?: LoadedRoute | null; to?: LoadedRoute } & Pick<
-    NavigationOptions,
-    'scroll' | 'hash'
-  >) {
+  }: {
+    hash?: string;
+    from?: LoadedRoute | null;
+    to?: LoadedRoute;
+    scroll?: ScrollToTarget | null;
+  }) {
     if (!inBrowser) return;
 
     let cancelled = false;
