@@ -499,14 +499,18 @@ export function logRoutesList({
     logs.push(`- ${link}`);
   }
 
-  logs.push('', kleur.bold(kleur.underline('REDIRECTS')), '');
-  for (const link of Object.keys(redirects)) {
-    logs.push(kleur.yellow(`- ${link} -> ${redirects[link]}`));
+  if (Object.keys(redirects).length > 0) {
+    logs.push('', kleur.bold(kleur.underline('REDIRECTS')), '');
+    for (const link of Object.keys(redirects)) {
+      logs.push(kleur.yellow(`- ${link} -> ${redirects[link]}`));
+    }
   }
 
-  logs.push('', kleur.bold(kleur.underline('NOT FOUND')), '');
-  for (const link of notFoundLinks) {
-    logs.push(kleur.red(`- ${link}`));
+  if (notFoundLinks.size > 0) {
+    logs.push('', kleur.bold(kleur.underline('NOT FOUND')), '');
+    for (const link of notFoundLinks) {
+      logs.push(kleur.red(`- ${link}`));
+    }
   }
 
   console.log(logs.join('\n'));
