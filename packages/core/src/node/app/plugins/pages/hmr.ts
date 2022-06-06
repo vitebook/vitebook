@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { ServerPage } from 'src/shared';
 import { type ViteDevServer } from 'vite';
 
 import { normalizePath } from '../../../utils';
@@ -23,13 +24,7 @@ export function handleHMR({ app, server }: PagesHMRConfig) {
     for (const page of app.pages.all) {
       if (page.layouts.includes(layoutIndex)) {
         clearMarkdownCache(page.filePath);
-
-        const module = server.moduleGraph
-          .getModulesByFile(page.filePath)
-          ?.values()
-          .next();
-
-        if (module?.value) server.moduleGraph.invalidateModule(module.value);
+        invalidatePageModule(server, page);
       }
     }
   }
@@ -117,13 +112,22 @@ export function handleHMR({ app, server }: PagesHMRConfig) {
   }
 
   function fullReload() {
-    invalidateModule(virtualModuleRequestPath.pages);
-    invalidateModule(virtualModuleRequestPath.layouts);
+    invalidateModuleByID(virtualModuleRequestPath.pages);
+    invalidateModuleByID(virtualModuleRequestPath.layouts);
     server.ws.send({ type: 'full-reload' });
   }
 
-  function invalidateModule(id: string) {
+  function invalidateModuleByID(id: string) {
     const mod = server.moduleGraph.getModuleById(id);
     if (mod) server.moduleGraph.invalidateModule(mod);
   }
+}
+
+export function invalidatePageModule(server: ViteDevServer, page: ServerPage) {
+  const module = server.moduleGraph
+    .getModulesByFile(page.filePath)
+    ?.values()
+    .next();
+
+  if (module?.value) server.moduleGraph.invalidateModule(module.value);
 }

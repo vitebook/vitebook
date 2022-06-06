@@ -9,6 +9,7 @@ import type { ViteDevServer } from 'vite';
 
 import type { MarkdownMeta, ServerPage } from '../../../../shared';
 import type { App } from '../../App';
+import { invalidatePageModule } from '../pages/hmr';
 import { type Plugin } from '../Plugin';
 import { handleHMR } from './hmr';
 import {
@@ -215,6 +216,7 @@ export function markdownPlugin(config: ResolvedMarkdownPluginConfig): Plugin {
 
         if (isLayoutFile && currentPage?.layouts.includes(layoutIndex)) {
           clearMarkdownCache(currentPage.filePath);
+          invalidatePageModule(server, currentPage);
 
           const { output: _, ...meta } = parse(
             currentPage.filePath,
