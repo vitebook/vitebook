@@ -2,6 +2,7 @@ import {
   type AppContextMap,
   type LoadedClientPage,
   type PageRoute,
+  WithRouteMatch,
 } from '../../shared';
 
 export type RedirectRoute = (pathnameOrURL: string | URL) => void;
@@ -74,7 +75,7 @@ export type ScrollToTarget = (info: { cancel: ScrollCancel }) => ScrollTarget;
 export type ScrollCancel = () => void;
 
 export type RouterScrollBehaviorHook = (info: {
-  from: LoadedRoute;
+  from: LoadedRoute | null;
   to: LoadedRoute;
   cancel: ScrollCancel;
   savedPosition?: { top?: number; left?: number };
@@ -83,15 +84,15 @@ export type RouterScrollBehaviorHook = (info: {
 export type CancelNavigation = () => void;
 
 export type RouterBeforeNavigateHook = (navigation: {
-  from: RouteDeclaration;
-  to: RouteDeclaration;
+  from: LoadedRoute | null;
+  to: WithRouteMatch<RouteDeclaration>;
   match: URLPatternComponentResult;
   cancel: CancelNavigation;
   redirect: RedirectRoute;
 }) => void;
 
 export type RouterAfterNavigateHook = (navigation: {
-  from: LoadedRoute;
+  from: LoadedRoute | null;
   to: LoadedRoute;
   match: URLPatternComponentResult;
 }) => void | Promise<void>;

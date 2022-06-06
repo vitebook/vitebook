@@ -10,6 +10,7 @@ import {
   compareRoutes,
   inBrowser,
   isString,
+  isUndefined,
   matchRoute,
   slash,
   type WithRouteMatch,
@@ -453,16 +454,14 @@ export class Router {
       redirecting = redirectNavigation(redirectURL);
     });
 
-    if (this._currentRoute) {
-      for (const hook of this._beforeNavigate) {
-        hook({
-          from: this._currentRoute,
-          to: route,
-          match: route.match,
-          cancel,
-          redirect,
-        });
-      }
+    for (const hook of this._beforeNavigate) {
+      hook({
+        from: this._currentRoute,
+        to: route,
+        match: route.match,
+        cancel,
+        redirect,
+      });
     }
 
     if (cancelled) return;
@@ -524,24 +523,22 @@ export class Router {
       await new Promise((res) => window.requestAnimationFrame(res));
 
       await this._scroll({
-        from: fromRoute!,
+        from: fromRoute,
         to: toRoute,
         scroll,
         hash,
       });
     }
 
-    if (fromRoute) {
-      await Promise.all(
-        this._afterNavigate.map((hook) =>
-          hook({
-            from: fromRoute,
-            to: toRoute,
-            match: route.match,
-          }),
-        ),
-      );
-    }
+    await Promise.all(
+      this._afterNavigate.map((hook) =>
+        hook({
+          from: fromRoute,
+          to: toRoute,
+          match: route.match,
+        }),
+      ),
+    );
 
     this._url = url;
     this._started = true;
@@ -558,7 +555,7 @@ export class Router {
     hash,
     from,
     to,
-  }: { from?: LoadedRoute; to?: LoadedRoute } & Pick<
+  }: { from?: LoadedRoute | null; to?: LoadedRoute } & Pick<
     NavigationOptions,
     'scroll' | 'hash'
   >) {
@@ -572,7 +569,7 @@ export class Router {
     let scrollTarget: ScrollTarget = null;
     if (scroll) {
       scrollTarget = await scroll({ cancel });
-    } else if (from && to && this.scrollBehavior) {
+    } else if (!isUndefined(from) && to && this.scrollBehavior) {
       scrollTarget = await this.scrollBehavior({
         from,
         to,
