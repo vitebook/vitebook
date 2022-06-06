@@ -71,9 +71,25 @@ export type ResolvedRouteConfig = {
    * ```
    */
   matchers: PageRouteMatcherConfig;
-  /** Route logging style. */
+  /**
+   * The route logging style.
+   *
+   * @defaultValue `tree`
+   */
   log: RoutesLogStyle;
+  /**
+   * The route logging level is used by the logger to determine how much detail to include.
+   *
+   * - `info` - Logs all routes, redirects, and not found pages.
+   * - `warn` - Only logs redirects and not found pages.
+   * - `error` - Only logs not found pages.
+   *
+   * @defaultValue `warn`
+   */
+  logLevel: RoutesLogLevel;
 };
+
+export type RoutesLogLevel = 'info' | 'warn' | 'error';
 
 export type RoutesLogStyle = 'none' | 'list' | 'tree' | CustomRoutesLogger;
 
@@ -82,6 +98,8 @@ export type CustomRoutesLogger = (
 ) => void | Promise<void>;
 
 export type CustomRoutesLoggerInput = {
+  /** Desired route logging level. */
+  level: RoutesLogLevel;
   /** All found links and their respective server page. */
   links: Map<string, ServerPage>;
   /** Record containing links and their respective redirect. */

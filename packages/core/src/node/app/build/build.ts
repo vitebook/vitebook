@@ -423,6 +423,7 @@ export async function build(app: App): Promise<void> {
   const routesLogStyle = app.config.routes.log;
   if (routesLogStyle !== 'none') {
     const input = {
+      level: app.config.routes.logLevel,
       links: seenLinks,
       redirects,
       dataHashes,
@@ -489,24 +490,28 @@ function log404(
 }
 
 export function logRoutesList({
+  level,
   links,
   notFoundLinks,
   redirects,
 }: CustomRoutesLoggerInput) {
-  const logs: string[] = ['', kleur.bold(kleur.underline('ROUTES')), ''];
+  const logs: string[] = [];
 
-  for (const link of links.keys()) {
-    logs.push(`- ${link}`);
+  if (level === 'info') {
+    logs.push('', kleur.bold(kleur.underline('ROUTES')), '');
+    for (const link of links.keys()) {
+      logs.push(`- ${link}`);
+    }
   }
 
-  if (Object.keys(redirects).length > 0) {
+  if (/(warn|error)/.test(level) && Object.keys(redirects).length > 0) {
     logs.push('', kleur.bold(kleur.underline('REDIRECTS')), '');
     for (const link of Object.keys(redirects)) {
       logs.push(kleur.yellow(`- ${link} -> ${redirects[link]}`));
     }
   }
 
-  if (notFoundLinks.size > 0) {
+  if (level === 'error' && notFoundLinks.size > 0) {
     logs.push('', kleur.bold(kleur.underline('NOT FOUND')), '');
     for (const link of notFoundLinks) {
       logs.push(kleur.red(`- ${link}`));
@@ -517,13 +522,20 @@ export function logRoutesList({
   console.log();
 }
 
-export function logRoutesTree({ links, redirects }: CustomRoutesLoggerInput) {
-  console.log(`\n${kleur.bold(kleur.underline('ROUTES'))}\n`);
+export function logRoutesTree({
+  level,
+  links,
+  redirects,
+  notFoundLinks,
+}: CustomRoutesLoggerInput) {
+  if (level === 'info') {
+    console.log(`\n${kleur.bold(kleur.underline('ROUTES'))}\n`);
+  }
 
   type TreeDir = {
     name: string;
     path: TreeDir[];
-    file: Set<{ name: string; href: string; page: ServerPage }>;
+    file: Set<{ name: string; link: string }>;
   };
 
   const newDir = (name: string): TreeDir => ({
@@ -534,8 +546,18 @@ export function logRoutesTree({ links, redirects }: CustomRoutesLoggerInput) {
 
   const tree = newDir('.');
 
-  for (const href of links.keys()) {
-    const segments = noslash(href).split('/');
+  const warnOnly = level === 'warn';
+  const errorOnly = level === 'error';
+  const redirectLinks = new Set(Object.keys(redirects));
+
+  const filteredLinks = errorOnly
+    ? notFoundLinks
+    : warnOnly
+    ? new Set([...notFoundLinks, ...redirectLinks])
+    : new Set([...notFoundLinks, ...links.keys()]);
+
+  for (const link of filteredLinks) {
+    const segments = noslash(link).split('/');
 
     let current = tree;
     for (const segment of segments.slice(0, -1)) {
@@ -549,9 +571,8 @@ export function logRoutesTree({ links, redirects }: CustomRoutesLoggerInput) {
       current = nextDir;
     }
 
-    const name = href.endsWith('/') ? 'index.html' : path.basename(href);
-    const page = links.get(href)!;
-    current.file.add({ name, href, page });
+    const name = link.endsWith('/') ? 'index.html' : path.basename(link);
+    current.file.add({ name, link });
   }
 
   const PRINT_SYMBOLS = {
@@ -561,8 +582,6 @@ export function logRoutesTree({ links, redirects }: CustomRoutesLoggerInput) {
     LAST_BRANCH: '└── ',
     VERTICAL: '│   ',
   };
-
-  const redirectLinks = new Set(Object.keys(redirects));
 
   const print = (tree: TreeDir, depth: number, precedingSymbols: string) => {
     const lines: string[] = [];
@@ -576,10 +595,20 @@ export function logRoutesTree({ links, redirects }: CustomRoutesLoggerInput) {
     for (const [index, file] of files.entries()) {
       const isLast = index === files.length - 1 && tree.path.length === 0;
       const line = [precedingSymbols];
-      const isRedirect = redirectLinks.has(file.href);
       line.push(isLast ? PRINT_SYMBOLS.LAST_BRANCH : PRINT_SYMBOLS.BRANCH);
-      line.push(isRedirect ? kleur.yellow(file.name) : file.name);
-      if (isRedirect) line.push(kleur.dim(` -> ${redirectLinks[file.href]}`));
+
+      if (redirectLinks.has(file.link)) {
+        line.push(
+          `${kleur.yellow(file.name)} ${kleur.yellow(kleur.bold('(307)'))} -> ${
+            redirects[file.link]
+          }`,
+        );
+      } else if (notFoundLinks.has(file.link)) {
+        line.push(`${kleur.red(file.name)} ${kleur.red(kleur.bold('(404)'))}`);
+      } else {
+        line.push(file.name);
+      }
+
       lines.push(line.join(''));
     }
 
@@ -608,7 +637,7 @@ export function logRoutesTree({ links, redirects }: CustomRoutesLoggerInput) {
 
   console.log(kleur.bold(kleur.cyan('.')));
   console.log(print(tree, 1, '').join('\n'));
-  console.log('\n');
+  console.log();
 }
 
 function guessPackageManager(app: App): 'npm' | 'yarn' | 'pnpm' {
