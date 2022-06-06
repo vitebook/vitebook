@@ -1,3 +1,10 @@
+# [0.36.0](https://github.com/vitebook/vitebook/compare/v0.35.1...v0.36.0) (2022-06-06)
+
+### Features
+
+- **core:** custom sitemap entries config option ([3589b0f](https://github.com/vitebook/vitebook/commit/3589b0fbcb170e55e1015edcf2bdd65cc3a15987))
+- **core:** new custom route logging option ([4f411f4](https://github.com/vitebook/vitebook/commit/4f411f4517010d882b10ef95169f39798660e6d2))
+
 ## [0.35.1](https://github.com/vitebook/vitebook/compare/v0.35.0...v0.35.1) (2022-06-06)
 
 ### Bug Fixes
