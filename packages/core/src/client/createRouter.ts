@@ -66,8 +66,8 @@ export async function createRouter({
   handleHMR(router);
 
   if (inBrowser) {
-    router.listen();
     await router.go(location.href, { replace: true });
+    router.listen();
   }
 
   return router;

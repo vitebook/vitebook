@@ -541,7 +541,6 @@ export class Router {
     );
 
     this._url = url;
-    this._started = true;
     this._navigation.set(null);
   }
 
@@ -765,6 +764,8 @@ export class Router {
         );
       }
     });
+
+    this._started = true;
   }
 }
 
