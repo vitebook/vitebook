@@ -1,3 +1,9 @@
+## [0.36.1](https://github.com/vitebook/vitebook/compare/v0.36.0...v0.36.1) (2022-06-06)
+
+### Bug Fixes
+
+- **core:** detect and log malformed url pathnames on build ([a3be960](https://github.com/vitebook/vitebook/commit/a3be9603690103ba0505b585331f5478966f481a))
+
 # [0.36.0](https://github.com/vitebook/vitebook/compare/v0.35.1...v0.36.0) (2022-06-06)
 
 ### Features
