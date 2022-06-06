@@ -217,6 +217,7 @@ export async function resolveAppConfig({
     priority: 0.7,
     include: /.*/,
     exclude: null,
+    entries: [],
   };
 
   const __sitemap: ResolvedSitemapConfig[] = (

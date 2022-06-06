@@ -188,6 +188,17 @@ export type ResolvedSitemapConfig = {
   priority:
     | SitemapPriority
     | ((url: URL) => SitemapPriority | Promise<SitemapPriority>);
+  /**
+   * Additional sitemap URLS to be included.
+   */
+  entries: SitemapURL[];
+};
+
+export type SitemapURL = {
+  path: string;
+  lastmod?: string;
+  changefreq?: SitemapChangeFrequency;
+  priority?: SitemapPriority;
 };
 
 export type SitemapConfig = Partial<ResolvedSitemapConfig>;

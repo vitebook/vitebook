@@ -24,7 +24,7 @@ import {
 import { ensureFile } from '../../utils';
 import { logger, LoggerIcon } from '../../utils/logger';
 import type { App } from '../App';
-import type { ResolvedSitemapConfig } from '../AppConfig';
+import type { ResolvedSitemapConfig, SitemapURL } from '../AppConfig';
 import { installFetch } from '../installFetch';
 import {
   buildDataScriptTag,
@@ -729,20 +729,21 @@ async function buildSitemap(
     return date;
   };
 
-  const urls = (
-    await Promise.all(
+  const urls = [
+    ...(await Promise.all(
       Array.from(seenHref.keys())
         .filter(filter)
-        .map(
-          async (pathname) => `<url>
-    <loc>${baseUrl}${slash(pathname)}</loc>
-    <lastmod>${await lastmod(pathname)}</lastmod>
-    <changefreq>${await changefreq(new URL(pathname, baseUrl))}</changefreq>
-    <priority>${await priority(new URL(pathname, baseUrl))}</priority>
-  </url>`,
-        ),
-    )
-  ).join('\n  ');
+        .map(async (pathname) => ({
+          path: pathname,
+          lastmod: await lastmod(pathname),
+          changefreq: await changefreq(new URL(pathname, baseUrl)),
+          priority: await priority(new URL(pathname, baseUrl)),
+        }))
+        // @ts-expect-error - .
+        .map(async (url) => buildSitemapURL(await url, baseUrl)),
+    )),
+    ...config.entries.map((url) => buildSitemapURL(url, baseUrl)),
+  ].join('\n  ');
 
   const content = `<?xml version="1.0" encoding="UTF-8" ?>
 <urlset
@@ -757,4 +758,16 @@ async function buildSitemap(
 </urlset>`;
 
   await app.dirs.out.write(config.filename, content);
+}
+
+function buildSitemapURL(url: SitemapURL, baseUrl = '/') {
+  const lastmod = url.lastmod
+    ? `\n    <lastmod>${url.lastmod ?? ''}</lastmod>`
+    : '';
+
+  return `<url>
+    <loc>${baseUrl}${slash(url.path)}</loc>${lastmod}
+    <changefreq>${url.changefreq ?? 'weekly'}</changefreq>
+    <priority>${url.priority ?? 0.7}</priority>
+  </url>`;
 }
