@@ -1,3 +1,10 @@
+## [0.36.2](https://github.com/vitebook/vitebook/compare/v0.36.1...v0.36.2) (2022-06-06)
+
+### Bug Fixes
+
+- **core:** do not log empty redirects or 404s during build ([4a64a80](https://github.com/vitebook/vitebook/commit/4a64a8020a65189543a4e0a87b1c2ca8c0bece51))
+- **core:** resolved markdown links trailing slash missing ([31472cc](https://github.com/vitebook/vitebook/commit/31472cce3d432040c8485fa12c9decbaf367ee87))
+
 ## [0.36.1](https://github.com/vitebook/vitebook/compare/v0.36.0...v0.36.1) (2022-06-06)
 
 ### Bug Fixes
