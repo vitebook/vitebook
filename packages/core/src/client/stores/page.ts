@@ -17,7 +17,7 @@ export const createPageStore: () => PageStore = () => ({
 });
 
 if (import.meta.hot) {
-  import.meta.hot.on('vitebook::md_meta', ({ filePath, ...meta }) => {
+  import.meta.hot.on('vitebook::md_meta', ({ filePath, meta }) => {
     const page = get(store);
     if (isLoadedMarkdownPage(page) && filePath.endsWith(page.rootPath)) {
       store.update((page) => ({ ...page, meta }));

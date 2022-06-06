@@ -218,27 +218,31 @@ export function markdownPlugin(config: ResolvedMarkdownPluginConfig): Plugin {
           clearMarkdownCache(currentPage.filePath);
           invalidatePageModule(server, currentPage);
 
-          const { output: _, ...meta } = parse(
+          const { meta } = parse(
             currentPage.filePath,
             await readFile(currentPage.filePath, { encoding: 'utf-8' }),
           );
 
-          handleMetaHMR(server, meta);
+          handleMetaHMR(server, currentPage.filePath, meta);
         }
 
-        const { output, ...meta } = parse(file, content);
+        const { output, meta } = parse(file, content);
         ctx.read = () => output;
 
-        if (!isLayoutFile) handleMetaHMR(server, meta);
+        if (!isLayoutFile) handleMetaHMR(server, file, meta);
       }
     },
   };
 }
 
-function handleMetaHMR(server: ViteDevServer, meta: MarkdownMeta) {
+function handleMetaHMR(
+  server: ViteDevServer,
+  filePath: string,
+  meta: MarkdownMeta,
+) {
   server.ws.send({
     type: 'custom',
     event: 'vitebook::md_meta',
-    data: meta,
+    data: { filePath, meta },
   });
 }

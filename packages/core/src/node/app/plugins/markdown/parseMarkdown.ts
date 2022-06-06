@@ -17,6 +17,7 @@ import {
   type MarkdownFrontmatter,
   type MarkdownHeading,
   type MarkdownMeta,
+  type ServerPage,
 } from '../../../../shared';
 import type { App } from '../../App';
 import { resolveStaticRouteFromFilePath } from '../pages';
@@ -66,9 +67,13 @@ export type ParseMarkdownConfig = {
   render: MarkdocRenderer;
 };
 
-export type ParseMarkdownResult = MarkdownMeta & {
+export type ParseMarkdownResult = {
   filePath: string;
   output: string;
+  meta: MarkdownMeta;
+  ast: Node;
+  stuff: MarkdocTreeWalkStuff;
+  content: RenderableTreeNode;
 };
 
 const cache = new LRUCache<string, ParseMarkdownResult>({ max: 1024 });
@@ -150,29 +155,7 @@ export function parseMarkdown(
   };
 
   const page = app.pages.getPage(filePath);
-  if (page) {
-    const layoutFiles = page.layouts.map(
-      (layout) => app.pages.getLayoutByIndex(layout).filePath,
-    );
-
-    for (const layoutFile of layoutFiles.reverse()) {
-      if (!opts.filter?.(layoutFile) ?? !layoutFile.endsWith('.md')) continue;
-
-      const layoutMeta = parseMarkdown(
-        app,
-        layoutFile,
-        fs.readFileSync(layoutFile, { encoding: 'utf-8' }),
-        opts,
-      );
-
-      meta.title = meta.title ?? layoutMeta.title;
-      meta.headings = [...layoutMeta.headings, ...meta.headings];
-      meta.frontmatter = { ...layoutMeta.frontmatter, ...meta.frontmatter };
-      if (layoutMeta.lastUpdated < meta.lastUpdated) {
-        meta.lastUpdated = layoutMeta.lastUpdated;
-      }
-    }
-  }
+  if (page) mergeLayoutMeta(app, page, meta, opts);
 
   let output =
     (opts.render?.({ filePath, content, meta, imports, stuff }) ??
@@ -190,9 +173,12 @@ export function parseMarkdown(
   }
 
   const result: ParseMarkdownResult = {
-    ...meta,
+    meta,
+    ast,
     filePath,
     output,
+    stuff,
+    content,
   };
 
   cache.set(cacheKey, result);
@@ -203,6 +189,52 @@ export function parseMarkdown(
 export function getFrontmatter(source: string | Buffer): MarkdownFrontmatter {
   const { data: frontmatter } = matter(source);
   return frontmatter;
+}
+
+function mergeLayoutMeta(
+  app: App,
+  page: ServerPage,
+  meta: MarkdownMeta,
+  opts: Partial<ParseMarkdownConfig> = {},
+) {
+  const layoutFiles = page.layouts.map(
+    (layout) => app.pages.getLayoutByIndex(layout).filePath,
+  );
+
+  for (const layoutFile of layoutFiles.reverse()) {
+    if (!opts.filter?.(layoutFile) ?? !layoutFile.endsWith('.md')) continue;
+
+    const { ast: layoutAst, meta: layoutMeta } = parseMarkdown(
+      app,
+      layoutFile,
+      fs.readFileSync(layoutFile, { encoding: 'utf-8' }),
+      opts,
+    );
+
+    let headingsPos = 0;
+    for (const node of layoutAst.walk()) {
+      if (node.type === 'heading') {
+        headingsPos += 1;
+      } else if (node.attributes.content === '<slot />') {
+        break;
+      }
+    }
+
+    meta.title = meta.title ?? layoutMeta.title;
+    meta.frontmatter = { ...layoutMeta.frontmatter, ...meta.frontmatter };
+
+    meta.headings = [
+      ...(headingsPos > 0
+        ? layoutMeta.headings.slice(0, headingsPos)
+        : layoutMeta.headings),
+      ...meta.headings,
+      ...(headingsPos > 0 ? layoutMeta.headings.slice(headingsPos) : []),
+    ];
+
+    if (layoutMeta.lastUpdated < meta.lastUpdated) {
+      meta.lastUpdated = layoutMeta.lastUpdated;
+    }
+  }
 }
 
 function walkRenderTree(
