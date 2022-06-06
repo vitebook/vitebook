@@ -2,6 +2,7 @@ import path from 'upath';
 
 import {
   calcRoutePathScore,
+  endslash,
   isFunction,
   isRoutePathDynamic,
   type PageRoute,
@@ -90,7 +91,7 @@ export function resolveStaticRouteFromFilePath(
   pagesDir: string,
   filePath: string,
 ) {
-  const pagePath = path.relative(pagesDir, filePath);
+  const pagePath = endslash(path.relative(pagesDir, filePath));
 
   const url = new URL(
     stripPageInfoFromFilePath(pagePath).toLowerCase(),
