@@ -24,6 +24,18 @@ export const svelteMarkdocTags: MarkdocConfig['tags'] = {
       );
     },
   },
+  slot: {
+    render: 'svelte:fragment',
+    transform(node, config) {
+      node.attributes.slot = node.attributes.name;
+      delete node.attributes.name;
+      return new Markdoc.Tag(
+        'svelte:fragment',
+        node.attributes,
+        node.transformChildren(config),
+      );
+    },
+  },
 };
 
 const renderAttr: RenderMarkdocConfig['attr'] = (_, name, value) =>
