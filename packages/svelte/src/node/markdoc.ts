@@ -1,16 +1,28 @@
 import {
   escapeHtml,
+  Markdoc,
+  type MarkdocConfig,
   type MarkdocRenderer,
   type MarkdocTag,
   type MarkdocTreeNodeTransformer,
   type MarkdocTreeWalkStuff,
-  RenderMarkdocConfig,
+  type RenderMarkdocConfig,
   renderMarkdocToHTML,
 } from '@vitebook/core/node';
 
-export const svelteMarkdocTags = {
-  svelte_head: {
+export const svelteMarkdocTags: MarkdocConfig['tags'] = {
+  head: {
     render: 'svelte:head',
+  },
+  fragment: {
+    render: 'svelte:fragment',
+    transform(node, config) {
+      return new Markdoc.Tag(
+        'svelte:fragment',
+        node.attributes,
+        node.transformChildren(config),
+      );
+    },
   },
 };
 

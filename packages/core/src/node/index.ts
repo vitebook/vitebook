@@ -54,3 +54,4 @@ export type {
   RenderableTreeNodes as MarkdocRenderableTreeNodes,
   Tag as MarkdocTag,
 } from '@markdoc/markdoc';
+export { default as Markdoc } from '@markdoc/markdoc';
