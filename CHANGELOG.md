@@ -1,3 +1,9 @@
+# [0.37.0](https://github.com/vitebook/vitebook/compare/v0.36.2...v0.37.0) (2022-06-06)
+
+### Features
+
+- **core:** new routes `logLevel` config option ([04a8a31](https://github.com/vitebook/vitebook/commit/04a8a315119902936f0bb9bf1fae9cea6565f97c))
+
 ## [0.36.2](https://github.com/vitebook/vitebook/compare/v0.36.1...v0.36.2) (2022-06-06)
 
 ### Bug Fixes
