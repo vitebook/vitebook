@@ -1,3 +1,9 @@
+## [0.34.3](https://github.com/vitebook/vitebook/compare/v0.34.2...v0.34.3) (2022-06-06)
+
+### Bug Fixes
+
+- **core:** `from` in router hooks is `null` on first load ([f9d90e4](https://github.com/vitebook/vitebook/commit/f9d90e483270ae6f7995d1ff8144e3433360cfdf))
+
 ## [0.34.2](https://github.com/vitebook/vitebook/compare/v0.34.1...v0.34.2) (2022-06-05)
 
 ### Bug Fixes
