@@ -185,11 +185,22 @@ export async function build(app: App): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { render } = require(serverEntryPath) as ServerEntryModule;
 
+    const validPathname = /(\/|\.html)$/;
+
     // eslint-disable-next-line no-inner-declarations
     async function buildPage(url: URL, page: ServerPage) {
       const pathname = normalizedURLPathname(url);
 
-      if (seenLinks.has(pathname)) return;
+      if (seenLinks.has(pathname) || notFoundLinks.has(pathname)) {
+        return;
+      }
+
+      if (!validPathname.test(pathname)) {
+        log404(pathname, page, 'Found malformed URL pathname.');
+        notFoundLinks.add(pathname);
+        return;
+      }
+
       seenLinks.set(pathname, page);
 
       const serverLoadedOutput = await loadServerOutput(url, page);
@@ -312,18 +323,7 @@ export async function build(app: App): Promise<void> {
 
       if (!notFoundLinks.has(pathname)) {
         if (notFoundLinks.size === 0) console.log();
-
-        logger.warn(
-          logger.formatWarnMsg(
-            [
-              `${kleur.bold('(404)')} Found link matching no page.`,
-              '',
-              `${kleur.bold('Link:')} ${href}`,
-              `${kleur.bold('File Path:')} ${page.rootPath}`,
-            ].join('\n'),
-          ),
-        );
-
+        log404(pathname, page);
         notFoundLinks.add(pathname);
       }
     }
@@ -471,33 +471,42 @@ export async function build(app: App): Promise<void> {
   );
 }
 
+function log404(
+  link: string,
+  page: ServerPage,
+  message = 'Found link matching no page.',
+) {
+  logger.warn(
+    logger.formatWarnMsg(
+      [
+        `${kleur.bold('(404)')} ${message}`,
+        '',
+        `${kleur.bold('Link:')} ${link}`,
+        `${kleur.bold('File Path:')} ${page.rootPath}`,
+      ].join('\n'),
+    ),
+  );
+}
+
 export function logRoutesList({
   links,
   notFoundLinks,
   redirects,
 }: CustomRoutesLoggerInput) {
-  console.log(`\n${kleur.bold(kleur.underline('ROUTES'))}\n`);
+  const logs: string[] = ['', kleur.bold(kleur.underline('ROUTES')), ''];
 
-  const logs: string[] = [];
+  for (const link of links.keys()) {
+    logs.push(`- ${link}`);
+  }
 
-  const sortedLinks = Array.from(links.keys()).sort((linkA, linkB) => {
-    const segmentsA = linkA.split('/').length;
-    const segmentsB = linkB.split('/').length;
-    return segmentsA != segmentsB
-      ? segmentsA - segmentsB // shallow paths first
-      : linkA.length - linkB.length; // shorter path first
-  });
+  logs.push('', kleur.bold(kleur.underline('REDIRECTS')), '');
+  for (const link of Object.keys(redirects)) {
+    logs.push(kleur.yellow(`- ${link} -> ${redirects[link]}`));
+  }
 
-  for (const link of sortedLinks) {
-    if (notFoundLinks.has(link)) {
-      logs.push(kleur.red(`- ${link} ${kleur.bold('(404)')}`));
-    } else if (redirects[link]) {
-      logs.push(
-        kleur.yellow(`- ${link} -> ${redirects[link]} ${kleur.bold('(307)')}`),
-      );
-    } else {
-      logs.push(`- ${kleur.dim(link)}`);
-    }
+  logs.push('', kleur.bold(kleur.underline('NOT FOUND')), '');
+  for (const link of notFoundLinks) {
+    logs.push(kleur.red(`- ${link}`));
   }
 
   console.log(logs.join('\n'));
