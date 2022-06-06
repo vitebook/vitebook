@@ -1,6 +1,10 @@
 import type { FilterPattern } from '@rollup/pluginutils';
 
-import { type PageRouteMatcherConfig } from '../../shared';
+import type {
+  PageRouteMatcherConfig,
+  ServerLoadedOutputMap,
+  ServerPage,
+} from '../../shared';
 import type { CLIArgs } from '../cli/args';
 import type {
   CorePluginConfig,
@@ -67,6 +71,27 @@ export type ResolvedRouteConfig = {
    * ```
    */
   matchers: PageRouteMatcherConfig;
+  /** Route logging style. */
+  log: RoutesLogStyle;
+};
+
+export type RoutesLogStyle = 'none' | 'list' | 'tree' | CustomRoutesLogger;
+
+export type CustomRoutesLogger = (
+  input: CustomRoutesLoggerInput,
+) => void | Promise<void>;
+
+export type CustomRoutesLoggerInput = {
+  /** All found links and their respective server page. */
+  links: Map<string, ServerPage>;
+  /** Record containing links and their respective redirect. */
+  redirects: Record<string, string>;
+  /** Data hash table containing data asset id to hash value. */
+  dataHashes: Record<string, string>;
+  /** Set of 404 links that were found. */
+  notFoundLinks: Set<string>;
+  /** Map of links and their respective loaded server output (might be a redirect link). */
+  serverOutput: Map<string, string | ServerLoadedOutputMap>;
 };
 
 export type RoutesConfig = Partial<ResolvedRouteConfig>;

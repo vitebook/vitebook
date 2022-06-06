@@ -173,6 +173,7 @@ export async function resolveAppConfig({
       bool: /(true|false|0|1)/,
       ...routes.matchers,
     },
+    log: routes.log ?? 'list',
   };
 
   const pageExts = `md,svelte,vue,jsx,tsx`;

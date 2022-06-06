@@ -24,7 +24,11 @@ import {
 import { ensureFile } from '../../utils';
 import { logger, LoggerIcon } from '../../utils/logger';
 import type { App } from '../App';
-import type { ResolvedSitemapConfig, SitemapURL } from '../AppConfig';
+import type {
+  CustomRoutesLoggerInput,
+  ResolvedSitemapConfig,
+  SitemapURL,
+} from '../AppConfig';
 import { installFetch } from '../installFetch';
 import {
   buildDataScriptTag,
@@ -48,20 +52,18 @@ export async function build(app: App): Promise<void> {
   const spinner = ora();
 
   const baseUrl = app.vite?.config.base ?? '/';
+  const pages = app.pages.all;
 
   const appEntries = getAppBundleEntries(app);
   const appEntryFilenames = Object.keys(appEntries);
 
-  const pages = app.pages.all;
-  const outputFiles: [filePath: string, content: string][] = [];
-  const dataHashTable: Record<string, string> = {};
-  const pageServerOutput: Map<string, string | ServerLoadedOutputMap> =
-    new Map();
-
   const hrefRE = /href="(.*?)"/g;
-  const seenHref = new Map<string, ServerPage>();
-  const notFoundHref = new Set<string>();
-  const redirectsTable: Record<string, string> = {};
+  const seenLinks = new Map<string, ServerPage>();
+  const notFoundLinks = new Set<string>();
+  const redirects: Record<string, string> = {};
+  const dataHashes: Record<string, string> = {};
+  const serverOutput: Map<string, string | ServerLoadedOutputMap> = new Map();
+  const outputFiles: [filePath: string, content: string][] = [];
 
   function normalizedURLPathname(url: URL) {
     return url.pathname.replace(/\/$/, '/index.html');
@@ -122,8 +124,8 @@ export async function build(app: App): Promise<void> {
     async function loadServerOutput(url: URL, page: ServerPage) {
       const pathname = normalizedURLPathname(url);
 
-      if (pageServerOutput.has(pathname)) {
-        return pageServerOutput.get(pathname)!;
+      if (serverOutput.has(pathname)) {
+        return serverOutput.get(pathname)!;
       }
 
       const { output, redirect } = await loadPageServerOutput(
@@ -144,8 +146,8 @@ export async function build(app: App): Promise<void> {
 
       if (redirect) {
         const pathname = normalizedURLPathname(url);
-        redirectsTable[pathname] = redirect;
-        pageServerOutput.set(pathname, redirect);
+        redirects[pathname] = redirect;
+        serverOutput.set(pathname, redirect);
         return redirect;
       }
 
@@ -159,7 +161,7 @@ export async function build(app: App): Promise<void> {
             .digest('hex')
             .substring(0, 8);
 
-          dataHashTable[id] = hash;
+          dataHashes[id] = hash;
 
           outputFiles.push([
             path.join(app.dirs.out.path, `${DATA_ASSET_BASE_URL}/${hash}.json`),
@@ -168,7 +170,7 @@ export async function build(app: App): Promise<void> {
         }
       }
 
-      pageServerOutput.set(pathname, output);
+      serverOutput.set(pathname, output);
       return output;
     }
 
@@ -187,14 +189,14 @@ export async function build(app: App): Promise<void> {
     async function buildPage(url: URL, page: ServerPage) {
       const pathname = normalizedURLPathname(url);
 
-      if (seenHref.has(pathname)) return;
-      seenHref.set(pathname, page);
+      if (seenLinks.has(pathname)) return;
+      seenLinks.set(pathname, page);
 
-      const serverOutput = await loadServerOutput(url, page);
+      const serverLoadedOutput = await loadServerOutput(url, page);
 
       // Redirect.
-      if (isString(serverOutput)) {
-        const location = serverOutput;
+      if (isString(serverLoadedOutput)) {
+        const location = serverLoadedOutput;
 
         const html = `<meta http-equiv="refresh" content="${escapeHtml(
           `0;url=${location}`,
@@ -207,7 +209,7 @@ export async function build(app: App): Promise<void> {
         return;
       }
 
-      const serverData = buildServerLoadedDataMap(serverOutput);
+      const serverData = buildServerLoadedDataMap(serverLoadedOutput);
       const { ssr, html, head } = await render(url, { data: serverData });
 
       const stylesheetLinks = [CSS_CHUNK?.fileName]
@@ -250,7 +252,7 @@ export async function build(app: App): Promise<void> {
 
       const appScriptTag = `<script type="module" src="/${ENTRY_CHUNK.fileName}" defer></script>`;
 
-      const dataScriptTag = buildDataScriptTag(serverData, dataHashTable);
+      const dataScriptTag = buildDataScriptTag(serverData, dataHashes);
 
       const dataHashScriptTag = `<script id="__VBK_DATA_HASH_MAP__">window.__VBK_DATA_HASH_MAP__ = __VBK_DATA__;</script>`;
       const redirectsScriptTag = `<script id="__VBK_REDIRECTS_MAP__">window.__VBK_REDIRECTS_MAP__ = __VBK_REDIRECTS__;</script>`;
@@ -294,7 +296,7 @@ export async function build(app: App): Promise<void> {
 
     // eslint-disable-next-line no-inner-declarations
     async function buildPageFromHref(page: ServerPage, href: string) {
-      if (isLinkExternal(href, baseUrl) || seenHref.has(href)) return;
+      if (isLinkExternal(href, baseUrl) || seenLinks.has(href)) return;
 
       const url = new URL(`http://ssr${slash(href)}`);
 
@@ -308,8 +310,8 @@ export async function build(app: App): Promise<void> {
 
       const pathname = normalizedURLPathname(url);
 
-      if (!notFoundHref.has(pathname)) {
-        if (notFoundHref.size === 0) console.log();
+      if (!notFoundLinks.has(pathname)) {
+        if (notFoundLinks.size === 0) console.log();
 
         logger.warn(
           logger.formatWarnMsg(
@@ -322,7 +324,7 @@ export async function build(app: App): Promise<void> {
           ),
         );
 
-        notFoundHref.add(pathname);
+        notFoundLinks.add(pathname);
       }
     }
 
@@ -354,7 +356,7 @@ export async function build(app: App): Promise<void> {
 
     spinner.stopAndPersist({
       symbol: LoggerIcon.Success,
-      text: kleur.bold(`Rendered ${kleur.underline(seenHref.size)} pages`),
+      text: kleur.bold(`Rendered ${kleur.underline(seenLinks.size)} pages`),
     });
 
     // -------------------------------------------------------------------------------------------
@@ -364,10 +366,10 @@ export async function build(app: App): Promise<void> {
     spinner.start(`Writing files...`);
 
     const dataInsertRE = /__VBK_DATA__/;
-    const dataHashTableString = JSON.stringify(dataHashTable);
+    const dataHashTableString = JSON.stringify(dataHashes);
 
     const redirectsInsertRE = /__VBK_REDIRECTS__/;
-    const redirectsString = JSON.stringify(redirectsTable);
+    const redirectsString = JSON.stringify(redirects);
 
     await Promise.all(
       outputFiles.map(async ([filePath, fileContent]) => {
@@ -384,7 +386,9 @@ export async function build(app: App): Promise<void> {
 
     if (app.config.sitemap.length > 0) {
       await Promise.all(
-        app.config.sitemap.map((config) => buildSitemap(app, seenHref, config)),
+        app.config.sitemap.map((config) =>
+          buildSitemap(app, seenLinks, config),
+        ),
       );
     }
 
@@ -416,7 +420,25 @@ export async function build(app: App): Promise<void> {
 
   const endTime = ((Date.now() - startTime) / 1000).toFixed(2);
 
-  logRoutes(seenHref, redirectsTable);
+  const routesLogStyle = app.config.routes.log;
+  if (routesLogStyle !== 'none') {
+    const input = {
+      links: seenLinks,
+      redirects,
+      dataHashes,
+      notFoundLinks,
+      serverOutput,
+    };
+
+    const logger =
+      routesLogStyle === 'list'
+        ? logRoutesList
+        : routesLogStyle === 'tree'
+        ? logRoutesTree
+        : routesLogStyle;
+
+    logger(input);
+  }
 
   const speedIcon = {
     2: '🤯',
@@ -449,10 +471,40 @@ export async function build(app: App): Promise<void> {
   );
 }
 
-export function logRoutes(
-  seenHref: Map<string, ServerPage>,
-  redirectsTable: Record<string, string>,
-) {
+export function logRoutesList({
+  links,
+  notFoundLinks,
+  redirects,
+}: CustomRoutesLoggerInput) {
+  console.log(`\n${kleur.bold(kleur.underline('ROUTES'))}\n`);
+
+  const logs: string[] = [];
+
+  const sortedLinks = Array.from(links.keys()).sort((linkA, linkB) => {
+    const segmentsA = linkA.split('/').length;
+    const segmentsB = linkB.split('/').length;
+    return segmentsA != segmentsB
+      ? segmentsA - segmentsB // shallow paths first
+      : linkA.length - linkB.length; // shorter path first
+  });
+
+  for (const link of sortedLinks) {
+    if (notFoundLinks.has(link)) {
+      logs.push(kleur.red(`- ${link} ${kleur.bold('(404)')}`));
+    } else if (redirects[link]) {
+      logs.push(
+        kleur.yellow(`- ${link} -> ${redirects[link]} ${kleur.bold('(307)')}`),
+      );
+    } else {
+      logs.push(`- ${kleur.dim(link)}`);
+    }
+  }
+
+  console.log(logs.join('\n'));
+  console.log();
+}
+
+export function logRoutesTree({ links, redirects }: CustomRoutesLoggerInput) {
   console.log(`\n${kleur.bold(kleur.underline('ROUTES'))}\n`);
 
   type TreeDir = {
@@ -469,7 +521,7 @@ export function logRoutes(
 
   const tree = newDir('.');
 
-  for (const href of seenHref.keys()) {
+  for (const href of links.keys()) {
     const segments = noslash(href).split('/');
 
     let current = tree;
@@ -485,7 +537,7 @@ export function logRoutes(
     }
 
     const name = href.endsWith('/') ? 'index.html' : path.basename(href);
-    const page = seenHref.get(href)!;
+    const page = links.get(href)!;
     current.file.add({ name, href, page });
   }
 
@@ -497,7 +549,7 @@ export function logRoutes(
     VERTICAL: '│   ',
   };
 
-  const redirects = new Set(Object.keys(redirectsTable));
+  const redirectLinks = new Set(Object.keys(redirects));
 
   const print = (tree: TreeDir, depth: number, precedingSymbols: string) => {
     const lines: string[] = [];
@@ -511,10 +563,10 @@ export function logRoutes(
     for (const [index, file] of files.entries()) {
       const isLast = index === files.length - 1 && tree.path.length === 0;
       const line = [precedingSymbols];
-      const isRedirect = redirects.has(file.href);
+      const isRedirect = redirectLinks.has(file.href);
       line.push(isLast ? PRINT_SYMBOLS.LAST_BRANCH : PRINT_SYMBOLS.BRANCH);
       line.push(isRedirect ? kleur.yellow(file.name) : file.name);
-      if (isRedirect) line.push(kleur.dim(` -> ${redirectsTable[file.href]}`));
+      if (isRedirect) line.push(kleur.dim(` -> ${redirectLinks[file.href]}`));
       lines.push(line.join(''));
     }
 
