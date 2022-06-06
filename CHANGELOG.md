@@ -1,3 +1,13 @@
+## [0.35.1](https://github.com/vitebook/vitebook/compare/v0.35.0...v0.35.1) (2022-06-06)
+
+### Bug Fixes
+
+- **core:** router should start after listeners ([31441b7](https://github.com/vitebook/vitebook/commit/31441b7350798c69a6a505a67e2c3d6ada752e89))
+
+### Features
+
+- **core:** allow hash to be passed into `router.go` ([a0966e9](https://github.com/vitebook/vitebook/commit/a0966e9278184d82bfe7510742066a5340949236))
+
 # [0.35.0](https://github.com/vitebook/vitebook/compare/v0.34.3...v0.35.0) (2022-06-06)
 
 ### Bug Fixes
