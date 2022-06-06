@@ -1,3 +1,15 @@
+# [0.35.0](https://github.com/vitebook/vitebook/compare/v0.34.3...v0.35.0) (2022-06-06)
+
+### Bug Fixes
+
+- **core:** invalidate markdown page on layout change ([5fbf5ef](https://github.com/vitebook/vitebook/commit/5fbf5ef6240953c97b1b60a22b6896df16ae15b6))
+
+### Features
+
+- **core:** merge markdown layout and page metadata headings in correct order ([0407e17](https://github.com/vitebook/vitebook/commit/0407e173a54d101f83b3c686354fec2a174891da))
+- **svelte:** new `fragment` markdown tag ([b1883c4](https://github.com/vitebook/vitebook/commit/b1883c4ba715e50cf97c031ddc628484c1ad5255))
+- **svelte:** new `slot` markdown tag ([090a1de](https://github.com/vitebook/vitebook/commit/090a1ded4902a1523219b4938ef74259c669f391))
+
 ## [0.34.3](https://github.com/vitebook/vitebook/compare/v0.34.2...v0.34.3) (2022-06-06)
 
 ### Bug Fixes
