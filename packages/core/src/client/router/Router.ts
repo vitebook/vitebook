@@ -310,10 +310,11 @@ export class Router {
   }
 
   /**
-   * Attempts to match the given path to a declared route and navigate to it.
+   * Attempts to match the given path to a declared route and navigate to it. The path can be a
+   * URL pathname (e.g., `/a/path.html`), hash (e.g., `#some-id`), or URL instance (e.g., `new URL(...)`).
    */
   async go(
-    pathnameOrURL: string | URL,
+    path: string | URL,
     {
       scroll,
       replace = false,
@@ -321,7 +322,16 @@ export class Router {
       state = {},
     }: GoToRouteOptions = {},
   ) {
-    const url = this.buildURL(pathnameOrURL);
+    if (isString(path) && path.startsWith('#')) {
+      const hash = path;
+      this._updateHash(hash);
+      this._changeHistoryState(this._url, state, replace);
+      await this._scroll({ scroll, hash });
+      this._updateScrollPosition();
+      return;
+    }
+
+    const url = this.buildURL(path);
 
     if (!this.disabled) {
       return this._navigate(url, {
@@ -492,9 +502,7 @@ export class Router {
       await new Promise((res) => window.requestAnimationFrame(res));
     }
 
-    const change = replace ? 0 : 1;
-    state[this._historyIndexKey] = this._historyIndex += change;
-    this._history[replace ? 'replaceState' : 'pushState'](state, '', url);
+    this._changeHistoryState(url, state, replace);
 
     if (inBrowser) {
       if (!keepfocus) {
@@ -541,6 +549,24 @@ export class Router {
 
     this._url = url;
     this._navigation.set(null);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  protected _changeHistoryState(url: URL, state: any, replace: boolean) {
+    const change = replace ? 0 : 1;
+    state[this._historyIndexKey] = this._historyIndex += change;
+    this._history[replace ? 'replaceState' : 'pushState'](state, '', url);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  protected _updateHash(hash: string) {
+    this._url.hash = hash;
+    if (this._currentRoute) {
+      getContext(this.context, ROUTE_CTX_KEY).__set({
+        ...this.currentRoute!,
+        url: this._url,
+      });
+    }
   }
 
   protected _updateScrollPosition() {
@@ -694,16 +720,8 @@ export class Router {
 
       if (hash !== undefined && base === location.href.split('#')[0]) {
         hashNavigation = true;
-
+        this._updateHash(hash);
         this._updateScrollPosition();
-
-        if (this._currentRoute) {
-          getContext(this.context, ROUTE_CTX_KEY).__set({
-            ...this.currentRoute!,
-            url,
-          });
-        }
-
         return;
       }
 
