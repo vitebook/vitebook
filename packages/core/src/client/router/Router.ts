@@ -91,7 +91,7 @@ export class Router {
   /**
    * Base scroll settings that are applied to all scrolls.
    */
-  scrollBase?: RouterScrollBase;
+  scrollBase?: () => RouterScrollBase;
 
   _beforeNavigate: RouterBeforeNavigateHook[] = [];
 
@@ -629,9 +629,10 @@ export class Router {
       }
     };
 
-    const baseTop = this.scrollBase?.top ?? 0;
-    const baseLeft = this.scrollBase?.left ?? 0;
-    const baseBehavior = this.scrollBase?.behavior ?? 'auto';
+    const base = this.scrollBase?.();
+    const baseTop = base?.top ?? 0;
+    const baseLeft = base?.left ?? 0;
+    const baseBehavior = base?.behavior ?? 'auto';
 
     if (scrollTarget || deepLinked) {
       const el = isString(scrollTarget?.el)
