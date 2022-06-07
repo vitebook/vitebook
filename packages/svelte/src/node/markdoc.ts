@@ -51,6 +51,7 @@ export const svelteMarkdocTags: MarkdocConfig['tags'] = {
 
 // Care for strings that have been JSON stringified ("...")
 const propRE = /^"/;
+const stripSlotWrapperRE = /<p><slot(.*?)\/?><\/p>/g;
 
 const renderAttr: RenderMarkdocConfig['attr'] = (_, name, value) => {
   const isString = typeof value === 'string';
@@ -65,7 +66,11 @@ export const renderMarkdoc: MarkdocRenderer = ({
   imports,
   stuff,
 }) => {
-  const markup = renderMarkdocToHTML(content, { attr: renderAttr });
+  let markup = renderMarkdocToHTML(content, { attr: renderAttr });
+
+  markup = markup
+    .substring('<article>'.length, markup.length - '</article>'.length)
+    .replace(stripSlotWrapperRE, '<slot$1/>');
 
   const scriptModule = [
     '<script context="module">',
