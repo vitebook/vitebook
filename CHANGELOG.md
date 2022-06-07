@@ -1,3 +1,16 @@
+# [0.38.0](https://github.com/vitebook/vitebook/compare/v0.37.0...v0.38.0) (2022-06-07)
+
+### Bug Fixes
+
+- **svelte:** simplify `component` markdoc tag render ([4017bc4](https://github.com/vitebook/vitebook/commit/4017bc49e6853801abac07040a2f2226a9b0f574))
+
+### Features
+
+- **core:** new `import` markdoc tag ([03233b9](https://github.com/vitebook/vitebook/commit/03233b90fccf308e6bb5599f124f3529a545497f))
+- **core:** router accepts base scroll settings ([28b39fc](https://github.com/vitebook/vitebook/commit/28b39fcaf2d68106f0351b5e0458a9558080d86c))
+- **core:** shorthand scroll cancel by returning `false` ([46b5d3f](https://github.com/vitebook/vitebook/commit/46b5d3faabb8affac448d16a3d2389f93daaf0e0))
+- **svelte:** new `component` markdoc tag ([c4f8810](https://github.com/vitebook/vitebook/commit/c4f8810aecb9e6e40c6bceff1ac95f590d80b67f))
+
 # [0.37.0](https://github.com/vitebook/vitebook/compare/v0.36.2...v0.37.0) (2022-06-06)
 
 ### Features
