@@ -64,6 +64,8 @@ export type NavigationOptions = GoToRouteOptions & {
   blocked?: () => void;
 };
 
+export type RouterScrollBase = ScrollToOptions;
+
 export type ScrollTarget =
   | void
   | null

@@ -29,6 +29,7 @@ import type {
   RouterAfterNavigateHook,
   RouterBeforeNavigateHook,
   RouterOptions,
+  RouterScrollBase,
   RouterScrollBehaviorHook,
   ScoredRouteDeclaration,
   ScrollTarget,
@@ -86,6 +87,11 @@ export class Router {
    * @defaultValue `'auto'`
    */
   scrollBehavior?: RouterScrollBehaviorHook;
+
+  /**
+   * Base scroll settings that are applied to all scrolls.
+   */
+  scrollBase?: RouterScrollBase;
 
   _beforeNavigate: RouterBeforeNavigateHook[] = [];
 
@@ -623,6 +629,10 @@ export class Router {
       }
     };
 
+    const baseTop = this.scrollBase?.top ?? 0;
+    const baseLeft = this.scrollBase?.left ?? 0;
+    const baseBehavior = this.scrollBase?.behavior ?? 'auto';
+
     if (scrollTarget || deepLinked) {
       const el = isString(scrollTarget?.el)
         ? document.querySelector(scrollTarget!.el)
@@ -630,9 +640,9 @@ export class Router {
 
       const docRect = document.documentElement.getBoundingClientRect();
       const elRect = el?.getBoundingClientRect() ?? { top: 0, left: 0 };
-      const offsetTop = scrollTarget?.top ?? 0;
-      const offsetLeft = scrollTarget?.left ?? 0;
-      const behavior = scrollTarget?.behavior ?? 'auto';
+      const offsetTop = baseTop + (scrollTarget?.top ?? 0);
+      const offsetLeft = baseLeft + (scrollTarget?.left ?? 0);
+      const behavior = scrollTarget?.behavior ?? baseBehavior;
 
       scrollTo({
         left: elRect.left - docRect.left - offsetLeft,
@@ -640,7 +650,7 @@ export class Router {
         behavior,
       });
     } else {
-      scrollTo({ top: 0, left: 0 });
+      scrollTo({ top: baseTop, left: baseLeft });
     }
   }
 
