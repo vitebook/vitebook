@@ -1,3 +1,9 @@
+## [0.39.1](https://github.com/vitebook/vitebook/compare/v0.39.0...v0.39.1) (2022-06-07)
+
+### Bug Fixes
+
+- **svelte:** remove invalid article or p wrappers ([a7325fb](https://github.com/vitebook/vitebook/commit/a7325fb8b01d67d58eed0e73c1caec03998eca5e))
+
 # [0.39.0](https://github.com/vitebook/vitebook/compare/v0.38.1...v0.39.0) (2022-06-07)
 
 ### Features
