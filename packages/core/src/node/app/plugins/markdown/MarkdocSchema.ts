@@ -159,6 +159,13 @@ export class MarkdocSchema {
         ...nodes,
       },
       tags: {
+        import: {
+          render: undefined,
+          selfClosing: true,
+          transform(node) {
+            return new Markdoc.Tag('import', node.attributes);
+          },
+        },
         ...this.base.tags,
         ...tags,
       },

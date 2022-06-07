@@ -50,9 +50,9 @@ export const svelteMarkdocTags: MarkdocConfig['tags'] = {
 };
 
 // Care for strings that have been JSON stringified ("...")
-// `_$$` are objects.
-const propRE = /^(?:"|_\$\$)/;
-const objStrRE = /^_\$\$/;
+// `$$` are objects.
+const propRE = /^(?:"|\$\$)/;
+const objStrRE = /^\$\$/;
 
 const renderAttr: RenderMarkdocConfig['attr'] = (_, name, value) => {
   const isString = typeof value === 'string';
@@ -124,7 +124,7 @@ function resoleSvelteComponent(tag: MarkdocTag, stuff: MarkdocTreeWalkStuff) {
   const cname = path.basename(filePath, path.extname(filePath));
   stuff.imports.add(`import ${cname} from "${filePath}";`);
 
-  tag.attributes.this = `_$$${cname}`;
+  tag.attributes.this = `$$${cname}`;
   delete tag.attributes.file;
 }
 

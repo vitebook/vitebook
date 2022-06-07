@@ -255,6 +255,7 @@ const codeNameRE = /^(code|Code)$/;
 const fenceNameRE = /^(pre|Fence)$/;
 const headingNameRE = /^(h\d|Heading)$/;
 const linkNameRE = /^(a|link|Link)$/;
+const importRE = /^import$/;
 
 export type MarkdocTreeWalkStuff = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -283,6 +284,11 @@ function forEachRenderNode(
       collectHeadings(node, stuff.headings);
     } else if (linkNameRE.test(name)) {
       resolveLinks(node, stuff);
+    } else if (importRE.test(name)) {
+      // @ts-expect-error - ignore from render.
+      node.name = null;
+      const file = node.attributes.file;
+      if (file) stuff.imports.add(`import "${file}";`);
     }
   }
 }
