@@ -12,7 +12,7 @@ import LRUCache from 'lru-cache';
 import path from 'upath';
 
 import {
-  escapeHtml,
+  escapeHTML,
   isLinkExternal,
   type MarkdownFrontmatter,
   type MarkdownHeading,
@@ -298,7 +298,7 @@ function transformCode(tag: Tag) {
   const code = isComponent ? tag.attributes.content : tag.children[0];
 
   if (isComponent && typeof code === 'string') {
-    tag.attributes.code = escapeHtml(code);
+    tag.attributes.code = escapeHTML(code);
     tag.children[0] = null;
     delete tag.attributes.content;
   }
@@ -331,7 +331,7 @@ function highlightCodeFences(tag: Tag, highlight: HighlightCodeBlock) {
 
     if (isComponent) {
       tag.attributes.lang = lang;
-      tag.attributes.code = escapeHtml(code);
+      tag.attributes.code = escapeHTML(code);
       if (highlightedCode) tag.attributes.highlightedCode = output;
       tag.children[0] = null;
       delete tag.attributes.language;

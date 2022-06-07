@@ -1,5 +1,5 @@
 import {
-  escapeHtml,
+  escapeHTML,
   Markdoc,
   type MarkdocConfig,
   type MarkdocRenderer,
@@ -134,7 +134,7 @@ function escapeCodeContent(tag: MarkdocTag) {
     if (isComponent) {
       tag.attributes.code = JSON.stringify(code);
     } else {
-      tag.children[0] = htmlBlock(escapeHtml(code));
+      tag.children[0] = htmlBlock(escapeHTML(code));
     }
   }
 }

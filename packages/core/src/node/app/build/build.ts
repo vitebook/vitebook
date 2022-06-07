@@ -9,7 +9,7 @@ import path from 'upath';
 import {
   cleanRoutePath,
   DATA_ASSET_BASE_URL,
-  escapeHtml,
+  escapeHTML,
   isFunction,
   isLinkExternal,
   isString,
@@ -209,7 +209,7 @@ export async function build(app: App): Promise<void> {
       if (isString(serverLoadedOutput)) {
         const location = serverLoadedOutput;
 
-        const html = `<meta http-equiv="refresh" content="${escapeHtml(
+        const html = `<meta http-equiv="refresh" content="${escapeHTML(
           `0;url=${location}`,
         )}">`;
 
