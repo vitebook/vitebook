@@ -1,3 +1,9 @@
+# [0.39.0](https://github.com/vitebook/vitebook/compare/v0.38.1...v0.39.0) (2022-06-07)
+
+### Features
+
+- **core:** export `unescapeHTML` helper function ([0ce0a86](https://github.com/vitebook/vitebook/commit/0ce0a86d6f0a61a5f7fceb707f455c08155ed5de))
+
 ## [0.38.1](https://github.com/vitebook/vitebook/compare/v0.38.0...v0.38.1) (2022-06-07)
 
 ### Bug Fixes
