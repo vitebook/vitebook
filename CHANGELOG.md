@@ -1,3 +1,9 @@
+## [0.38.1](https://github.com/vitebook/vitebook/compare/v0.38.0...v0.38.1) (2022-06-07)
+
+### Bug Fixes
+
+- **core:** router scroll base should be function ([0db88ca](https://github.com/vitebook/vitebook/commit/0db88ca1ea541e70b4dc8957bc0b990cd39d965d))
+
 # [0.38.0](https://github.com/vitebook/vitebook/compare/v0.37.0...v0.38.0) (2022-06-07)
 
 ### Bug Fixes
