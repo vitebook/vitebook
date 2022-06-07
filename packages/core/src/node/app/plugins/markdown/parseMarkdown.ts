@@ -255,7 +255,6 @@ const codeNameRE = /^(code|Code)$/;
 const fenceNameRE = /^(pre|Fence)$/;
 const headingNameRE = /^(h\d|Heading)$/;
 const linkNameRE = /^(a|link|Link)$/;
-const componentNameRE = /^component$/;
 
 export type MarkdocTreeWalkStuff = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -284,21 +283,8 @@ function forEachRenderNode(
       collectHeadings(node, stuff.headings);
     } else if (linkNameRE.test(name)) {
       resolveLinks(node, stuff);
-    } else if (componentNameRE.test(name)) {
-      resolveComponent(node, stuff);
     }
   }
-}
-
-function resolveComponent(tag: Tag, stuff: MarkdocTreeWalkStuff) {
-  const { name, path: filePath } = tag.attributes;
-
-  tag.name = name;
-
-  stuff.imports.add(`import ${name} from "${filePath}";`);
-
-  delete tag.attributes.name;
-  delete tag.attributes.path;
 }
 
 function transformCode(tag: Tag) {

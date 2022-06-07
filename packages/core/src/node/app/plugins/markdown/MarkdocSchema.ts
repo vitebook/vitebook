@@ -6,7 +6,7 @@ import { globbySync } from 'globby';
 import kleur from 'kleur';
 import path from 'upath';
 
-import { uppercaseFirstLetter } from '../../../../shared';
+import { toPascalCase } from '../../../../shared';
 import { logger, normalizePath } from '../../../utils';
 
 const STRIP_MARKDOC_DIR_RE = /\/@markdoc\/.+/;
@@ -92,7 +92,7 @@ export class MarkdocSchema {
       return;
     }
 
-    const cname = uppercaseFirstLetter(name);
+    const cname = toPascalCase(name);
     const inline = /@inline/.test(pagesPath);
     const owningDir = path.dirname(
       filePath.replace(STRIP_MARKDOC_DIR_RE, '/root.md'),
@@ -161,7 +161,6 @@ export class MarkdocSchema {
       tags: {
         ...this.base.tags,
         ...tags,
-        ...this.getCustomTagsConfig(),
       },
     };
 
@@ -223,31 +222,6 @@ export class MarkdocSchema {
     }
 
     return tags;
-  }
-
-  getCustomTagsConfig(): MarkdocConfig['tags'] {
-    return {
-      component: {
-        render: 'component',
-        transform: (node, config) => {
-          const filePath = node.attributes.path;
-
-          node.attributes.name =
-            node.attributes.name ??
-            uppercaseFirstLetter(
-              path.basename(filePath, path.extname(filePath)),
-            );
-
-          return new Markdoc.Tag(
-            // name will be replaced once resolved during parsing.
-            // see `resolveComponent()` in `parseMarkdown.ts`.
-            'component',
-            node.attributes,
-            node.transformChildren(config),
-          );
-        },
-      },
-    };
   }
 
   markFileForHMR(nodeFilePath: string, pageFilePath: string) {

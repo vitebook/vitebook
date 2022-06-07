@@ -9,6 +9,7 @@ import {
   type RenderMarkdocConfig,
   renderMarkdocToHTML,
 } from '@vitebook/core/node';
+import path from 'path';
 
 export const svelteMarkdocTags: MarkdocConfig['tags'] = {
   head: {
@@ -36,13 +37,29 @@ export const svelteMarkdocTags: MarkdocConfig['tags'] = {
       );
     },
   },
+  component: {
+    render: 'svelte:component',
+    transform(node, config) {
+      return new Markdoc.Tag(
+        'svelte:component',
+        node.attributes,
+        node.transformChildren(config),
+      );
+    },
+  },
 };
 
-const renderAttr: RenderMarkdocConfig['attr'] = (_, name, value) =>
-  // Care for strings that have been JSON stringified
-  typeof value === 'string' && !value.startsWith('"')
+// Care for strings that have been JSON stringified ("...")
+// `_$$` are objects.
+const propRE = /^(?:"|_\$\$)/;
+const objStrRE = /^_\$\$/;
+
+const renderAttr: RenderMarkdocConfig['attr'] = (_, name, value) => {
+  const isString = typeof value === 'string';
+  return isString && !propRE.test(value)
     ? `${name}="${value}"`
-    : `${name}={${value}}`;
+    : `${name}={${isString ? value.replace(objStrRE, '') : value}}`;
+};
 
 export const renderMarkdoc: MarkdocRenderer = ({
   meta,
@@ -71,6 +88,7 @@ export const renderMarkdoc: MarkdocRenderer = ({
 const codeNameRE = /^(code|Code)$/;
 const fenceNameRE = /^(pre|Fence)$/;
 const svelteHeadNameRE = /^svelte:head$/;
+const svelteComponentNameRE = /^svelte:component$/;
 
 export const transformTreeNode: MarkdocTreeNodeTransformer = ({
   node,
@@ -85,6 +103,8 @@ export const transformTreeNode: MarkdocTreeNodeTransformer = ({
       escapeFenceContent(node);
     } else if (svelteHeadNameRE.test(name)) {
       resolveSvelteHead(node, stuff);
+    } else if (svelteComponentNameRE.test(name)) {
+      resoleSvelteComponent(node, stuff);
     }
   }
 };
@@ -96,6 +116,16 @@ function resolveSvelteHead(tag: MarkdocTag, stuff: MarkdocTreeWalkStuff) {
       stuff.head = tag.children[0]!.children.join('');
     }
   }
+}
+
+function resoleSvelteComponent(tag: MarkdocTag, stuff: MarkdocTreeWalkStuff) {
+  const { file: filePath } = tag.attributes;
+
+  const cname = path.basename(filePath, path.extname(filePath));
+  stuff.imports.add(`import ${cname} from "${filePath}";`);
+
+  tag.attributes.this = `_$$${cname}`;
+  delete tag.attributes.file;
 }
 
 function escapeCodeContent(tag: MarkdocTag) {
