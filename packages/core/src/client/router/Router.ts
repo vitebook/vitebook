@@ -604,6 +604,11 @@ export class Router {
       });
     }
 
+    if (scrollTarget === false) {
+      cancel();
+      return;
+    }
+
     if (cancelled) return;
 
     const deepLinked = hash

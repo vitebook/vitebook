@@ -67,6 +67,7 @@ export type NavigationOptions = GoToRouteOptions & {
 export type ScrollTarget =
   | void
   | null
+  | false
   | (ScrollToOptions & { el?: string | HTMLElement });
 
 export type ScrollToTarget = (info: { cancel: ScrollCancel }) => ScrollTarget;
