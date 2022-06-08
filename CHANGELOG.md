@@ -1,3 +1,9 @@
+## [0.39.3](https://github.com/vitebook/vitebook/compare/v0.39.2...v0.39.3) (2022-06-08)
+
+### Bug Fixes
+
+- **svelte:** pkg breaking due to bad import ([cec5045](https://github.com/vitebook/vitebook/commit/cec50458a2de0757fbb5559baa87c4cc82112d69))
+
 ## [0.39.2](https://github.com/vitebook/vitebook/compare/v0.39.1...v0.39.2) (2022-06-08)
 
 ### Bug Fixes
