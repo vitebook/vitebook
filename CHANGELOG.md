@@ -1,3 +1,9 @@
+## [0.39.2](https://github.com/vitebook/vitebook/compare/v0.39.1...v0.39.2) (2022-06-08)
+
+### Bug Fixes
+
+- **svelte:** convert markdoc component names to pascal case ([72ba530](https://github.com/vitebook/vitebook/commit/72ba530310666d8676e686a128114b37f5d44e6f))
+
 ## [0.39.1](https://github.com/vitebook/vitebook/compare/v0.39.0...v0.39.1) (2022-06-07)
 
 ### Bug Fixes
