@@ -1,4 +1,3 @@
-import { toPascalCase } from '@vitebook/core';
 import {
   escapeHTML,
   Markdoc,
@@ -9,6 +8,7 @@ import {
   type MarkdocTreeWalkStuff,
   type RenderMarkdocConfig,
   renderMarkdocToHTML,
+  toPascalCase,
 } from '@vitebook/core/node';
 import path from 'path';
 
