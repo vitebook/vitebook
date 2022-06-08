@@ -1,3 +1,4 @@
+import { toPascalCase } from '@vitebook/core';
 import {
   escapeHTML,
   Markdoc,
@@ -124,7 +125,7 @@ function resolveSvelteHead(tag: MarkdocTag, stuff: MarkdocTreeWalkStuff) {
 function resoleSvelteComponent(tag: MarkdocTag, stuff: MarkdocTreeWalkStuff) {
   const { file: filePath } = tag.attributes;
 
-  const cname = path.basename(filePath, path.extname(filePath));
+  const cname = toPascalCase(path.basename(filePath, path.extname(filePath)));
   stuff.imports.add(`import ${cname} from "${filePath}";`);
 
   tag.name = cname;
