@@ -1,3 +1,9 @@
+# [0.40.0](https://github.com/vitebook/vitebook/compare/v0.39.3...v0.40.0) (2022-06-09)
+
+### Features
+
+- **core:** add vitebook specific enforce plugin option ([c44bd1d](https://github.com/vitebook/vitebook/commit/c44bd1df3d5f2f91bc4d1769ce84693656b41937))
+
 ## [0.39.3](https://github.com/vitebook/vitebook/compare/v0.39.2...v0.39.3) (2022-06-08)
 
 ### Bug Fixes
