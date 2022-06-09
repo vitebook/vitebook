@@ -5,6 +5,10 @@ import { type ResolvedAppConfig } from '../AppConfig';
 
 export type Plugin = VitePlugin & {
   /**
+   * Similar to the Vite `enforce` option except for Vitebook plugins.
+   */
+  vitebookEnforce?: 'pre' | 'post';
+  /**
    * Hook for extending the Vitebook app configuration. This is after the App config has
    * been resolved with defaults, so all options are defined. This hook is called before Vite or
    * any plugins have started.

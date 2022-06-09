@@ -78,11 +78,21 @@ export const createApp = async (
 
   const core = corePlugin(__config.core);
 
+  const prePlugins = userPlugins.filter(
+    (plugin) => plugin.vitebookEnforce === 'pre',
+  );
+  const normalPlugins = userPlugins.filter((plugin) => !plugin.vitebookEnforce);
+  const postPlugins = userPlugins.filter(
+    (plugin) => plugin.vitebookEnforce === 'post',
+  );
+
   const plugins = [
+    ...prePlugins,
     core,
     markdownPlugin(__config.markdown),
-    ...userPlugins,
+    ...normalPlugins,
     pagesPlugin(__config.pages),
+    ...postPlugins,
   ].filter((plugin) => !!plugin) as FilteredPlugins;
 
   const app: App = {
