@@ -1,3 +1,9 @@
+## [0.40.1](https://github.com/vitebook/vitebook/compare/v0.40.0...v0.40.1) (2022-06-12)
+
+### Bug Fixes
+
+- **core:** collect formatted headings ([f8c8a1b](https://github.com/vitebook/vitebook/commit/f8c8a1bc0403cb1bdd918af8897bc3ed2262fdef))
+
 # [0.40.0](https://github.com/vitebook/vitebook/compare/v0.39.3...v0.40.0) (2022-06-09)
 
 ### Features
