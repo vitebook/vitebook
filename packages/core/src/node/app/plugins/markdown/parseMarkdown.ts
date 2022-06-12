@@ -347,10 +347,14 @@ function highlightCodeFences(tag: Tag, highlight: HighlightCodeBlock) {
 }
 
 function collectHeadings(tag: Tag, headings: MarkdownHeading[]) {
-  const title = tag.children[0];
+  const title =
+    typeof tag.children[0] === 'string'
+      ? tag.children[0]
+      : tag.children[0]?.children[0] ?? '';
 
   if (typeof title === 'string') {
     const id = tag.attributes.id ?? slugify(title);
+
     const level =
       tag.attributes.level ?? Number(tag.name.match(/h(\d+)/)?.[1] ?? 0);
 
