@@ -1,3 +1,9 @@
+## [0.40.2](https://github.com/vitebook/vitebook/compare/v0.40.1...v0.40.2) (2022-06-12)
+
+### Bug Fixes
+
+- **core:** support inline code when collecting markdown headings ([5209823](https://github.com/vitebook/vitebook/commit/5209823a3758e44896aa192e0af5d71a557f5d2a))
+
 ## [0.40.1](https://github.com/vitebook/vitebook/compare/v0.40.0...v0.40.1) (2022-06-12)
 
 ### Bug Fixes
