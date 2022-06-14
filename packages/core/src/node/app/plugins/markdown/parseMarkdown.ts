@@ -95,7 +95,7 @@ export function parseMarkdown(
 ): ParseMarkdownResult {
   const cacheKey = filePath + source;
 
-  if (!opts.ignoreCache && cache.has(cacheKey)) return cache.get(source)!;
+  if (!opts.ignoreCache && cache.has(cacheKey)) return cache.get(cacheKey)!;
 
   const ast = Markdoc.parse(source, filePath);
 
