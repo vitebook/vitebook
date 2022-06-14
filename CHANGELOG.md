@@ -1,3 +1,9 @@
+## [0.42.1](https://github.com/vitebook/vitebook/compare/v0.42.0...v0.42.1) (2022-06-14)
+
+### Bug Fixes
+
+- **core:** route pathname not matching correctly ([5fa224e](https://github.com/vitebook/vitebook/commit/5fa224e4a6b01397985b36820ac537008224ec16))
+
 # [0.42.0](https://github.com/vitebook/vitebook/compare/v0.41.0...v0.42.0) (2022-06-14)
 
 ### Features
