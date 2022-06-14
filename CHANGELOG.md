@@ -1,3 +1,9 @@
+## [0.40.3](https://github.com/vitebook/vitebook/compare/v0.40.2...v0.40.3) (2022-06-14)
+
+### Bug Fixes
+
+- **core:** markdown with same content is not transformed correctly ([2af15e8](https://github.com/vitebook/vitebook/commit/2af15e8e8297b56af2b6db019c7ca973473a0db9))
+
 ## [0.40.2](https://github.com/vitebook/vitebook/compare/v0.40.1...v0.40.2) (2022-06-12)
 
 ### Bug Fixes
