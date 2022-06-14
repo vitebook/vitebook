@@ -1,3 +1,11 @@
+## [0.40.4](https://github.com/vitebook/vitebook/compare/v0.40.3...v0.40.4) (2022-06-14)
+
+### Bug Fixes
+
+- **core:** log denormalized 404 link urls ([65aa2f2](https://github.com/vitebook/vitebook/commit/65aa2f2c31093eade6ce493884087d3fcb4faa64))
+- **core:** normalize hrefs when crawling links ([8f56eb0](https://github.com/vitebook/vitebook/commit/8f56eb0896837d31c3c5c21818f49044205e43a1))
+- **core:** parse markdown using wrong cache key ([c2be219](https://github.com/vitebook/vitebook/commit/c2be219df492da419a91a96e0a2d71547c2888a4))
+
 ## [0.40.3](https://github.com/vitebook/vitebook/compare/v0.40.2...v0.40.3) (2022-06-14)
 
 ### Bug Fixes
