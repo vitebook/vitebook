@@ -51,14 +51,19 @@ export const svelteMarkdocTags: MarkdocConfig['tags'] = {
 };
 
 // Care for strings that have been JSON stringified ("...")
-const propRE = /^"/;
+const propRE = /^(?:"|\$obj::)/;
+const objRE = /^\$obj::/;
 const stripSlotWrapperRE = /<p><slot(.*?)\/?><\/p>/g;
+
+const markObj = (name: string) => {
+  return `$obj::${name}`;
+};
 
 const renderAttr: RenderMarkdocConfig['attr'] = (_, name, value) => {
   const isString = typeof value === 'string';
   return isString && !propRE.test(value)
     ? `${name}="${value}"`
-    : `${name}={${value}}`;
+    : `${name}={${isString ? value.replace(objRE, '') : value}}`;
 };
 
 export const renderMarkdoc: MarkdocRenderer = ({
@@ -93,6 +98,7 @@ const codeNameRE = /^(code|Code)$/;
 const fenceNameRE = /^(pre|Fence)$/;
 const svelteHeadNameRE = /^svelte:head$/;
 const svelteComponentNameRE = /^svelte:component$/;
+const imgRE = /^img$/;
 
 export const transformTreeNode: MarkdocTreeNodeTransformer = ({
   node,
@@ -109,9 +115,20 @@ export const transformTreeNode: MarkdocTreeNodeTransformer = ({
       resolveSvelteHead(node, stuff);
     } else if (svelteComponentNameRE.test(name)) {
       resoleSvelteComponent(node, stuff);
+    } else if (imgRE.test(name)) {
+      resolveImg(node, stuff);
     }
   }
 };
+
+function resolveImg(tag: MarkdocTag, stuff: MarkdocTreeWalkStuff) {
+  const src = tag.attributes.src;
+
+  const name = toPascalCase(path.basename(src, path.extname(src)));
+  stuff.imports.add(`import ${name} from "${src}";`);
+
+  tag.attributes.src = markObj(name);
+}
 
 function resolveSvelteHead(tag: MarkdocTag, stuff: MarkdocTreeWalkStuff) {
   tag.attributes.__ignore = true;
