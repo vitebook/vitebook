@@ -128,22 +128,13 @@ export function matchRouteInfo<T extends PageRoute>(
   const normalized: T[] =
     'route' in routes[0] ? routes.map((r) => r.route) : routes;
 
-  const index = normalized.findIndex((route) =>
-    route.pattern.test(cleanRouteMatchingURL(url)),
-  );
-
+  const index = normalized.findIndex((route) => route.pattern.test(url));
   const route = normalized[index];
-
   const match = execRouteMatch(url, route);
 
   return route && match ? { index, route, match } : undefined;
 }
 
 export function execRouteMatch<T extends PageRoute>(url: URL, route?: T) {
-  return route?.pattern.exec(cleanRouteMatchingURL(url))?.pathname;
-}
-
-const htmlExtRE = /\.html$/;
-export function cleanRouteMatchingURL(url: URL) {
-  return `http://test${url.pathname.replace(htmlExtRE, '')}`;
+  return route?.pattern.exec(url)?.pathname;
 }

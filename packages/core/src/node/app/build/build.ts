@@ -13,6 +13,7 @@ import {
   isFunction,
   isLinkExternal,
   isString,
+  isUndefined,
   matchRouteInfo,
   noendslash,
   noslash,
@@ -307,7 +308,7 @@ export async function build(app: App): Promise<void> {
 
     // eslint-disable-next-line no-inner-declarations
     async function buildPageFromHref(page: ServerPage, href: string) {
-      if (isLinkExternal(href, baseUrl)) return;
+      if (href.startsWith('#') || isLinkExternal(href, baseUrl)) return;
 
       const url = new URL(`http://ssr${slash(href)}`);
       const pathname = normalizedURLPathname(url);
@@ -315,7 +316,8 @@ export async function build(app: App): Promise<void> {
       if (seenLinks.has(pathname) || notFoundLinks.has(pathname)) return;
 
       const { index } = matchRouteInfo(url, app.pages.all) ?? {};
-      const foundPage = index ? app.pages.all[index] : null;
+      const foundPage =
+        !isUndefined(index) && index >= 0 ? app.pages.all[index] : null;
 
       if (foundPage && !notFoundRE.test(foundPage.id)) {
         await buildPage(url, foundPage);
@@ -364,8 +366,18 @@ export async function build(app: App): Promise<void> {
 
     spinner.start(`Writing files...`);
 
+    const prodDataHashes: Record<string, string> = {};
+    for (const id of Object.keys(dataHashes)) {
+      const hashedId = createHash('sha1')
+        .update(id)
+        .digest('hex')
+        .substring(0, 8);
+
+      prodDataHashes[hashedId] = dataHashes[id];
+    }
+
     const dataInsertRE = /__VBK_DATA__/;
-    const dataHashTableString = JSON.stringify(dataHashes);
+    const dataHashTableString = JSON.stringify(prodDataHashes);
 
     const redirectsInsertRE = /__VBK_REDIRECTS__/;
     const redirectsString = JSON.stringify(redirects);

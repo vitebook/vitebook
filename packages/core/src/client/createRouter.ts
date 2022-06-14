@@ -216,7 +216,7 @@ export async function loadData(
   const hashId =
     import.meta.env.PROD && !import.meta.env.SSR
       ? // @ts-expect-error - .
-        window.__VBK_DATA_HASH_MAP__[id]
+        window.__VBK_DATA_HASH_MAP__[await hashDataId(id)]
       : id;
 
   if (!hashId) return {};
@@ -259,4 +259,15 @@ function getDataFromScript(id: string) {
   }
 
   return {};
+}
+
+// Used in production to hash data id.
+async function hashDataId(id: string) {
+  const encodedText = new TextEncoder().encode(id);
+  const hashBuffer = await crypto.subtle.digest('SHA-1', encodedText);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+    .substring(0, 8);
 }
