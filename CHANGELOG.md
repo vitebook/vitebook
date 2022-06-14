@@ -1,3 +1,10 @@
+## [0.42.2](https://github.com/vitebook/vitebook/compare/v0.42.1...v0.42.2) (2022-06-14)
+
+### Bug Fixes
+
+- **core:** import images so they work in prod ([831dbd7](https://github.com/vitebook/vitebook/commit/831dbd70f94a4c998d8fa352d7aadf3b78811f00))
+- **core:** redirects need to be normalized for prod ([3ca623d](https://github.com/vitebook/vitebook/commit/3ca623d24e12f23fdc1a0d5230118fed55a6695b))
+
 ## [0.42.1](https://github.com/vitebook/vitebook/compare/v0.42.0...v0.42.1) (2022-06-14)
 
 ### Bug Fixes
