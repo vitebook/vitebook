@@ -41,8 +41,8 @@
     "types:node": "api-extractor run -c types.node.json",
     "clean": "rimraf dist dist-*",
     "dev": "pnpm clean && run-p watch:client watch:node watch:types",
-    "watch:client": "pnpm build:client -- -w",
-    "watch:node": "pnpm build:node -- -w",
+    "watch:client": "pnpm run build:client -w",
+    "watch:node": "pnpm run build:node -w",
     "watch:types": "node ../../.scripts/run-on-change.js --glob=\"src/**/*.ts\" --script=build:types"
   },
   "dependencies": {

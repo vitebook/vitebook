@@ -58,13 +58,13 @@ from the project root.
 
 ```bash
 # Install all dependenices and symlink packages in the workspace (see `pnpm-workspace.yaml`).
-$: pnpm install
+$: pnpm i
 
 # Install dependency for a single package.
-$: pnpm install vite --filter core
+$: pnpm -F core i vite
 
 # Update a dependency for a single package.
-$: pnpm up vite@2.6.13 --filter core
+$: pnpm -F core up vite@2.6.13
 
 # Update a dependency for all packages.
 $: pnpm up vite@2.6.13 -r
