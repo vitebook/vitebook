@@ -307,9 +307,12 @@ export async function build(app: App): Promise<void> {
 
     // eslint-disable-next-line no-inner-declarations
     async function buildPageFromHref(page: ServerPage, href: string) {
-      if (isLinkExternal(href, baseUrl) || seenLinks.has(href)) return;
+      if (isLinkExternal(href, baseUrl)) return;
 
       const url = new URL(`http://ssr${slash(href)}`);
+      const pathname = normalizedURLPathname(url);
+
+      if (seenLinks.has(pathname) || notFoundLinks.has(pathname)) return;
 
       const { index } = matchRouteInfo(url, app.pages.all) ?? {};
       const foundPage = index ? app.pages.all[index] : null;
@@ -319,13 +322,9 @@ export async function build(app: App): Promise<void> {
         return;
       }
 
-      const pathname = normalizedURLPathname(url);
-
-      if (!notFoundLinks.has(pathname)) {
-        if (notFoundLinks.size === 0) console.log();
-        log404(url.pathname, page);
-        notFoundLinks.add(pathname);
-      }
+      if (notFoundLinks.size === 0) console.log();
+      log404(url.pathname, page);
+      notFoundLinks.add(pathname);
     }
 
     // Start with static paths and then crawl additional links.
@@ -528,10 +527,6 @@ export function logRoutesTree({
   redirects,
   notFoundLinks,
 }: CustomRoutesLoggerInput) {
-  if (level === 'info') {
-    console.log(`\n${kleur.bold(kleur.underline('ROUTES'))}\n`);
-  }
-
   type TreeDir = {
     name: string;
     path: TreeDir[];
@@ -635,9 +630,15 @@ export function logRoutesTree({
     return lines;
   };
 
-  console.log(kleur.bold(kleur.cyan('.')));
-  console.log(print(tree, 1, '').join('\n'));
-  console.log();
+  if (tree.path.length > 0) {
+    if (level === 'info') {
+      console.log(`\n${kleur.bold(kleur.underline('ROUTES'))}\n`);
+    }
+
+    console.log(kleur.bold(kleur.cyan('.')));
+    console.log(print(tree, 1, '').join('\n'));
+    console.log();
+  }
 }
 
 function guessPackageManager(app: App): 'npm' | 'yarn' | 'pnpm' {
