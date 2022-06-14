@@ -93,7 +93,7 @@ export function parseMarkdown(
   source: string,
   opts: Partial<ParseMarkdownConfig> = {},
 ): ParseMarkdownResult {
-  const cacheKey = source;
+  const cacheKey = filePath + source;
 
   if (!opts.ignoreCache && cache.has(cacheKey)) return cache.get(source)!;
 
