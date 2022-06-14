@@ -101,7 +101,7 @@ export async function bundle(
     loader: options.loader,
     platform: options.platform ?? 'node',
     format: options.format ?? 'esm',
-    target: options.target ?? 'node14',
+    target: options.target ?? 'node16',
     allowOverwrite: options.allowOverwrite ?? true,
     bundle: options.bundle ?? true,
     preserveSymlinks: options.preserveSymlinks ?? true,

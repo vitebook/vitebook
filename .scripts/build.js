@@ -40,7 +40,7 @@ async function main() {
     logLevel: args.logLevel ?? 'warning',
     platform: args.platform ?? 'browser',
     format: 'esm',
-    target: args.target ?? IS_NODE ? 'node14' : 'esnext',
+    target: args.target ?? IS_NODE ? 'node16' : 'esnext',
     watch: args.watch || args.w,
     chunkNames: '[name].[hash]',
     splitting: args.split,

@@ -5,7 +5,7 @@
   "license": "MIT",
   "main": "bin/create-vitebook.js",
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=16.0.0"
   },
   "contributors": [
     "Rahim Alwer <rahim.alwer@gmail.com>"
