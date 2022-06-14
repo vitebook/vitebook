@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/core",
-  "version": "0.40.4",
+  "version": "0.41.0",
   "type": "module",
   "types": "index.d.ts",
   "sideEffects": false,

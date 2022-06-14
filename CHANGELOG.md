@@ -1,3 +1,9 @@
+# [0.41.0](https://github.com/vitebook/vitebook/compare/v0.40.4...v0.41.0) (2022-06-14)
+
+### Features
+
+- **core:** add markdown meta transformer ([7718206](https://github.com/vitebook/vitebook/commit/7718206769e410be59e62e870b7caced85b8cd97))
+
 ## [0.40.4](https://github.com/vitebook/vitebook/compare/v0.40.3...v0.40.4) (2022-06-14)
 
 ### Bug Fixes
