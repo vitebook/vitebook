@@ -1,3 +1,9 @@
+## [0.42.3](https://github.com/vitebook/vitebook/compare/v0.42.2...v0.42.3) (2022-06-14)
+
+### Bug Fixes
+
+- **core:** use more unique image import names ([c91275b](https://github.com/vitebook/vitebook/commit/c91275bfc625fa237369dd9f6066a1cd89d754fa))
+
 ## [0.42.2](https://github.com/vitebook/vitebook/compare/v0.42.1...v0.42.2) (2022-06-14)
 
 ### Bug Fixes
