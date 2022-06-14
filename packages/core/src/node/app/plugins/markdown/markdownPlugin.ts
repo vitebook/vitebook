@@ -81,6 +81,10 @@ export type ResolvedMarkdownPluginConfig = {
    */
   transformContent: ParseMarkdownConfig['transformContent'];
   /**
+   * Markdown meta transformers (_before_ content is rendered).
+   */
+  transformMeta: ParseMarkdownConfig['transformMeta'];
+  /**
    * Rendered Markdown output transformers.
    */
   transformOutput: ParseMarkdownConfig['transformOutput'];

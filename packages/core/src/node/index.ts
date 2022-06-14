@@ -26,6 +26,7 @@ export type {
   HighlightCodeBlock,
   MarkdocAstTransformer,
   MarkdocContentTransformer,
+  MarkdocMetaTransformer,
   MarkdocNodeFileMeta,
   MarkdocOutputTransformer,
   MarkdocRenderer,

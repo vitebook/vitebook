@@ -217,6 +217,7 @@ export async function resolveAppConfig({
     },
     transformAst: [],
     transformContent: [],
+    transformMeta: [],
     transformOutput: [],
     transformTreeNode: [],
     ...markdown,

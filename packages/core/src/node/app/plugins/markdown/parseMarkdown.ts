@@ -40,6 +40,13 @@ export type MarkdocContentTransformer = (data: {
   frontmatter: MarkdownFrontmatter;
 }) => string;
 
+export type MarkdocMetaTransformer = (data: {
+  filePath: string;
+  imports: string[];
+  stuff: MarkdocTreeWalkStuff;
+  meta: MarkdownMeta;
+}) => void;
+
 export type MarkdocOutputTransformer = (data: {
   filePath: string;
   code: string;
@@ -63,6 +70,7 @@ export type ParseMarkdownConfig = {
   transformAst: MarkdocAstTransformer[];
   transformTreeNode: MarkdocTreeNodeTransformer[];
   transformContent: MarkdocContentTransformer[];
+  transformMeta: MarkdocMetaTransformer[];
   transformOutput: MarkdocOutputTransformer[];
   render: MarkdocRenderer;
 };
@@ -157,19 +165,17 @@ export function parseMarkdown(
   const page = app.pages.getPage(filePath);
   if (page) mergeLayoutMeta(app, page, meta, opts);
 
+  for (const transformer of opts.transformMeta ?? []) {
+    transformer({ filePath, meta, imports, stuff });
+  }
+
   let output =
     (opts.render?.({ filePath, content, meta, imports, stuff }) ??
       renderMarkdocToHTML(content)) ||
     '';
 
   for (const transformer of opts.transformOutput ?? []) {
-    output = transformer({
-      filePath,
-      meta,
-      code: output,
-      imports,
-      stuff,
-    });
+    output = transformer({ filePath, meta, code: output, imports, stuff });
   }
 
   const result: ParseMarkdownResult = {
