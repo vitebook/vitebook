@@ -16,6 +16,7 @@ import {
   isUndefined,
   matchRouteInfo,
   noendslash,
+  normalizeURL,
   noslash,
   type ServerEntryModule,
   type ServerLoadedOutputMap,
@@ -65,10 +66,6 @@ export async function build(app: App): Promise<void> {
   const dataHashes: Record<string, string> = {};
   const serverOutput: Map<string, string | ServerLoadedOutputMap> = new Map();
   const outputFiles: [filePath: string, content: string][] = [];
-
-  function normalizedURLPathname(url: URL) {
-    return url.pathname.replace(/\/$/, '/index.html');
-  }
 
   try {
     // -------------------------------------------------------------------------------------------
@@ -123,7 +120,7 @@ export async function build(app: App): Promise<void> {
 
     // eslint-disable-next-line no-inner-declarations
     async function loadServerOutput(url: URL, page: ServerPage) {
-      const pathname = normalizedURLPathname(url);
+      const pathname = normalizeURL(url).pathname;
 
       if (serverOutput.has(pathname)) {
         return serverOutput.get(pathname)!;
@@ -146,7 +143,7 @@ export async function build(app: App): Promise<void> {
       );
 
       if (redirect) {
-        const pathname = normalizedURLPathname(url);
+        const pathname = normalizeURL(url).pathname;
         redirects[pathname] = redirect;
         serverOutput.set(pathname, redirect);
         return redirect;
@@ -190,7 +187,7 @@ export async function build(app: App): Promise<void> {
 
     // eslint-disable-next-line no-inner-declarations
     async function buildPage(url: URL, page: ServerPage) {
-      const pathname = normalizedURLPathname(url);
+      const pathname = normalizeURL(url).pathname;
 
       if (seenLinks.has(pathname) || notFoundLinks.has(pathname)) {
         return;
@@ -311,7 +308,7 @@ export async function build(app: App): Promise<void> {
       if (href.startsWith('#') || isLinkExternal(href, baseUrl)) return;
 
       const url = new URL(`http://ssr${slash(href)}`);
-      const pathname = normalizedURLPathname(url);
+      const pathname = normalizeURL(url).pathname;
 
       if (seenLinks.has(pathname) || notFoundLinks.has(pathname)) return;
 

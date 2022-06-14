@@ -15,17 +15,21 @@ if (!args.script) {
 }
 
 let running = false;
-let pending = false;
-function onChange() {
-  if (running) {
-    pending = true;
-    return;
-  }
+async function onChange() {
+  if (running) return;
 
   running = true;
-  spawn('pnpm', [args.script], { stdio: 'inherit', cwd });
+  await runScript(args.script);
   running = false;
-  if (pending) onChange();
+}
+
+function runScript(script) {
+  return new Promise((resolve) => {
+    const ps = spawn('pnpm', ['run', script], { stdio: 'inherit', cwd });
+    ps.on('close', () => {
+      resolve();
+    });
+  });
 }
 
 onChange();

@@ -12,6 +12,7 @@ import {
   isString,
   isUndefined,
   matchRoute,
+  normalizeURL,
   slash,
   type WithRouteMatch,
 } from '../../shared';
@@ -211,8 +212,8 @@ export class Router {
    * Redirect from a given pathname to another.
    */
   addRedirect(from: string | URL, to: string | URL) {
-    const fromURL = isString(from) ? this.buildURL(from) : from;
-    const toURL = isString(to) ? this.buildURL(to) : to;
+    const fromURL = normalizeURL(isString(from) ? this.buildURL(from) : from);
+    const toURL = normalizeURL(isString(to) ? this.buildURL(to) : to);
     this._redirects.set(fromURL.href, toURL.href);
   }
 
@@ -261,14 +262,16 @@ export class Router {
    * Builds and returns an application URL given a pathname.
    */
   buildURL(pathnameOrURL: string | URL) {
-    if (!isString(pathnameOrURL)) return new URL(pathnameOrURL);
+    const url = !isString(pathnameOrURL)
+      ? new URL(pathnameOrURL)
+      : new URL(
+          pathnameOrURL,
+          pathnameOrURL.startsWith('#')
+            ? /(.*?)(#|$)/.exec(location.href)![1]
+            : getBaseUri(this.baseUrl),
+        );
 
-    return new URL(
-      pathnameOrURL,
-      pathnameOrURL.startsWith('#')
-        ? /(.*?)(#|$)/.exec(location.href)![1]
-        : getBaseUri(this.baseUrl),
-    );
+    return normalizeURL(url);
   }
 
   /**
@@ -397,9 +400,11 @@ export class Router {
     url: URL,
     handle: (url: URL) => Promise<void>,
   ): null | Promise<void> {
-    if (!this._redirects.has(url.href)) return null;
+    const href = normalizeURL(url).href;
 
-    const redirectHref = this._redirects.get(url.href)!;
+    if (!this._redirects.has(href)) return null;
+
+    const redirectHref = this._redirects.get(href)!;
     const redirectURL = new URL(redirectHref);
 
     if (this.owns(redirectURL)) {

@@ -147,3 +147,8 @@ const htmlExtRE = /\.html$/;
 export function getRouteMatchingPathname(url: URL) {
   return url.pathname.replace(htmlExtRE, '');
 }
+
+export function normalizeURL(url: URL) {
+  url.pathname = url.pathname.replace(/\/index.html$/, '/');
+  return url;
+}
