@@ -1,3 +1,10 @@
+# [0.42.0](https://github.com/vitebook/vitebook/compare/v0.41.0...v0.42.0) (2022-06-14)
+
+### Features
+
+- **core:** bump minimum node version to `16.x` ([4ae7fb5](https://github.com/vitebook/vitebook/commit/4ae7fb5cb05ab872673c48e4ba285df718bb77ab))
+- **core:** hash data asset ids in data hash map ([73fb829](https://github.com/vitebook/vitebook/commit/73fb829ff4af752c50773db00a3ef48a2f7c942a))
+
 # [0.41.0](https://github.com/vitebook/vitebook/compare/v0.40.4...v0.41.0) (2022-06-14)
 
 ### Features
