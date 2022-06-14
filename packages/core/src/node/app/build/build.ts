@@ -196,7 +196,7 @@ export async function build(app: App): Promise<void> {
       }
 
       if (!validPathname.test(pathname)) {
-        log404(pathname, page, 'Found malformed URL pathname.');
+        log404(url.pathname, page, 'Found malformed URL pathname.');
         notFoundLinks.add(pathname);
         return;
       }
@@ -323,7 +323,7 @@ export async function build(app: App): Promise<void> {
 
       if (!notFoundLinks.has(pathname)) {
         if (notFoundLinks.size === 0) console.log();
-        log404(pathname, page);
+        log404(url.pathname, page);
         notFoundLinks.add(pathname);
       }
     }
