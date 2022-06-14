@@ -124,7 +124,7 @@ export const transformTreeNode: MarkdocTreeNodeTransformer = ({
 function resolveImg(tag: MarkdocTag, stuff: MarkdocTreeWalkStuff) {
   const src = tag.attributes.src;
 
-  const name = toPascalCase(path.basename(src, path.extname(src)));
+  const name = `${toPascalCase(path.basename(src, path.extname(src)))}Image`;
   stuff.imports.add(`import ${name} from "${src}";`);
 
   tag.attributes.src = markObj(name);
