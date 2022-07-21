@@ -15,9 +15,9 @@
     "@vitebook/markdown-shiki": "0.23.6",
     "@vitebook/markdown-svelte": "0.23.6",
     "@vitebook/theme-default": "0.23.6",
-    "svelte": "^3.43.1",
+    "svelte": "^3.49.0",
     "typescript": "^4.4.3",
-    "vite": "^2.8.0"
+    "vite": "^3.0.0"
   },
   "engines": {
     "node": ">=16"

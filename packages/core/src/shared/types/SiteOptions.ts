@@ -93,4 +93,5 @@ export type SiteLocaleConfig = LocaleConfig<SiteLocaleData>;
 
 export type VirtualSiteDataModule<Theme extends ThemeConfig = ThemeConfig> = {
   default: SiteOptions<Theme>;
+  [Symbol.toStringTag]: 'Module';
 };

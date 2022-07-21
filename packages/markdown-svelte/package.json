@@ -50,9 +50,9 @@
     "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
     "clean": "rimraf dist",
     "dev": "pnpm clean && run-p watch:client watch:node watch:types",
-    "watch:client": "pnpm build:client -- --watch",
-    "watch:node": "pnpm build:node -- --watch",
-    "watch:types": "pnpm build:types -- --watch"
+    "watch:client": "pnpm run build:client --watch",
+    "watch:node": "pnpm run build:node --watch",
+    "watch:types": "pnpm run build:types --watch"
   },
   "dependencies": {
     "@rollup/pluginutils": "^4.1.1",
@@ -65,12 +65,13 @@
   "devDependencies": {
     "@vitebook/client": "workspace:*",
     "@vitebook/core": "workspace:*",
-    "svelte": "^3.44.1"
+    "markdown-it": "^12.2.0",
+    "svelte": "^3.49.0"
   },
   "peerDependencies": {
     "@vitebook/client": "0.23.6",
     "@vitebook/core": "0.23.6",
-    "svelte": "^3.44.1"
+    "svelte": "^3.49.0"
   },
   "publishConfig": {
     "access": "public"

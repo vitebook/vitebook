@@ -65,7 +65,6 @@ export function corePlugin(): Plugin {
           },
         },
         optimizeDeps: { exclude: clientPackages },
-        // @ts-expect-error - not typed.
         ssr: { noExternal: clientPackages },
       };
 

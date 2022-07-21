@@ -45,8 +45,8 @@
     "build:types": "tsc -p tsconfig.json --outDir dist/types --emitDeclarationOnly",
     "clean": "rimraf dist",
     "dev": "pnpm clean && run-p watch:node watch:types",
-    "watch:node": "pnpm build:node -- --watch",
-    "watch:types": "pnpm build:types -- --watch"
+    "watch:node": "pnpm run build:node --watch",
+    "watch:types": "pnpm run build:types --watch"
   },
   "dependencies": {
     "@vitebook/markdown": "0.23.6",

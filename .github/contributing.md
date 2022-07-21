@@ -61,13 +61,13 @@ from the project root.
 $: pnpm install
 
 # Install dependency for a single package.
-$: pnpm install vite --filter @vitebook/core
+$: pnpm -F core install vite
 
 # Update a dependency for a single package.
-$: pnpm up vite@2.6.13 --filter @vitebook/core
+$: pnpm -F core up vite@3.0.0
 
 # Update a dependency for all packages.
-$: pnpm up vite@2.6.13 -r
+$: pnpm up vite@3.0.0 -r
 ```
 
 ## 📝 Documentation Site

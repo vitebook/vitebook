@@ -5,11 +5,8 @@ import options from ':virtual/vitebook/site';
 
 export const siteOptions = readable<SiteOptions>(options, (set) => {
   if (import.meta.hot) {
-    import.meta.hot.accept(
-      '/:virtual/vitebook/site',
-      (mod: VirtualSiteDataModule) => {
-        set(mod.default);
-      },
-    );
+    import.meta.hot.accept('/:virtual/vitebook/site', (mod) => {
+      set((mod as unknown as VirtualSiteDataModule).default);
+    });
   }
 });

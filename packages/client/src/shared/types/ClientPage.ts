@@ -7,4 +7,5 @@ export type LoadedClientPage = LoadedSveltePage | LoadedMarkdownPage;
 
 export type VirtualClientPagesModule = {
   default: ClientPage[];
+  [Symbol.toStringTag]: 'Module';
 };

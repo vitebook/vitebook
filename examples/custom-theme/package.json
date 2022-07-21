@@ -12,8 +12,8 @@
   "devDependencies": {
     "@vitebook/client": "0.23.6",
     "@vitebook/core": "0.23.6",
-    "svelte": "^3.44.0",
-    "vite": "^2.8.0"
+    "svelte": "^3.49.0",
+    "vite": "^3.0.0"
   },
   "engines": {
     "node": ">=16"

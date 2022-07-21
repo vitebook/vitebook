@@ -1,19 +1,19 @@
-import { useEffect, useRef } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 
 export function useOnDestroy() {
-  const callbacks = useRef<(() => void)[]>(null);
+  const [callbacks, setCallbacks] = useState<(() => void)[]>([]);
 
   const onDestroy = useRef((callback: () => void) => {
-    if (callbacks.current === null) {
-      callbacks.current = [];
+    if (callbacks === null) {
+      setCallbacks([]);
     }
 
-    callbacks.current!.push(callback);
+    callbacks.push(callback);
   });
 
   useEffect(() => {
     return () => {
-      callbacks.current?.forEach((fn) => fn());
+      callbacks.forEach((fn) => fn());
     };
   }, []);
 

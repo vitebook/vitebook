@@ -34,8 +34,10 @@ async function main() {
     target: 'es2020',
     watch: args.watch || args.w,
     bundle: true,
+    minify: true,
     logLevel: 'info',
     external: [
+      /@vitebook/,
       '@vitebook/core',
       '@vitebook/client',
       '@vitebook/markdown',
@@ -45,7 +47,21 @@ async function main() {
       'svelte',
       'vue',
       'vite',
+      'rollup',
       ...(args.external?.split(',') ?? []),
+    ],
+    plugins: [
+      {
+        name: 'chalk-fix',
+        setup(build) {
+          build.onResolve({ filter: /#(ansi|supports)/ }, ({ path }) => {
+            const id = path.slice(1);
+            return {
+              path: `${process.cwd()}/node_modules/chalk/source/vendor/${id}/index.js`,
+            };
+          });
+        },
+      },
     ],
   });
 }

@@ -16,4 +16,5 @@ export type ClientTheme = DefaultTheme<ClientThemeComponent> & {
 
 export type VirtualClientThemeModule = {
   default: ClientTheme;
+  [Symbol.toStringTag]: 'Module';
 };

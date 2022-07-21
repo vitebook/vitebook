@@ -8,11 +8,11 @@
   ],
   "scripts": {
     "build": "node .scripts/run-build.js",
-    "build:all": "pnpm build --filter ./packages",
+    "build:all": "pnpm -F \"./packages/**\" build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "docs:build": "pnpm vitebook:build --filter @vitebook/docs",
-    "docs:dev": "pnpm vitebook:dev --filter @vitebook/docs",
-    "docs:preview": "pnpm vitebook:preview --filter @vitebook/docs",
+    "docs:build": "pnpm -F docs vitebook:build",
+    "docs:dev": "pnpm -F docs vitebook:dev",
+    "docs:preview": "pnpm -F docs vitebook:preview",
     "example": "node .scripts/run-example.js",
     "format": "run-s format:*",
     "format:eslint": "npm run lint:eslint -- --fix",
@@ -48,7 +48,7 @@
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "execa": "^5.1.1",
-    "fast-glob": "^3.2.7",
+    "fast-glob": "^3.2.11",
     "fs-extra": "^10.0.0",
     "husky": "^7.0.4",
     "kleur": "^4.1.4",
@@ -65,10 +65,10 @@
   },
   "engines": {
     "node": ">=16",
-    "pnpm": ">=6"
+    "pnpm": ">=7"
   },
   "volta": {
     "node": "16.10.0",
-    "pnpm": "6.24.4"
+    "pnpm": "7.5.2"
   }
 }
