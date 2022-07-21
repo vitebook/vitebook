@@ -99,7 +99,7 @@ $: pnpm format
 $: pnpm build client
 
 # Run build and watch for changes to rebuild in any of the packages in the `packages/` directory.
-$: pnpm build client -- --watch
+$: pnpm run build client --watch
 
 # Build all packages in the `packages/` directory.
 $: pnpm build:all
@@ -108,13 +108,13 @@ $: pnpm build:all
 $: pnpm example
 
 # Shorthand without running through prompts.
-$: pnpm example svelte -- --script dev
+$: pnpm run example svelte --script dev
 
 # Run a script located inside a sandbox application in the `sandbox/` directory.
 $: pnpm sandbox
 
 # Shorthand without running through prompts.
-$: pnpm sandbox svelte -- --script dev
+$: pnpm run sandbox svelte --script dev
 ```
 
 ## 🧪 Sandbox

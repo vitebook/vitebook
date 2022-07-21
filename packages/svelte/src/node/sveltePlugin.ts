@@ -10,7 +10,7 @@ import { renderMarkdoc, svelteMarkdocTags, transformTreeNode } from './markdoc';
 import { svelteSSRPlugin } from './svelteSSRPlugin';
 
 export type SveltePluginConfig = {
-  svelte?: SveltePluginOptions;
+  svelte?: Partial<SveltePluginOptions>;
 };
 
 const VIRTUAL_APP_ID = `${VM_PREFIX}/svelte/app` as const;
@@ -60,7 +60,6 @@ export function sveltePlugin(config: SveltePluginConfig = {}): Plugin {
       if (!hasSveltePlugin) {
         app.plugins.push(
           svelte({
-            ...config.svelte,
             extensions: [
               '.svelte',
               '.md',
@@ -70,7 +69,7 @@ export function sveltePlugin(config: SveltePluginConfig = {}): Plugin {
               ...config.svelte?.compilerOptions,
               hydratable: true,
             },
-          }),
+          }) as unknown as VitePlugin,
         );
       }
     },

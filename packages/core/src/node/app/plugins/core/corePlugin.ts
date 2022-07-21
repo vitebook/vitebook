@@ -53,10 +53,7 @@ export function corePlugin(config: ResolvedCorePluginConfig): ClientPlugin {
             ...virtualAliases,
           },
         },
-        optimizeDeps: {
-          exclude: [...clientPackages],
-        },
-        // @ts-expect-error - .
+        optimizeDeps: { exclude: clientPackages },
         ssr: { noExternal: clientPackages },
         server: {
           fs: {

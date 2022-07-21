@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "build": "node .scripts/run-build.js",
-    "build:all": "pnpm -F ./packages/* build",
+    "build:all": "pnpm -F \"./packages/**\" build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "docs:dev": "pnpm -F docs dev",
     "docs:build": "pnpm -F docs build",
@@ -53,7 +53,7 @@
     "semver": "^7.3.5",
     "svelte": "^3.44.1",
     "svelte2tsx": "^0.5.9",
-    "typescript": "^4.6.4",
+    "typescript": "^4.7.4",
     "upath": "^2.0.1"
   },
   "engines": {

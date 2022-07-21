@@ -66,7 +66,7 @@
   "peerDependencies": {
     "@wooorm/starry-night": "^1.0.0",
     "shiki": "^0.10.1",
-    "vite": "^2.8.0"
+    "vite": "^3.0.0"
   },
   "peerDependenciesMeta": {
     "shiki": {
@@ -85,9 +85,9 @@
     "rimraf": "^3.0.2",
     "rollup": "^2.58.0",
     "shiki": "^0.10.1",
-    "typescript": "^4.6.4",
+    "typescript": "^4.7.4",
     "upath": "^2.0.1",
-    "vite": "^2.8.0"
+    "vite": "^3.0.0"
   },
   "engines": {
     "node": ">=16"

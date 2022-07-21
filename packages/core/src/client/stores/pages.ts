@@ -7,12 +7,9 @@ import type { ReadableStore } from './types';
 const store = writable(allPages);
 
 if (import.meta.hot) {
-  import.meta.hot.accept(
-    '/:virtual/vitebook/pages',
-    (mod: { default: ClientPage[] }) => {
-      store.set(mod.default);
-    },
-  );
+  import.meta.hot.accept('/:virtual/vitebook/pages', (mod) => {
+    store.set(mod?.default ?? []);
+  });
 }
 
 export const pages: ReadableStore<ClientPage[]> = {
