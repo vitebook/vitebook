@@ -22,6 +22,7 @@
     "@vitebook/preact": "0.100.3",
     "@vitebook/theme-default": "0.100.3",
     "preact": "^10.5.14",
+    "preact-render-to-string": "^5.1.19",
     "svelte": "^3.43.1",
     "typescript": "^4.4.0",
     "vite": "^3.0.0"
