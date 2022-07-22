@@ -141,7 +141,6 @@ export function clientPlugin(
                 extensions: hasMarkdownSveltePlugin
                   ? ['.svelte', '.md']
                   : ['.svelte'],
-                experimental: { useVitePreprocess: true },
               }),
             );
           }
