@@ -1,5 +1,9 @@
 <script>
-  import { COMPONENT_SSR_CTX_KEY, useAppContext } from '@vitebook/client';
+  import {
+    SSR_CTX_KEY,
+    COMPONENT_SSR_CTX_KEY,
+    useAppContext,
+  } from '@vitebook/client';
   import { h, hydrate as preactHydrate, render as preactRender } from 'preact';
   import { onDestroy } from 'svelte';
   import App from ':virtual/vitebook/preact/app';
@@ -39,22 +43,27 @@
     preactRender(null, target);
   }
 
-  let ssr = '';
-  let ssrId = import.meta.env.SSR ? Math.random().toString(16).slice(2) : '';
+  let ssrId = isSSR ? Math.random().toString(16).slice(2) : '';
+  let ssrMarker = isSSR ? `<!--${ssrId}-->` : '';
 
-  if (import.meta.env.SSR) {
+  if (isSSR) {
     if (component) {
-      const renderToString = require('preact-render-to-string');
-      // @ts-expect-error - .
-      ssr = renderToString(createNewApp());
       const ssrContext = useAppContext(COMPONENT_SSR_CTX_KEY);
-      ssrContext[ssrId] = {};
+      ssrContext[ssrId] = {
+        // We pass this render function back up to the server entry file because top-level await
+        // is not supported in Svelte yet.
+        async render() {
+          const render = (await import('preact-render-to-string')).default;
+          const html = render(createNewApp());
+          return [ssrMarker, html];
+        },
+      };
     }
   }
 </script>
 
 <div bind:this={target}>
   {#if isSSR}
-    {@html ssr}
+    {@html ssrMarker}
   {/if}
 </div>

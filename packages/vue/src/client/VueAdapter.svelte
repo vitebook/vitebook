@@ -46,24 +46,25 @@
     app = undefined;
   }
 
-  let ssrId = import.meta.env.SSR ? Math.random().toString(16).slice(2) : '';
-  let ssrMarker = import.meta.env.SSR ? `<!--${ssrId}-->` : '';
+  let ssrId = isSSR ? Math.random().toString(16).slice(2) : '';
+  let ssrMarker = isSSR ? `<!--${ssrId}-->` : '';
 
-  if (import.meta.env.SSR) {
+  if (isSSR) {
     if (component) {
-      const { renderToString } = require('vue/server-renderer');
-      const appSSrContext = useAppContext(SSR_CTX_KEY);
+      const appSSRContext = useAppContext(SSR_CTX_KEY);
       const ssrContext = useAppContext(COMPONENT_SSR_CTX_KEY);
       ssrContext[ssrId] = {
         // We pass this render function back up to the server entry file because top-level await
         // is not supported in Svelte yet.
         async render() {
           await createNewApp(component);
+
+          const { renderToString } = await import('vue/server-renderer');
           const html = await renderToString(
             // Passing in app SSR context as Vue will automatically add component module id's
             // to the `module` set on it.
             app,
-            appSSrContext,
+            appSSRContext,
           );
           return [ssrMarker, html];
         },

@@ -48,6 +48,16 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
     options.exclude,
   );
 
+  const dedupe = [
+    'preact',
+    'preact/compat',
+    'preact/jsx-runtime',
+    '@prefresh/core',
+    '@prefresh/vite',
+    'react',
+    'react-dom',
+  ];
+
   return [
     {
       name: PLUGIN_NAME,
@@ -57,12 +67,12 @@ export function preactPlugin(options: PreactPluginOptions = {}): Plugin[] {
           resolve: {
             alias: {
               [VIRTUAL_APP_ID]: VIRTUAL_APP_REQUEST_PATH,
+              react: 'preact/compat',
+              'react-dom': 'preact/compat',
             },
+            dedupe,
           },
-          optimizeDeps: {
-            include: ['preact/debug', 'preact/devtools', '@prefresh/vite'],
-            exclude: ['preact', 'preact/compat', 'preact/hooks'],
-          },
+          optimizeDeps: { include: dedupe },
         };
       },
       async configureApp(_app) {

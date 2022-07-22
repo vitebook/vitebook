@@ -16,7 +16,7 @@ export const render: ServerRenderFn = async (page) => {
     modules: new Set(),
   };
 
-  const componentsSsrContext: AppContextMap[typeof COMPONENT_SSR_CTX_KEY] = {};
+  const renderSSRContext: AppContextMap[typeof COMPONENT_SSR_CTX_KEY] = {};
 
   const router = await createRouter();
   await router.go(page.route);
@@ -24,7 +24,7 @@ export const render: ServerRenderFn = async (page) => {
   const context = new Map();
   context.set(SSR_CTX_KEY, ssrContext);
   context.set(ROUTER_CTX_KEY, router);
-  context.set(COMPONENT_SSR_CTX_KEY, componentsSsrContext);
+  context.set(COMPONENT_SSR_CTX_KEY, renderSSRContext);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let { head, html, css } = (App as any).render({}, { context });
@@ -32,13 +32,11 @@ export const render: ServerRenderFn = async (page) => {
   head = head ?? '';
   css = css.code ?? '';
 
-  for (const componentSsr of Object.values(componentsSsrContext)) {
-    head += componentSsr.head ?? '';
-    css += componentSsr.css?.code ?? '';
-    const [marker, componentHtml] = (await componentSsr.render?.()) ?? [];
-    if (marker && componentHtml) {
-      html = html.replace(marker, componentHtml);
-    }
+  for (const result of Object.values(renderSSRContext)) {
+    head += result.head ?? '';
+    css += result.css?.code ?? '';
+    const ssrRender = (await result.render?.()) ?? [];
+    if (ssrRender) html = html.replace(ssrRender[0], ssrRender[1]);
   }
 
   return { context: ssrContext, html, head, css };
