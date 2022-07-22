@@ -1,3 +1,10 @@
+## [0.100.2](https://github.com/vitebook/vitebook/compare/v0.100.1...v0.100.2) (2022-07-22)
+
+### Bug Fixes
+
+- add default ts preprocessor ([a834c3c](https://github.com/vitebook/vitebook/commit/a834c3ca796c2dcfebfe0a8388d70e27e85a013b))
+- disable dep optimization during dev ([d00e4bd](https://github.com/vitebook/vitebook/commit/d00e4bd32c58d11af18624a1e77fad0f272045e6))
+
 ## [0.100.1](https://github.com/vitebook/vitebook/compare/v0.100.0...v0.100.1) (2022-07-22)
 
 ### Bug Fixes

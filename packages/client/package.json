@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/client",
-  "version": "0.100.1",
+  "version": "0.100.2",
   "keywords": [
     "client",
     "esm",
@@ -87,7 +87,7 @@
     "vite": "^3.0.0"
   },
   "peerDependencies": {
-    "@vitebook/core": "0.100.1",
+    "@vitebook/core": "0.100.2",
     "svelte": "^3.44.0"
   },
   "publishConfig": {
