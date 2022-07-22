@@ -1,3 +1,9 @@
+## [0.100.5](https://github.com/vitebook/vitebook/compare/v0.100.4...v0.100.5) (2022-07-22)
+
+### Bug Fixes
+
+- **core:** disable optimize deps during builds for now ([0e74367](https://github.com/vitebook/vitebook/commit/0e74367c15fc9ab8a7ca52da0a23cc4b49da466a))
+
 ## [0.100.4](https://github.com/vitebook/vitebook/compare/v0.100.3...v0.100.4) (2022-07-22)
 
 ### Bug Fixes

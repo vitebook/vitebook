@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/example-react",
-  "version": "0.100.4",
+  "version": "0.100.5",
   "private": true,
   "type": "module",
   "scripts": {
@@ -16,11 +16,11 @@
   "devDependencies": {
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
-    "@vitebook/client": "0.100.4",
-    "@vitebook/core": "0.100.4",
-    "@vitebook/markdown-preact": "0.100.4",
-    "@vitebook/preact": "0.100.4",
-    "@vitebook/theme-default": "0.100.4",
+    "@vitebook/client": "0.100.5",
+    "@vitebook/core": "0.100.5",
+    "@vitebook/markdown-preact": "0.100.5",
+    "@vitebook/preact": "0.100.5",
+    "@vitebook/theme-default": "0.100.5",
     "preact": "^10.5.14",
     "preact-render-to-string": "^5.1.19",
     "svelte": "^3.43.1",

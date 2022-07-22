@@ -186,7 +186,7 @@ importers:
       '@types/lru-cache': ^5.1.1
       '@vitebook/client': workspace:*
       '@vitebook/core': workspace:*
-      '@vitebook/markdown': 0.100.4
+      '@vitebook/markdown': 0.100.5
       '@vitebook/preact': workspace:*
       kleur: ^4.1.4
       lru-cache: ^6.0.0
@@ -209,7 +209,7 @@ importers:
     specifiers:
       '@types/prismjs': ^1.16.6
       '@vitebook/core': workspace:*
-      '@vitebook/markdown': 0.100.4
+      '@vitebook/markdown': 0.100.5
       prismjs: ^1.25.0
     dependencies:
       '@vitebook/markdown': link:../markdown
@@ -221,7 +221,7 @@ importers:
   packages/markdown-shiki:
     specifiers:
       '@vitebook/core': workspace:*
-      '@vitebook/markdown': 0.100.4
+      '@vitebook/markdown': 0.100.5
       shiki: ^0.9.11
     dependencies:
       '@vitebook/markdown': link:../markdown
@@ -235,7 +235,7 @@ importers:
       '@types/lru-cache': ^5.1.1
       '@vitebook/client': workspace:*
       '@vitebook/core': workspace:*
-      '@vitebook/markdown': 0.100.4
+      '@vitebook/markdown': 0.100.5
       kleur: ^4.1.4
       lru-cache: ^6.0.0
       magic-string: ^0.25.7
@@ -259,7 +259,7 @@ importers:
       '@rollup/pluginutils': ^4.1.1
       '@types/lru-cache': ^5.1.1
       '@vitebook/core': workspace:*
-      '@vitebook/markdown': 0.100.4
+      '@vitebook/markdown': 0.100.5
       '@vitebook/vue': workspace:*
       kleur: ^4.1.4
       lru-cache: ^6.0.0

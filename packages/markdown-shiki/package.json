@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/markdown-shiki",
-  "version": "0.100.4",
+  "version": "0.100.5",
   "keywords": [
     "esm",
     "markdown",
@@ -49,14 +49,14 @@
     "watch:types": "pnpm run build:types --watch"
   },
   "dependencies": {
-    "@vitebook/markdown": "0.100.4",
+    "@vitebook/markdown": "0.100.5",
     "shiki": "^0.9.11"
   },
   "devDependencies": {
     "@vitebook/core": "workspace:*"
   },
   "peerDependencies": {
-    "@vitebook/core": "0.100.4"
+    "@vitebook/core": "0.100.5"
   },
   "publishConfig": {
     "access": "public"

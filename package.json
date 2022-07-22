@@ -1,6 +1,6 @@
 {
   "name": "vitebook-workspace",
-  "version": "0.100.4",
+  "version": "0.100.5",
   "private": true,
   "type": "module",
   "workspaces": [
