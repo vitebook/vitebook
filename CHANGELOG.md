@@ -1,3 +1,9 @@
+# [0.200.0](https://github.com/vitebook/vitebook/compare/v0.42.3...v0.200.0) (2022-07-22)
+
+### Features
+
+- bump vite to `3.0` ([d2b7983](https://github.com/vitebook/vitebook/commit/d2b79830fd06ca885f2e57016db773ba03c417f3))
+
 ## [0.42.3](https://github.com/vitebook/vitebook/compare/v0.42.2...v0.42.3) (2022-06-14)
 
 ### Bug Fixes
