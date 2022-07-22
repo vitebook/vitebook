@@ -79,7 +79,8 @@
     "just-debounce-it": "^3.0.1",
     "just-throttle": "^4.0.1",
     "kleur": "^4.1.4",
-    "magic-string": "^0.25.7"
+    "magic-string": "^0.25.7",
+    "upath": "^2.0.1"
   },
   "devDependencies": {
     "@vitebook/core": "workspace:*",
