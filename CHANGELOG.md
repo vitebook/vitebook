@@ -1,3 +1,10 @@
+## [0.100.1](https://github.com/vitebook/vitebook/compare/v0.100.0...v0.100.1) (2022-07-22)
+
+### Bug Fixes
+
+- **client:** drop experimental vite preprocess in svelte plugin ([c314abc](https://github.com/vitebook/vitebook/commit/c314abc43d975e8ce2c011aa751eb79131558811))
+- **core:** esm build should be used during build ([4294440](https://github.com/vitebook/vitebook/commit/4294440ecfabf922c17450300e8aaa785e938a66))
+
 # [0.100.0](https://github.com/vitebook/vitebook/compare/v0.23.6...v0.100.0) (2022-07-22)
 
 ### Bug Fixes
