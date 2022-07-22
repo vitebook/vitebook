@@ -1,3 +1,9 @@
+## [0.100.4](https://github.com/vitebook/vitebook/compare/v0.100.3...v0.100.4) (2022-07-22)
+
+### Bug Fixes
+
+- **client:** add missing `upath` dep ([63a9805](https://github.com/vitebook/vitebook/commit/63a9805443e8e60fa9e7a9e07c7fc75c6c9f697d))
+
 ## [0.100.3](https://github.com/vitebook/vitebook/compare/v0.100.2...v0.100.3) (2022-07-22)
 
 ### Bug Fixes
