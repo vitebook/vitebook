@@ -7,6 +7,7 @@ import {
   VM_PREFIX,
 } from '@vitebook/core/node';
 import { fs, logger, path } from '@vitebook/core/node/utils';
+import { transform } from 'esbuild';
 import kleur from 'kleur';
 import MagicString from 'magic-string';
 import { compile as svelteCompile, parse, walk } from 'svelte/compiler';
@@ -77,6 +78,9 @@ export function clientPlugin(
       entry: {
         client: require.resolve(`${PLUGIN_NAME}/entry-client.js`),
         server: require.resolve(`${PLUGIN_NAME}/entry-server.js`),
+      },
+      api: {
+        sveltePreprocess: typescriptPreprocessor(),
       },
       async configureApp(_app) {
         app = _app;
@@ -361,5 +365,40 @@ function addThemeScope({
   return {
     code: mcs.toString(),
     map: mcs.generateMap({ source: filename }).toString(),
+  };
+}
+
+/**
+ * @returns {import('svelte/types/compiler/preprocess').PreprocessorGroup}
+ */
+function typescriptPreprocessor() {
+  const typescriptRE = /^(ts|typescript)($||\/)/;
+
+  return {
+    async script({ filename, attributes, content }) {
+      const isTypescript =
+        typeof attributes.lang === 'string' &&
+        typescriptRE.test(attributes.lang);
+
+      if (isTypescript) {
+        return transform(content, {
+          sourcefile: filename,
+          charset: 'utf8',
+          loader: 'ts',
+          format: 'esm',
+          minify: false,
+          target: 'esnext',
+          tsconfigRaw: {
+            compilerOptions: {
+              importsNotUsedAsValues: 'preserve',
+              // @ts-expect-error - .
+              preserveValueImports: true,
+            },
+          },
+        });
+      }
+
+      return null;
+    },
   };
 }
