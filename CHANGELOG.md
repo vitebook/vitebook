@@ -1,3 +1,9 @@
+## [0.100.3](https://github.com/vitebook/vitebook/compare/v0.100.2...v0.100.3) (2022-07-22)
+
+### Bug Fixes
+
+- replace `require` with `import` during ssr ([c381f97](https://github.com/vitebook/vitebook/commit/c381f97beb816a28f273174f87cdd776c1282e68))
+
 ## [0.100.2](https://github.com/vitebook/vitebook/compare/v0.100.1...v0.100.2) (2022-07-22)
 
 ### Bug Fixes
