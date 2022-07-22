@@ -62,7 +62,7 @@ export async function build(app: App): Promise<void> {
       await fs.readFile(app.dirs.out.resolve('ssr-manifest.json'), 'utf-8'),
     );
 
-    const serverEntryPath = app.dirs.out.resolve('server', 'entry-server.cjs');
+    const serverEntryPath = app.dirs.out.resolve('server', 'entry-server.js');
 
     await fs.rename(
       app.dirs.out.resolve(
@@ -73,9 +73,8 @@ export async function build(app: App): Promise<void> {
     );
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { render } = require(app.dirs.out.resolve(
-      'server',
-      serverEntryPath,
+    const { render } = (await import(
+      app.dirs.out.resolve('server', serverEntryPath)
     )) as ServerEntryModule;
 
     // Include home page so it's rendered (if not included).
