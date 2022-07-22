@@ -64,7 +64,7 @@ export function corePlugin(): Plugin {
             [virtualModuleId.pages]: virtualModuleRequestPath.pages,
           },
         },
-        optimizeDeps: { exclude: clientPackages },
+        optimizeDeps: { exclude: clientPackages, disabled: 'dev' },
         ssr: { noExternal: clientPackages },
       };
 

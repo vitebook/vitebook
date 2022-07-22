@@ -34,7 +34,6 @@ async function main() {
     target: 'es2020',
     watch: args.watch || args.w,
     bundle: true,
-    minify: true,
     logLevel: 'info',
     external: [
       /@vitebook/,
