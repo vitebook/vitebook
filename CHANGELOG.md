@@ -4,12 +4,6 @@
 
 - upgrade to vite `3.0` ([43861f7](https://github.com/vitebook/vitebook/commit/43861f770ed05897ec93ffcefde88bf06d14ac5d))
 
-# [0.24.0](https://github.com/vitebook/vitebook/compare/v0.23.6...v0.24.0) (2022-07-22)
-
-### Bug Fixes
-
-- upgrade to vite `3.0` ([43861f7](https://github.com/vitebook/vitebook/commit/43861f770ed05897ec93ffcefde88bf06d14ac5d))
-
 ## [0.23.6](https://github.com/vitebook/vitebook/compare/v0.23.5...v0.23.6) (2022-04-21)
 
 ### Bug Fixes
