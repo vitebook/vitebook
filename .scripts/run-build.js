@@ -28,6 +28,6 @@ const pkgIndex =
 const pkg = packages[pkgIndex];
 const watch = process.argv.includes('-w') || process.argv.includes('--watch');
 
-spawn('pnpm', [watch ? 'dev' : 'build', `--filter=@vitebook/${pkg}`], {
+spawn('pnpm', [`-F ${pkg}`, watch ? 'dev' : 'build'], {
   stdio: 'inherit',
 });
