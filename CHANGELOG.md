@@ -1,3 +1,9 @@
+## [0.200.3](https://github.com/vitebook/vitebook/compare/v0.200.2...v0.200.3) (2022-08-19)
+
+### Bug Fixes
+
+- forward all svelte config options ([615ed75](https://github.com/vitebook/vitebook/commit/615ed7584f100ec4d8a8b4fae8e96a9ca1e855ce))
+
 ## [0.200.2](https://github.com/vitebook/vitebook/compare/v0.200.0...v0.200.2) (2022-08-19)
 
 ### Bug Fixes
