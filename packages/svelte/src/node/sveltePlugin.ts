@@ -50,7 +50,10 @@ export function sveltePlugin(config: SveltePluginConfig = {}): Plugin {
         app.config.client.app = VIRTUAL_APP_ID;
       }
 
-      const hasSveltePlugin = app.vite?.config.plugins
+      const hasSveltePlugin = [
+        ...app.plugins,
+        ...(app.vite?.config.plugins ?? []),
+      ]
         ?.flat()
         .some(
           (plugin) =>
@@ -60,6 +63,7 @@ export function sveltePlugin(config: SveltePluginConfig = {}): Plugin {
       if (!hasSveltePlugin) {
         app.plugins.push(
           svelte({
+            ...config.svelte,
             extensions: [
               '.svelte',
               '.md',
