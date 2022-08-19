@@ -1,3 +1,9 @@
+## [0.200.2](https://github.com/vitebook/vitebook/compare/v0.200.0...v0.200.2) (2022-08-19)
+
+### Bug Fixes
+
+- disable named exports warning during ssr bundle ([22e7064](https://github.com/vitebook/vitebook/commit/22e7064088abe0cb80387ff5d7c4cab66ae5f4ce))
+
 # [0.200.0](https://github.com/vitebook/vitebook/compare/v0.42.3...v0.200.0) (2022-07-22)
 
 ### Features
