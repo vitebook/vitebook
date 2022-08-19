@@ -74,6 +74,7 @@ function resolveBundleConfig(
         output: ssr
           ? {
               format: 'cjs',
+              exports: 'named',
               entryFileNames: `[name].cjs`,
               assetFileNames: `[name].cjs`,
               chunkFileNames: `[name].cjs`,

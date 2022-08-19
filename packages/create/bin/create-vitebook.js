@@ -114,7 +114,7 @@ async function main() {
   builder.pkg.addVitebookDependency('svelte');
 
   builder.pkg.addDependency('svelte', '^3.40.0', { dev: true });
-  builder.pkg.addDependency('vite', '^2.9.0', { dev: true });
+  builder.pkg.addDependency('vite', '^3.0.0', { dev: true });
 
   // switch (builder.framework) {
   //   case 'vue':
