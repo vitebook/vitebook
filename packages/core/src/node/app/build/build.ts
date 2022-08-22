@@ -32,6 +32,7 @@ import {
 } from '../plugins/core';
 import { installFetch } from '../polyfills';
 import { resolvePageImports } from './chunks';
+import { crawl } from './crawl';
 import { log404, logRoutesList, logRoutesTree } from './log';
 import { buildSitemap } from './sitemap';
 
@@ -57,7 +58,6 @@ export async function build(
   const appEntries = app.entries();
   const appEntryFilenames = Object.keys(appEntries);
 
-  const hrefRE = /href="(.*?)"/g;
   const seenLinks = new Map<string, ServerPage>();
   const notFoundLinks = new Set<string>();
   const redirects: Record<string, string> = {};
@@ -263,7 +263,10 @@ export async function build(
 
       outputFiles.push([getHTMLFilePath(url), pageHtml]);
 
-      await crawlHtml(page, html);
+      const hrefs = crawl(html);
+      for (let i = 0; i < hrefs.length; i++) {
+        await buildPageFromHref(page, hrefs[i]);
+      }
     }
 
     // eslint-disable-next-line no-inner-declarations
@@ -278,15 +281,6 @@ export async function build(
     }
 
     const notFoundRE = /\/@404\./;
-    // eslint-disable-next-line no-inner-declarations
-    async function crawlHtml(page: ServerPage, html: string) {
-      // Attempt to crawl for additional links.
-      for (let href of html.match(hrefRE) ?? []) {
-        href = href.slice(6, -1);
-        await buildPageFromHref(page, href);
-      }
-    }
-
     // eslint-disable-next-line no-inner-declarations
     async function buildPageFromHref(page: ServerPage, href: string) {
       if (href.startsWith('#') || isLinkExternal(href, baseUrl)) return;
