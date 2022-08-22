@@ -21,7 +21,6 @@ import {
   ROUTER_CTX_KEY,
   SERVER_CTX_KEY,
 } from './context';
-import { LRUMap } from './LRUMap.js';
 import { createMemoryHistory } from './router/history/memory';
 import { Router } from './router/Router';
 import type { RouteDeclaration } from './router/types';
@@ -197,10 +196,6 @@ export function loadPageLayouts(
   );
 }
 
-// TODO: let's figure out a better number of entries because 100 is random. Probably best to
-// let user configure this.
-const dataCache = new LRUMap(100);
-
 export async function loadData(
   router: Router,
   module: ClientPageModule | ClientLayoutModule,
@@ -226,16 +221,10 @@ export async function loadData(
     return data.get(hashId) ?? {};
   }
 
-  if (import.meta.env.PROD && dataCache.has(hashId)) {
-    return dataCache.get(hashId)!;
-  }
-
   try {
     const json = !router.started
       ? getDataFromScript(hashId)
       : await (await fetch(`${DATA_ASSET_BASE_URL}/${hashId}.json`)).json();
-
-    dataCache.set(hashId, json);
 
     return json;
   } catch (e) {
