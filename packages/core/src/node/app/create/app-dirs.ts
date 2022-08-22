@@ -20,7 +20,7 @@ export function createAppDirectories(
     searchForWorkspaceRoot(cwdDir.path, rootDir.path),
     tmpDir.path,
   );
-  const routesDir = createDirectory(config.dirs.routes, tmpDir.path);
+  const appDir = createDirectory(config.dirs.app, tmpDir.path);
   const outDir = createDirectory(config.dirs.output, tmpDir.path);
   const publicDir = createDirectory(config.dirs.public, tmpDir.path);
   return {
@@ -28,7 +28,7 @@ export function createAppDirectories(
     cwd: cwdDir,
     workspace: workspaceDir,
     root: rootDir,
-    routes: routesDir,
+    app: appDir,
     out: outDir,
     public: publicDir,
   };

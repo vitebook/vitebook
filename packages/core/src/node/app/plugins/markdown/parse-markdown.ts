@@ -73,7 +73,7 @@ export function parseMarkdown(
   const stuff: MarkdocTreeWalkStuff = {
     baseUrl: app.vite.resolved!.base,
     filePath,
-    routesDir: app.dirs.routes.path,
+    appDir: app.dirs.app.path,
     highlight: opts.highlight!,
     imports: new Set(),
     links: new Set(),
@@ -207,7 +207,7 @@ export type MarkdocTreeWalkStuff = {
   [id: string]: any;
   baseUrl: string;
   filePath: string;
-  routesDir: string;
+  appDir: string;
   links: Set<string>;
   imports: Set<string>;
   headings: MarkdownHeading[];
@@ -338,7 +338,7 @@ function resolveLinks(tag: Tag, stuff: MarkdocTreeWalkStuff) {
       ? '.' + rawPath
       : path.resolve(path.dirname(stuff.filePath), rawPath);
 
-    const route = resolveStaticRouteFromFilePath(stuff.routesDir, absolutePath);
+    const route = resolveStaticRouteFromFilePath(stuff.appDir, absolutePath);
 
     const resolvedHref = `${route}${rawHash}`;
     tag.attributes.href = resolvedHref;

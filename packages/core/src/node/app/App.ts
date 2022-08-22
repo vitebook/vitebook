@@ -53,7 +53,7 @@ export type AppDirectories = {
   cwd: Directory;
   root: Directory;
   workspace: Directory;
-  routes: Directory;
+  app: Directory;
   tmp: Directory;
   out: Directory;
   public: Directory;

@@ -17,7 +17,7 @@ export function routesPlugin(): VitebookPlugin {
       },
     },
     async configureServer(server) {
-      server.watcher.add(app.dirs.routes.path);
+      server.watcher.add(app.dirs.app.path);
       handlePagesHMR(app);
     },
     async load(id) {

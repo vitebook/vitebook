@@ -62,7 +62,7 @@ export class Routes {
   isPage(filePath: string) {
     return (
       this.hasPage(filePath) ||
-      (filePath.startsWith(this._app.dirs.routes.path) &&
+      (filePath.startsWith(this._app.dirs.app.path) &&
         this._pagesFilter(filePath))
     );
   }
@@ -70,7 +70,7 @@ export class Routes {
   isLayout(filePath: string) {
     return (
       this.hasLayout(filePath) ||
-      (filePath.startsWith(this._app.dirs.routes.path) &&
+      (filePath.startsWith(this._app.dirs.app.path) &&
         this._layoutsFilter(filePath))
     );
   }
@@ -83,7 +83,7 @@ export class Routes {
   getPageFilePaths() {
     return globbySync(this._app.config.routes.pages.include, {
       absolute: true,
-      cwd: this._app.dirs.routes.path,
+      cwd: this._app.dirs.app.path,
     })
       .filter(this._pagesFilter)
       .map(normalizePath);
@@ -92,7 +92,7 @@ export class Routes {
   getLayoutFilePaths() {
     return globbySync(this._app.config.routes.layouts.include, {
       absolute: true,
-      cwd: this._app.dirs.routes.path,
+      cwd: this._app.dirs.app.path,
     })
       .filter(this._layoutsFilter)
       .map(normalizePath);
@@ -114,7 +114,7 @@ export class Routes {
     const layoutName = this.getPageLayoutName(filePath, fileContent);
     const hasLoader = this.hasLoader(fileContent);
     const route = resolveRouteFromFilePath(
-      this._app.dirs.routes.path,
+      this._app.dirs.app.path,
       filePath,
       this._app.config.routes.matchers,
     );

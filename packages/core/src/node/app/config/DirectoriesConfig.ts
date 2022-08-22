@@ -9,12 +9,12 @@ export type ResolvedDirectoriesConfig = {
   public: string;
 
   /**
-   * Path to application routes directory. The value can be either an absolute file system path
+   * Path to application directory. The value can be either an absolute file system path
    * or a path relative to `<root>`.
    *
-   * @default '<root>/routes'
+   * @default '<root>/app'
    */
-  routes: string;
+  app: string;
 
   /**
    * The build output directory. The value can be either an absolute file system path or a path

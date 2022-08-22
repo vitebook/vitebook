@@ -11,7 +11,7 @@ import { virtualAliases, virtualModuleRequestPath } from '../alias';
 import type { App, AppFactory } from '../App';
 import { build, createServerBundle, resolveBuildConfig } from '../build';
 import type { AppConfig } from '../config/AppConfig';
-import { createAppFactory } from '../create/create-app';
+import { createAppFactory } from '../create/app-factory';
 import { installFetch } from '../polyfills';
 import { handleDataRequest } from './core/handle-data';
 import { handlePageRequest } from './core/handle-page';
@@ -53,7 +53,7 @@ export function vitebookPlugin(
                 path.dirname(app.entry.server),
                 app.dirs.cwd.path,
                 app.dirs.root.path,
-                app.dirs.routes.path,
+                app.dirs.app.path,
                 app.dirs.public.path,
                 app.dirs.out.path,
                 app.dirs.tmp.path,

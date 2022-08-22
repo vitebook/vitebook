@@ -18,7 +18,7 @@ export type MarkdocNodeFileMeta = {
   type: 'node' | 'tag';
   inline: boolean;
   filePath: string;
-  routesPath: string;
+  routePath: string;
   owningDir: string;
 };
 
@@ -48,17 +48,17 @@ export class MarkdocSchema {
   getFilePaths() {
     return globbySync(this._app.config.markdown.nodes.include, {
       absolute: true,
-      cwd: this._app.dirs.routes.path,
+      cwd: this._app.dirs.app.path,
     })
       .filter(this._filter)
       .map(normalizePath);
   }
 
   addNode(filePath: string) {
-    const routesPath = this._app.dirs.routes.relative(filePath);
+    const routePath = this._app.dirs.app.relative(filePath);
 
     const name = path
-      .basename(routesPath, path.extname(routesPath))
+      .basename(routePath, path.extname(routePath))
       .replace('@node', '')
       .replace('@inline', '');
 
@@ -76,25 +76,25 @@ export class MarkdocSchema {
     }
 
     const cname = toPascalCase(name);
-    const inline = /@inline/.test(routesPath);
+    const inline = /@inline/.test(routePath);
     const owningDir = path.dirname(
       filePath.replace(STRIP_MARKDOC_DIR_RE, '/root.md'),
     );
 
-    this._nodes.set(routesPath, {
+    this._nodes.set(routePath, {
       name,
       type,
       cname,
       filePath,
-      routesPath: routesPath,
+      routePath: routePath,
       inline,
       owningDir,
     });
   }
 
   removeNode(filePath: string) {
-    const routesPath = this._app.dirs.routes.relative(filePath);
-    this._nodes.delete(routesPath);
+    const routePath = this._app.dirs.app.relative(filePath);
+    this._nodes.delete(routePath);
   }
 
   isNode(filePath: string) {
@@ -159,7 +159,7 @@ export class MarkdocSchema {
   }
 
   doesNodeBelongToPage(nodeFilePath: string, pageFilePath: string) {
-    const nodePath = this._app.dirs.routes.relative(nodeFilePath);
+    const nodePath = this._app.dirs.app.relative(nodeFilePath);
     const node = this._nodes.get(nodePath);
     return node && pageFilePath.startsWith(node.owningDir);
   }
