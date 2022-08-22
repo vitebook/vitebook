@@ -1,5 +1,7 @@
 // @ts-check
 
+export const removeTrailingSlash = (str) => str.replace(/\/$/, '');
+
 const WORD_SEPARATORS =
   /[\s\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-./:;<=>?@[\]^_`{|}~]+/;
 

@@ -8,11 +8,11 @@ npm install @vitebook/svelte
 
 ```js
 // vite.config.js
-import { vbkSvelte } from '@vitebook/svelte/node';
+import vitebook from '@vitebook/core/node';
+import svelte from '@vitebook/svelte/node';
+import { defineConfig } from 'vite';
 
-export default {
-  vitebook: {
-    plugins: [vbkSvelte()],
-  },
-};
+export default defineConfig({
+  plugins: [vitebook(), svelte()],
+});
 ```

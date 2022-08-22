@@ -1,28 +1,41 @@
 import type { Plugin as VitePlugin } from 'vite';
 
-import type { App, AppEnv } from '../App';
-import { type ResolvedAppConfig } from '../AppConfig';
+import type { App } from '../App';
+import type { AppConfig, ResolvedAppConfig } from '../AppConfig';
 
-export type Plugin = VitePlugin & {
-  /**
-   * Similar to the Vite `enforce` option except for Vitebook plugins.
-   */
-  vitebookEnforce?: 'pre' | 'post';
-  /**
-   * Hook for extending the Vitebook app configuration. This is after the App config has
-   * been resolved with defaults, so all options are defined. This hook is called before Vite or
-   * any plugins have started.
-   */
-  vitebookConfig?: (
-    config: ResolvedAppConfig,
-    env: AppEnv,
-  ) => void | Promise<void>;
-  /**
-   * Configure the Vitebook application instance. This can also be used to store a reference to the
-   * app for use in other hooks. This hook is called after the application has been initialized.
-   */
-  vitebookInit?: (app: App, env: AppEnv) => void | Promise<void>;
+export type VitebookPlugin = VitePlugin & {
+  vitebook?: {
+    /**
+     * Whether to run before core Vitebook plugins or after.
+     */
+    enforce?: 'pre' | 'post';
+    /**
+     * Overrides client and server entry files.
+     */
+    entry?: App['entry'];
+    /**
+     * Hook for extending the Vitebook app configuration.
+     */
+    config?: (
+      config: ResolvedAppConfig,
+    ) =>
+      | Omit<AppConfig, 'dirs'>
+      | null
+      | void
+      | Promise<Omit<AppConfig, 'dirs'> | null | void>;
+    /**
+     * Called immediately after the config has been resolved.
+     */
+    configureApp?: (app: App) => void | Promise<void>;
+  };
 };
+
+export type VitebookPluginOption = VitebookPlugin | false | null | undefined;
+
+export type VitebookPluginOptions =
+  | VitebookPluginOption
+  | Promise<VitebookPluginOption>
+  | (VitebookPluginOption | Promise<VitebookPluginOption>)[];
 
 export type ResolvePageContext = {
   /** Default page module id. Can be overwritten by plugin. */
@@ -38,10 +51,4 @@ export type ResolvePageContext = {
    * by plugin.
    */
   route: string;
-  /** Application environment information. */
-  env: AppEnv;
 };
-
-export type PluginOption = Plugin | false | null | undefined;
-export type Plugins = (PluginOption | PluginOption[])[];
-export type FilteredPlugins = Plugin[];

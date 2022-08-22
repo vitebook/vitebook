@@ -5,11 +5,6 @@ import type {
   ServerLoadedOutputMap,
   ServerPage,
 } from '../../shared';
-import type { CLIArgs } from '../cli/args';
-import type {
-  CorePluginConfig,
-  ResolvedCorePluginConfig,
-} from './plugins/core';
 import type {
   MarkdownPluginConfig,
   ResolvedMarkdownPluginConfig,
@@ -18,15 +13,10 @@ import type {
   PagesPluginConfig,
   ResolvedPagesPluginConfig,
 } from './plugins/pages';
-import type { FilteredPlugins, Plugins } from './plugins/Plugin';
 
 export type ResolvedAppConfig = {
-  /** Parsed CLI arguments. */
-  cliArgs: CLIArgs;
   /** Application directory paths. */
   dirs: ResolvedAppDirsConfig;
-  /** Core options. */
-  core: ResolvedCorePluginConfig;
   /** Client options. */
   client: ResolvedAppClientConfig;
   /** Routing options. */
@@ -37,14 +27,12 @@ export type ResolvedAppConfig = {
   markdown: ResolvedMarkdownPluginConfig;
   /** Sitemap options. */
   sitemap: ResolvedSitemapConfig[];
-  /** Vitebook plugins. */
-  plugins: FilteredPlugins;
-  /**
-   * Whether to load in debug mode.
-   *
-   * @default false
-   */
-  debug: boolean;
+  /** Whether app is running in debug mode.  */
+  isDebug: boolean;
+  /** Whether Vite is in build mode. */
+  isBuild: boolean;
+  /** Whether Vite is in SSR mode. */
+  isSSR: boolean;
 };
 
 export type ResolvedRouteConfig = {
@@ -118,7 +106,7 @@ export type ResolvedAppClientConfig = {
   /**
    * Application module ID or file path relative to `<root>`.
    */
-  app: string | undefined;
+  app: string;
   /**
    * Array of module ids that will be imported to configure the client-side application. The
    * module must export a `configureApp()` function.
@@ -129,22 +117,6 @@ export type ResolvedAppClientConfig = {
 export type AppClientConfig = Partial<ResolvedAppClientConfig>;
 
 export type ResolvedAppDirsConfig = {
-  /**
-   * Path to current working directory. The path can be absolute or relative to the current working
-   * directory `process.cwd()`.
-   *
-   * @default 'process.cwd()'
-   */
-  cwd: string;
-
-  /**
-   * Path to project root directory. The path can be absolute or relative to the current working
-   * directory `<cwd>`.
-   *
-   * @default '<cwd>'
-   */
-  root: string;
-
   /**
    * Directory to serve as plain static assets. Files in this directory are served and copied to
    * build dist dir as-is without transform. The value can be either an absolute file system path
@@ -248,19 +220,10 @@ export type SitemapConfig = Partial<ResolvedSitemapConfig>;
 
 export type AppConfig = Omit<
   Partial<ResolvedAppConfig>,
-  | 'dirs'
-  | 'core'
-  | 'client'
-  | 'markdown'
-  | 'pages'
-  | 'plugins'
-  | 'routes'
-  | 'sitemap'
+  'dirs' | 'client' | 'markdown' | 'pages' | 'routes' | 'sitemap'
 > & {
   /** Application directory paths. */
   dirs?: AppDirsConfig;
-  /** Core options. */
-  core?: CorePluginConfig;
   /** Client options. */
   client?: AppClientConfig;
   /** Routing options. */
@@ -269,8 +232,6 @@ export type AppConfig = Omit<
   pages?: PagesPluginConfig;
   /** Markdown options. */
   markdown?: MarkdownPluginConfig;
-  /** Vitebook plugins. */
-  plugins?: Plugins;
   /** One or many sitemap configurations. */
   sitemap?: SitemapConfig | SitemapConfig[];
 };

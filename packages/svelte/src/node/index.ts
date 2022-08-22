@@ -1,5 +1,6 @@
-import { sveltePlugin as mainPlugin } from './sveltePlugin';
-
 export * from '../shared';
-export * from './sveltePlugin';
-export default mainPlugin;
+export {
+  sveltePlugin as default,
+  sveltePlugin as vitebookSvelte,
+} from './svelte-plugin';
+export * from './svelte-plugin';

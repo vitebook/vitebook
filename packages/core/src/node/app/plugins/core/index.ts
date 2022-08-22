@@ -1,3 +1,2 @@
-export * from './corePlugin';
-export * from './indexHtml';
-export * from './serverLoader';
+export * from './index-html';
+export * from './server-loader';

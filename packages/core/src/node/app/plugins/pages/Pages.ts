@@ -65,7 +65,7 @@ export class Pages {
     return this._layouts;
   }
 
-  async init(config: PagesConfig) {
+  async configure(config: PagesConfig) {
     config.exclude.push(/@layout/, /@markdoc/, /\/@/, /\/_/, /@server/);
     this.pagesFilter = createFilter(config.include, config.exclude);
 

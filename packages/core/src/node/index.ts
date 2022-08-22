@@ -1,27 +1,7 @@
-import type { UserConfig as ViteConfig } from 'vite';
-
-import type { AppConfig } from './app/AppConfig';
-
+export * from '../shared';
 export * from './app/alias';
 export * from './app/App';
 export * from './app/AppConfig';
-export * from './app/plugins/ClientPlugin';
-export * from './app/plugins/Plugin';
-export * from './cli/run';
-
-export type VitebookConfig = AppConfig | { [root: `$${string}`]: AppConfig };
-
-export function defineConfig(
-  config: ViteConfig & { vitebook: VitebookConfig },
-): typeof config {
-  return config;
-}
-
-export * from '../shared';
-export type {
-  CorePluginConfig,
-  ResolvedCorePluginConfig,
-} from './app/plugins/core';
 export type {
   HighlightCodeBlock,
   MarkdocAstTransformer,
@@ -47,6 +27,12 @@ export type {
   ResolvedPagesPluginConfig,
 } from './app/plugins/pages';
 export * from './app/plugins/pages/utils';
+export * from './app/plugins/Plugin';
+export {
+  vitebookPlugin as default,
+  vitebookPlugin as vitebook,
+} from './app/plugins/vitebook-plugin';
+export * from './app/plugins/vitebook-plugin';
 export * from './utils';
 export type {
   Config as MarkdocConfig,

@@ -3,6 +3,23 @@
 import fs from 'fs';
 import path from 'upath';
 
+export function emptyDir(dir) {
+  if (!fs.existsSync(dir)) {
+    return;
+  }
+
+  for (const file of fs.readdirSync(dir)) {
+    const abs = path.resolve(dir, file);
+    // baseline is Node 12 so can't use rmSync :(
+    if (fs.lstatSync(abs).isDirectory()) {
+      emptyDir(abs);
+      fs.rmdirSync(abs);
+    } else {
+      fs.unlinkSync(abs);
+    }
+  }
+}
+
 /**
  * @param {string} srcDir
  * @param {string} destDir
@@ -47,4 +64,12 @@ export function replaceTemplateStrings(content, replace) {
   });
 
   return content;
+}
+
+export function isDirEmpty(path) {
+  if (!fs.existsSync(path)) {
+    return true;
+  }
+
+  return fs.readdirSync(path).length === 0;
 }

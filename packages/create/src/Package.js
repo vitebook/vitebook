@@ -3,8 +3,8 @@
 import fs from 'fs';
 import path from 'upath';
 
-import { getVersion } from './utils/getVersion.js';
-import { sortObjectKeys } from './utils/sortObjectKeys.js';
+import { sortObjectKeys } from './utils/obj.js';
+import { getVersion } from './utils/version.js';
 
 export class Package {
   /** @protected @type {Record<string, any>} */

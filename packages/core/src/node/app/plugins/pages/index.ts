@@ -1,3 +1,3 @@
 export * from './Pages';
-export * from './pagesPlugin';
+export * from './pages-plugin';
 export * from './utils';

@@ -84,3 +84,17 @@ export async function emptyDir(dir: string) {
   await fs.promises.rm(dir, { recursive: true, force: true });
   await fs.promises.mkdir(dir);
 }
+
+export function mkdirp(dir: string) {
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+  } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((e as any).code === 'EEXIST') return;
+    throw e;
+  }
+}
+
+export function rimraf(path: string) {
+  fs.rmSync(path, { force: true, recursive: true });
+}

@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import { FileDirectory } from './FileDirectory.js';
 import { GitIgnore } from './GitIgnore.js';
 import { Package } from './Package.js';
-import { getVersion } from './utils/getVersion.js';
+import { getVersion } from './utils/version.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -48,6 +48,7 @@ export class ProjectBuilder {
       src: {
         root: new FileDirectory(resolveSrcPath()),
         template: {
+          config: new FileDirectory(resolveSrcPath('template-config')),
           root: new FileDirectory(resolveSrcPath('template-root')),
         },
       },

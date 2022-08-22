@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'upath';
+import { searchForWorkspaceRoot } from 'vite';
 
 import {
   loadModule as loadModuleUtil,
@@ -44,20 +45,27 @@ export const createAppDirUtil = (
   };
 };
 
-export const createAppDirs = (config: ResolvedAppConfig): AppDirs => {
-  const tmp = createAppDirUtil(process.cwd(), 'node_modules/.vitebook/temp');
-  const cwd = createAppDirUtil(config.dirs.cwd, tmp.path);
-  const root = createAppDirUtil(config.dirs.root, tmp.path);
-  const pages = createAppDirUtil(config.dirs.pages, tmp.path);
-  const out = createAppDirUtil(config.dirs.output, tmp.path);
-  const publicDir = createAppDirUtil(config.dirs.public, tmp.path);
-
+export const createAppDirs = (
+  root: string,
+  config: ResolvedAppConfig,
+): AppDirs => {
+  const tmpDir = createAppDirUtil(process.cwd(), 'node_modules/.vitebook/temp');
+  const cwdDir = createAppDirUtil(process.cwd(), tmpDir.path);
+  const rootDir = createAppDirUtil(root, tmpDir.path);
+  const workspaceDir = createAppDirUtil(
+    searchForWorkspaceRoot(cwdDir.path, rootDir.path),
+    tmpDir.path,
+  );
+  const pagesDir = createAppDirUtil(config.dirs.pages, tmpDir.path);
+  const outDir = createAppDirUtil(config.dirs.output, tmpDir.path);
+  const publicDir = createAppDirUtil(config.dirs.public, tmpDir.path);
   return {
-    tmp,
-    cwd,
-    root,
-    pages,
-    out,
+    tmp: tmpDir,
+    cwd: cwdDir,
+    workspace: workspaceDir,
+    root: rootDir,
+    pages: pagesDir,
+    out: outDir,
     public: publicDir,
   };
 };

@@ -23,67 +23,6 @@ import type { App } from '../../App';
 import { resolveStaticRouteFromFilePath } from '../pages';
 import { renderMarkdocToHTML } from './render';
 
-export type MarkdocTreeNodeTransformer = (data: {
-  node: RenderableTreeNode;
-  stuff: MarkdocTreeWalkStuff;
-}) => void;
-
-export type MarkdocAstTransformer = (data: {
-  ast: Node;
-  filePath: string;
-  source: string;
-}) => void;
-
-export type MarkdocContentTransformer = (data: {
-  filePath: string;
-  content: RenderableTreeNode;
-  frontmatter: MarkdownFrontmatter;
-}) => string;
-
-export type MarkdocMetaTransformer = (data: {
-  filePath: string;
-  imports: string[];
-  stuff: MarkdocTreeWalkStuff;
-  meta: MarkdownMeta;
-}) => void;
-
-export type MarkdocOutputTransformer = (data: {
-  filePath: string;
-  code: string;
-  imports: string[];
-  stuff: MarkdocTreeWalkStuff;
-  meta: MarkdownMeta;
-}) => string;
-
-export type MarkdocRenderer = (data: {
-  filePath: string;
-  content: RenderableTreeNode;
-  imports: string[];
-  stuff: MarkdocTreeWalkStuff;
-  meta: MarkdownMeta;
-}) => string;
-
-export type ParseMarkdownConfig = {
-  ignoreCache?: boolean;
-  filter: (id: string) => boolean;
-  highlight: HighlightCodeBlock;
-  transformAst: MarkdocAstTransformer[];
-  transformTreeNode: MarkdocTreeNodeTransformer[];
-  transformContent: MarkdocContentTransformer[];
-  transformMeta: MarkdocMetaTransformer[];
-  transformOutput: MarkdocOutputTransformer[];
-  render: MarkdocRenderer;
-};
-
-export type ParseMarkdownResult = {
-  filePath: string;
-  output: string;
-  meta: MarkdownMeta;
-  ast: Node;
-  stuff: MarkdocTreeWalkStuff;
-  content: RenderableTreeNode;
-};
-
 const cache = new LRUCache<string, ParseMarkdownResult>({ max: 1024 });
 const cacheK = new LRUCache<string, string>({ max: 1024 });
 
@@ -132,7 +71,7 @@ export function parseMarkdown(
   }
 
   const stuff: MarkdocTreeWalkStuff = {
-    baseUrl: app.vite?.config.base ?? '/',
+    baseUrl: app.vite.resolved!.base,
     filePath,
     pagesDir: app.dirs.pages.path,
     highlight: opts.highlight!,
@@ -431,3 +370,64 @@ function slugify(str: string) {
       .toLowerCase()
   );
 }
+
+export type MarkdocTreeNodeTransformer = (data: {
+  node: RenderableTreeNode;
+  stuff: MarkdocTreeWalkStuff;
+}) => void;
+
+export type MarkdocAstTransformer = (data: {
+  ast: Node;
+  filePath: string;
+  source: string;
+}) => void;
+
+export type MarkdocContentTransformer = (data: {
+  filePath: string;
+  content: RenderableTreeNode;
+  frontmatter: MarkdownFrontmatter;
+}) => string;
+
+export type MarkdocMetaTransformer = (data: {
+  filePath: string;
+  imports: string[];
+  stuff: MarkdocTreeWalkStuff;
+  meta: MarkdownMeta;
+}) => void;
+
+export type MarkdocOutputTransformer = (data: {
+  filePath: string;
+  code: string;
+  imports: string[];
+  stuff: MarkdocTreeWalkStuff;
+  meta: MarkdownMeta;
+}) => string;
+
+export type MarkdocRenderer = (data: {
+  filePath: string;
+  content: RenderableTreeNode;
+  imports: string[];
+  stuff: MarkdocTreeWalkStuff;
+  meta: MarkdownMeta;
+}) => string;
+
+export type ParseMarkdownConfig = {
+  ignoreCache?: boolean;
+  filter: (id: string) => boolean;
+  highlight: HighlightCodeBlock;
+  transformAst: MarkdocAstTransformer[];
+  transformTreeNode: MarkdocTreeNodeTransformer[];
+  transformContent: MarkdocContentTransformer[];
+  transformMeta: MarkdocMetaTransformer[];
+  transformOutput: MarkdocOutputTransformer[];
+  render: MarkdocRenderer;
+};
+
+export type ParseMarkdownResult = {
+  filePath: string;
+  output: string;
+  meta: MarkdownMeta;
+  ast: Node;
+  stuff: MarkdocTreeWalkStuff;
+  content: RenderableTreeNode;
+};

@@ -1,4 +1,4 @@
 export * from './MarkdocSchema';
-export * from './markdownPlugin';
-export * from './parseMarkdown';
+export * from './markdown-plugin';
+export * from './parse-markdown';
 export * from './render';

@@ -3,8 +3,7 @@
 import fs from 'fs';
 import path from 'upath';
 
-import { copyDir, copyFile } from './utils/copy.js';
-import { emptyDir } from './utils/emptyDir.js';
+import { copyDir, copyFile, emptyDir } from './utils/fs.js';
 
 export class FileDirectory {
   /**

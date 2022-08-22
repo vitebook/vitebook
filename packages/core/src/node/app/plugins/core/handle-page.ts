@@ -4,17 +4,16 @@ import { type Connect, type ModuleNode, type ViteDevServer } from 'vite';
 import { matchRouteInfo, type ServerEntryModule } from '../../../../shared';
 import { virtualModuleId } from '../../alias';
 import { type App } from '../../App';
-import { readIndexHtmlFile } from './indexHtml';
+import { readIndexHtmlFile } from './index-html';
 import {
   buildDataScriptTag,
   buildServerLoadedDataMap,
   loadPageServerOutput,
-} from './serverLoader';
+} from './server-loader';
 
 export async function handlePageRequest(
   url: URL,
   app: App,
-  server: ViteDevServer,
   req: Connect.IncomingMessage,
   res: ServerResponse,
 ) {
@@ -22,14 +21,14 @@ export async function handlePageRequest(
 
   const index = readIndexHtmlFile(app);
 
-  const transformedIndex = await server.transformIndexHtml(
+  const transformedIndex = await app.vite.server!.transformIndexHtml(
     pathname,
     index,
     req.originalUrl,
   );
 
-  const { render } = (await server.ssrLoadModule(
-    app.client.entry.server,
+  const { render } = (await app.vite.server!.ssrLoadModule(
+    app.entry.server,
   )) as ServerEntryModule;
 
   const match = matchRouteInfo(url, app.pages.all);
@@ -45,7 +44,7 @@ export async function handlePageRequest(
     url,
     app,
     page,
-    server.ssrLoadModule,
+    app.vite.server!.ssrLoadModule,
   );
 
   if (redirect) {
@@ -59,8 +58,8 @@ export async function handlePageRequest(
 
   const { html: appHtml, head } = await render(url, { data: serverData });
 
-  const appFilePath = server.moduleGraph
-    .getModuleById(`/${virtualModuleId.app}`)!
+  const appFilePath = app.vite
+    .server!.moduleGraph.getModuleById(`/${virtualModuleId.app}`)!
     .importedModules.values()
     .next().value.file;
 
@@ -71,7 +70,7 @@ export async function handlePageRequest(
         (layout) => app.pages.getLayoutByIndex(layout)!.filePath,
       ),
       page.filePath,
-    ].map((file) => getStylesByFile(server, file)),
+    ].map((file) => getStylesByFile(app.vite.server!, file)),
   );
 
   // Prevent FOUC during development.
@@ -93,14 +92,14 @@ export async function handlePageRequest(
 
 // Vite doesn't expose this so we just copy the list for now
 const styleRE = /\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/;
-export async function getStylesByFile(vite: ViteDevServer, file: string) {
-  const files = await vite.moduleGraph.getModulesByFile(file);
+export async function getStylesByFile(server: ViteDevServer, file: string) {
+  const files = await server.moduleGraph.getModulesByFile(file);
   const node = Array.from(files ?? [])[0];
 
   if (!node) throw new Error(`Could not find node for ${file}`);
 
   const deps = new Set<ModuleNode>();
-  await findModuleDeps(vite, node, deps);
+  await findModuleDeps(server, node, deps);
 
   const styles: Record<string, string> = {};
 
@@ -113,7 +112,7 @@ export async function getStylesByFile(vite: ViteDevServer, file: string) {
       (query.has('svelte') && query.get('type') === 'style')
     ) {
       try {
-        const mod = await vite.ssrLoadModule(dep.url, { fixStacktrace: false });
+        const mod = await server.ssrLoadModule(dep.url);
         styles[dep.url] = mod.default;
       } catch {
         // no-op
@@ -125,7 +124,7 @@ export async function getStylesByFile(vite: ViteDevServer, file: string) {
 }
 
 export async function findModuleDeps(
-  vite: ViteDevServer,
+  server: ViteDevServer,
   node: ModuleNode,
   deps: Set<ModuleNode>,
 ) {
@@ -134,12 +133,12 @@ export async function findModuleDeps(
   async function add(node: ModuleNode) {
     if (!deps.has(node)) {
       deps.add(node);
-      await findModuleDeps(vite, node, deps);
+      await findModuleDeps(server, node, deps);
     }
   }
 
   async function addByUrl(url: string) {
-    const node = await vite.moduleGraph.getModuleByUrl(url);
+    const node = await server.moduleGraph.getModuleByUrl(url);
     if (node) await add(node);
   }
 

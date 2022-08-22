@@ -15,11 +15,10 @@ import { addTailwindFeature } from '../src/features/tailwind.js';
 import { addTypescriptFeature } from '../src/features/typescript.js';
 import { ProjectBuilder } from '../src/ProjectBuilder.js';
 import { setupPrompt } from '../src/prompts.js';
-import { getNodeMajorVersion } from '../src/utils/getNodeVersion.js';
-import { isDirEmpty } from '../src/utils/isDirEmpty.js';
+import { isDirEmpty } from '../src/utils/fs.js';
 import { toValidPackageName } from '../src/utils/pkg.js';
-import { removeTrailingSlash } from '../src/utils/removeTrailingSlash.js';
-import { toTitleCase } from '../src/utils/toTitleCase.js';
+import { removeTrailingSlash, toTitleCase } from '../src/utils/str.js';
+import { getNodeMajorVersion } from '../src/utils/version.js';
 
 const argv = minimist(process.argv.slice(2), { string: ['_'] });
 
@@ -91,19 +90,8 @@ async function main() {
   }
 
   const scripts = ['dev', 'build', 'preview'];
-  const scriptsExist = scripts.some((script) =>
-    builder.pkg.hasScriptName(script),
-  );
-  const scriptsPrefix = scriptsExist ? 'vitebook:' : '';
-  const devScript = `${scriptsPrefix}dev`;
   for (const script of scripts) {
-    builder.pkg.addScript(
-      `${scriptsPrefix}${script}`,
-      link
-        ? `node node_modules/@vitebook/core/bin/vitebook.js ${script}`
-        : `vitebook ${script}`,
-      { regexTest: new RegExp(`vitebook(\\.js)? ${script}`) },
-    );
+    builder.pkg.addScript(`${script}`, `vite ${script}`);
   }
 
   // -------------------------------------------------------------------------------------------
@@ -113,8 +101,11 @@ async function main() {
   builder.pkg.addVitebookDependency('core');
   builder.pkg.addVitebookDependency('svelte');
 
-  builder.pkg.addDependency('svelte', '^3.40.0', { dev: true });
   builder.pkg.addDependency('vite', '^3.0.0', { dev: true });
+  builder.pkg.addDependency('svelte', '^3.40.0', { dev: true });
+  builder.pkg.addDependency('@sveltejs/vite-plugin-svelte', '^1.0.0', {
+    dev: true,
+  });
 
   // switch (builder.framework) {
   //   case 'vue':
@@ -138,7 +129,12 @@ async function main() {
   // Template
   // -------------------------------------------------------------------------------------------
 
-  builder.dirs.src.template.root.copyDir('.', builder.dirs.dest.root);
+  builder.dirs.src.template.root.copyDir('./', builder.dirs.dest.root);
+
+  builder.dirs.src.template.config.copyFile(
+    `vite.svelte.config.js`,
+    builder.dirs.dest.root.resolve('vite.config.js'),
+  );
 
   // -------------------------------------------------------------------------------------------
   // Features
@@ -167,20 +163,18 @@ async function main() {
   switch (packageManager) {
     case 'yarn':
       console.log(kleur.bold('  yarn'));
-      console.log(kleur.bold(`  yarn ${devScript}`));
+      console.log(kleur.bold(`  yarn dev`));
       break;
     case 'pnpm':
       console.log(kleur.bold('  pnpm install'));
-      console.log(kleur.bold(`  pnpm ${devScript}`));
+      console.log(kleur.bold(`  pnpm dev`));
       break;
     default:
       console.log(
         kleur.bold(`  ${workspace ? 'pnpm' : packageManager} install`),
       );
       console.log(
-        kleur.bold(
-          `  ${workspace ? 'pnpm' : `${packageManager} run`} ${devScript}`,
-        ),
+        kleur.bold(`  ${workspace ? 'pnpm' : `${packageManager} run`} dev`),
       );
       break;
   }

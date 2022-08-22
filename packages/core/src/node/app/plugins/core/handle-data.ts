@@ -1,14 +1,12 @@
 import { type ServerResponse } from 'http';
-import { type ViteDevServer } from 'vite';
 
 import { matchRouteInfo, parseDataAssetURL } from '../../../../shared';
 import { type App } from '../../App';
-import { buildServerLoaderInput, runModuleServerLoader } from './serverLoader';
+import { buildServerLoaderInput, runModuleServerLoader } from './server-loader';
 
 export async function handleDataRequest(
   url: URL,
   app: App,
-  server: ViteDevServer,
   res: ServerResponse,
 ) {
   const { url: route, layoutIndex } = parseDataAssetURL(url);
@@ -29,7 +27,7 @@ export async function handleDataRequest(
     app,
     module.filePath,
     buildServerLoaderInput(route, page),
-    server.ssrLoadModule,
+    app.vite.server!.ssrLoadModule,
   );
 
   if (output.redirect) {

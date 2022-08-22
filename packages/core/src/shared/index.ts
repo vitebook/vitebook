@@ -1,7 +1,7 @@
 // ssr
 export * from './ssr';
 // polyfills
-export * from './poly/installURLPattern';
+export * from './polyfills';
 // types
 export * from './Markdown';
 export * from './Page';

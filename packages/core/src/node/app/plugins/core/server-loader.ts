@@ -15,7 +15,6 @@ import {
   type ServerPage,
   slash,
 } from '../../../../shared';
-import { logger } from '../../../utils';
 import { type App } from '../../App';
 
 export function buildDataScriptTag(
@@ -90,7 +89,7 @@ export async function loadPageServerOutput(
 
     redirect =
       output.redirect &&
-      !isLinkExternal(output.redirect, app.vite?.config.base ?? '/')
+      !isLinkExternal(output.redirect, app.vite.resolved!.base)
         ? slash(output.redirect)
         : output.redirect;
   })();
@@ -174,43 +173,40 @@ export async function runModuleServerLoader(
     }
 
     if (!isDataValid) {
-      logger.warn(
-        logger.formatWarnMsg(
-          [
-            'Received invalid data from loader (expected object).\n',
-            `${kleur.bold('File Path:')} ${filePath}`,
-            `${kleur.bold('Data Type:')} ${typeof output.data}`,
-          ].join('\n'),
-        ),
+      app.logger.warn(
+        'Received invalid data from loader (expected object).',
+        [
+          `\n${kleur.bold('File Path:')} ${filePath}`,
+          `${kleur.bold('Data Type:')} ${typeof output.data}`,
+        ].join('\n'),
+        '\n',
       );
 
       output.data = {};
     }
 
     if (buildCacheKey && !isFunction(buildCacheKey)) {
-      logger.warn(
-        logger.formatWarnMsg(
-          [
-            'Received invalid cache builder from loader (expected function).\n',
-            `${kleur.bold('File Path:')} ${filePath}`,
-            `${kleur.bold('Cache Type:')} ${typeof buildCacheKey}`,
-          ].join('\n'),
-        ),
+      app.logger.warn(
+        'Received invalid cache builder from loader (expected function).',
+        [
+          `\n${kleur.bold('File Path:')} ${filePath}`,
+          `${kleur.bold('Cache Type:')} ${typeof buildCacheKey}`,
+        ].join('\n'),
+        '\n',
       );
     }
 
     return output;
-  } catch (e) {
+  } catch (error) {
     // TODO: handle this with error boundaries.
-    logger.error(
-      logger.formatErrorMsg(
-        [
-          'Error was thrown by data loader.\n',
-          `${kleur.bold('File Path:')} ${filePath}`,
-          `${kleur.bold('Input:')} ${input}`,
-        ].join('\n'),
-      ),
-      `\n${e}`,
+    app.logger.error(
+      'Error was thrown by data loader.',
+      [
+        `\n${kleur.bold('File Path:')} ${filePath}`,
+        `${kleur.bold('Input:')} ${input}`,
+      ].join('\n'),
+      '\n',
+      error,
     );
   }
 

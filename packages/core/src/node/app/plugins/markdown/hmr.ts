@@ -3,7 +3,7 @@ import { type ViteDevServer } from 'vite';
 import { normalizePath } from '../../../utils';
 import { Pages } from '../pages';
 import { type MarkdocSchema } from './MarkdocSchema';
-import { clearMarkdownCache } from './parseMarkdown';
+import { clearMarkdownCache } from './parse-markdown';
 
 export type MarkdownHMRConfig = {
   pages: Pages;

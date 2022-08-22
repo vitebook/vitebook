@@ -5,7 +5,7 @@ import { type ViteDevServer } from 'vite';
 import { normalizePath } from '../../../utils';
 import { virtualModuleRequestPath } from '../../alias';
 import type { App } from '../../App';
-import { clearServerLoaderCache } from '../core/serverLoader';
+import { clearServerLoaderCache } from '../core/server-loader';
 import { clearMarkdownCache } from '../markdown';
 
 export type PagesHMRConfig = {

@@ -45,10 +45,10 @@
     "watch:types": "node ../../.scripts/run-on-change.js --glob=\"src/**/*.ts\" --script=build:types"
   },
   "dependencies": {
-    "@sveltejs/vite-plugin-svelte": "^1.0.0",
     "magic-string": "^0.25.9"
   },
   "peerDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.0.0",
     "@vitebook/core": "0.200.3",
     "svelte": "^3.40.0"
   },

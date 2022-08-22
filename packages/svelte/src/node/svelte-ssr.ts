@@ -1,16 +1,19 @@
-import type { App, Plugin } from '@vitebook/core/node';
+import type { App, VitebookPlugin } from '@vitebook/core/node';
 import MagicString from 'magic-string';
 
 const SVELTE_FILE_RE = /\.svelte($|\/)/;
 
-export function svelteSSRPlugin(): Plugin {
+export function svelteSSRPlugin(): VitebookPlugin {
   let app: App;
 
   return {
     name: '@vitebook/ssr',
     enforce: 'post',
-    vitebookInit(_app) {
-      app = _app;
+    vitebook: {
+      enforce: 'post',
+      configureApp(_app) {
+        app = _app;
+      },
     },
     transform(code, id, { ssr } = {}) {
       if (

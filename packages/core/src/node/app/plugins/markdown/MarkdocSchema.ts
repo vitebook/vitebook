@@ -44,13 +44,10 @@ export class MarkdocSchema {
 
   filter!: (id: string) => boolean;
 
-  async init(config: MarkdocSchemaConfig) {
+  async configure(config: MarkdocSchemaConfig) {
     this.config = config;
-
     config.exclude.push(/\/_/, /@layout/);
     this.filter = createFilter(config.include, config.exclude);
-
-    await this.discover();
   }
 
   async discover() {
@@ -83,11 +80,7 @@ export class MarkdocSchema {
       )}`;
 
       logger.warn(
-        logger.formatWarnMsg(
-          `invalid markdown node name [${kleur.bold(
-            name,
-          )}]. \n\n${validValues}`,
-        ),
+        `Invalid markdown node name [${kleur.bold(name)}]. \n\n${validValues}`,
       );
       return;
     }

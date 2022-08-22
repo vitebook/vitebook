@@ -1,16 +1,14 @@
-import { createFilter } from '@rollup/pluginutils';
 import { createHash } from 'crypto';
 import fs from 'fs';
 import kleur from 'kleur';
 import ora from 'ora';
-import type { OutputAsset, OutputChunk, RollupOutput } from 'rollup';
+import type { OutputAsset, OutputBundle, OutputChunk } from 'rollup';
 import path from 'upath';
 
 import {
   cleanRoutePath,
   DATA_ASSET_BASE_URL,
   escapeHTML,
-  isFunction,
   isLinkExternal,
   isString,
   isUndefined,
@@ -23,40 +21,40 @@ import {
   type ServerPage,
   slash,
 } from '../../../shared';
-import { ensureFile } from '../../utils';
-import { logger, LoggerIcon } from '../../utils/logger';
+import { ensureFile, rimraf } from '../../utils';
+import { LoggerIcon } from '../../utils/logger';
 import type { App } from '../App';
-import type {
-  CustomRoutesLoggerInput,
-  ResolvedSitemapConfig,
-  SitemapURL,
-} from '../AppConfig';
-import { installFetch } from '../installFetch';
 import {
   buildDataScriptTag,
   buildServerLoadedDataMap,
   loadPageServerOutput,
   readIndexHtmlFile,
 } from '../plugins/core';
-import { bundle, getAppBundleEntries } from './bundle';
+import { installFetch } from '../polyfills';
+import { resolvePageImports } from './chunks';
+import { log404, logRoutesList, logRoutesTree } from './log';
+import { buildSitemap } from './sitemap';
 
-export async function build(app: App): Promise<void> {
+export async function build(
+  app: App,
+  clientBundle: OutputBundle,
+): Promise<void> {
   installFetch();
 
-  logger.info(kleur.bold(kleur.cyan(`\nvitebook@${app.version}\n`)));
+  app.logger.info(kleur.bold(`vitebook@${app.version}`));
 
   if (app.pages.size === 0) {
-    logger.info(kleur.bold(`❓ No pages were resolved\n`));
+    console.log(kleur.bold(`❓ No pages were resolved`));
     return;
   }
 
   const startTime = Date.now();
   const spinner = ora();
 
-  const baseUrl = app.vite?.config.base ?? '/';
+  const baseUrl = app.vite.resolved!.base;
   const pages = app.pages.all;
 
-  const appEntries = getAppBundleEntries(app);
+  const appEntries = app.entries();
   const appEntryFilenames = Object.keys(appEntries);
 
   const hrefRE = /href="(.*?)"/g;
@@ -67,33 +65,27 @@ export async function build(app: App): Promise<void> {
   const serverOutput: Map<string, string | ServerLoadedOutputMap> = new Map();
   const outputFiles: [filePath: string, content: string][] = [];
 
+  const chunks: OutputChunk[] = [];
+  const assets: OutputAsset[] = [];
+
+  for (const value of Object.values(clientBundle)) {
+    if (value.type === 'asset') {
+      assets.push(value);
+    } else {
+      chunks.push(value);
+    }
+  }
+
   try {
-    // -------------------------------------------------------------------------------------------
-    // BUNDLE
-    // -------------------------------------------------------------------------------------------
+    const ENTRY_CHUNK = chunks.find(
+      (chunk) => chunk.isEntry && /^entry-/.test(chunk.fileName),
+    )!;
 
-    const bundleStartTime = Date.now();
-    spinner.start(kleur.bold('Bundling application...'));
+    const APP_CHUNK = chunks.find(
+      (chunk) => chunk.isEntry && /^app-/.test(chunk.fileName),
+    )!;
 
-    const [clientBundle] = await bundle(app);
-
-    const ENTRY_CHUNK = clientBundle.output.find(
-      (chunk) =>
-        chunk.type === 'chunk' &&
-        chunk.isEntry &&
-        /^assets\/entry\./.test(chunk.fileName),
-    ) as OutputChunk;
-
-    const APP_CHUNK = clientBundle.output.find(
-      (chunk) =>
-        chunk.type === 'chunk' &&
-        chunk.isEntry &&
-        /^assets\/app\./.test(chunk.fileName),
-    ) as OutputChunk;
-
-    const CSS_CHUNK = clientBundle.output.find(
-      (chunk) => chunk.type === 'asset' && chunk.fileName.endsWith('.css'),
-    ) as OutputAsset;
+    const CSS_CHUNK = assets.find((asset) => asset.fileName.endsWith('.css'))!;
 
     const HTML_TEMPLATE = readIndexHtmlFile(app, { dev: false });
 
@@ -103,14 +95,6 @@ export async function build(app: App): Promise<void> {
         'utf-8',
       ),
     );
-
-    const bundleEndTime = ((Date.now() - bundleStartTime) / 1000).toFixed(2);
-    spinner.stopAndPersist({
-      symbol: LoggerIcon.Success,
-      text: kleur.bold(
-        `Bundled application in ${kleur.underline(`${bundleEndTime}s`)}`,
-      ),
-    });
 
     // -------------------------------------------------------------------------------------------
     // LOAD DATA
@@ -135,7 +119,7 @@ export async function build(app: App): Promise<void> {
             'server',
             `${appEntryFilenames
               .find((name) => appEntries[name] === filePath)
-              ?.replace(specialCharsRE, '_')}.cjs`,
+              ?.replace(specialCharsRE, '_')}.js`,
           );
 
           return require(path);
@@ -178,10 +162,10 @@ export async function build(app: App): Promise<void> {
 
     spinner.start(kleur.bold(`Rendering ${app.pages.size} pages...`));
 
-    const serverEntryPath = app.dirs.out.resolve('server', 'entry.cjs');
+    const serverEntryPath = app.dirs.out.resolve('server', 'entry.js');
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { render } = require(serverEntryPath) as ServerEntryModule;
+    const { render } = (await import(serverEntryPath)) as ServerEntryModule;
 
     const validPathname = /(\/|\.html)$/;
 
@@ -230,7 +214,7 @@ export async function build(app: App): Promise<void> {
       const pageImports = resolvePageImports(
         app,
         page,
-        clientBundle,
+        chunks,
         ENTRY_CHUNK,
         APP_CHUNK,
       );
@@ -342,12 +326,10 @@ export async function build(app: App): Promise<void> {
         const page = app.pages.all[index];
         await buildPage(url, page);
       } else {
-        logger.warn(
-          logger.formatWarnMsg(
-            `${kleur.bold(
-              '(404)',
-            )} No matching route for entry ${kleur.underline(entry)}.\n`,
-          ),
+        app.logger.warn(
+          `${kleur.bold('(404)')} No matching route for entry ${kleur.underline(
+            entry,
+          )}.`,
         );
       }
     }
@@ -409,13 +391,9 @@ export async function build(app: App): Promise<void> {
     // CLEAN + LOG
     // -------------------------------------------------------------------------------------------
 
-    if (!app.env.isDebug) {
-      await fs.promises.rm(app.dirs.out.resolve('server'), {
-        recursive: true,
-        force: true,
-      });
-
-      await fs.promises.unlink(app.dirs.out.resolve('ssr-manifest.json'));
+    if (!app.config.isDebug) {
+      rimraf(app.dirs.out.resolve('server'));
+      rimraf(app.dirs.out.resolve('ssr-manifest.json'));
     }
   } catch (e) {
     spinner.stopAndPersist({
@@ -457,19 +435,19 @@ export async function build(app: App): Promise<void> {
     Infinity: '⚰️',
   };
 
-  logger.success(
+  app.logger.success(
     kleur.bold(
-      `${LoggerIcon.Success} Build complete in ${kleur.bold(
-        kleur.underline(`${endTime}s`),
-      )} ${speedIcon[Object.keys(speedIcon).find((t) => endTime <= t)!]}`,
+      `Build complete in ${kleur.bold(kleur.underline(`${endTime}s`))} ${
+        speedIcon[Object.keys(speedIcon).find((t) => endTime <= t)!]
+      }`,
     ),
   );
 
   const pkgManager = guessPackageManager(app);
   const previewCommand = await findPreviewScriptName(app);
-  logger.success(
+  console.log(
     kleur.bold(
-      `\n⚡ ${
+      `⚡ ${
         previewCommand
           ? `Run \`${
               pkgManager === 'npm' ? 'npm run' : pkgManager
@@ -480,211 +458,9 @@ export async function build(app: App): Promise<void> {
   );
 }
 
-function log404(
-  link: string,
-  page: ServerPage,
-  message = 'Found link matching no page.',
-) {
-  logger.warn(
-    logger.formatWarnMsg(
-      [
-        `${kleur.bold('(404)')} ${message}`,
-        '',
-        `${kleur.bold('Link:')} ${link}`,
-        `${kleur.bold('File Path:')} ${page.rootPath}`,
-      ].join('\n'),
-    ),
-  );
-}
-
-export function logRoutesList({
-  level,
-  links,
-  notFoundLinks,
-  redirects,
-}: CustomRoutesLoggerInput) {
-  const logs: string[] = [];
-
-  if (level === 'info') {
-    logs.push('', kleur.bold(kleur.underline('ROUTES')), '');
-    for (const link of links.keys()) {
-      logs.push(`- ${link}`);
-    }
-  }
-
-  if (/(warn|error)/.test(level) && Object.keys(redirects).length > 0) {
-    logs.push('', kleur.bold(kleur.underline('REDIRECTS')), '');
-    for (const link of Object.keys(redirects)) {
-      logs.push(kleur.yellow(`- ${link} -> ${redirects[link]}`));
-    }
-  }
-
-  if (level === 'error' && notFoundLinks.size > 0) {
-    logs.push('', kleur.bold(kleur.underline('NOT FOUND')), '');
-    for (const link of notFoundLinks) {
-      logs.push(kleur.red(`- ${link}`));
-    }
-  }
-
-  console.log(logs.join('\n'));
-  console.log();
-}
-
-export function logRoutesTree({
-  level,
-  links,
-  redirects,
-  notFoundLinks,
-}: CustomRoutesLoggerInput) {
-  type TreeDir = {
-    name: string;
-    path: TreeDir[];
-    file: Set<{ name: string; link: string }>;
-  };
-
-  const newDir = (name: string): TreeDir => ({
-    name,
-    path: [],
-    file: new Set(),
-  });
-
-  const tree = newDir('.');
-
-  const warnOnly = level === 'warn';
-  const errorOnly = level === 'error';
-  const redirectLinks = new Set(Object.keys(redirects));
-
-  const filteredLinks = errorOnly
-    ? notFoundLinks
-    : warnOnly
-    ? new Set([...notFoundLinks, ...redirectLinks])
-    : new Set([...notFoundLinks, ...links.keys()]);
-
-  for (const link of filteredLinks) {
-    const segments = noslash(link).split('/');
-
-    let current = tree;
-    for (const segment of segments.slice(0, -1)) {
-      let nextDir = current.path.find((dir) => dir.name === segment);
-
-      if (!nextDir) {
-        nextDir = newDir(segment);
-        current.path.push(nextDir);
-      }
-
-      current = nextDir;
-    }
-
-    const name = link.endsWith('/') ? 'index.html' : path.basename(link);
-    current.file.add({ name, link });
-  }
-
-  const PRINT_SYMBOLS = {
-    BRANCH: '├── ',
-    EMPTY: '',
-    INDENT: '    ',
-    LAST_BRANCH: '└── ',
-    VERTICAL: '│   ',
-  };
-
-  const print = (tree: TreeDir, depth: number, precedingSymbols: string) => {
-    const lines: string[] = [];
-
-    const files = Array.from(tree.file).sort((a, b) => {
-      if (a.name === 'index.html') return -1;
-      if (b.name === 'index.html') return 1;
-      return a.name.localeCompare(b.name, undefined, { numeric: true });
-    });
-
-    for (const [index, file] of files.entries()) {
-      const isLast = index === files.length - 1 && tree.path.length === 0;
-      const line = [precedingSymbols];
-      line.push(isLast ? PRINT_SYMBOLS.LAST_BRANCH : PRINT_SYMBOLS.BRANCH);
-
-      if (redirectLinks.has(file.link)) {
-        line.push(
-          `${kleur.yellow(file.name)} ${kleur.yellow(kleur.bold('(307)'))} -> ${
-            redirects[file.link]
-          }`,
-        );
-      } else if (notFoundLinks.has(file.link)) {
-        line.push(`${kleur.red(file.name)} ${kleur.red(kleur.bold('(404)'))}`);
-      } else {
-        line.push(file.name);
-      }
-
-      lines.push(line.join(''));
-    }
-
-    for (const [index, child] of tree.path.entries()) {
-      const line = [precedingSymbols];
-      const isLast = index === tree.path.length - 1 && child.path.length === 0;
-      line.push(isLast ? PRINT_SYMBOLS.LAST_BRANCH : PRINT_SYMBOLS.BRANCH);
-      line.push(kleur.bold(kleur.cyan(child.name)));
-      lines.push(line.join(''));
-      const dirLines = print(
-        child,
-        depth + 1,
-        precedingSymbols +
-          (depth >= 1
-            ? isLast
-              ? PRINT_SYMBOLS.INDENT
-              : PRINT_SYMBOLS.VERTICAL
-            : PRINT_SYMBOLS.EMPTY),
-      );
-
-      lines.push(...dirLines);
-    }
-
-    return lines;
-  };
-
-  if (tree.path.length > 0) {
-    if (level === 'info') {
-      console.log(`\n${kleur.bold(kleur.underline('ROUTES'))}\n`);
-    }
-
-    console.log(kleur.bold(kleur.cyan('.')));
-    console.log(print(tree, 1, '').join('\n'));
-    console.log();
-  }
-}
-
-function guessPackageManager(app: App): 'npm' | 'yarn' | 'pnpm' {
-  if (fs.existsSync(app.dirs.root.resolve('pnpm-lock.yaml'))) {
-    return 'pnpm';
-  }
-
-  if (fs.existsSync(app.dirs.root.resolve('yarn.lock'))) {
-    return 'yarn';
-  }
-
-  return 'npm';
-}
-
-async function findPreviewScriptName(app: App): Promise<string | undefined> {
-  try {
-    const packageJson = app.dirs.root.resolve('package.json');
-    if (fs.existsSync(packageJson)) {
-      const content = fs.readFileSync(packageJson, 'utf-8');
-      const json = JSON.parse(content);
-
-      const script = Object.keys(json.scripts ?? {}).find((script) => {
-        return json.scripts[script].includes('vitebook preview');
-      });
-
-      return script;
-    }
-  } catch (e) {
-    //
-  }
-
-  return undefined;
-}
-
 function createLinkTag(app: App, rel: string, fileName?: string) {
   if (!fileName) return '';
-  const baseUrl = noendslash(app.vite?.config.base ?? '/');
+  const baseUrl = noendslash(app.vite.resolved!.base);
   const href = `${baseUrl}${slash(fileName)}`;
   return `<link rel="${rel}" href="${href}">`;
 }
@@ -692,7 +468,7 @@ function createLinkTag(app: App, rel: string, fileName?: string) {
 function createPreloadTag(app: App, fileName?: string) {
   if (!fileName) return '';
 
-  const baseUrl = noendslash(app.vite?.config.base ?? '/');
+  const baseUrl = noendslash(app.vite.resolved!.base);
   const href = `${baseUrl}${slash(fileName)}`;
 
   if (fileName.endsWith('.js')) {
@@ -729,149 +505,34 @@ function resolveImportsFromManifest(
   return Array.from(imports);
 }
 
-function resolvePageImports(
-  app: App,
-  page: ServerPage,
-  bundle: RollupOutput,
-  entryChunk: OutputChunk,
-  appChunk: OutputChunk,
-) {
-  const pageChunk = bundle.output.find(
-    (chunk) => chunk.type === 'chunk' && chunk.facadeModuleId === page.filePath,
-  ) as OutputChunk;
+function guessPackageManager(app: App): 'npm' | 'yarn' | 'pnpm' {
+  if (fs.existsSync(app.dirs.root.resolve('pnpm-lock.yaml'))) {
+    return 'pnpm';
+  }
 
-  const layoutChunks = resolvePageLayoutChunks(app, page, bundle);
+  if (fs.existsSync(app.dirs.root.resolve('yarn.lock'))) {
+    return 'yarn';
+  }
 
-  return {
-    imports: Array.from(
-      new Set([
-        ...entryChunk.imports.filter((i) => i !== appChunk.fileName),
-        ...appChunk.imports,
-        ...layoutChunks.map((chunk) => chunk.imports).flat(),
-        appChunk.fileName,
-        ...layoutChunks.map((chunk) => chunk.fileName),
-        ...(pageChunk?.imports ?? []),
-        pageChunk.fileName,
-      ]),
-    ),
-    dynamicImports: Array.from(
-      new Set([
-        ...[entryChunk, appChunk]
-          .map((chunk) =>
-            chunk.dynamicImports.filter(
-              (fileName) => !isPageChunk(fileName, bundle),
-            ),
-          )
-          .flat(),
-        ...layoutChunks.map((chunk) => chunk.dynamicImports).flat(),
-        ...(pageChunk?.dynamicImports ?? []),
-      ]),
-    ),
-  };
+  return 'npm';
 }
 
-function resolveChunkByFilePath(filePath: string, bundle: RollupOutput) {
-  return bundle.output.find(
-    (chunk) => chunk.type === 'chunk' && chunk.facadeModuleId === filePath,
-  ) as OutputChunk;
-}
+async function findPreviewScriptName(app: App): Promise<string | undefined> {
+  try {
+    const packageJson = app.dirs.root.resolve('package.json');
+    if (fs.existsSync(packageJson)) {
+      const content = fs.readFileSync(packageJson, 'utf-8');
+      const json = JSON.parse(content);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function resolvePageChunk(page: ServerPage, bundle: RollupOutput) {
-  return resolveChunkByFilePath(page.filePath, bundle);
-}
+      const script = Object.keys(json.scripts ?? {}).find((script) => {
+        return json.scripts[script].includes('vite preview');
+      });
 
-function resolvePageLayoutChunks(
-  app: App,
-  page: ServerPage,
-  bundle: RollupOutput,
-) {
-  return page.layouts
-    .map((i) => app.pages.getLayoutByIndex(i))
-    .map((layout) => resolveChunkByFilePath(layout!.filePath, bundle))
-    .filter(Boolean) as OutputChunk[];
-}
+      return script;
+    }
+  } catch (e) {
+    //
+  }
 
-const cache = new Map();
-function isPageChunk(fileName: string, bundle: RollupOutput) {
-  if (cache.has(fileName)) return cache.get(fileName);
-
-  const is = bundle.output.find(
-    (chunk) => chunk.type === 'chunk' && chunk.fileName === fileName,
-  ) as OutputChunk;
-
-  cache.set(fileName, !!is);
-  return is;
-}
-
-async function buildSitemap(
-  app: App,
-  seenHref: Map<string, ServerPage>,
-  config: ResolvedSitemapConfig,
-) {
-  const baseUrl = config.baseUrl;
-
-  if (!baseUrl) return;
-
-  const filter = createFilter(config.include, config.exclude);
-
-  const changefreq = isFunction(config.changefreq)
-    ? config.changefreq
-    : () => config.changefreq;
-
-  const priority = isFunction(config.priority)
-    ? config.priority
-    : () => config.priority;
-
-  const lastmodCache = new Map<string, string>();
-  const lastmod = async (pathname: string) => {
-    if (lastmodCache.has(pathname)) return lastmodCache.get(pathname);
-    const filePath = seenHref.get(pathname)!.filePath;
-    const mtime = (await fs.promises.stat(filePath)).mtime;
-    const date = mtime.toISOString().split('T')[0];
-    lastmodCache.set(pathname, date);
-    return date;
-  };
-
-  const urls = [
-    ...(await Promise.all(
-      Array.from(seenHref.keys())
-        .filter(filter)
-        .map(async (pathname) => ({
-          path: pathname,
-          lastmod: await lastmod(pathname),
-          changefreq: await changefreq(new URL(pathname, baseUrl)),
-          priority: await priority(new URL(pathname, baseUrl)),
-        }))
-        // @ts-expect-error - .
-        .map(async (url) => buildSitemapURL(await url, baseUrl)),
-    )),
-    ...config.entries.map((url) => buildSitemapURL(url, baseUrl)),
-  ].join('\n  ');
-
-  const content = `<?xml version="1.0" encoding="UTF-8" ?>
-<urlset
-  xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:xhtml="https://www.w3.org/1999/xhtml"
-  xmlns:mobile="https://www.google.com/schemas/sitemap-mobile/1.0"
-  xmlns:news="https://www.google.com/schemas/sitemap-news/0.9"
-  xmlns:image="https://www.google.com/schemas/sitemap-image/1.1"
-  xmlns:video="https://www.google.com/schemas/sitemap-video/1.1"
->
-  ${urls}
-</urlset>`;
-
-  await app.dirs.out.write(config.filename, content);
-}
-
-function buildSitemapURL(url: SitemapURL, baseUrl = '/') {
-  const lastmod = url.lastmod
-    ? `\n    <lastmod>${url.lastmod ?? ''}</lastmod>`
-    : '';
-
-  return `<url>
-    <loc>${baseUrl}${slash(url.path)}</loc>${lastmod}
-    <changefreq>${url.changefreq ?? 'weekly'}</changefreq>
-    <priority>${url.priority ?? 0.7}</priority>
-  </url>`;
+  return undefined;
 }

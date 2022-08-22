@@ -16,11 +16,7 @@
   "bugs": {
     "url": "https://github.com/vitebook/vitebook/issues"
   },
-  "bin": {
-    "vitebook": "bin/vitebook.js"
-  },
   "files": [
-    "bin/",
     "dist/",
     "index.d.ts",
     "globals.d.ts",
@@ -49,7 +45,6 @@
     "@markdoc/markdoc": "^0.1.2",
     "@rollup/pluginutils": "^4.1.1",
     "@types/lru-cache": "^5.1.1",
-    "cac": "^6.7.3",
     "esbuild": "^0.12.24",
     "get-folder-size": "^3.1.0",
     "globby": "^13.1.1",

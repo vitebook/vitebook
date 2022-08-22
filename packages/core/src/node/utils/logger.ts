@@ -17,62 +17,82 @@ export const LoggerIcon = Object.freeze({
   Error: '🚨',
 });
 
-export const formatInfoMsg = (message: string): string =>
-  LoggerColor.Info(`\n${LoggerIcon.Info} ${message}\n`);
+const formatInfoTitle = (title: string): string =>
+  LoggerColor.Info(`\n${LoggerIcon.Info}  ${title}\n`);
 
-export const formatTipMsg = (message: string): string =>
-  LoggerColor.Tip(`\n${LoggerIcon.Tip} ${message}\n`);
+const formatTipTitle = (title: string): string =>
+  LoggerColor.Tip(`\n${LoggerIcon.Tip} ${title}\n`);
 
-export const formatSuccessMsg = (message: string): string =>
-  LoggerColor.Success(`\n${LoggerIcon.Success} ${message}\n`);
+const formatSuccessTitle = (title: string): string =>
+  LoggerColor.Success(`\n${LoggerIcon.Success} ${title}\n`);
 
-export const formatWarnMsg = (message: string): string =>
-  LoggerColor.Warn(`\n${LoggerIcon.Warn} ${message}\n`);
+const formatWarnTitle = (title: string): string =>
+  LoggerColor.Warn(`\n${LoggerIcon.Warn} ${title}\n`);
 
-export const formatErrorMsg = (message: string): string =>
-  LoggerColor.Error(`\n${LoggerIcon.Error} ${message}\n`);
+const formatErrorTitle = (title: string): string =>
+  LoggerColor.Error(`\n${LoggerIcon.Error} ${title}\n`);
 
 export const createError = (message?: string | undefined): Error => {
-  return new Error(formatErrorMsg(message ?? ''));
+  return new Error(formatErrorTitle(message ?? ''));
 };
 
-export const withSpinner =
-  (message: string) =>
-  async <T>(target: () => Promise<T>): Promise<T> => {
-    if (process.env.DEBUG) {
-      return target();
-    }
-
-    const spinner = ora();
-
-    try {
-      spinner.start(message);
-      const result = await target();
-      spinner.stopAndPersist({
-        symbol: '',
-        text: formatSuccessMsg(message),
-      });
-      return result;
-    } catch (e) {
-      spinner.stopAndPersist({
-        symbol: '',
-        text: formatErrorMsg(message),
-      });
-      throw e;
-    }
-  };
-
 export const logger = {
-  warn: console.warn,
-  tip: console.log,
-  success: console.log,
-  info: console.log,
-  error: console.error,
-  createError,
-  formatWarnMsg,
-  formatTipMsg,
-  formatSuccessMsg,
-  formatInfoMsg,
-  formatErrorMsg,
-  withSpinner,
+  info: (title: string, ...args: unknown[]) => {
+    console.info(formatInfoTitle(title), ...args);
+  },
+  tip: (title: string, ...args: unknown[]) => {
+    console.info(formatTipTitle(title), ...args);
+  },
+  success: (title: string, ...args: unknown[]) => {
+    console.info(formatSuccessTitle(title), ...args);
+  },
+  warn: (title: string, ...args: unknown[]) => {
+    console.warn(formatWarnTitle(title), ...args);
+  },
+  error: (title: string, ...args: unknown[]) => {
+    console.error(
+      formatErrorTitle(title),
+      args.length > 0 ? '\n' : '',
+      ...args,
+    );
+  },
+  withSpinner:
+    (
+      pendingTitle: string,
+      options: {
+        successTitle?: string;
+        errorTitle?: string;
+        timed?: boolean;
+      } = {},
+    ) =>
+    async <T>(target: () => Promise<T>): Promise<T> => {
+      const spinner = ora();
+      const successTitle = options.successTitle ?? pendingTitle;
+      const errorTitle = options.errorTitle ?? pendingTitle;
+
+      try {
+        spinner.start(kleur.bold(`${pendingTitle}...`));
+
+        const startTime = Date.now();
+        const result = await target();
+        const endTime = ((Date.now() - startTime) / 1000).toFixed(2);
+
+        spinner.stopAndPersist({
+          symbol: '',
+          text: formatSuccessTitle(
+            options.timed
+              ? `${successTitle} in ${kleur.underline(`${endTime}s`)}`
+              : successTitle,
+          ),
+        });
+
+        return result;
+      } catch (e) {
+        spinner.stopAndPersist({
+          symbol: '',
+          text: formatErrorTitle(errorTitle),
+        });
+        throw e;
+      }
+    },
 };

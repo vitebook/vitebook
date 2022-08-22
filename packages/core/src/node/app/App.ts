@@ -1,36 +1,58 @@
-import type { loadConfigFromFile, PreviewServer, ViteDevServer } from 'vite';
+import type {
+  ConfigEnv as ViteConfigEnv,
+  ResolvedConfig as ViteResolvedConfig,
+  UserConfig as ViteUserConfig,
+  ViteDevServer,
+} from 'vite';
 
+import type { logger } from '../utils';
 import type { loadModule } from '../utils/module';
 import type { ResolvedAppConfig } from './AppConfig';
 import type { DisposalBin } from './create/DisposalBin';
-import type { ClientPlugin } from './plugins/ClientPlugin';
 import type { MarkdocSchema } from './plugins/markdown';
 import type { Pages } from './plugins/pages';
-import type { FilteredPlugins } from './plugins/Plugin';
 
-export type App = {
-  /** Plugin extensions. */
-  [x: string]: unknown;
+export type AppDetails = {
   version: string;
   dirs: AppDirs;
-  env: AppEnv;
-  client: ClientPlugin;
+  entry: {
+    client: string;
+    server: string;
+  };
+  vite: {
+    env: ViteConfigEnv;
+  };
   config: ResolvedAppConfig;
-  plugins: FilteredPlugins;
+};
+
+export type AppFactory = AppDetails & {
+  create: () => Promise<App>;
+};
+
+export type App = AppDetails & {
+  /** Plugin extensions. */
+  [x: string]: unknown;
+  entries: () => Record<string, string>;
   context: Map<string, unknown>;
   pages: Pages;
   markdoc: MarkdocSchema;
   disposal: DisposalBin;
-  vite: Awaited<ReturnType<typeof loadConfigFromFile>>;
-  dev: () => Promise<ViteDevServer>;
-  build: () => Promise<void>;
-  preview: () => Promise<PreviewServer>;
-  close: () => Promise<void>;
+  logger: typeof logger;
+  vite: {
+    env: ViteConfigEnv;
+    user: ViteUserConfig;
+    /** Available after core plugin `configResolved` hook runs. */
+    resolved?: ViteResolvedConfig;
+    /** Available during dev mode after core plugin `configureServer` hook runs. */
+    server?: ViteDevServer;
+  };
+  destroy: () => void;
 };
 
 export type AppDirs = {
   cwd: AppDirUtils;
   root: AppDirUtils;
+  workspace: AppDirUtils;
   pages: AppDirUtils;
   tmp: AppDirUtils;
   out: AppDirUtils;
@@ -50,10 +72,6 @@ export type AppDirUtils = {
   relative: (...path: string[]) => string;
   /** Write contents to file relative to current directory. */
   write: (filePath: string, data: string) => void;
-};
-
-export type AppEnv = {
-  isDebug: boolean;
 };
 
 export { DisposalBin };
