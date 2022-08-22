@@ -6,13 +6,35 @@ import {
   loadModule as loadModuleUtil,
   LoadModuleOptions,
 } from '../../utils/module';
-import type { AppDirs, AppDirUtils } from '../App';
-import type { ResolvedAppConfig } from '../AppConfig';
+import type { AppDirectories, Directory } from '../App';
+import type { ResolvedAppConfig } from '../config';
 
-export const createAppDirUtil = (
-  baseDir: string,
-  tmpDir?: string,
-): AppDirUtils => {
+export function createAppDirectories(
+  root: string,
+  config: ResolvedAppConfig,
+): AppDirectories {
+  const tmpDir = createDirectory(process.cwd(), 'node_modules/.vitebook/temp');
+  const cwdDir = createDirectory(process.cwd(), tmpDir.path);
+  const rootDir = createDirectory(root, tmpDir.path);
+  const workspaceDir = createDirectory(
+    searchForWorkspaceRoot(cwdDir.path, rootDir.path),
+    tmpDir.path,
+  );
+  const routesDir = createDirectory(config.dirs.routes, tmpDir.path);
+  const outDir = createDirectory(config.dirs.output, tmpDir.path);
+  const publicDir = createDirectory(config.dirs.public, tmpDir.path);
+  return {
+    tmp: tmpDir,
+    cwd: cwdDir,
+    workspace: workspaceDir,
+    root: rootDir,
+    routes: routesDir,
+    out: outDir,
+    public: publicDir,
+  };
+}
+
+function createDirectory(baseDir: string, tmpDir?: string): Directory {
   const resolve = (...args: string[]) =>
     args.length === 1 && path.isAbsolute(args[0])
       ? args[0]
@@ -43,29 +65,4 @@ export const createAppDirUtil = (
     write,
     loadModule,
   };
-};
-
-export const createAppDirs = (
-  root: string,
-  config: ResolvedAppConfig,
-): AppDirs => {
-  const tmpDir = createAppDirUtil(process.cwd(), 'node_modules/.vitebook/temp');
-  const cwdDir = createAppDirUtil(process.cwd(), tmpDir.path);
-  const rootDir = createAppDirUtil(root, tmpDir.path);
-  const workspaceDir = createAppDirUtil(
-    searchForWorkspaceRoot(cwdDir.path, rootDir.path),
-    tmpDir.path,
-  );
-  const pagesDir = createAppDirUtil(config.dirs.pages, tmpDir.path);
-  const outDir = createAppDirUtil(config.dirs.output, tmpDir.path);
-  const publicDir = createAppDirUtil(config.dirs.public, tmpDir.path);
-  return {
-    tmp: tmpDir,
-    cwd: cwdDir,
-    workspace: workspaceDir,
-    root: rootDir,
-    pages: pagesDir,
-    out: outDir,
-    public: publicDir,
-  };
-};
+}

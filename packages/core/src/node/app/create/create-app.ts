@@ -15,17 +15,17 @@ import { logger, resolveRelativePath } from '../../utils';
 import type { App, AppDetails, AppFactory } from '../App';
 import type {
   AppConfig,
-  ResolvedAppClientConfig,
   ResolvedAppConfig,
-  ResolvedRouteConfig,
+  ResolvedClientConfig,
+  ResolvedMarkdownConfig,
+  ResolvedRoutesConfig,
   ResolvedSitemapConfig,
-} from '../AppConfig';
-import { type ResolvedMarkdownPluginConfig } from '../plugins/markdown';
+} from '../config';
 import { MarkdocSchema } from '../plugins/markdown/MarkdocSchema';
-import { Pages, type ResolvedPagesPluginConfig } from '../plugins/pages';
 import type { VitebookPlugin } from '../plugins/Plugin';
+import { Routes } from '../plugins/routes';
 import { getAppVersion } from './app-utils';
-import { createAppDirs } from './create-app-dirs';
+import { createAppDirectories } from './create-app-dirs';
 import { DisposalBin } from './DisposalBin';
 
 export const createAppFactory = async (
@@ -41,7 +41,7 @@ export const createAppFactory = async (
   resolvedConfig.isBuild = env.command === 'build';
   resolvedConfig.isSSR = !!viteConfig.build?.ssr;
 
-  const dirs = createAppDirs(root, resolvedConfig);
+  const dirs = createAppDirectories(root, resolvedConfig);
   const version = getAppVersion();
 
   let plugins = viteConfig
@@ -78,7 +78,7 @@ export const createAppFactory = async (
         })(),
         vite: { user: viteConfig, env },
         context: new Map(),
-        pages: new Pages(),
+        routes: new Routes(),
         markdoc: new MarkdocSchema(),
         disposal: new DisposalBin(),
         destroy: () => $app.disposal.empty(),
@@ -119,24 +119,24 @@ function resolveAppConfig(
     isDebug: debug = false,
     client = {},
     routes = {},
-    pages = {},
     markdown = {},
     sitemap,
   }: AppConfig,
 ): ResolvedAppConfig {
   const _cwd = path.resolve(process.cwd());
   const _root = resolveRelativePath(_cwd, root);
-  const _pages = resolveRelativePath(_root, dirs.pages ?? 'pages');
+  const _pages = resolveRelativePath(_root, dirs.routes ?? 'routes');
   const _output = resolveRelativePath(_root, dirs.output ?? 'build');
   const _public = resolveRelativePath(_root, dirs.public ?? 'public');
 
-  const __client: ResolvedAppClientConfig = {
+  const __client: ResolvedClientConfig = {
     // Most likely set later by a plugin.
     app: client.app ? path.relative(_root, client.app) : '',
     configFiles: client.configFiles ?? [],
   };
 
-  const __routes: ResolvedRouteConfig = {
+  const pageExts = `md,svelte,vue,jsx,tsx`;
+  const __routes: ResolvedRoutesConfig = {
     entries: routes.entries ?? [],
     matchers: {
       int: /\d+/,
@@ -146,15 +146,11 @@ function resolveAppConfig(
     },
     log: routes.log ?? 'tree',
     logLevel: routes.logLevel ?? 'warn',
-  };
-
-  const pageExts = `md,svelte,vue,jsx,tsx`;
-  const __pages: ResolvedPagesPluginConfig = {
-    include: pages.include ?? [
-      `**/@404.{${pageExts}}`,
-      `**/*@page*.{${pageExts}}`,
-    ],
-    exclude: pages.exclude ?? [],
+    pages: {
+      include: [`**/@404.{${pageExts}}`, `**/*@page*.{${pageExts}}`],
+      exclude: [],
+      ...routes.pages,
+    },
     layouts: {
       include: [
         `**/*@layout.{${pageExts}}`,
@@ -163,11 +159,11 @@ function resolveAppConfig(
         `**/@layouts/**/*.reset.{${pageExts}}`,
       ],
       exclude: [],
-      ...pages.layouts,
+      ...routes.layouts,
     },
   };
 
-  const __markdown: ResolvedMarkdownPluginConfig = {
+  const __markdown: ResolvedMarkdownConfig = {
     include: markdown.include ?? /\.md($|\?)/,
     exclude: markdown.exclude ?? [],
     markdoc: markdown.markdoc ?? {},
@@ -206,13 +202,12 @@ function resolveAppConfig(
   return {
     isDebug: debug,
     dirs: {
-      pages: _pages,
+      routes: _pages,
       output: _output,
       public: _public,
     },
     client: __client,
     routes: __routes,
-    pages: __pages,
     markdown: __markdown,
     sitemap: __sitemap,
     isBuild: false,
@@ -223,12 +218,12 @@ function resolveAppConfig(
 function getEntries(app: App) {
   const entries: Record<string, string> = {};
 
-  for (const page of app.pages.all) {
+  for (const page of app.routes.pages) {
     const filename = buildPageOutputFilename(app, page);
     entries[filename] = page.filePath;
   }
 
-  for (const layout of app.pages.layouts) {
+  for (const layout of app.routes.layouts) {
     const filename = buildLayoutOutputFilename(app, layout);
     entries[filename] = layout.filePath;
   }
@@ -237,13 +232,13 @@ function getEntries(app: App) {
 }
 
 function buildPageOutputFilename(app: App, page: ServerPage) {
-  const name = path.trimExt(app.dirs.pages.relative(page.rootPath));
+  const name = path.trimExt(app.dirs.routes.relative(page.rootPath));
   return `pages/${name}`;
 }
 
 function buildLayoutOutputFilename(app: App, layout: ServerLayout) {
   const name = path
-    .trimExt(app.dirs.pages.relative(layout.rootPath))
+    .trimExt(app.dirs.routes.relative(layout.rootPath))
     .replace(/@layouts\//, '');
 
   return `layouts/${name}`;

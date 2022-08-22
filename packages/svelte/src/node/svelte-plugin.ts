@@ -8,10 +8,10 @@ import { svelteSSRPlugin } from './svelte-ssr';
 const VIRTUAL_APP_ID = `${VM_PREFIX}/svelte/app` as const;
 
 export function sveltePlugin(): VitebookPluginOptions {
-  let pagesDir: string;
+  let routesDir: string;
 
   function resolveAppId() {
-    const userAppFile = path.resolve(pagesDir, '@app.svelte');
+    const userAppFile = path.resolve(routesDir, '@app.svelte');
     return fs.existsSync(userAppFile)
       ? { id: userAppFile }
       : { id: '@vitebook/svelte/App.svelte' };
@@ -33,7 +33,7 @@ export function sveltePlugin(): VitebookPluginOptions {
       vitebook: {
         enforce: 'pre',
         config(config) {
-          pagesDir = config.dirs.pages;
+          routesDir = config.dirs.routes;
           const appId = resolveAppId().id;
           return {
             client: {

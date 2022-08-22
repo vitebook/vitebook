@@ -1,24 +1,15 @@
-import { type ViteDevServer } from 'vite';
-
 import { normalizePath } from '../../../utils';
-import { Pages } from '../pages';
-import { type MarkdocSchema } from './MarkdocSchema';
+import type { App } from '../../App';
 import { clearMarkdownCache } from './parse-markdown';
 
-export type MarkdownHMRConfig = {
-  pages: Pages;
-  markdoc: MarkdocSchema;
-  server: ViteDevServer;
-};
-
-export function handleHMR({ pages, markdoc, server }: MarkdownHMRConfig) {
-  const isNode = (filePath) => markdoc.isAnyNode(filePath);
+export function handleMarkdownHMR(app: App) {
+  const isNode = (filePath) => app.markdoc.isAnyNode(filePath);
 
   onFileEvent(isNode, 'add', async (filePath) => {
-    markdoc.addNode(filePath);
+    app.markdoc.addNode(filePath);
 
-    for (const page of pages.all) {
-      if (markdoc.nodeBelongsTo(filePath, page.filePath)) {
+    for (const page of app.routes.pages) {
+      if (app.markdoc.doesNodeBelongToPage(filePath, page.filePath)) {
         clearMarkdownCache(page.filePath);
         invalidateFile(page.filePath);
       }
@@ -28,9 +19,9 @@ export function handleHMR({ pages, markdoc, server }: MarkdownHMRConfig) {
   });
 
   onFileEvent(isNode, 'unlink', async (filePath) => {
-    markdoc.removeNode(filePath);
+    app.markdoc.removeNode(filePath);
 
-    const files = markdoc.affectedFiles.get(filePath);
+    const files = app.markdoc.affectedFiles.get(filePath);
 
     if (files) {
       for (const file of files) {
@@ -39,7 +30,7 @@ export function handleHMR({ pages, markdoc, server }: MarkdownHMRConfig) {
       }
     }
 
-    markdoc.affectedFiles.delete(filePath);
+    app.markdoc.affectedFiles.delete(filePath);
     return { reload: true };
   });
 
@@ -48,7 +39,7 @@ export function handleHMR({ pages, markdoc, server }: MarkdownHMRConfig) {
     eventName: string,
     handler: (path: string) => Promise<void | null | { reload?: boolean }>,
   ) {
-    server.watcher.on(eventName, async (path) => {
+    app.vite.server!.watcher.on(eventName, async (path) => {
       const filePath = normalizePath(path);
 
       if (!test(filePath)) return;
@@ -56,14 +47,14 @@ export function handleHMR({ pages, markdoc, server }: MarkdownHMRConfig) {
       const { reload } = (await handler(filePath)) ?? {};
 
       if (reload) {
-        server.ws.send({ type: 'full-reload' });
+        app.vite.server!.ws.send({ type: 'full-reload' });
       }
     });
   }
 
   function invalidateFile(filePath: string) {
-    server.moduleGraph
-      .getModulesByFile(filePath)
-      ?.forEach((mod) => server.moduleGraph.invalidateModule(mod));
+    app.vite
+      .server!.moduleGraph.getModulesByFile(filePath)
+      ?.forEach((mod) => app.vite.server!.moduleGraph.invalidateModule(mod));
   }
 }

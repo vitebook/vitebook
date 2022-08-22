@@ -4,24 +4,24 @@ import type { MarkdownMeta } from './Markdown';
 
 export type WithRouteMatch<T> = T & { match: URLPatternComponentResult };
 
-export type PageRouteMatcher = string | RegExp | null | undefined | void;
+export type RouteMatcher = string | RegExp | null | undefined | void;
 
-export type PageRouteMatcherFn = (input: {
+export type RouteMatcherFn = (input: {
   filePath: string;
-  pagePath: string;
-}) => PageRouteMatcher;
+  routePath: string;
+}) => RouteMatcher;
 
-export type PageRouteMatcherName = string;
+export type RouteMatcherName = string;
 
-export type PageRouteMatcherConfig = Record<
-  PageRouteMatcherName,
-  PageRouteMatcher | PageRouteMatcherFn
+export type RouteMatcherConfig = Record<
+  RouteMatcherName,
+  RouteMatcher | RouteMatcherFn
 >;
 
-export type PageRoute = {
-  /** Page name which can be used to identify route. */
+export type RouteInfo = {
+  /** Name which can be used to identify route. */
   readonly name?: string;
-  /** The page order number if declared (e.g., `[1]page.md` would be 1). */
+  /** Order number if declared (e.g., `[1]page.md` would be 1). */
   readonly order?: number;
   /**
    * A positive integer representing the path match ranking. The route with the highest score
@@ -51,7 +51,7 @@ export type ClientPage = {
   /** System file path relative to `<root>`. */
   readonly rootPath: string;
   /** Page route object. */
-  readonly route: PageRoute;
+  readonly route: RouteInfo;
   /** Page file extension.  */
   readonly ext: string;
   /** Additional page metadata. */
@@ -110,12 +110,12 @@ export type ServerPage = Omit<ClientPage, 'loader' | 'layouts'> & {
   id: string;
   /** Absolute system file path to page file.  */
   readonly filePath: string;
+  /** Routing object. */
+  readonly route: RouteInfo;
   /** Page name. */
   readonly name?: string;
   /** System file path relative to `<root>` to associated page file. */
   readonly rootPath: string;
-  /** Page route object. */
-  route: PageRoute;
   /** Page layout name. */
   layoutName?: string;
   /**
@@ -148,7 +148,7 @@ export type ServerLayout = Omit<ClientLayout, 'loader'> & {
 export type ServerLoaderInput = Readonly<{
   pathname: string;
   page: ServerPage;
-  route: PageRoute;
+  route: RouteInfo;
   /** Result from running `URLPattern.exec().pathname`. */
   match: URLPatternComponentResult;
 }>;

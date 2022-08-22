@@ -1,7 +1,7 @@
 import type { Plugin as VitePlugin } from 'vite';
 
 import type { App } from '../App';
-import type { AppConfig, ResolvedAppConfig } from '../AppConfig';
+import type { AppConfig, ResolvedAppConfig } from '../config';
 
 export type VitebookPlugin = VitePlugin & {
   vitebook?: {
@@ -36,19 +36,3 @@ export type VitebookPluginOptions =
   | VitebookPluginOption
   | Promise<VitebookPluginOption>
   | (VitebookPluginOption | Promise<VitebookPluginOption>)[];
-
-export type ResolvePageContext = {
-  /** Default page module id. Can be overwritten by plugin. */
-  id: string;
-  /** Absolute system file path of page file. */
-  filePath: string;
-  /** System file path to page file relative to `<rootDir>` .  */
-  relativeFilePath: string;
-  /** Safely read file content (avoid empty buffer issues). */
-  read: () => Promise<string>;
-  /**
-   * Page client-side route inferred from file path such as `/pages/page.html`. Can be overwritten
-   * by plugin.
-   */
-  route: string;
-};

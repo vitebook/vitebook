@@ -8,17 +8,9 @@ import path from 'upath';
 
 import { toPascalCase } from '../../../../shared';
 import { logger, normalizePath } from '../../../utils';
+import { type App } from '../../App';
 
 const STRIP_MARKDOC_DIR_RE = /\/@markdoc\/.+/;
-
-export type MarkdocSchemaConfig = {
-  include: string[];
-  exclude: (string | RegExp)[];
-  dirs: {
-    root: string;
-    pages: string;
-  };
-};
 
 export type MarkdocNodeFileMeta = {
   name: string;
@@ -26,28 +18,26 @@ export type MarkdocNodeFileMeta = {
   type: 'node' | 'tag';
   inline: boolean;
   filePath: string;
-  pagesPath: string;
+  routesPath: string;
   owningDir: string;
 };
 
 export class MarkdocSchema {
-  protected nodes = new Map<string, MarkdocNodeFileMeta>();
-  protected config!: MarkdocSchemaConfig;
-
-  base: MarkdocConfig = {};
-
-  /** Vite info set as Markdoc variables. */
-  vite = { mode: '', env: {} };
+  protected _app!: App;
+  protected _nodes = new Map<string, MarkdocNodeFileMeta>();
+  protected _filter!: (id: string) => boolean;
 
   /** track files for HMR. */
   affectedFiles = new Map<string, Set<string>>();
 
-  filter!: (id: string) => boolean;
+  async init(app: App) {
+    this._app = app;
+    this._filter = createFilter(
+      app.config.markdown.nodes.include,
+      app.config.markdown.nodes.exclude,
+    );
 
-  async configure(config: MarkdocSchemaConfig) {
-    this.config = config;
-    config.exclude.push(/\/_/, /@layout/);
-    this.filter = createFilter(config.include, config.exclude);
+    await this.discover();
   }
 
   async discover() {
@@ -56,19 +46,19 @@ export class MarkdocSchema {
   }
 
   getFilePaths() {
-    return globbySync(this.config.include, {
+    return globbySync(this._app.config.markdown.nodes.include, {
       absolute: true,
-      cwd: this.config.dirs.pages,
+      cwd: this._app.dirs.routes.path,
     })
-      .filter(this.filter)
+      .filter(this._filter)
       .map(normalizePath);
   }
 
   addNode(filePath: string) {
-    const pagesPath = this.getPagesPath(filePath);
+    const routesPath = this._app.dirs.routes.relative(filePath);
 
     const name = path
-      .basename(pagesPath, path.extname(pagesPath))
+      .basename(routesPath, path.extname(routesPath))
       .replace('@node', '')
       .replace('@inline', '');
 
@@ -86,25 +76,25 @@ export class MarkdocSchema {
     }
 
     const cname = toPascalCase(name);
-    const inline = /@inline/.test(pagesPath);
+    const inline = /@inline/.test(routesPath);
     const owningDir = path.dirname(
       filePath.replace(STRIP_MARKDOC_DIR_RE, '/root.md'),
     );
 
-    this.nodes.set(pagesPath, {
+    this._nodes.set(routesPath, {
       name,
       type,
       cname,
       filePath,
-      pagesPath,
+      routesPath: routesPath,
       inline,
       owningDir,
     });
   }
 
   removeNode(filePath: string) {
-    const pagesPath = this.getPagesPath(filePath);
-    this.nodes.delete(pagesPath);
+    const routesPath = this._app.dirs.routes.relative(filePath);
+    this._nodes.delete(routesPath);
   }
 
   isNode(filePath: string) {
@@ -116,39 +106,40 @@ export class MarkdocSchema {
   }
 
   isAnyNode(filePath: string) {
-    return filePath.includes('@markdoc') && this.filter(filePath);
+    return filePath.includes('@markdoc') && this._filter(filePath);
   }
 
   resolveImports(filePath: string) {
-    return this.getOwnedNodes(filePath, '*')
+    return this.getPageOwnedNodes(filePath, '*')
       .map((node) => {
-        return `import ${node.cname} from "/${this.getRootPath(
-          node.filePath,
-        )}";`;
+        const rootPath = this._app.dirs.root.relative(node.filePath);
+        return `import ${node.cname} from "/${rootPath}";`;
       })
       .filter(Boolean);
   }
 
-  getConfig(pageFilePath: string): MarkdocConfig {
-    const isPage = pageFilePath.startsWith(this.config.dirs.pages);
-    const nodes = isPage ? this.getNodesConfig(pageFilePath) : {};
-    const tags = isPage ? this.getTagsConfig(pageFilePath) : {};
+  getPageConfig(pageFilePath: string): MarkdocConfig {
+    const base = this._app.config.markdown.markdoc;
+    const isPage = this._app.routes.isPage(pageFilePath);
+    const nodes = isPage ? this.getPageNodesConfig(pageFilePath) : {};
+    const tags = isPage ? this.getPageTagsConfig(pageFilePath) : {};
 
     const config: MarkdocConfig = {
-      ...this.base,
+      ...base,
       variables: {
-        ...this.base.variables,
+        ...base.variables,
         file: {
-          ...this.base.variables?.file,
+          ...base.variables?.file,
           path: pageFilePath,
         },
         vite: {
-          ...this.base.variables?.vite,
-          ...this.vite,
+          ...base.variables?.vite,
+          mode: this._app.vite.resolved!.mode,
+          env: this._app.vite.resolved!.env,
         },
       },
       nodes: {
-        ...this.base.nodes,
+        ...base.nodes,
         ...nodes,
       },
       tags: {
@@ -159,7 +150,7 @@ export class MarkdocSchema {
             return new Markdoc.Tag('import', node.attributes);
           },
         },
-        ...this.base.tags,
+        ...base.tags,
         ...tags,
       },
     };
@@ -167,24 +158,24 @@ export class MarkdocSchema {
     return config;
   }
 
-  nodeBelongsTo(nodeFilePath: string, pageFilePath: string) {
-    const nodePath = this.getPagesPath(nodeFilePath);
-    const node = this.nodes.get(nodePath);
+  doesNodeBelongToPage(nodeFilePath: string, pageFilePath: string) {
+    const nodePath = this._app.dirs.routes.relative(nodeFilePath);
+    const node = this._nodes.get(nodePath);
     return node && pageFilePath.startsWith(node.owningDir);
   }
 
-  getOwnedNodes(pageFilePath: string, type: '*' | 'node' | 'tag') {
-    return Array.from(this.nodes.values()).filter(
+  getPageOwnedNodes(pageFilePath: string, type: '*' | 'node' | 'tag') {
+    return Array.from(this._nodes.values()).filter(
       (node) =>
         (type === '*' || node.type === type) &&
-        this.nodeBelongsTo(node.filePath, pageFilePath),
+        this.doesNodeBelongToPage(node.filePath, pageFilePath),
     );
   }
 
-  getNodesConfig(pageFilePath: string) {
+  getPageNodesConfig(pageFilePath: string) {
     const nodes: MarkdocConfig['nodes'] = {};
 
-    for (const node of this.getOwnedNodes(pageFilePath, 'node')) {
+    for (const node of this.getPageOwnedNodes(pageFilePath, 'node')) {
       nodes[node.name] = {
         render: node.cname,
         transform: (_node, config) => {
@@ -202,10 +193,10 @@ export class MarkdocSchema {
     return nodes;
   }
 
-  getTagsConfig(pageFilePath: string) {
+  getPageTagsConfig(pageFilePath: string) {
     const tags: MarkdocConfig['tags'] = {};
 
-    for (const tag of this.getOwnedNodes(pageFilePath, 'tag')) {
+    for (const tag of this.getPageOwnedNodes(pageFilePath, 'tag')) {
       tags[tag.name] = {
         render: tag.cname,
         selfClosing: tag.inline,
@@ -229,14 +220,6 @@ export class MarkdocSchema {
       nodeFilePath,
       (this.affectedFiles.get(nodeFilePath) ?? new Set()).add(pageFilePath),
     );
-  }
-
-  protected getRootPath(filePath: string) {
-    return path.relative(this.config.dirs.root, filePath);
-  }
-
-  protected getPagesPath(filePath: string) {
-    return path.relative(this.config.dirs.pages, filePath);
   }
 }
 

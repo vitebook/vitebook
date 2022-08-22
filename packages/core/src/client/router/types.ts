@@ -1,7 +1,7 @@
 import {
   type AppContextMap,
   type LoadedClientPage,
-  type PageRoute,
+  type RouteInfo,
   WithRouteMatch,
 } from '../../shared';
 
@@ -18,7 +18,7 @@ export type RouteLoader = (info: {
   redirect: RedirectRoute;
 }) => void | LoadedClientPage | Promise<void | LoadedClientPage>;
 
-export type RouteDeclaration = Omit<PageRoute, 'score'> & {
+export type RouteDeclaration = Omit<RouteInfo, 'score'> & {
   score?: number;
   prefetch?: RoutePrefetch;
   loader: RouteLoader;

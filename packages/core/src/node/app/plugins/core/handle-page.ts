@@ -31,8 +31,8 @@ export async function handlePageRequest(
     app.entry.server,
   )) as ServerEntryModule;
 
-  const match = matchRouteInfo(url, app.pages.all);
-  const page = app.pages.all[match?.index ?? -1];
+  const match = matchRouteInfo(url, app.routes.pages);
+  const page = app.routes.pages[match?.index ?? -1];
 
   if (!page) {
     res.statusCode = 404;
@@ -67,7 +67,7 @@ export async function handlePageRequest(
     [
       appFilePath,
       ...page.layouts.map(
-        (layout) => app.pages.getLayoutByIndex(layout)!.filePath,
+        (layout) => app.routes.getLayoutByIndex(layout)!.filePath,
       ),
       page.filePath,
     ].map((file) => getStylesByFile(app.vite.server!, file)),

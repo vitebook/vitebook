@@ -1,21 +1,18 @@
-import { type Config as MarkdocConfig } from '@markdoc/markdoc';
-import { createFilter, type FilterPattern } from '@rollup/pluginutils';
+import { createFilter } from '@rollup/pluginutils';
 import { readFile } from 'fs/promises';
-import { type Options as HastToHtmlConfig, toHtml } from 'hast-util-to-html';
+import { toHtml } from 'hast-util-to-html';
 import kleur from 'kleur';
-import type { HighlighterOptions as ShikiConfig } from 'shiki';
 import type { ViteDevServer } from 'vite';
 
 import type { MarkdownMeta, ServerPage } from '../../../../shared';
 import type { App } from '../../App';
-import { invalidatePageModule } from '../pages/hmr';
 import { type VitebookPlugin } from '../Plugin';
-import { handleHMR } from './hmr';
+import { invalidatePageModule } from '../routes/pages-hmr';
+import { handleMarkdownHMR } from './hmr';
 import {
   clearMarkdownCache,
   type HighlightCodeBlock,
   parseMarkdown,
-  type ParseMarkdownConfig,
   type ParseMarkdownResult,
 } from './parse-markdown';
 
@@ -35,17 +32,8 @@ export function markdownPlugin(): VitebookPlugin {
 
         const config = app.config.markdown;
 
-        const {
-          include,
-          exclude,
-          markdoc,
-          nodes,
-          hastToHtml,
-          highlighter,
-          ...parseOptions
-        } = config;
-
-        app.markdoc.base = markdoc;
+        const { include, exclude, hastToHtml, highlighter, ...parseOptions } =
+          config;
 
         highlight = typeof highlighter === 'function' ? highlighter : null;
 
@@ -104,30 +92,14 @@ export function markdownPlugin(): VitebookPlugin {
           }
         }
 
-        await app.markdoc.configure({
-          include: nodes.include,
-          exclude: nodes.exclude,
-          dirs: {
-            root: app.dirs.root.path,
-            pages: app.dirs.pages.path,
-          },
-        });
-
-        await app.markdoc.discover();
+        await app.markdoc.init(app);
       },
     },
-    configResolved(config) {
-      app.markdoc.vite = {
-        mode: app.vite.env.mode,
-        env: config.env ?? {},
-      };
-    },
     async configureServer(server) {
-      handleHMR({ pages: app.pages, markdoc: app.markdoc, server });
-
+      handleMarkdownHMR(app);
       server.ws.on('vitebook::page_change', ({ rootPath }) => {
         const filePath = app.dirs.root.resolve(rootPath);
-        currentPage = app.pages.getPage(filePath);
+        currentPage = app.routes.getPage(filePath);
       });
     },
     transform(content, id) {
@@ -144,7 +116,7 @@ export function markdownPlugin(): VitebookPlugin {
       if (filter(file)) {
         const content = await read();
 
-        const layoutIndex = app.pages.getLayoutIndex(file);
+        const layoutIndex = app.routes.getLayoutIndex(file);
         const isLayoutFile = layoutIndex >= 0;
 
         if (isLayoutFile && currentPage?.layouts.includes(layoutIndex)) {
@@ -156,19 +128,19 @@ export function markdownPlugin(): VitebookPlugin {
             await readFile(currentPage.filePath, { encoding: 'utf-8' }),
           );
 
-          handleMetaHMR(server, currentPage.filePath, meta);
+          handleMarkdownMetaHMR(server, currentPage.filePath, meta);
         }
 
         const { output, meta } = parse(file, content);
         ctx.read = () => output;
 
-        if (!isLayoutFile) handleMetaHMR(server, file, meta);
+        if (!isLayoutFile) handleMarkdownMetaHMR(server, file, meta);
       }
     },
   };
 }
 
-function handleMetaHMR(
+function handleMarkdownMetaHMR(
   server: ViteDevServer,
   filePath: string,
   meta: MarkdownMeta,
@@ -179,80 +151,3 @@ function handleMetaHMR(
     data: { filePath, meta },
   });
 }
-
-export type ResolvedMarkdownPluginConfig = {
-  /**
-   * Filter files to be processed as Markdown files.
-   */
-  include: FilterPattern;
-  /**
-   * Filter files to be excluded from Markdown processing.
-   */
-  exclude: FilterPattern;
-  /**
-   * Markdoc configuration options.
-   */
-  markdoc: MarkdocConfig;
-  /**
-   * Markdoc nodes configuration.
-   */
-  nodes: {
-    /**
-     * Globs pointing at files which should be included as Markdoc nodes/tags.
-     */
-    include: string[];
-    /**
-     * Globs or RegExp indicating node files which should be excluded from being Markdoc nodes/tags.
-     */
-    exclude: (string | RegExp)[];
-  };
-  /**
-   * Syntax highlighter configuration.
-   *
-   * - In order to use Shiki please install it `npm install shiki`.
-   * - In order to use Starry Night please install it `npm install @woorm/starry-night`.
-   *
-   * @see {@link https://github.com/shikijs/shiki}
-   * @see {@link https://github.com/wooorm/starry-night}
-   */
-  highlighter: 'shiki' | 'starry-night' | HighlightCodeBlock | false;
-  /**
-   * Shiki configuration options.
-   */
-  shiki: ShikiConfig;
-  /**
-   * HAST to HTML transformer configuration. The tree returned from `starry-night` is a HAST
-   * tree so it needs to be transformed to HTML - you can configure it here.
-   *
-   * @see {@link https://github.com/wooorm/starry-night}
-   * @see {@link https://github.com/syntax-tree/hast-util-to-html}
-   */
-  hastToHtml: HastToHtmlConfig;
-  /**
-   * Markdoc AST transformers.
-   */
-  transformAst: ParseMarkdownConfig['transformAst'];
-  /**
-   * Called for each render node in the Markdoc renderable tree. This function can be used to
-   * transform the tree before it's rendered.
-   */
-  transformTreeNode: ParseMarkdownConfig['transformTreeNode'];
-  /**
-   * Markdoc renderable tree transformers (_after_ AST is transformed into render tree).
-   */
-  transformContent: ParseMarkdownConfig['transformContent'];
-  /**
-   * Markdown meta transformers (_before_ content is rendered).
-   */
-  transformMeta: ParseMarkdownConfig['transformMeta'];
-  /**
-   * Rendered Markdown output transformers.
-   */
-  transformOutput: ParseMarkdownConfig['transformOutput'];
-  /**
-   * Custom Markdoc renderer which takes render tree and produces final output.
-   */
-  render?: ParseMarkdownConfig['render'];
-};
-
-export type MarkdownPluginConfig = Partial<ResolvedMarkdownPluginConfig>;

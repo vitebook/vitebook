@@ -11,11 +11,11 @@ export async function handleDataRequest(
 ) {
   const { url: route, layoutIndex } = parseDataAssetURL(url);
 
-  const match = matchRouteInfo(route, app.pages.all);
-  const page = app.pages.all[match?.index ?? -1];
+  const match = matchRouteInfo(route, app.routes.pages);
+  const page = app.routes.pages[match?.index ?? -1];
 
   const module =
-    layoutIndex >= 0 ? app.pages.getLayoutByIndex(layoutIndex) : page;
+    layoutIndex >= 0 ? app.routes.getLayoutByIndex(layoutIndex) : page;
 
   if (!page || !module) {
     res.statusCode = 404;

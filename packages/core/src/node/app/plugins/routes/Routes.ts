@@ -5,77 +5,46 @@ import path from 'upath';
 
 import {
   compareRoutes,
-  type PageRouteMatcherConfig,
-  prettyJsonStr,
   type ServerLayout,
   type ServerPage,
   slash,
-  stripImportQuotesFromJson,
 } from '../../../../shared';
 import { normalizePath } from '../../../utils';
+import { type App } from '../../App';
 import { getFrontmatter } from '../markdown';
 import {
   getPageLayoutNameFromFilePath,
   getPageNameFromFilePath,
-  resolvePageRouteFromFilePath,
+  resolveRouteFromFilePath,
 } from './utils';
 
 const MD_FILE_RE = /\.md($|\/)/;
 const PAGE_LAYOUT_NAME_RE = /\+(.*?)\./;
 const STRIP_LAYOUTS_PATH = /\/@layouts\/.+/;
 const HAS_LOADER_RE = /(export function loader|export const loader)/;
-const STRIP_URL_PATTERN_QUOTES_RE = /"new URLPattern(.*?)"/g;
 
-export type PagesConfig = {
-  include: string[];
-  exclude: (string | RegExp)[];
-  matchers: PageRouteMatcherConfig;
+export class Routes {
+  protected _app!: App;
 
-  dirs: {
-    root: string;
-    pages: string;
-  };
+  pages: ServerPage[] = [];
+  layouts: ServerLayout[] = [];
 
-  layouts: {
-    include: string[];
-    exclude: (string | RegExp)[];
-  };
-};
+  protected _pagesFilter!: (id: string) => boolean;
+  protected _layoutsFilter!: (id: string) => boolean;
 
-export class Pages {
-  /* root filepath to page */
-  protected _pages: ServerPage[] = [];
+  async init(app: App) {
+    this._app = app;
 
-  /* root filepath to layout */
-  protected _layouts: ServerLayout[] = [];
-
-  protected _config!: PagesConfig;
-
-  pagesFilter!: (id: string) => boolean;
-  layoutsFilter!: (id: string) => boolean;
-
-  get size() {
-    return this._pages.length;
-  }
-
-  get all() {
-    return this._pages;
-  }
-
-  get layouts() {
-    return this._layouts;
-  }
-
-  async configure(config: PagesConfig) {
-    this.layoutsFilter = createFilter(
-      config.layouts.include,
-      config.layouts.exclude,
+    this._layoutsFilter = createFilter(
+      app.config.routes.layouts.include,
+      app.config.routes.layouts.exclude,
     );
-    this.pagesFilter = createFilter(config.include, config.exclude);
-    this._config = config;
-  }
 
-  async discover() {
+    this._pagesFilter = createFilter(
+      app.config.routes.pages.include,
+      app.config.routes.pages.exclude,
+    );
+
     await this.discoverLayouts();
     await this.discoverPages();
   }
@@ -93,58 +62,62 @@ export class Pages {
   isPage(filePath: string) {
     return (
       this.hasPage(filePath) ||
-      (filePath.startsWith(this._config.dirs.pages) &&
-        this.pagesFilter(filePath))
+      (filePath.startsWith(this._app.dirs.routes.path) &&
+        this._pagesFilter(filePath))
     );
   }
 
   isLayout(filePath: string) {
     return (
       this.hasLayout(filePath) ||
-      (filePath.startsWith(this._config.dirs.pages) &&
-        this.layoutsFilter(filePath))
+      (filePath.startsWith(this._app.dirs.routes.path) &&
+        this._layoutsFilter(filePath))
     );
   }
 
   clear() {
-    this._pages = [];
-    this._layouts = [];
+    this.pages = [];
+    this.layouts = [];
   }
 
   getPageFilePaths() {
-    return globbySync(this._config.include, {
+    return globbySync(this._app.config.routes.pages.include, {
       absolute: true,
-      cwd: this._config.dirs.pages,
+      cwd: this._app.dirs.routes.path,
     })
-      .filter(this.pagesFilter)
+      .filter(this._pagesFilter)
       .map(normalizePath);
   }
 
   getLayoutFilePaths() {
-    return globbySync(this._config.layouts.include, {
+    return globbySync(this._app.config.routes.layouts.include, {
       absolute: true,
-      cwd: this._config.dirs.pages,
+      cwd: this._app.dirs.routes.path,
     })
-      .filter(this.layoutsFilter)
+      .filter(this._layoutsFilter)
       .map(normalizePath);
   }
 
   getPage(filePath: string) {
-    return this._pages.find((p) => p.filePath === filePath);
+    return this.pages.find((p) => p.filePath === filePath);
   }
 
   async addPage(filePath: string) {
     this.removePage(filePath);
 
-    const rootPath = this.getRootPath(filePath);
+    const rootPath = this._app.dirs.root.relative(filePath);
     const name = getPageNameFromFilePath(filePath);
     const id = slash(rootPath);
     const ext = path.extname(rootPath);
-    const route = this.resolvePageRoute(filePath);
     const fileContent = fs.readFileSync(filePath, { encoding: 'utf-8' });
-    const layouts = this.resolveLayouts(filePath);
+    const layouts = this.resolvePageLayouts(filePath);
     const layoutName = this.getPageLayoutName(filePath, fileContent);
     const hasLoader = this.hasLoader(fileContent);
+    const route = resolveRouteFromFilePath(
+      this._app.dirs.routes.path,
+      filePath,
+      this._app.config.routes.matchers,
+    );
 
     const page: ServerPage = {
       id,
@@ -159,8 +132,8 @@ export class Pages {
       context: {},
     };
 
-    this._pages.push(page);
-    this._pages = this._pages.sort((a, b) => compareRoutes(a.route, b.route));
+    this.pages.push(page);
+    this.pages = this.pages.sort((a, b) => compareRoutes(a.route, b.route));
 
     return page;
   }
@@ -171,7 +144,7 @@ export class Pages {
 
   getPageIndex(filePath: string) {
     const page = this.getPage(filePath);
-    return this._pages.findIndex((p) => p === page);
+    return this.pages.findIndex((p) => p === page);
   }
 
   hasPage(filePath: string) {
@@ -181,24 +154,24 @@ export class Pages {
   removePage(filePath: string) {
     if (!this.hasPage(filePath)) return;
     const index = this.getPageIndex(filePath);
-    this._pages.splice(index, 1);
+    this.pages.splice(index, 1);
   }
 
   getLayout(filePath: string) {
-    return this._layouts.find((l) => l.filePath === filePath);
+    return this.layouts.find((l) => l.filePath === filePath);
   }
 
   getLayoutByIndex(index: number) {
-    return this._layouts[index];
+    return this.layouts[index];
   }
 
   hasLayout(filePath: string) {
-    return this._layouts.some((l) => l.filePath === filePath);
+    return this.layouts.some((l) => l.filePath === filePath);
   }
 
   async addLayout(filePath: string) {
     const name = getPageLayoutNameFromFilePath(filePath);
-    const rootPath = this.getRootPath(filePath);
+    const rootPath = this._app.dirs.root.relative(filePath);
     const owningDir = path.dirname(
       rootPath.replace(STRIP_LAYOUTS_PATH, '/root.md'),
     );
@@ -217,9 +190,9 @@ export class Pages {
       reset,
     };
 
-    this._layouts.push(layout);
+    this.layouts.push(layout);
 
-    this._layouts = this._layouts.sort((a, b) => {
+    this.layouts = this.layouts.sort((a, b) => {
       const segmentsA = a.rootPath.split(/\//g);
       const segmentsB = b.rootPath.split(/\//g);
 
@@ -230,8 +203,8 @@ export class Pages {
         : 1;
     });
 
-    for (const page of this._pages) {
-      page.layouts = this.resolveLayouts(page.filePath);
+    for (const page of this.pages) {
+      page.layouts = this.resolvePageLayouts(page.filePath);
     }
 
     return layout;
@@ -241,20 +214,20 @@ export class Pages {
     if (!this.hasLayout(filePath)) return;
 
     const index = this.getLayoutIndex(filePath);
-    this._layouts.splice(index, 1);
+    this.layouts.splice(index, 1);
 
-    for (const page of this._pages) {
+    for (const page of this.pages) {
       if (page.layouts.includes(index)) {
-        page.layouts = this.resolveLayouts(page.filePath);
+        page.layouts = this.resolvePageLayouts(page.filePath);
       }
     }
   }
 
-  resolveLayouts(pageFilePath: string) {
+  resolvePageLayouts(pageFilePath: string) {
     let layouts: number[] = [];
 
-    this._layouts.forEach((layout, i) => {
-      if (this.layoutBelongsTo(pageFilePath, layout.filePath)) {
+    this.layouts.forEach((layout, i) => {
+      if (this.doesLayoutBelongToPage(pageFilePath, layout.filePath)) {
         if (layout.reset) {
           layouts = [];
         }
@@ -267,7 +240,7 @@ export class Pages {
   }
 
   getLayoutIndex(filePath: string) {
-    return this._layouts.findIndex((l) => l.filePath === filePath);
+    return this.layouts.findIndex((l) => l.filePath === filePath);
   }
 
   getPageLayoutName(
@@ -287,66 +260,14 @@ export class Pages {
     );
   }
 
-  layoutBelongsTo(pageFilePath: string, layoutFilePath: string) {
+  doesLayoutBelongToPage(pageFilePath: string, layoutFilePath: string) {
     const pageLayoutName = this.getPageLayoutName(pageFilePath);
-    const pageRootPath = this.getRootPath(pageFilePath);
+    const pageRootPath = this._app.dirs.root.relative(pageFilePath);
     const layout = this.getLayout(layoutFilePath);
     return (
       layout &&
       pageRootPath.startsWith(layout.owningDir) &&
       (layout.name === '@layout' || layout.name === pageLayoutName)
     );
-  }
-
-  resolvePageRoute(pageFilePath: string) {
-    return resolvePageRouteFromFilePath(
-      this._config.dirs.pages,
-      pageFilePath,
-      this._config.matchers,
-    );
-  }
-
-  loadPagesModule() {
-    return `export default ${stripImportQuotesFromJson(
-      prettyJsonStr(
-        this._pages.map((page) => ({
-          name: page.name,
-          rootPath: page.rootPath,
-          route: {
-            ...page.route,
-            // initialized late on client to allow polyfill to be installed.
-            pattern: undefined,
-          },
-          ext: page.ext,
-          layoutName: page.layoutName,
-          layouts: page.layouts,
-          context:
-            Object.keys(page.context).length > 0 ? page.context : undefined,
-          loader: `() => import('${page.id}')`,
-        })),
-      ),
-    )}`.replace(STRIP_URL_PATTERN_QUOTES_RE, 'new URLPattern$1');
-  }
-
-  loadLayoutsModule() {
-    return `export default ${stripImportQuotesFromJson(
-      prettyJsonStr(
-        this._layouts.map((layout) => {
-          return {
-            name: layout.name,
-            rootPath: layout.rootPath,
-            loader: `() => import('${layout.id}')`,
-          };
-        }),
-      ),
-    )}`;
-  }
-
-  protected getRootPath(filePath: string) {
-    return path.relative(this._config.dirs.root, filePath);
-  }
-
-  protected getPagePath(filePath: string) {
-    return path.relative(this._config.dirs.pages, filePath);
   }
 }

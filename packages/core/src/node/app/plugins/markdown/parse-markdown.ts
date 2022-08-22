@@ -20,7 +20,7 @@ import {
   type ServerPage,
 } from '../../../../shared';
 import type { App } from '../../App';
-import { resolveStaticRouteFromFilePath } from '../pages';
+import { resolveStaticRouteFromFilePath } from '../routes';
 import { renderMarkdocToHTML } from './render';
 
 const cache = new LRUCache<string, ParseMarkdownResult>({ max: 1024 });
@@ -55,7 +55,7 @@ export function parseMarkdown(
     : {};
 
   const nodeImports = app.markdoc.resolveImports(filePath);
-  const config = app.markdoc.getConfig(filePath);
+  const config = app.markdoc.getPageConfig(filePath);
   const lastUpdated = Math.round(fs.statSync(filePath).mtimeMs);
 
   const content = Markdoc.transform(ast, {
@@ -73,7 +73,7 @@ export function parseMarkdown(
   const stuff: MarkdocTreeWalkStuff = {
     baseUrl: app.vite.resolved!.base,
     filePath,
-    pagesDir: app.dirs.pages.path,
+    routesDir: app.dirs.routes.path,
     highlight: opts.highlight!,
     imports: new Set(),
     links: new Set(),
@@ -101,7 +101,7 @@ export function parseMarkdown(
     lastUpdated,
   };
 
-  const page = app.pages.getPage(filePath);
+  const page = app.routes.getPage(filePath);
   if (page) mergeLayoutMeta(app, page, meta, opts);
 
   for (const transformer of opts.transformMeta ?? []) {
@@ -143,7 +143,7 @@ function mergeLayoutMeta(
   opts: Partial<ParseMarkdownConfig> = {},
 ) {
   const layoutFiles = page.layouts.map(
-    (layout) => app.pages.getLayoutByIndex(layout).filePath,
+    (layout) => app.routes.getLayoutByIndex(layout).filePath,
   );
 
   for (const layoutFile of layoutFiles.reverse()) {
@@ -207,7 +207,7 @@ export type MarkdocTreeWalkStuff = {
   [id: string]: any;
   baseUrl: string;
   filePath: string;
-  pagesDir: string;
+  routesDir: string;
   links: Set<string>;
   imports: Set<string>;
   headings: MarkdownHeading[];
@@ -338,7 +338,7 @@ function resolveLinks(tag: Tag, stuff: MarkdocTreeWalkStuff) {
       ? '.' + rawPath
       : path.resolve(path.dirname(stuff.filePath), rawPath);
 
-    const route = resolveStaticRouteFromFilePath(stuff.pagesDir, absolutePath);
+    const route = resolveStaticRouteFromFilePath(stuff.routesDir, absolutePath);
 
     const resolvedHref = `${route}${rawHash}`;
     tag.attributes.href = resolvedHref;

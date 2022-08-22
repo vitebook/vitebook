@@ -55,7 +55,7 @@ export class ProjectBuilder {
       dest: {
         root: new FileDirectory(targetDir),
         src: new FileDirectory(path.resolve(targetDir, 'src')),
-        pages: new FileDirectory(path.resolve(targetDir, 'pages')),
+        routes: new FileDirectory(path.resolve(targetDir, 'routes')),
       },
     };
 

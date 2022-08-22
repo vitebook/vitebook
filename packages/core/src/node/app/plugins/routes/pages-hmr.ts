@@ -1,27 +1,22 @@
 import fs from 'fs';
-import { ServerPage } from 'src/shared';
 import { type ViteDevServer } from 'vite';
 
+import { type ServerPage } from '../../../../shared';
 import { normalizePath } from '../../../utils';
 import { virtualModuleRequestPath } from '../../alias';
-import type { App } from '../../App';
+import { type App } from '../../App';
 import { clearServerLoaderCache } from '../core/server-loader';
 import { clearMarkdownCache } from '../markdown';
 
-export type PagesHMRConfig = {
-  app: App;
-  server: ViteDevServer;
-};
-
-export function handleHMR({ app, server }: PagesHMRConfig) {
-  const pages = app.pages;
-
-  const isPage = (filePath) => pages.isPage(filePath);
-  const isLayout = (filePath) => pages.isLayout(filePath);
+export function handlePagesHMR(app: App) {
+  const routes = app.routes;
+  const server = app.vite.server!;
+  const isPage = (filePath) => routes.isPage(filePath);
+  const isLayout = (filePath) => routes.isLayout(filePath);
 
   function clearLayoutChildrenMarkdownCaches(layoutFilePath: string) {
-    const layoutIndex = app.pages.getLayoutIndex(layoutFilePath);
-    for (const page of app.pages.all) {
+    const layoutIndex = routes.getLayoutIndex(layoutFilePath);
+    for (const page of routes.pages) {
       if (page.layouts.includes(layoutIndex)) {
         clearMarkdownCache(page.filePath);
         invalidatePageModule(server, page);
@@ -30,24 +25,24 @@ export function handleHMR({ app, server }: PagesHMRConfig) {
   }
 
   onFileEvent(isPage, 'add', async (filePath) => {
-    pages.addPage(filePath);
+    routes.addPage(filePath);
     return { reload: true };
   });
 
   onFileEvent(isPage, 'unlink', async (filePath) => {
-    pages.removePage(filePath);
+    routes.removePage(filePath);
     return { reload: true };
   });
 
   onFileEvent(isPage, 'change', async (filePath) => {
-    const page = pages.getPage(filePath);
-    const layoutName = pages.getPageLayoutName(filePath);
-    const hasLoader = pages.hasLoader(
+    const page = routes.getPage(filePath);
+    const layoutName = routes.getPageLayoutName(filePath);
+    const hasLoader = routes.hasLoader(
       fs.readFileSync(filePath, { encoding: 'utf-8' }),
     );
 
     if (page && page?.layoutName !== layoutName) {
-      page.layouts = pages.resolveLayouts(filePath);
+      page.layouts = routes.resolvePageLayouts(filePath);
       return { reload: true };
     }
 
@@ -64,14 +59,14 @@ export function handleHMR({ app, server }: PagesHMRConfig) {
   });
 
   onFileEvent(isLayout, 'add', async (filePath) => {
-    pages.addLayout(filePath);
+    routes.addLayout(filePath);
     clearLayoutChildrenMarkdownCaches(filePath);
     return { reload: true };
   });
 
   onFileEvent(isLayout, 'change', async (filePath) => {
-    const layout = pages.getLayout(filePath);
-    const hasLoader = pages.hasLoader(
+    const layout = routes.getLayout(filePath);
+    const hasLoader = routes.hasLoader(
       fs.readFileSync(filePath, { encoding: 'utf-8' }),
     );
 
@@ -89,7 +84,7 @@ export function handleHMR({ app, server }: PagesHMRConfig) {
 
   onFileEvent(isLayout, 'unlink', async (filePath) => {
     clearLayoutChildrenMarkdownCaches(filePath);
-    pages.removeLayout(filePath);
+    routes.removeLayout(filePath);
     return { reload: true };
   });
 

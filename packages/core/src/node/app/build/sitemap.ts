@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import { isFunction, type ServerPage, slash } from '../../../shared';
 import type { App } from '../App';
-import type { ResolvedSitemapConfig, SitemapURL } from '../AppConfig';
+import type { ResolvedSitemapConfig, SitemapURL } from '../config';
 
 export async function buildSitemap(
   app: App,

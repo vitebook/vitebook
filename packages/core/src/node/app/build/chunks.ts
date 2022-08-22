@@ -70,7 +70,7 @@ export function resolvePageLayoutChunks(
   chunks: OutputChunk[],
 ) {
   return page.layouts
-    .map((i) => app.pages.getLayoutByIndex(i))
+    .map((i) => app.routes.getLayoutByIndex(i))
     .map((layout) => resolveChunkByFilePath(layout!.filePath, chunks))
     .filter(Boolean) as OutputChunk[];
 }

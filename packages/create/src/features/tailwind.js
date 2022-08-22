@@ -19,7 +19,7 @@ export function addTailwindFeature(builder) {
 
   builder.dirs.dest.root.writeFile(`postcss.config${ext}`, getPostCssConfig());
 
-  builder.dirs.dest.pages.writeFile(
+  builder.dirs.dest.routes.writeFile(
     'global.css',
     `@tailwind base;\n@tailwind components;\n@tailwind utilities;`,
     { overwrite: true },

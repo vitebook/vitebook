@@ -7,14 +7,14 @@ import type {
 
 import type { logger } from '../utils';
 import type { loadModule } from '../utils/module';
-import type { ResolvedAppConfig } from './AppConfig';
+import type { ResolvedAppConfig } from './config/AppConfig';
 import type { DisposalBin } from './create/DisposalBin';
 import type { MarkdocSchema } from './plugins/markdown';
-import type { Pages } from './plugins/pages';
+import type { Routes } from './plugins/routes';
 
 export type AppDetails = {
   version: string;
-  dirs: AppDirs;
+  dirs: AppDirectories;
   entry: {
     client: string;
     server: string;
@@ -34,7 +34,7 @@ export type App = AppDetails & {
   [x: string]: unknown;
   entries: () => Record<string, string>;
   context: Map<string, unknown>;
-  pages: Pages;
+  routes: Routes;
   markdoc: MarkdocSchema;
   disposal: DisposalBin;
   logger: typeof logger;
@@ -49,17 +49,17 @@ export type App = AppDetails & {
   destroy: () => void;
 };
 
-export type AppDirs = {
-  cwd: AppDirUtils;
-  root: AppDirUtils;
-  workspace: AppDirUtils;
-  pages: AppDirUtils;
-  tmp: AppDirUtils;
-  out: AppDirUtils;
-  public: AppDirUtils;
+export type AppDirectories = {
+  cwd: Directory;
+  root: Directory;
+  workspace: Directory;
+  routes: Directory;
+  tmp: Directory;
+  out: Directory;
+  public: Directory;
 };
 
-export type AppDirUtils = {
+export type Directory = {
   /** Absolute path to directory. */
   path: string;
   /** Transpile with ESBuild and import as an ESM module. */

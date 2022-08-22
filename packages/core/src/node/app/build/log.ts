@@ -3,7 +3,7 @@ import path from 'upath';
 
 import { noslash, type ServerPage } from '../../../shared';
 import { logger } from '../../utils';
-import type { CustomRoutesLoggerInput } from '../AppConfig';
+import type { CustomRoutesLoggerInput } from '../config';
 
 export function log404(
   link: string,

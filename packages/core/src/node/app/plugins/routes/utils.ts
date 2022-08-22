@@ -5,8 +5,8 @@ import {
   endslash,
   isFunction,
   isRoutePathDynamic,
-  type PageRoute,
-  type PageRouteMatcherConfig,
+  type RouteInfo,
+  type RouteMatcherConfig,
   slash,
   stripPageOrderFromPath,
 } from '../../../../shared';
@@ -29,7 +29,7 @@ export function getPageLayoutNameFromFilePath(filePath: string) {
   return match && match.length > 0 ? match : filename;
 }
 
-export function stripPageMetaFromFilePath(filePath: string) {
+export function stripRouteMetaFromFilePath(filePath: string) {
   const ext = path.extname(filePath);
   return filePath.replace(
     new RegExp(`@(\\w|\\+)+\\.${ext.slice(1)}$`, 'i'),
@@ -37,26 +37,28 @@ export function stripPageMetaFromFilePath(filePath: string) {
   );
 }
 
-export function stripPageInfoFromFilePath(filePath: string) {
-  return stripPageMetaFromFilePath(stripPageOrderFromPath(filePath));
+export function stripRouteInfoFromFilePath(filePath: string) {
+  return stripRouteMetaFromFilePath(stripPageOrderFromPath(filePath));
 }
 
-export function resolvePageRouteFromFilePath(
-  pagesDir: string,
+export function resolveRouteFromFilePath(
+  routesDir: string,
   filePath: string,
-  matchers: PageRouteMatcherConfig = {},
-): PageRoute {
-  const pagePath = path.relative(pagesDir, filePath);
-  const orderMatch = path.basename(pagePath).match(PAGE_ORDER_RE)?.[1];
+  matchers: RouteMatcherConfig = {},
+): RouteInfo {
+  const routePath = path.relative(routesDir, filePath);
+  const orderMatch = path.basename(routePath).match(PAGE_ORDER_RE)?.[1];
   const order = orderMatch ? Number(orderMatch) : undefined;
 
-  const isNotFound = path.basename(pagePath).startsWith('@404');
-  let route = stripPageInfoFromFilePath(pagePath);
+  const isNotFound = path.basename(routePath).startsWith('@404');
+  let route = stripRouteInfoFromFilePath(routePath);
 
   for (const matcherName of Object.keys(matchers)) {
     const matcher = matchers[matcherName];
 
-    let value = isFunction(matcher) ? matcher({ filePath, pagePath }) : matcher;
+    let value = isFunction(matcher)
+      ? matcher({ filePath, routePath: routePath })
+      : matcher;
 
     if (value instanceof RegExp) {
       const regexStr = value.toString();
@@ -96,13 +98,13 @@ export function resolvePageRouteFromFilePath(
 }
 
 export function resolveStaticRouteFromFilePath(
-  pagesDir: string,
+  routesDir: string,
   filePath: string,
 ) {
-  const pagePath = endslash(path.relative(pagesDir, filePath));
+  const routePath = endslash(path.relative(routesDir, filePath));
 
   const url = new URL(
-    stripPageInfoFromFilePath(pagePath).toLowerCase(),
+    stripRouteInfoFromFilePath(routePath).toLowerCase(),
     'http://localhost',
   );
 
