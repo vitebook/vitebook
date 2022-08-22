@@ -22,11 +22,7 @@ import type {
 } from '../AppConfig';
 import { type ResolvedMarkdownPluginConfig } from '../plugins/markdown';
 import { MarkdocSchema } from '../plugins/markdown/MarkdocSchema';
-import {
-  Pages,
-  type ResolvedPagesPluginConfig,
-  stripPageInfoFromFilePath,
-} from '../plugins/pages';
+import { Pages, type ResolvedPagesPluginConfig } from '../plugins/pages';
 import type { VitebookPlugin } from '../plugins/Plugin';
 import { getAppVersion } from './app-utils';
 import { createAppDirs } from './create-app-dirs';
@@ -154,7 +150,10 @@ function resolveAppConfig(
 
   const pageExts = `md,svelte,vue,jsx,tsx`;
   const __pages: ResolvedPagesPluginConfig = {
-    include: pages.include ?? [`**/*.{${pageExts}}`],
+    include: pages.include ?? [
+      `**/@404.{${pageExts}}`,
+      `**/*@page*.{${pageExts}}`,
+    ],
     exclude: pages.exclude ?? [],
     layouts: {
       include: [
@@ -238,10 +237,7 @@ function getEntries(app: App) {
 }
 
 function buildPageOutputFilename(app: App, page: ServerPage) {
-  const name = path.trimExt(
-    stripPageInfoFromFilePath(app.dirs.pages.relative(page.rootPath)),
-  );
-
+  const name = path.trimExt(app.dirs.pages.relative(page.rootPath));
   return `pages/${name}`;
 }
 

@@ -277,7 +277,7 @@ export async function build(
       return app.dirs.out.resolve(filePath.slice(1));
     }
 
-    const notFoundRE = /\/404\./;
+    const notFoundRE = /\/@404\./;
     // eslint-disable-next-line no-inner-declarations
     async function crawlHtml(page: ServerPage, html: string) {
       // Attempt to crawl for additional links.

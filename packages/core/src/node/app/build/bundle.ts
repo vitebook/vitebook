@@ -19,6 +19,7 @@ export function resolveBuildConfig(app: App): ViteConfig {
 
   return {
     appType: 'spa',
+    logLevel: 'warn',
     publicDir: ssr ? false : undefined,
     esbuild: { treeShaking: !ssr },
     build: {

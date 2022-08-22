@@ -13,6 +13,13 @@ import {
 
 const LAYOUT_NAME_RE = /(.*?)@layout/;
 const PAGE_ORDER_RE = /^\[(\d*)\]/;
+const PAGE_NAME_RE = /(.*?)@page/;
+
+export function getPageNameFromFilePath(filePath: string) {
+  const filename = path.basename(filePath, path.extname(filePath));
+  const match = filename.match(PAGE_NAME_RE)?.[1];
+  return match && match.length > 0 ? match : undefined;
+}
 
 export function getPageLayoutNameFromFilePath(filePath: string) {
   const filename = path
@@ -22,13 +29,16 @@ export function getPageLayoutNameFromFilePath(filePath: string) {
   return match && match.length > 0 ? match : filename;
 }
 
-export function stripPageLayoutNameFromFilePath(filePath: string) {
+export function stripPageMetaFromFilePath(filePath: string) {
   const ext = path.extname(filePath);
-  return filePath.replace(new RegExp(`@\\w+\\.${ext.slice(1)}$`, 'i'), ext);
+  return filePath.replace(
+    new RegExp(`@(\\w|\\+)+\\.${ext.slice(1)}$`, 'i'),
+    `index${ext}`,
+  );
 }
 
 export function stripPageInfoFromFilePath(filePath: string) {
-  return stripPageLayoutNameFromFilePath(stripPageOrderFromPath(filePath));
+  return stripPageMetaFromFilePath(stripPageOrderFromPath(filePath));
 }
 
 export function resolvePageRouteFromFilePath(
@@ -40,6 +50,7 @@ export function resolvePageRouteFromFilePath(
   const orderMatch = path.basename(pagePath).match(PAGE_ORDER_RE)?.[1];
   const order = orderMatch ? Number(orderMatch) : undefined;
 
+  const isNotFound = path.basename(pagePath).startsWith('@404');
   let route = stripPageInfoFromFilePath(pagePath);
 
   for (const matcherName of Object.keys(matchers)) {
@@ -57,11 +68,7 @@ export function resolvePageRouteFromFilePath(
     route = route.replace(`[${matcherName}]`, `${value ?? ''}`);
   }
 
-  const isNotFound = route.startsWith('404');
-
   const resolveStaticPath = () => {
-    if (isNotFound) return '(.*?)';
-
     const url = new URL(route.toLowerCase(), 'http://v/');
     return url.pathname
       .replace(/\..+($|\\?)/i, '{.html}?')
@@ -70,10 +77,11 @@ export function resolvePageRouteFromFilePath(
 
   const dynamic = isNotFound || isRoutePathDynamic(route);
 
-  const pathname =
-    dynamic && !isNotFound
-      ? slash(path.trimExt(route).replace(/\/index$/, '{/}?{index}?{.html}?'))
-      : resolveStaticPath();
+  const pathname = isNotFound
+    ? `${route.replace(path.basename(route), '')}(.*?)`
+    : dynamic
+    ? slash(path.trimExt(route).replace(/\/index$/, '{/}?{index}?{.html}?'))
+    : resolveStaticPath();
 
   const score = calcRoutePathScore(pathname);
   const pattern = new URLPattern({ pathname });

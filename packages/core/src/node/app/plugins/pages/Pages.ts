@@ -16,11 +16,12 @@ import { normalizePath } from '../../../utils';
 import { getFrontmatter } from '../markdown';
 import {
   getPageLayoutNameFromFilePath,
+  getPageNameFromFilePath,
   resolvePageRouteFromFilePath,
 } from './utils';
 
 const MD_FILE_RE = /\.md($|\/)/;
-const PAGE_LAYOUT_NAME_RE = /@(.*?)\./;
+const PAGE_LAYOUT_NAME_RE = /\+(.*?)\./;
 const STRIP_LAYOUTS_PATH = /\/@layouts\/.+/;
 const HAS_LOADER_RE = /(export function loader|export const loader)/;
 const STRIP_URL_PATTERN_QUOTES_RE = /"new URLPattern(.*?)"/g;
@@ -66,15 +67,11 @@ export class Pages {
   }
 
   async configure(config: PagesConfig) {
-    config.exclude.push(/@layout/, /@markdoc/, /\/@/, /\/_/, /@server/);
-    this.pagesFilter = createFilter(config.include, config.exclude);
-
-    config.layouts.exclude.push(/\/_/, /@markdoc/, /@server/);
     this.layoutsFilter = createFilter(
       config.layouts.include,
       config.layouts.exclude,
     );
-
+    this.pagesFilter = createFilter(config.include, config.exclude);
     this._config = config;
   }
 
@@ -124,7 +121,7 @@ export class Pages {
   }
 
   getLayoutFilePaths() {
-    return globbySync(this._config.include, {
+    return globbySync(this._config.layouts.include, {
       absolute: true,
       cwd: this._config.dirs.pages,
     })
@@ -140,6 +137,7 @@ export class Pages {
     this.removePage(filePath);
 
     const rootPath = this.getRootPath(filePath);
+    const name = getPageNameFromFilePath(filePath);
     const id = slash(rootPath);
     const ext = path.extname(rootPath);
     const route = this.resolvePageRoute(filePath);
@@ -150,6 +148,7 @@ export class Pages {
 
     const page: ServerPage = {
       id,
+      name,
       filePath,
       rootPath,
       ext,
@@ -311,6 +310,7 @@ export class Pages {
     return `export default ${stripImportQuotesFromJson(
       prettyJsonStr(
         this._pages.map((page) => ({
+          name: page.name,
           rootPath: page.rootPath,
           route: {
             ...page.route,

@@ -110,6 +110,8 @@ export type ServerPage = Omit<ClientPage, 'loader' | 'layouts'> & {
   id: string;
   /** Absolute system file path to page file.  */
   readonly filePath: string;
+  /** Page name. */
+  readonly name?: string;
   /** System file path relative to `<root>` to associated page file. */
   readonly rootPath: string;
   /** Page route object. */

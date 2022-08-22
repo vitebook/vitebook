@@ -130,11 +130,7 @@ async function main() {
   // -------------------------------------------------------------------------------------------
 
   builder.dirs.src.template.root.copyDir('./', builder.dirs.dest.root);
-
-  builder.dirs.src.template.config.copyFile(
-    `vite.svelte.config.js`,
-    builder.dirs.dest.root.resolve('vite.config.js'),
-  );
+  builder.dirs.src.template.svelte.copyDir('./', builder.dirs.dest.root);
 
   // -------------------------------------------------------------------------------------------
   // Features
