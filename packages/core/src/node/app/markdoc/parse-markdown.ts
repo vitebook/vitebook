@@ -1,10 +1,6 @@
 /* eslint-disable import/no-named-as-default-member */
 
-import Markdoc, {
-  type Node,
-  type RenderableTreeNode,
-  type Tag,
-} from '@markdoc/markdoc';
+import Markdoc, { type RenderableTreeNode, type Tag } from '@markdoc/markdoc';
 import fs from 'fs';
 import matter from 'gray-matter';
 import yaml from 'js-yaml';
@@ -18,10 +14,16 @@ import {
   type MarkdownHeading,
   type MarkdownMeta,
   type ServerPage,
-} from '../../../../shared';
-import type { App } from '../../App';
-import { resolveStaticRouteFromFilePath } from '../routes';
+} from '../../../shared';
+import type { App } from '../App';
+import { resolveStaticRouteFromFilePath } from '../nodes';
 import { renderMarkdocToHTML } from './render';
+import type {
+  HighlightCodeBlock,
+  MarkdocTreeWalkStuff,
+  ParseMarkdownConfig,
+  ParseMarkdownResult,
+} from './types';
 
 const cache = new LRUCache<string, ParseMarkdownResult>({ max: 1024 });
 const cacheK = new LRUCache<string, string>({ max: 1024 });
@@ -54,8 +56,8 @@ export function parseMarkdown(
     ? yaml.load(ast.attributes.frontmatter)
     : {};
 
-  const nodeImports = app.markdoc.resolveImports(filePath);
-  const config = app.markdoc.getPageConfig(filePath);
+  const nodeImports = app.markdoc.resolveOwnedImports(filePath);
+  const config = app.markdoc.getOwnedConfig(filePath);
   const lastUpdated = Math.round(fs.statSync(filePath).mtimeMs);
 
   const content = Markdoc.transform(ast, {
@@ -101,7 +103,7 @@ export function parseMarkdown(
     lastUpdated,
   };
 
-  const page = app.routes.getPage(filePath);
+  const page = app.nodes.pages.find(filePath);
   if (page) mergeLayoutMeta(app, page, meta, opts);
 
   for (const transformer of opts.transformMeta ?? []) {
@@ -143,7 +145,7 @@ function mergeLayoutMeta(
   opts: Partial<ParseMarkdownConfig> = {},
 ) {
   const layoutFiles = page.layouts.map(
-    (layout) => app.routes.getLayoutByIndex(layout).filePath,
+    (index) => app.nodes.layouts.getByIndex(index).filePath,
   );
 
   for (const layoutFile of layoutFiles.reverse()) {
@@ -202,18 +204,6 @@ const headingNameRE = /^(h\d|Heading)$/;
 const linkNameRE = /^(a|link|Link)$/;
 const importRE = /^import$/;
 
-export type MarkdocTreeWalkStuff = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [id: string]: any;
-  baseUrl: string;
-  filePath: string;
-  appDir: string;
-  links: Set<string>;
-  imports: Set<string>;
-  headings: MarkdownHeading[];
-  highlight: HighlightCodeBlock;
-};
-
 function forEachRenderNode(
   node: RenderableTreeNode,
   stuff: MarkdocTreeWalkStuff,
@@ -248,11 +238,6 @@ function transformCode(tag: Tag) {
     delete tag.attributes.content;
   }
 }
-
-export type HighlightCodeBlock = (
-  code: string,
-  lang: string,
-) => string | undefined | null;
 
 const preTagRE = /<\/?pre(.*?)>/g;
 const preTagStyleAttrRE = /<pre.*?style="(.*?)"/;
@@ -370,64 +355,3 @@ function slugify(str: string) {
       .toLowerCase()
   );
 }
-
-export type MarkdocTreeNodeTransformer = (data: {
-  node: RenderableTreeNode;
-  stuff: MarkdocTreeWalkStuff;
-}) => void;
-
-export type MarkdocAstTransformer = (data: {
-  ast: Node;
-  filePath: string;
-  source: string;
-}) => void;
-
-export type MarkdocContentTransformer = (data: {
-  filePath: string;
-  content: RenderableTreeNode;
-  frontmatter: MarkdownFrontmatter;
-}) => string;
-
-export type MarkdocMetaTransformer = (data: {
-  filePath: string;
-  imports: string[];
-  stuff: MarkdocTreeWalkStuff;
-  meta: MarkdownMeta;
-}) => void;
-
-export type MarkdocOutputTransformer = (data: {
-  filePath: string;
-  code: string;
-  imports: string[];
-  stuff: MarkdocTreeWalkStuff;
-  meta: MarkdownMeta;
-}) => string;
-
-export type MarkdocRenderer = (data: {
-  filePath: string;
-  content: RenderableTreeNode;
-  imports: string[];
-  stuff: MarkdocTreeWalkStuff;
-  meta: MarkdownMeta;
-}) => string;
-
-export type ParseMarkdownConfig = {
-  ignoreCache?: boolean;
-  filter: (id: string) => boolean;
-  highlight: HighlightCodeBlock;
-  transformAst: MarkdocAstTransformer[];
-  transformTreeNode: MarkdocTreeNodeTransformer[];
-  transformContent: MarkdocContentTransformer[];
-  transformMeta: MarkdocMetaTransformer[];
-  transformOutput: MarkdocOutputTransformer[];
-  render: MarkdocRenderer;
-};
-
-export type ParseMarkdownResult = {
-  filePath: string;
-  output: string;
-  meta: MarkdownMeta;
-  ast: Node;
-  stuff: MarkdocTreeWalkStuff;
-  content: RenderableTreeNode;
-};

@@ -6,15 +6,15 @@ import type { ViteDevServer } from 'vite';
 
 import type { MarkdownMeta, ServerPage } from '../../../../shared';
 import type { App } from '../../App';
-import { type VitebookPlugin } from '../Plugin';
-import { invalidatePageModule } from '../routes/pages-hmr';
-import { handleMarkdownHMR } from './hmr';
 import {
   clearMarkdownCache,
   type HighlightCodeBlock,
   parseMarkdown,
   type ParseMarkdownResult,
-} from './parse-markdown';
+} from '../../markdoc';
+import { invalidatePageModule } from '../nodes/pages-hmr';
+import { type VitebookPlugin } from '../Plugin';
+import { handleMarkdownHMR } from './hmr';
 
 export function markdownPlugin(): VitebookPlugin {
   let app: App;
@@ -99,7 +99,7 @@ export function markdownPlugin(): VitebookPlugin {
       handleMarkdownHMR(app);
       server.ws.on('vitebook::page_change', ({ rootPath }) => {
         const filePath = app.dirs.root.resolve(rootPath);
-        currentPage = app.routes.getPage(filePath);
+        currentPage = app.nodes.pages.find(filePath);
       });
     },
     transform(content, id) {
@@ -116,7 +116,7 @@ export function markdownPlugin(): VitebookPlugin {
       if (filter(file)) {
         const content = await read();
 
-        const layoutIndex = app.routes.getLayoutIndex(file);
+        const layoutIndex = app.nodes.layouts.findIndex(file);
         const isLayoutFile = layoutIndex >= 0;
 
         if (isLayoutFile && currentPage?.layouts.includes(layoutIndex)) {

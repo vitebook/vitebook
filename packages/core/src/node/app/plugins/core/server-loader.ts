@@ -99,7 +99,7 @@ export async function loadPageServerOutput(
   await Promise.all(
     page.layouts.map(async (index) => {
       const id = buildDataAssetID(pathname, index);
-      const layout = app.routes.getLayoutByIndex(index)!;
+      const layout = app.nodes.layouts.getByIndex(index);
 
       const output = await runModuleServerLoader(
         app,
@@ -131,9 +131,9 @@ export async function runModuleServerLoader(
 ): Promise<ServerLoadedOutput> {
   if (!filePath) return {};
 
-  const module = app.routes.isLayout(filePath)
-    ? app.routes.getLayout(filePath)
-    : app.routes.getPage(filePath);
+  const module = app.nodes.layouts.is(filePath)
+    ? app.nodes.layouts.find(filePath)
+    : app.nodes.pages.find(filePath);
 
   if (!module || !module.hasLoader) {
     clearServerLoaderCache(filePath);

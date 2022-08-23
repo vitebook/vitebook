@@ -1,4 +1,4 @@
-import type { LoadedClientMarkdownPage, LoadedClientPage } from '../Page';
+import type { LoadedClientMarkdownPage, LoadedClientPage } from '../nodes';
 import { isNumber } from './unit';
 import { noslash, slash } from './url';
 

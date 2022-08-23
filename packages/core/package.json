@@ -46,7 +46,6 @@
     "@rollup/pluginutils": "^4.1.1",
     "@types/lru-cache": "^5.1.1",
     "esbuild": "^0.12.24",
-    "get-folder-size": "^3.1.0",
     "globby": "^13.1.1",
     "gray-matter": "^4.0.3",
     "hast-util-to-html": "^8.0.3",

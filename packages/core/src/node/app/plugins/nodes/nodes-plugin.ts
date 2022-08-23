@@ -4,16 +4,16 @@ import type { VitebookPlugin } from '../Plugin';
 import { loadLayoutsModule, loadPagesModule } from './load';
 import { handlePagesHMR } from './pages-hmr';
 
-export function routesPlugin(): VitebookPlugin {
+export function nodesPlugin(): VitebookPlugin {
   let app: App;
 
   return {
-    name: '@vitebook/routes',
+    name: '@vitebook/nodes',
     enforce: 'pre',
     vitebook: {
       async configureApp(_app) {
         app = _app;
-        await app.routes.init(app);
+        await app.nodes.init(app);
       },
     },
     async configureServer(server) {
@@ -22,11 +22,11 @@ export function routesPlugin(): VitebookPlugin {
     },
     async load(id) {
       if (id === virtualModuleRequestPath.pages) {
-        return loadPagesModule(app.routes.pages);
+        return loadPagesModule(app.nodes.pages.toArray());
       }
 
       if (id === virtualModuleRequestPath.layouts) {
-        return loadLayoutsModule(app.routes.layouts);
+        return loadLayoutsModule(app.nodes.layouts.toArray());
       }
 
       return null;

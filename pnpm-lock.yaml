@@ -75,7 +75,6 @@ importers:
       '@wooorm/starry-night': ^1.0.0
       chokidar: ^3.5.2
       esbuild: ^0.12.24
-      get-folder-size: ^3.1.0
       globby: ^13.1.1
       gray-matter: ^4.0.3
       hast-util-to-html: ^8.0.3
@@ -99,7 +98,6 @@ importers:
       '@rollup/pluginutils': 4.2.1
       '@types/lru-cache': 5.1.1
       esbuild: 0.12.29
-      get-folder-size: 3.1.0
       globby: 13.1.2
       gray-matter: 4.0.3
       hast-util-to-html: 8.0.3
@@ -2044,22 +2042,10 @@ packages:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
     dev: true
 
-  /gar/1.0.4:
-    resolution: {integrity: sha512-w4n9cPWyP7aHxKxYHFQMegj7WIAsL/YX/C4Bs5Rr8s1H9M1rNtRWRsw+ovYMkXDQ5S4ZbYHsHAPmevPjPgw44w==}
-    dev: false
-
   /get-caller-file/2.0.5:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
     engines: {node: 6.* || 8.* || >= 10.*}
     dev: true
-
-  /get-folder-size/3.1.0:
-    resolution: {integrity: sha512-/I7q+x1HCd22IXP4+kp2Wkz8+au7VfNwNyMfM4Z0gwaTMs+dJ1ShXUWDGSWXi+rDU59MI/j7NBP7+kd7zejnPw==}
-    engines: {node: '>=14.13.0'}
-    hasBin: true
-    dependencies:
-      gar: 1.0.4
-    dev: false
 
   /get-intrinsic/1.1.2:
     resolution: {integrity: sha512-Jfm3OyCxHh9DJyc28qGk+JmfkpO41A4XkneDSujN9MDXrm4oDKdHvndhZ2dN94+ERNfkYJWDclW6k2L/ZGHjXA==}

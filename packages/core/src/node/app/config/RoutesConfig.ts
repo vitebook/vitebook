@@ -49,11 +49,11 @@ export type ResolvedRoutesConfig = {
    */
   pages: {
     /**
-     * Globs indicating page files to be included in Vitebook (relative to `<pages>`).
+     * Globs indicating page files to be included in Vitebook (relative to `<app>`).
      */
     include: string[];
     /**
-     * Globs or RegExp indicating page files to be excluded from Vitebook (relative to `<pages>`).
+     * Globs or RegExp indicating page files to be excluded from Vitebook (relative to `<app>`).
      */
     exclude: (string | RegExp)[];
   };
@@ -62,11 +62,22 @@ export type ResolvedRoutesConfig = {
    */
   layouts: {
     /**
-     * Globs indicating layout files to be included in Vitebook (relative to `<pages>`).
+     * Globs indicating layout files to be included in Vitebook (relative to `<app>`).
      */
     include: string[];
     /**
-     * Globs or RegExp indicating layout files to be excluded from Vitebook (relative to `<pages>`).
+     * Globs or RegExp indicating layout files to be excluded from Vitebook (relative to `<app>`).
+     */
+    exclude: (string | RegExp)[];
+  };
+  functions: {
+    /**
+     * Globs indicating serverless/edge functions to be included in Vitebook (relative to `<app>`).
+     */
+    include: string[];
+    /**
+     * Globs or RegExp indicating serverless/edge functions to be excluded from Vitebook (relative
+     * to `<app>`).
      */
     exclude: (string | RegExp)[];
   };
@@ -96,8 +107,9 @@ export type CustomRoutesLoggerInput = {
 };
 
 export type RoutesConfig = Partial<
-  Omit<ResolvedRoutesConfig, 'pages' | 'layouts'>
+  Omit<ResolvedRoutesConfig, 'pages' | 'layouts' | 'functions'>
 > & {
   pages?: Partial<ResolvedRoutesConfig['pages']>;
-  layouts?: Partial<ResolvedRoutesConfig['pages']>;
+  layouts?: Partial<ResolvedRoutesConfig['layouts']>;
+  functions?: Partial<ResolvedRoutesConfig['functions']>;
 };

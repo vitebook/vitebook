@@ -7,7 +7,6 @@ export type {
   MarkdocAstTransformer,
   MarkdocContentTransformer,
   MarkdocMetaTransformer,
-  MarkdocNodeFileMeta,
   MarkdocOutputTransformer,
   MarkdocRenderer,
   MarkdocSchema,
@@ -15,17 +14,16 @@ export type {
   MarkdocTreeWalkStuff,
   ParseMarkdownConfig,
   RenderMarkdocConfig,
-} from './app/plugins/markdown';
-export { renderMarkdocToHTML } from './app/plugins/markdown';
+} from './app/markdoc';
+export { renderMarkdocToHTML } from './app/markdoc';
+export * from './app/nodes';
 export * from './app/plugins/Plugin';
-export type { Routes } from './app/plugins/routes';
-export * from './app/plugins/routes/utils';
 export {
   vitebookPlugin as default,
   vitebookPlugin as vitebook,
+  type VitebookPluginConfig,
 } from './app/plugins/vitebook-plugin';
-export * from './app/plugins/vitebook-plugin';
-export * from './utils';
+export { logger } from './utils/logger';
 export type {
   Config as MarkdocConfig,
   Node as MarkdocNode,

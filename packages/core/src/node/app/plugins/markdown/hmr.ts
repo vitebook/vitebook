@@ -1,15 +1,17 @@
 import { normalizePath } from '../../../utils';
 import type { App } from '../../App';
-import { clearMarkdownCache } from './parse-markdown';
+import { clearMarkdownCache } from '../../markdoc';
 
 export function handleMarkdownHMR(app: App) {
-  const isNode = (filePath) => app.markdoc.isAnyNode(filePath);
+  const schema = app.markdoc;
+  const nodes = app.nodes.markdoc;
+  const isNode = (filePath) => nodes.isAnyNode(filePath);
 
   onFileEvent(isNode, 'add', async (filePath) => {
-    app.markdoc.addNode(filePath);
+    nodes.add(filePath);
 
-    for (const page of app.routes.pages) {
-      if (app.markdoc.doesNodeBelongToPage(filePath, page.filePath)) {
+    for (const page of app.nodes.pages) {
+      if (nodes.isOwnedBy(filePath, page.filePath)) {
         clearMarkdownCache(page.filePath);
         invalidateFile(page.filePath);
       }
@@ -19,9 +21,9 @@ export function handleMarkdownHMR(app: App) {
   });
 
   onFileEvent(isNode, 'unlink', async (filePath) => {
-    app.markdoc.removeNode(filePath);
+    nodes.remove(filePath);
 
-    const files = app.markdoc.affectedFiles.get(filePath);
+    const files = schema.hmrFiles.get(filePath);
 
     if (files) {
       for (const file of files) {
@@ -30,7 +32,7 @@ export function handleMarkdownHMR(app: App) {
       }
     }
 
-    app.markdoc.affectedFiles.delete(filePath);
+    schema.hmrFiles.delete(filePath);
     return { reload: true };
   });
 

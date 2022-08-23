@@ -1,4 +1,4 @@
-import type { ServerLoadedDataMap } from './Page';
+import type { ServerLoadedDataMap } from './nodes';
 
 export type AppContextMap = Map<string, unknown>;
 

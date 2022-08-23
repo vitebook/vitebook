@@ -1,12 +1,8 @@
-import { build as esbuild, BuildOptions } from 'esbuild';
-import fs from 'fs';
-import getFolderSize from 'get-folder-size';
 import { createRequire } from 'module';
 import path from 'upath';
-import { fileURLToPath, pathToFileURL } from 'url';
+import { fileURLToPath } from 'url';
 
 import { isObject } from '../../shared';
-import { checksumFile, emptyDir, ensureDir } from './fs';
 
 /**
  * Check if a given module is an esm module with a default export.
@@ -41,91 +37,3 @@ export const requireResolve = (request: string): string | null => {
     return null;
   }
 };
-
-let tmpDir: string;
-
-export type LoadModuleOptions = BuildOptions;
-
-const requireShim = [
-  "import __vitebook__path from 'path';",
-  "import { fileURLToPath as __vitebook__fileURLToPath } from 'url';",
-  "import { createRequire as __vitebook__createRequire } from 'module';",
-  'const require = __vitebook__createRequire(import.meta.url);',
-  'var __require = function(x) { return require(x); };',
-  '__require.__proto__.resolve = require.resolve;',
-  'const __filename = __vitebook__fileURLToPath(import.meta.url);',
-  'const __dirname = __vitebook__path.dirname(__filename);',
-  '\n',
-].join('\n');
-
-/** Bundle with ESBuild and import as an ESM module. */
-export const loadModule = async <T>(
-  filePath: string,
-  options: LoadModuleOptions = {},
-): Promise<T> => {
-  const { ...buildOptions } = options;
-
-  if (!tmpDir) {
-    tmpDir =
-      options.outdir ?? path.join(process.cwd(), 'node_modules/.vitebook/temp');
-
-    if (fs.existsSync(tmpDir)) {
-      // If greater than 5MB let's empty it.
-      const { size } = await getFolderSize(tmpDir);
-      if (size > 5000000) await emptyDir(tmpDir);
-    } else {
-      await ensureDir(tmpDir);
-    }
-  }
-
-  const fileHash = await checksumFile('sha1', filePath);
-  const outputPath = path.resolve(tmpDir, `${fileHash}.mjs`);
-
-  const fileComment = `// FILE: ${filePath}\n\n`;
-  const code = await bundle(filePath, buildOptions);
-  await fs.promises.writeFile(outputPath, fileComment + requireShim + code);
-  const mod = import(
-    pathToFileURL(outputPath).href + `?t=${Date.now()}`
-  ) as unknown as T;
-
-  return mod;
-};
-
-export async function bundle(
-  filePath: string,
-  options: BuildOptions,
-): Promise<string | undefined> {
-  const { outputFiles } = await esbuild({
-    ...options,
-    entryPoints: [filePath],
-    loader: options.loader,
-    platform: options.platform ?? 'node',
-    format: options.format ?? 'esm',
-    target: options.target ?? 'node16',
-    allowOverwrite: options.allowOverwrite ?? true,
-    bundle: options.bundle ?? true,
-    preserveSymlinks: options.preserveSymlinks ?? true,
-    splitting: options.splitting ?? false,
-    treeShaking: options.treeShaking ?? true,
-    write: false,
-    plugins: [
-      {
-        name: 'mark-externals',
-        setup(build) {
-          // Must not start with "/" or "./" or "../" or "C:/"
-          // eslint-disable-next-line no-useless-escape
-          build.onResolve({ filter: /[A-Z]:\/*/ }, async () => ({
-            external: false,
-          }));
-          build.onResolve(
-            // eslint-disable-next-line no-useless-escape
-            { filter: /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ },
-            async () => ({ external: true }),
-          );
-        },
-      },
-    ],
-  });
-
-  return outputFiles[0]?.text;
-}

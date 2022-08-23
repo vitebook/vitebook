@@ -3,8 +3,8 @@ export * from './ssr';
 // polyfills
 export * from './polyfills';
 // types
-export * from './Markdown';
-export * from './Page';
+export * from './markdown';
+export * from './nodes';
 // utils
 export * from './utils/date';
 export * from './utils/error';

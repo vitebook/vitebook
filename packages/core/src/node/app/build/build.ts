@@ -44,7 +44,7 @@ export async function build(
 
   app.logger.info(kleur.bold(`vitebook@${app.version}`));
 
-  if (app.routes.pages.length === 0) {
+  if (app.nodes.pages.size === 0) {
     console.log(kleur.bold(`❓ No pages were resolved`));
     return;
   }
@@ -53,7 +53,7 @@ export async function build(
   const spinner = ora();
 
   const baseUrl = app.vite.resolved!.base;
-  const pages = app.routes.pages;
+  const pages = app.nodes.pages.toArray();
 
   const appEntries = app.entries();
   const appEntryFilenames = Object.keys(appEntries);
@@ -160,7 +160,7 @@ export async function build(
     // RENDER
     // -------------------------------------------------------------------------------------------
 
-    spinner.start(kleur.bold(`Rendering ${app.routes.pages.length} pages...`));
+    spinner.start(kleur.bold(`Rendering ${app.nodes.pages.size} pages...`));
 
     const serverEntryPath = app.dirs.out.resolve('server', 'entry.js');
 
@@ -290,9 +290,8 @@ export async function build(
 
       if (seenLinks.has(pathname) || notFoundLinks.has(pathname)) return;
 
-      const { index } = matchRouteInfo(url, app.routes.pages) ?? {};
-      const foundPage =
-        !isUndefined(index) && index >= 0 ? app.routes.pages[index] : null;
+      const { index } = matchRouteInfo(url, pages) ?? {};
+      const foundPage = !isUndefined(index) && index >= 0 ? pages[index] : null;
 
       if (foundPage && !notFoundRE.test(foundPage.id)) {
         await buildPage(url, foundPage);
@@ -314,10 +313,10 @@ export async function build(
 
     for (const entry of app.config.routes.entries) {
       const url = new URL(`http://ssr${slash(entry)}`);
-      const { index } = matchRouteInfo(url, app.routes.pages) ?? {};
+      const { index } = matchRouteInfo(url, pages) ?? {};
 
       if (index) {
-        const page = app.routes.pages[index];
+        const page = pages[index];
         await buildPage(url, page);
       } else {
         app.logger.warn(

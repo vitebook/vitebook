@@ -9,32 +9,19 @@ import {
   type RouteMatcherConfig,
   slash,
   stripPageOrderFromPath,
-} from '../../../../shared';
+} from '../../../shared';
 
-const LAYOUT_NAME_RE = /(.*?)@layout/;
 const PAGE_ORDER_RE = /^\[(\d*)\]/;
-const PAGE_NAME_RE = /(.*?)@page/;
-
-export function getPageNameFromFilePath(filePath: string) {
-  const filename = path.basename(filePath, path.extname(filePath));
-  const match = filename.match(PAGE_NAME_RE)?.[1];
-  return match && match.length > 0 ? match : undefined;
-}
-
-export function getPageLayoutNameFromFilePath(filePath: string) {
-  const filename = path
-    .basename(filePath, path.extname(filePath))
-    .replace(/\.reset($|\/)/, '');
-  const match = filename.match(LAYOUT_NAME_RE)?.[1];
-  return match && match.length > 0 ? match : filename;
-}
 
 export function stripRouteMetaFromFilePath(filePath: string) {
   const ext = path.extname(filePath);
-  return filePath.replace(
+  const stripped = filePath.replace(
     new RegExp(`@(\\w|\\+)+\\.${ext.slice(1)}$`, 'i'),
-    `index${ext}`,
+    ext,
   );
+  return stripped === ext
+    ? `index${ext}`
+    : stripped.replace(`/${ext}`, `/index${ext}`);
 }
 
 export function stripRouteInfoFromFilePath(filePath: string) {
@@ -82,7 +69,9 @@ export function resolveRouteFromFilePath(
   const pathname = isNotFound
     ? `${route.replace(path.basename(route), '')}(.*?)`
     : dynamic
-    ? slash(path.trimExt(route).replace(/\/index$/, '{/}?{index}?{.html}?'))
+    ? slash(
+        path.trimExt(route).replace(/\/index$/, '{/}?{index}?{.html}?'),
+      ).replace(/\/?$/, '{/}?')
     : resolveStaticPath();
 
   const score = calcRoutePathScore(pathname);

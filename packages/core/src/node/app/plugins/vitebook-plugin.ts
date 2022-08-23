@@ -16,7 +16,7 @@ import { installFetch } from '../polyfills';
 import { handleDataRequest } from './core/handle-data';
 import { handlePageRequest } from './core/handle-page';
 import { markdownPlugin } from './markdown/markdown-plugin';
-import { routesPlugin } from './routes/routes-plugin';
+import { nodesPlugin } from './nodes/nodes-plugin';
 
 const clientPackages = [
   '@vitebook/core',
@@ -201,7 +201,7 @@ export function vitebookPlugin(
       },
     },
     markdownPlugin(),
-    routesPlugin(),
+    nodesPlugin(),
   ];
 }
 

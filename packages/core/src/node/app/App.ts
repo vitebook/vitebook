@@ -6,11 +6,10 @@ import type {
 } from 'vite';
 
 import type { logger } from '../utils';
-import type { loadModule } from '../utils/module';
 import type { ResolvedAppConfig } from './config/AppConfig';
 import type { DisposalBin } from './create/DisposalBin';
-import type { MarkdocSchema } from './plugins/markdown';
-import type { Routes } from './plugins/routes';
+import type { MarkdocSchema } from './markdoc';
+import type { AppNodes } from './nodes';
 
 export type AppDetails = {
   version: string;
@@ -34,7 +33,7 @@ export type App = AppDetails & {
   [x: string]: unknown;
   entries: () => Record<string, string>;
   context: Map<string, unknown>;
-  routes: Routes;
+  nodes: AppNodes;
   markdoc: MarkdocSchema;
   disposal: DisposalBin;
   logger: typeof logger;
@@ -62,8 +61,6 @@ export type AppDirectories = {
 export type Directory = {
   /** Absolute path to directory. */
   path: string;
-  /** Transpile with ESBuild and import as an ESM module. */
-  loadModule: typeof loadModule;
   /** Read contents of file relative to current directory. */
   read: (filePath: string) => string;
   /** Resolve file path relative to current directory. */

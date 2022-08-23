@@ -32,12 +32,16 @@ export function resolveAppConfig(
   };
 
   const pageExts = `md,svelte,vue,jsx,tsx`;
+  const fnExts = 'js,ts';
+
   const __routes: ResolvedRoutesConfig = {
     entries: routes.entries ?? [],
     matchers: {
-      int: /\d+/,
-      str: /\w+/,
-      bool: /(true|false|0|1)/,
+      int: /:slug(\d+)/,
+      str: /:slug(\w+)/,
+      bool: /:slug(true|false)/,
+      slug: ':slug',
+      '...slug': ':slug*',
       ...routes.matchers,
     },
     log: routes.log ?? 'tree',
@@ -56,6 +60,11 @@ export function resolveAppConfig(
       ],
       exclude: [],
       ...routes.layouts,
+    },
+    functions: {
+      include: [`**/@edge.{${fnExts}}`, `**/@fn.{${fnExts}}`],
+      exclude: [],
+      ...routes.functions,
     },
   };
 

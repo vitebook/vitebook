@@ -11,7 +11,6 @@ export function loadPagesModule(pages: ServerPage[]) {
   return `export default ${stripImportQuotesFromJson(
     prettyJsonStr(
       pages.map((page) => ({
-        name: page.name,
         rootPath: page.rootPath,
         route: {
           ...page.route,

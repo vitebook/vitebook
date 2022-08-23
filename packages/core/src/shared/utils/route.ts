@@ -1,4 +1,4 @@
-import type { RouteInfo, WithRouteMatch } from '../Page';
+import type { RouteInfo, WithRouteMatch } from '../nodes';
 import { noslash, slash } from './url';
 
 const PATH_SCORE = {

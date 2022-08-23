@@ -17,9 +17,9 @@ import {
   resolveAppConfig,
   type ResolvedAppConfig,
 } from '../config';
-import { MarkdocSchema } from '../plugins/markdown/MarkdocSchema';
+import { MarkdocSchema } from '../markdoc/MarkdocSchema';
+import { AppNodes } from '../nodes';
 import type { VitebookPlugin } from '../plugins/Plugin';
-import { Routes } from '../plugins/routes';
 import { createAppDirectories } from './app-dirs';
 import { getAppVersion } from './app-utils';
 import { DisposalBin } from './DisposalBin';
@@ -74,7 +74,7 @@ export const createAppFactory = async (
         })(),
         vite: { user: viteConfig, env },
         context: new Map(),
-        routes: new Routes(),
+        nodes: new AppNodes(),
         markdoc: new MarkdocSchema(),
         disposal: new DisposalBin(),
         destroy: () => $app.disposal.empty(),
@@ -111,12 +111,12 @@ function defaultEntry(): App['entry'] {
 function getEntries(app: App) {
   const entries: Record<string, string> = {};
 
-  for (const page of app.routes.pages) {
+  for (const page of app.nodes.pages) {
     const filename = buildPageOutputFilename(app, page);
     entries[filename] = page.filePath;
   }
 
-  for (const layout of app.routes.layouts) {
+  for (const layout of app.nodes.layouts) {
     const filename = buildLayoutOutputFilename(app, layout);
     entries[filename] = layout.filePath;
   }

@@ -18,7 +18,7 @@ export type ResolvedAppConfig = {
   markdown: ResolvedMarkdownConfig;
   /** Sitemap options. */
   sitemap: ResolvedSitemapConfig[];
-  /** Whether app is running in debug mode.  */
+  /** Whether app is running in debug mode. */
   isDebug: boolean;
   /** Whether Vite is in build mode. */
   isBuild: boolean;
