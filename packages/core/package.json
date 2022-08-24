@@ -31,7 +31,7 @@
   "scripts": {
     "build": "run-s clean build:client build:node build:types",
     "build:client": "node ../../.scripts/build.js --entry=src/client/**/*.ts,src/shared/**/*.ts --outbase=src --outdir=dist",
-    "build:node": "node ../../.scripts/build.js --platform=node --bundle",
+    "build:node": "node ../../.scripts/build.js --platform=node --bundle --split",
     "build:types": "tsc -p tsconfig.json && run-p types:*",
     "types:client": "api-extractor run -c types.client.json",
     "types:node": "api-extractor run -c types.node.json",

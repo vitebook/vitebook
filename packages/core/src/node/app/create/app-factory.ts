@@ -126,7 +126,7 @@ function getEntries(app: App) {
 
 function buildPageOutputFilename(app: App, page: ServerPage) {
   const name = path.trimExt(app.dirs.app.relative(page.rootPath));
-  return `pages/${name}`;
+  return `chunks/pages/${name}`;
 }
 
 function buildLayoutOutputFilename(app: App, layout: ServerLayout) {
@@ -134,5 +134,5 @@ function buildLayoutOutputFilename(app: App, layout: ServerLayout) {
     .trimExt(app.dirs.app.relative(layout.rootPath))
     .replace(/@layouts\//, '');
 
-  return `layouts/${name}`;
+  return `chunks/layouts/${name}`;
 }

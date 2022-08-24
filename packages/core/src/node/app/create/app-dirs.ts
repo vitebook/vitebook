@@ -16,6 +16,7 @@ export function createAppDirectories(
   );
   const appDir = createDirectory(config.dirs.app);
   const outDir = createDirectory(config.dirs.output);
+  const serverDir = createDirectory(outDir.resolve('server'));
   const publicDir = createDirectory(config.dirs.public);
   const tmpDir = createDirectory(cwdDir.resolve('node_modules/.vitebook/temp'));
   return {
@@ -24,19 +25,20 @@ export function createAppDirectories(
     root: rootDir,
     app: appDir,
     out: outDir,
+    server: serverDir,
     public: publicDir,
     tmp: tmpDir,
   };
 }
 
-function createDirectory(baseDir: string): Directory {
+export function createDirectory(dirname: string): Directory {
   const resolve = (...args: string[]) =>
     args.length === 1 && path.isAbsolute(args[0])
       ? args[0]
-      : path.resolve(baseDir, ...args);
+      : path.resolve(dirname, ...args);
 
   const relative = (...args: string[]) =>
-    path.relative(baseDir, path.join(...args));
+    path.relative(dirname, path.join(...args));
 
   const read = (filePath: string) =>
     fs.readFileSync(resolve(filePath), 'utf-8');
@@ -45,7 +47,7 @@ function createDirectory(baseDir: string): Directory {
     fs.writeFileSync(resolve(filePath), data);
 
   return {
-    path: baseDir,
+    path: dirname,
     resolve,
     relative,
     read,

@@ -320,13 +320,14 @@ function resolveLinks(tag: Tag, stuff: MarkdocTreeWalkStuff) {
     const rawHash = internalLinkMatch?.[2] ?? '';
 
     const absolutePath = rawPath?.startsWith('/')
-      ? '.' + rawPath
+      ? path.resolve(stuff.appDir, '.' + rawPath)
       : path.resolve(path.dirname(stuff.filePath), rawPath);
 
     const route = resolveStaticRouteFromFilePath(stuff.appDir, absolutePath);
 
     const resolvedHref = `${route}${rawHash}`;
     tag.attributes.href = resolvedHref;
+    tag.attributes['data-prefetch'] = '';
     stuff.links.add(resolvedHref);
   }
 }

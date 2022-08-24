@@ -1,4 +1,5 @@
 export * from './AppConfig';
+export * from './BuildConfig';
 export * from './ClientConfig';
 export * from './DirectoriesConfig';
 export * from './MarkdownConfig';

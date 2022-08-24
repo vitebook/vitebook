@@ -19,12 +19,12 @@ export const render: ServerRenderer = async (url, { data }) => {
 
   const renderer = findViewRenderer(app.id, app.module, renderers);
 
-  if (!renderer) return { html: '', ssr };
+  if (!renderer) return { html: '', context: ssr };
 
   const { head, html, css } = await renderer.ssr({
     module: app.module,
     context,
   });
 
-  return { ssr, html, head, css };
+  return { context: ssr, html, head, css };
 };

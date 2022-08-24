@@ -55,6 +55,7 @@ export type AppDirectories = {
   app: Directory;
   tmp: Directory;
   out: Directory;
+  server: Directory;
   public: Directory;
 };
 

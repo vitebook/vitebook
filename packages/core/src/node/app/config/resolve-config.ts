@@ -2,6 +2,8 @@ import path from 'upath';
 
 import { isArray } from '../../../shared';
 import { resolveRelativePath } from '../../utils';
+import { createAutoBuildAdapter } from '../build/adapter';
+import type { ResolvedBuildConfig } from '.';
 import type { AppConfig, ResolvedAppConfig } from './AppConfig';
 import type { ResolvedClientConfig } from './ClientConfig';
 import type { ResolvedMarkdownConfig } from './MarkdownConfig';
@@ -11,6 +13,7 @@ import type { ResolvedSitemapConfig } from './SitemapConfig';
 export function resolveAppConfig(
   root: string,
   {
+    build = {},
     dirs = {},
     isDebug: debug = false,
     client = {},
@@ -24,6 +27,10 @@ export function resolveAppConfig(
   const _app = resolveRelativePath(_root, dirs.app ?? 'app');
   const _output = resolveRelativePath(_root, dirs.output ?? 'build');
   const _public = resolveRelativePath(_root, dirs.public ?? 'public');
+
+  const __build: ResolvedBuildConfig = {
+    adapter: build.adapter ?? createAutoBuildAdapter(),
+  };
 
   const __client: ResolvedClientConfig = {
     // Most likely set later by a plugin.
@@ -105,7 +112,7 @@ export function resolveAppConfig(
     .map((config) => ({ ...__sitemapConfig, ...config }));
 
   return {
-    isDebug: debug,
+    build: __build,
     dirs: {
       app: _app,
       output: _output,
@@ -117,5 +124,6 @@ export function resolveAppConfig(
     sitemap: __sitemap,
     isBuild: false,
     isSSR: false,
+    isDebug: debug,
   };
 }

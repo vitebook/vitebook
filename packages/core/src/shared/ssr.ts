@@ -12,7 +12,7 @@ export type ServerEntryModule = {
 };
 
 export type ServerRenderResult = {
-  ssr: ServerContext;
+  context: ServerContext;
   head?: string;
   css?: string;
   html: string;

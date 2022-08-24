@@ -1,6 +1,12 @@
 export * from '../shared';
 export * from './app/alias';
 export * from './app/App';
+export type {
+  BuildAdapter,
+  BuildAdapterFactory,
+  BuildAdapterUtils,
+} from './app/build/adapter';
+export type { BuildBundles, BuildData } from './app/build/build';
 export * from './app/config';
 export type {
   HighlightCodeBlock,
@@ -23,7 +29,7 @@ export {
   vitebookPlugin as vitebook,
   type VitebookPluginConfig,
 } from './app/plugins/vitebook-plugin';
-export { logger } from './utils/logger';
+export * from './utils';
 export type {
   Config as MarkdocConfig,
   Node as MarkdocNode,

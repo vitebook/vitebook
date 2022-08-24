@@ -2,7 +2,9 @@ import type { AppContextMap } from '../shared';
 import type { Router } from './router/Router';
 import type { ViewRenderer } from './view/ViewRenderer';
 
-export * from '../shared';
+export * from '../shared/markdown';
+export * from '../shared/nodes';
+export * from '../shared/ssr';
 // context
 export * from './context';
 // router

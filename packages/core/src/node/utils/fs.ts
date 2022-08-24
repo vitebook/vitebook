@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
 import fs from 'fs';
-import path from 'path';
+import path from 'upath';
 
 export const isTypeScriptFile = (filePath: string): boolean =>
   /\.(ts|tsx)($|\?)/.test(filePath);

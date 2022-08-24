@@ -32,7 +32,7 @@ export function resolveBuildConfig(app: App): ViteConfig {
       minify: ssr ? false : !app.config.isDebug,
       polyfillModulePreload: false,
       outDir: ssr
-        ? app.dirs.root.relative(app.dirs.out.resolve('server'))
+        ? app.dirs.root.relative(app.dirs.server.path)
         : app.dirs.root.relative(app.dirs.out.path),
       rollupOptions: {
         input,
@@ -40,6 +40,7 @@ export function resolveBuildConfig(app: App): ViteConfig {
           format: 'esm',
           entryFileNames: ssr ? '[name].js' : `[name]-[hash].js`,
           chunkFileNames: ssr ? 'chunks/[name].js' : `chunks/[name]-[hash].js`,
+          assetFileNames: ssr ? '' : `assets/[name]-[hash].js`,
           manualChunks: extendManualChunks(),
         },
         preserveEntrySignatures: 'strict',

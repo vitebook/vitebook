@@ -6,8 +6,8 @@ import { virtualModuleId } from '../../alias';
 import { type App } from '../../App';
 import { readIndexHtmlFile } from './index-html';
 import {
-  buildDataScriptTag,
   buildServerLoadedDataMap,
+  createDataScriptTag,
   loadPageServerOutput,
 } from './server-loader';
 
@@ -54,7 +54,7 @@ export async function handlePageRequest(
   }
 
   const serverData = buildServerLoadedDataMap(serverOutput);
-  const dataScript = buildDataScriptTag(serverData);
+  const dataScript = createDataScriptTag(serverData);
 
   const { html: appHtml, head } = await render(url, { data: serverData });
 

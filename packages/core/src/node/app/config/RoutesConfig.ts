@@ -1,8 +1,5 @@
-import type {
-  RouteMatcherConfig,
-  ServerLoadedOutputMap,
-  ServerPage,
-} from '../../../shared';
+import type { RouteMatcherConfig } from '../../../shared';
+import type { BuildData } from '../build';
 
 export type ResolvedRoutesConfig = {
   /**
@@ -88,23 +85,13 @@ export type RoutesLogLevel = 'info' | 'warn' | 'error';
 export type RoutesLogStyle = 'none' | 'list' | 'tree' | CustomRoutesLogger;
 
 export type CustomRoutesLogger = (
-  input: CustomRoutesLoggerInput,
+  input: RoutesLoggerInput,
 ) => void | Promise<void>;
 
-export type CustomRoutesLoggerInput = {
+export type RoutesLoggerInput = {
   /** Desired route logging level. */
   level: RoutesLogLevel;
-  /** All found links and their respective server page. */
-  links: Map<string, ServerPage>;
-  /** Record containing links and their respective redirect. */
-  redirects: Record<string, string>;
-  /** Data hash table containing data asset id to hash value. */
-  dataHashes: Record<string, string>;
-  /** Set of 404 links that were found. */
-  notFoundLinks: Set<string>;
-  /** Map of links and their respective loaded server output (might be a redirect link). */
-  serverOutput: Map<string, string | ServerLoadedOutputMap>;
-};
+} & BuildData;
 
 export type RoutesConfig = Partial<
   Omit<ResolvedRoutesConfig, 'pages' | 'layouts' | 'functions'>

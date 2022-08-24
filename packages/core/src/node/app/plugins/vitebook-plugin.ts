@@ -166,7 +166,6 @@ export function vitebookPlugin(
 
           // Skip first build because $app is initialized in `configResolved` hook.
           if (!isFirstBuild) {
-            app?.destroy();
             app = await appFactory.create();
             app.vite.resolved = viteConfig;
           }
@@ -188,6 +187,7 @@ export function vitebookPlugin(
 
         await build(app, clientBundle);
         clientBundle = null;
+        app.destroy();
       },
       generateBundle(_, bundle) {
         // SSR build - delete all assets.

@@ -1,10 +1,10 @@
 import kleur from 'kleur';
 
 import {
-  buildDataAssetID,
   execRouteMatch,
   isFunction,
   isLinkExternal,
+  resolveDataAssetID,
   type ServerLoadedDataMap,
   type ServerLoadedOutput,
   type ServerLoadedOutputMap,
@@ -17,24 +17,21 @@ import {
 } from '../../../../shared';
 import { type App } from '../../App';
 
-export function buildDataScriptTag(
-  map: ServerLoadedDataMap,
-  hashTable?: Record<string, string>,
-) {
-  const output = {};
+export function createDataScriptTag(map: ServerLoadedDataMap) {
+  const table = {};
 
   for (const id of map.keys()) {
-    const hashedId = hashTable?.[id] ?? id;
     const data = map.get(id)!;
-
     if (data && Object.keys(data).length > 0) {
-      output[hashedId] = data;
+      table[id] = data;
     }
   }
 
-  return `<script id="__VBK_DATA__" type="application/json">${JSON.stringify(
-    output,
-  )}</script>`;
+  return [
+    '<script id="__VBK_DATA__" type="application/json">',
+    JSON.stringify(table),
+    '</script>',
+  ].join('');
 }
 
 export function buildServerLoadedDataMap(map: ServerLoadedOutputMap) {
@@ -76,7 +73,7 @@ export async function loadPageServerOutput(
 
   // Load page first - if it has a redirect we'll skip loading layouts.
   await (async () => {
-    const id = buildDataAssetID(pathname);
+    const id = resolveDataAssetID(pathname);
 
     const output = await runModuleServerLoader(
       app,
@@ -98,7 +95,7 @@ export async function loadPageServerOutput(
 
   await Promise.all(
     page.layouts.map(async (index) => {
-      const id = buildDataAssetID(pathname, index);
+      const id = resolveDataAssetID(pathname, index);
       const layout = app.nodes.layouts.getByIndex(index);
 
       const output = await runModuleServerLoader(

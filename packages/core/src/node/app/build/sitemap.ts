@@ -1,18 +1,22 @@
 import { createFilter } from '@rollup/pluginutils';
 import fs from 'fs';
 
-import { isFunction, type ServerPage, slash } from '../../../shared';
+import { isFunction, slash } from '../../../shared';
 import type { App } from '../App';
 import type { ResolvedSitemapConfig, SitemapURL } from '../config';
+import { BuildData } from './build';
 
 export async function buildSitemap(
   app: App,
-  seenHref: Map<string, ServerPage>,
+  links: BuildData['links'],
   config: ResolvedSitemapConfig,
 ) {
   const baseUrl = config.baseUrl;
 
-  if (!baseUrl) return;
+  if (!baseUrl) {
+    app.logger.warn('Sitemap requires a base URL to build links');
+    return null;
+  }
 
   const filter = createFilter(config.include, config.exclude);
 
@@ -27,7 +31,7 @@ export async function buildSitemap(
   const lastmodCache = new Map<string, string>();
   const lastmod = async (pathname: string) => {
     if (lastmodCache.has(pathname)) return lastmodCache.get(pathname);
-    const filePath = seenHref.get(pathname)!.filePath;
+    const filePath = links.get(pathname)!.filePath;
     const mtime = (await fs.promises.stat(filePath)).mtime;
     const date = mtime.toISOString().split('T')[0];
     lastmodCache.set(pathname, date);
@@ -36,7 +40,7 @@ export async function buildSitemap(
 
   const urls = [
     ...(await Promise.all(
-      Array.from(seenHref.keys())
+      Array.from(links.keys())
         .filter(filter)
         .map(async (pathname) => ({
           path: pathname,
@@ -62,7 +66,7 @@ export async function buildSitemap(
   ${urls}
 </urlset>`;
 
-  await app.dirs.out.write(config.filename, content);
+  return [config.filename, content];
 }
 
 export function buildSitemapURL(url: SitemapURL, baseUrl = '/') {

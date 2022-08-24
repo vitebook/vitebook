@@ -21,7 +21,9 @@ export function stripRouteMetaFromFilePath(filePath: string) {
   );
   return stripped === ext
     ? `index${ext}`
-    : stripped.replace(`/${ext}`, `/index${ext}`);
+    : ext
+    ? stripped.replace(`/${ext}`, `/index${ext}`)
+    : stripped.replace(/\/?$/, '/index.html');
 }
 
 export function stripRouteInfoFromFilePath(filePath: string) {
@@ -34,10 +36,13 @@ export function resolveRouteFromFilePath(
   matchers: RouteMatcherConfig = {},
 ): RouteInfo {
   const routePath = path.relative(routesDir, filePath);
-  const orderMatch = path.basename(routePath).match(PAGE_ORDER_RE)?.[1];
+  const basename = path.basename(routePath);
+  const orderMatch = basename.match(PAGE_ORDER_RE)?.[1];
   const order = orderMatch ? Number(orderMatch) : undefined;
 
-  const isNotFound = path.basename(routePath).startsWith('@404');
+  const isNotFound = basename.startsWith('@404');
+  const isServerlessFn = /@(edge|fn)/.test(basename);
+
   let route = stripRouteInfoFromFilePath(routePath);
 
   for (const matcherName of Object.keys(matchers)) {
@@ -64,14 +69,19 @@ export function resolveRouteFromFilePath(
       .replace(/\/(README|index){.html}\?($|\?)/i, '{/}?{index}?{.html}?');
   };
 
-  const dynamic = isNotFound || isRoutePathDynamic(route);
+  const dynamic = isNotFound || isServerlessFn || isRoutePathDynamic(route);
 
   const pathname = isNotFound
     ? `${route.replace(path.basename(route), '')}(.*?)`
     : dynamic
     ? slash(
-        path.trimExt(route).replace(/\/index$/, '{/}?{index}?{.html}?'),
-      ).replace(/\/?$/, '{/}?')
+        path
+          .trimExt(route)
+          .replace(
+            /\/(index)?(\.html)?$/,
+            isServerlessFn ? '{/}?' : '{/}?{index}?{.html}?',
+          ),
+      )
     : resolveStaticPath();
 
   const score = calcRoutePathScore(pathname);

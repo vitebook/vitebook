@@ -2,6 +2,7 @@ import type { GetManualChunk, OutputChunk } from 'rollup';
 
 import type { ServerPage } from '../../../shared';
 import type { App } from '../App';
+import type { BuildBundles } from './build';
 
 export function extendManualChunks(): GetManualChunk {
   return (id) => {
@@ -19,9 +20,7 @@ export function extendManualChunks(): GetManualChunk {
 export function resolvePageImports(
   app: App,
   page: ServerPage,
-  chunks: OutputChunk[],
-  entryChunk: OutputChunk,
-  appChunk: OutputChunk,
+  { entryChunk, appChunk, chunks }: BuildBundles['client'],
 ) {
   const pageChunk = chunks.find(
     (chunk) => chunk.facadeModuleId === page.filePath,
@@ -75,10 +74,6 @@ export function resolvePageLayoutChunks(
     .filter(Boolean) as OutputChunk[];
 }
 
-const cache = new Map();
 export function isPageChunk(fileName: string, chunks: OutputChunk[]) {
-  if (cache.has(fileName)) return cache.get(fileName);
-  const is = chunks.find((chunk) => chunk.fileName === fileName);
-  cache.set(fileName, !!is);
-  return is;
+  return chunks.some((chunk) => chunk.isEntry && chunk.fileName === fileName);
 }

@@ -1,3 +1,4 @@
+import type { BuildConfig, ResolvedBuildConfig } from './BuildConfig';
 import type { ClientConfig, ResolvedClientConfig } from './ClientConfig';
 import type {
   DirectoriesConfig,
@@ -8,6 +9,8 @@ import type { ResolvedRoutesConfig, RoutesConfig } from './RoutesConfig';
 import type { ResolvedSitemapConfig, SitemapConfig } from './SitemapConfig';
 
 export type ResolvedAppConfig = {
+  /** Application build options. */
+  build: ResolvedBuildConfig;
   /** Application directory paths. */
   dirs: ResolvedDirectoriesConfig;
   /** Client options. */
@@ -28,8 +31,10 @@ export type ResolvedAppConfig = {
 
 export type AppConfig = Omit<
   Partial<ResolvedAppConfig>,
-  'dirs' | 'client' | 'markdown' | 'routes' | 'sitemap'
+  'build' | 'dirs' | 'client' | 'markdown' | 'routes' | 'sitemap'
 > & {
+  /** Application build options. */
+  build?: BuildConfig;
   /** Application directory paths. */
   dirs?: DirectoriesConfig;
   /** Client options. */

@@ -42,7 +42,7 @@ const htmlExtRE = /(?:index)?\.html$/;
 
 export const DATA_ASSET_BASE_URL = '/assets/data';
 
-export function buildDataAssetID(pathname: string, layoutIndex?: number) {
+export function resolveDataAssetID(pathname: string, layoutIndex?: number) {
   const id = `${isNumber(layoutIndex) ? `$${layoutIndex}:` : ''}${pathname
     .replace(splitRE, '_')
     .replace(htmlExtRE, '')}`;

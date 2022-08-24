@@ -1,3 +1,4 @@
+export * from './crypto';
 export * from './fs';
 export * from './logger';
 export * from './module';

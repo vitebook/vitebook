@@ -2,7 +2,6 @@ import app from ':virtual/vitebook/app';
 
 import {
   type AppContextMap,
-  buildDataAssetID,
   type ClientLayoutModule,
   type ClientLoadedData,
   type ClientPage,
@@ -14,6 +13,7 @@ import {
   isString,
   type LoadedClientLayout,
   type LoadedClientPage,
+  resolveDataAssetID,
 } from '../shared';
 import {
   getContext,
@@ -206,7 +206,7 @@ export async function loadData(
 
   const pathname = prefetchURL?.pathname ?? get(router.navigation)!.to.pathname;
 
-  const id = buildDataAssetID(decodeURI(pathname), layoutIndex);
+  const id = resolveDataAssetID(decodeURI(pathname), layoutIndex);
 
   const hashId =
     import.meta.env.PROD && !import.meta.env.SSR
@@ -242,9 +242,7 @@ function getDataFromScript(id: string) {
     const content = JSON.parse(dataScript!.textContent!);
     return content[id] ?? {};
   } catch (e) {
-    if (import.meta.env.DEV) {
-      //
-    }
+    // no-op
   }
 
   return {};
