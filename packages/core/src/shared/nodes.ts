@@ -6,17 +6,17 @@ export type WithRouteMatch<T> = T & { match: URLPatternComponentResult };
 
 export type RouteMatcher = string | RegExp | null | undefined | void;
 
-export type RouteMatcherFn = (input: {
-  filePath: string;
-  routePath: string;
-}) => RouteMatcher;
+export type SimpleRouterMatcher = {
+  name: string;
+  matcher: RouteMatcher;
+};
 
-export type RouteMatcherName = string;
+export type ComplexRouteMatcher = (
+  route: string,
+  info: { filePath: string },
+) => string | null | undefined | void;
 
-export type RouteMatcherConfig = Record<
-  RouteMatcherName,
-  RouteMatcher | RouteMatcherFn
->;
+export type RouteMatcherConfig = (SimpleRouterMatcher | ComplexRouteMatcher)[];
 
 export type RouteInfo = {
   /** Order number if declared (e.g., `[1]page.md` would be 1). */

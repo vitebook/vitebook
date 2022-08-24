@@ -6,6 +6,7 @@ import {
   isFunction,
   isRoutePathDynamic,
   type RouteInfo,
+  type RouteMatcher,
   type RouteMatcherConfig,
   slash,
   stripPageOrderFromPath,
@@ -30,10 +31,21 @@ export function stripRouteInfoFromFilePath(filePath: string) {
   return stripRouteMetaFromFilePath(stripPageOrderFromPath(filePath));
 }
 
+function normalizeTransformMatcher(value: RouteMatcher) {
+  if (value instanceof RegExp) {
+    const regexStr = value.toString();
+    value = regexStr.startsWith('/(')
+      ? regexStr.slice(1, -1)
+      : `(${regexStr.slice(1, -1)})`;
+  }
+
+  return value ?? '';
+}
+
 export function resolveRouteFromFilePath(
   routesDir: string,
   filePath: string,
-  matchers: RouteMatcherConfig = {},
+  matchers: RouteMatcherConfig = [],
 ): RouteInfo {
   const routePath = path.relative(routesDir, filePath);
   const basename = path.basename(routePath);
@@ -45,21 +57,16 @@ export function resolveRouteFromFilePath(
 
   let route = stripRouteInfoFromFilePath(routePath);
 
-  for (const matcherName of Object.keys(matchers)) {
-    const matcher = matchers[matcherName];
-
-    let value = isFunction(matcher)
-      ? matcher({ filePath, routePath: routePath })
-      : matcher;
-
-    if (value instanceof RegExp) {
-      const regexStr = value.toString();
-      value = regexStr.startsWith('/(')
-        ? regexStr.slice(1, -1)
-        : `(${regexStr.slice(1, -1)})`;
+  for (const matcher of matchers) {
+    if (isFunction(matcher)) {
+      const result = matcher(route, { filePath });
+      if (result) route = result;
+    } else {
+      route = route.replace(
+        `[${matcher.name}]`,
+        normalizeTransformMatcher(matcher.matcher),
+      );
     }
-
-    route = route.replace(`[${matcherName}]`, `${value ?? ''}`);
   }
 
   const resolveStaticPath = () => {

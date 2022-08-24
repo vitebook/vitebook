@@ -43,14 +43,14 @@ export function resolveAppConfig(
 
   const __routes: ResolvedRoutesConfig = {
     entries: routes.entries ?? [],
-    matchers: {
-      int: /:slug(\d+)/,
-      str: /:slug(\w+)/,
-      bool: /:slug(true|false)/,
-      slug: ':slug',
-      '...slug': ':slug*',
-      ...routes.matchers,
-    },
+    matchers: [
+      ...(routes.matchers ?? []),
+      { name: 'int', matcher: /\d+/ },
+      { name: 'str', matcher: /\w+/ },
+      { name: 'bool', matcher: /(true|false)/ },
+      (route) => route.replace(/\[\.\.\.(.*?)\]/g, ':$1*'),
+      (route) => route.replace(/\[(.*?)\]/g, ':$1'),
+    ],
     log: routes.log ?? 'tree',
     logLevel: routes.logLevel ?? 'warn',
     pages: {
