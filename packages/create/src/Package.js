@@ -111,9 +111,10 @@ export class Package {
    */
   addVitebookDependency(name) {
     const version = this.workspace ? 'workspace:*' : `^${getVersion()}`;
-    this.pkg.devDependencies[`@vitebook/${name}`] = this.link
-      ? `${this.manager === 'yarn' ? 'link:' : ''}${this.link}/${name}`
-      : version;
+    this.pkg.devDependencies[name === 'vitebook' ? name : `@vitebook/${name}`] =
+      this.link
+        ? `${this.manager === 'yarn' ? 'link:' : ''}${this.link}/${name}`
+        : version;
   }
 
   /**

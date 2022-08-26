@@ -1,5 +1,5 @@
-import type { App, VitebookPlugin } from '@vitebook/core/node';
 import MagicString from 'magic-string';
+import type { App, VitebookPlugin } from 'vitebook/node';
 
 const SVELTE_FILE_RE = /\.svelte($|\/)/;
 

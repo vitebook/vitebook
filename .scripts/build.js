@@ -16,7 +16,7 @@ if (!args.entry) {
   args.entry = IS_NODE ? 'src/node/index.ts' : 'src/client/index.ts';
 }
 
-if (!args.outdir) {
+if (!args.outfile && !args.outdir) {
   args.outdir = IS_NODE ? 'dist/node' : 'dist/client';
 }
 
@@ -31,11 +31,14 @@ async function main() {
     .map((glob) => globbySync(glob))
     .flat();
 
-  const outdir = path.resolve(process.cwd(), args.outdir);
+  const outdir = args.outfile
+    ? undefined
+    : path.resolve(process.cwd(), args.outdir);
 
   await build({
     entryPoints,
     outdir,
+    outfile: args.outfile,
     outbase: args.outbase,
     logLevel: args.logLevel ?? 'warning',
     platform: args.platform ?? 'browser',
@@ -96,8 +99,6 @@ function requireShim() {
     "import { fileURLToPath as __fileURLToPath } from 'url';",
     "import { createRequire as __createRequire } from 'module';",
     'const require = __createRequire(import.meta.url);',
-    'var __require = function(x) { return require(x); };',
-    '__require.__proto__.resolve = require.resolve;',
     'const __filename = __fileURLToPath(import.meta.url);',
     'const __dirname = __path.dirname(__filename);',
   ].join('\n');

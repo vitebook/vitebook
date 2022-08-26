@@ -143,7 +143,7 @@ $: yarn build theme-default --watch
 ```
 
 The `--link ../../packages` CLI option will link any `@vitebook/*` packages based on the link path
-provided. For example, `@vitebook/core` will be linked to `../../packages/core`.
+provided. For example, `@vitebook/svelte` will be linked to `../../packages/svelte`.
 
 ## ✍️ Commit
 

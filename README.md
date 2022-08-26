@@ -20,8 +20,8 @@ See [contributing.md](./.github/contributing.md).
 
 Copyright (c) 2021-present, Rahim Alwer
 
-[package]: https://www.npmjs.com/package/@vitebook/core
-[package-badge]: https://img.shields.io/npm/v/@vitebook/core?style=flat-square
+[package]: https://www.npmjs.com/package/vitebook
+[package-badge]: https://img.shields.io/npm/v/vitebook?style=flat-square
 [storybook]: https://storybook.js.org
 [webpack]: https://webpack.js.org
 [vite]: https://vitejs.dev

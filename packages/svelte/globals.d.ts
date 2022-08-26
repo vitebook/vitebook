@@ -4,7 +4,7 @@ declare module '*.svelte' {
 }
 
 declare module '*.md' {
-  import type { MarkdownMeta } from '@vitebook/core';
+  import type { MarkdownMeta } from 'vitebook';
 
   const meta: MarkdownMeta;
   export { meta };

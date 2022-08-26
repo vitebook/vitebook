@@ -45,9 +45,6 @@ export function getRawTSConfig(compilerOptions = {}) {
       noImplicitReturns: true,
       noUnusedLocals: false,
       noUnusedParameters: false,
-      paths: {
-        '$src/*': ['./src/*'],
-      },
       preserveWatchOutput: true,
       resolveJsonModule: true,
       skipLibCheck: true,
@@ -58,6 +55,6 @@ export function getRawTSConfig(compilerOptions = {}) {
       useDefineForClassFields: false,
       ...compilerOptions,
     },
-    include: ['src', 'pages'],
+    include: ['app'],
   };
 }

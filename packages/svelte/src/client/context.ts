@@ -1,3 +1,4 @@
+import { getContext } from 'svelte';
 import {
   type ContextTypes,
   FRONTMATTER_CTX_KEY,
@@ -6,8 +7,7 @@ import {
   ROUTE_CTX_KEY,
   ROUTER_CTX_KEY,
   SERVER_CTX_KEY,
-} from '@vitebook/core';
-import { getContext } from 'svelte';
+} from 'vitebook';
 
 export function getRouter() {
   return getContext(ROUTER_CTX_KEY) as ContextTypes[typeof ROUTER_CTX_KEY];

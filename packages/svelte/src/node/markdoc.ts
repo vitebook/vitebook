@@ -1,3 +1,4 @@
+import path from 'path';
 import {
   escapeHTML,
   Markdoc,
@@ -9,8 +10,7 @@ import {
   type RenderMarkdocConfig,
   renderMarkdocToHTML,
   toPascalCase,
-} from '@vitebook/core/node';
-import path from 'path';
+} from 'vitebook/node';
 
 export const svelteMarkdocTags: MarkdocConfig['tags'] = {
   head: {

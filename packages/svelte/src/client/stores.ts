@@ -1,11 +1,11 @@
+import type { Readable } from 'svelte/store';
 import type {
   LoadedClientPage,
   LoadedRoute,
   MarkdownFrontmatter,
   MarkdownMeta,
   RouteNavigation,
-} from '@vitebook/core';
-import type { Readable } from 'svelte/store';
+} from 'vitebook';
 
 import {
   getFrontmatter,

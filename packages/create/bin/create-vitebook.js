@@ -98,7 +98,7 @@ async function main() {
   // Core Dependencies
   // -------------------------------------------------------------------------------------------
 
-  builder.pkg.addVitebookDependency('core');
+  builder.pkg.addVitebookDependency('vitebook');
   builder.pkg.addVitebookDependency('svelte');
 
   builder.pkg.addDependency('vite', '^3.0.0', { dev: true });
@@ -129,7 +129,6 @@ async function main() {
   // Template
   // -------------------------------------------------------------------------------------------
 
-  builder.dirs.src.template.root.copyDir('./', builder.dirs.dest.root);
   builder.dirs.src.template.svelte.copyDir('./', builder.dirs.dest.root);
 
   // -------------------------------------------------------------------------------------------

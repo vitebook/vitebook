@@ -1,5 +1,5 @@
-import { type ViewRenderer } from '@vitebook/core';
 import { SvelteComponent } from 'svelte';
+import { type ViewRenderer } from 'vitebook';
 
 import { type SvelteModule, SvelteServerModule } from '../shared';
 

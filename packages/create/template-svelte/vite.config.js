@@ -1,7 +1,7 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import { vitebook } from '@vitebook/core/node';
 import { vitebookSvelte } from '@vitebook/svelte/node';
 import { defineConfig } from 'vite';
+import { vitebook } from 'vitebook/node';
 
 export default defineConfig({
   plugins: [

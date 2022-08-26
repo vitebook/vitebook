@@ -3,7 +3,13 @@
 import fs from 'fs';
 import path from 'upath';
 
-export const GIT_IGNORE = ['.DS_STORE', 'node_modules/', 'build/'];
+export const GIT_IGNORE = [
+  '.DS_STORE',
+  '.vercel/',
+  '.vitebook/',
+  'build/',
+  'node_modules/',
+];
 
 export class GitIgnore {
   /** @protected @readonly */

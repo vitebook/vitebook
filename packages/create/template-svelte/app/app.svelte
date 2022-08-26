@@ -1,0 +1,18 @@
+<script context="module">
+  import { createSvelteViewRenderer } from '@vitebook/svelte';
+
+  /** @type {import('vitebook').ConfigureApp} */
+  export function configureApp({ renderers }) {
+    renderers.push(createSvelteViewRenderer());
+  }
+</script>
+
+<script>
+  import './global.css';
+
+  import { PageLayouts, PageView } from '@vitebook/svelte';
+</script>
+
+<PageLayouts>
+  <PageView />
+</PageLayouts>

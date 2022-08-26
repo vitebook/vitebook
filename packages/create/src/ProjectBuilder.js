@@ -48,14 +48,13 @@ export class ProjectBuilder {
       src: {
         root: new FileDirectory(resolveSrcPath()),
         template: {
-          root: new FileDirectory(resolveSrcPath('template-root')),
           svelte: new FileDirectory(resolveSrcPath('template-svelte')),
         },
       },
       dest: {
         root: new FileDirectory(targetDir),
         src: new FileDirectory(path.resolve(targetDir, 'src')),
-        routes: new FileDirectory(path.resolve(targetDir, 'routes')),
+        app: new FileDirectory(path.resolve(targetDir, 'app')),
       },
     };
 
