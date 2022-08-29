@@ -1,10 +1,13 @@
 // TODO: Let's review what's actually required here for node@16+
 
 const globals = {
-  URLPattern: async () => (await import('urlpattern-polyfill')).URLPattern,
   crypto: () => import('node:crypto'),
-  fetch: async () => (await import('undici')).fetch,
-  Response: async () => (await import('undici')).Response,
+  URLPattern: async () => (await import('urlpattern-polyfill')).URLPattern,
+  Headers: async () => (await import('undici')).Headers,
+  ReadableStream: async () => (await import('node:stream/web')).ReadableStream,
+  TransformStream: async () =>
+    (await import('node:stream/web')).TransformStream,
+  WritableStream: async () => (await import('node:stream/web')).WritableStream,
   Request: async () => {
     const { Readable } = await import('node:stream');
     const { Request } = await import('undici');
@@ -21,29 +24,24 @@ const globals = {
       }
     };
   },
-  Headers: async () => (await import('undici')).Headers,
-  ReadableStream: async () => (await import('node:stream/web')).ReadableStream,
-  TransformStream: async () =>
-    (await import('node:stream/web')).TransformStream,
-  WritableStream: async () => (await import('node:stream/web')).WritableStream,
+  Response: async () => (await import('undici')).Response,
+  fetch: async () => (await import('undici')).fetch,
 };
 
 let installed = false;
 export async function installPolyfills() {
   if (installed) return;
 
-  await Promise.all(
-    (Object.keys(globals) as (keyof typeof globals)[]).map(async (name) => {
-      if (!(name in globalThis)) {
-        Object.defineProperty(globalThis, name, {
-          enumerable: true,
-          configurable: true,
-          writable: true,
-          value: await globals[name](),
-        });
-      }
-    }),
-  );
+  for (const name in globals) {
+    if (!(name in globalThis)) {
+      Object.defineProperty(globalThis, name, {
+        enumerable: true,
+        configurable: true,
+        writable: true,
+        value: await globals[name](),
+      });
+    }
+  }
 
   installed = true;
 }
