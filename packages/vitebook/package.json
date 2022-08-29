@@ -49,7 +49,6 @@
     "@markdoc/markdoc": "^0.1.2",
     "@rollup/pluginutils": "^4.1.1",
     "@types/lru-cache": "^5.1.1",
-    "esbuild": "^0.12.24",
     "globby": "^13.1.1",
     "gray-matter": "^4.0.3",
     "hast-util-to-html": "^8.0.3",
@@ -66,7 +65,8 @@
   "peerDependencies": {
     "@wooorm/starry-night": "^1.0.0",
     "shiki": "^0.10.1",
-    "vite": "^3.0.0"
+    "vite": "^3.0.0",
+    "esbuild": "^0.14.47"
   },
   "peerDependenciesMeta": {
     "shiki": {
@@ -80,6 +80,7 @@
     "@microsoft/api-extractor": "^7.20.0",
     "@wooorm/starry-night": "^1.0.0",
     "chokidar": "^3.5.2",
+    "esbuild": "^0.14.47",
     "kleur": "^4.1.4",
     "lit": "^2.2.4",
     "rimraf": "^3.0.2",
