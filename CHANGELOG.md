@@ -1,3 +1,9 @@
+## [0.201.2](https://github.com/vitebook/vitebook/compare/v0.201.1...v0.201.2) (2022-08-29)
+
+### Bug Fixes
+
+- update `vitebook` peer dep on release ([ba9a4b2](https://github.com/vitebook/vitebook/commit/ba9a4b2c681e183be0e197713e96b041db2f9593))
+
 ## [0.201.1](https://github.com/vitebook/vitebook/compare/v0.201.0...v0.201.1) (2022-08-29)
 
 ### Bug Fixes
