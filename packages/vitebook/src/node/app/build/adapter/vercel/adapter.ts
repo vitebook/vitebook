@@ -27,8 +27,6 @@ const matchersRE = /\[(?:.*?)\]/g;
 export function createVercelBuildAdapter(
   config?: VercelBuildAdapterConfig,
 ): BuildAdapterFactory {
-  const isVercelEnv = !!process.env.VERCEL;
-
   return async (app, bundles, build, $) => {
     const vercelDirs = {
       root: $.createDirectory(app.dirs.root.resolve(outputRoot)),
@@ -38,7 +36,6 @@ export function createVercelBuildAdapter(
 
     const staticAdapter = await createStaticBuildAdapter({
       skipOutput: true,
-      skipRedirects: isVercelEnv,
     })(app, bundles, build, $);
 
     return {
