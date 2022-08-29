@@ -1,8 +1,8 @@
-import path from 'path';
+import path from 'node:path';
+import { readFileSync } from 'node:fs';
 import minimist from 'minimist';
 import { globbySync } from 'globby';
 import { build } from 'esbuild';
-import { readFileSync } from 'fs';
 
 const args = minimist(process.argv.slice(2));
 
@@ -95,9 +95,9 @@ function ignoreSveltePlugin() {
 
 function requireShim() {
   return [
-    "import __path from 'path';",
-    "import { fileURLToPath as __fileURLToPath } from 'url';",
-    "import { createRequire as __createRequire } from 'module';",
+    "import __path from 'node:path';",
+    "import { fileURLToPath as __fileURLToPath } from 'node:url';",
+    "import { createRequire as __createRequire } from 'node:module';",
     'const require = __createRequire(import.meta.url);',
     'const __filename = __fileURLToPath(import.meta.url);',
     'const __dirname = __path.dirname(__filename);',

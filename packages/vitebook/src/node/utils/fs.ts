@@ -1,5 +1,5 @@
-import { createHash } from 'crypto';
-import fs from 'fs';
+import { createHash } from 'node:crypto';
+import fs from 'node:fs';
 import path from 'upath';
 
 export const isTypeScriptFile = (filePath: string): boolean =>

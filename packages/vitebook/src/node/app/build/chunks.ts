@@ -1,4 +1,5 @@
-import type { GetManualChunk, OutputChunk } from 'rollup';
+import type { GetManualChunk } from 'rollup';
+import { type ManifestChunk as ViteManifestChunk } from 'vite';
 
 import type { ServerPage } from '../../../shared';
 import type { App } from '../App';
@@ -17,63 +18,110 @@ export function extendManualChunks(): GetManualChunk {
   };
 }
 
-export function resolvePageImports(
+export function resolvePageChunks(
   app: App,
   page: ServerPage,
-  { entryChunk, appChunk, chunks }: BuildBundles['client'],
+  { entryChunk, appChunk, viteManifest }: BuildBundles['client'],
+  modules?: Set<string>,
 ) {
-  const pageChunk = chunks.find(
-    (chunk) => chunk.facadeModuleId === page.filePath,
-  )!;
+  const imports = new Set<string>();
+  const dynamicImports = new Set<string>();
+  const assets = new Set<string>();
 
-  const layoutChunks = resolvePageLayoutChunks(app, page, chunks);
+  const seen = new WeakSet<ViteManifestChunk>();
+  const collectChunks = (chunk?: ViteManifestChunk, isPage = false) => {
+    if (
+      !chunk ||
+      seen.has(chunk) ||
+      (!isPage && chunk.file.includes('@page'))
+    ) {
+      return;
+    }
+
+    if (chunk.assets) {
+      for (const id of chunk.assets) {
+        const asset = viteManifest[id];
+        if (asset) assets.add(asset.file);
+      }
+    }
+
+    if (chunk.imports) {
+      for (const id of chunk.imports) {
+        const chunk = viteManifest[id];
+        if (chunk) {
+          collectChunks(chunk);
+          imports.add(chunk.file);
+        }
+      }
+    }
+
+    if (chunk.dynamicImports) {
+      for (const id of chunk.dynamicImports) {
+        const chunk = viteManifest[id];
+        if (
+          chunk &&
+          !imports.has(chunk.file) &&
+          !chunk.file.includes('@page') &&
+          !chunk.file.includes('@layout')
+        ) {
+          dynamicImports.add(chunk.file);
+        }
+      }
+    }
+
+    seen.add(chunk);
+  };
+
+  // Entry
+
+  const entryId = app.dirs.root.relative(entryChunk.facadeModuleId!);
+  collectChunks(viteManifest[entryId]);
+  imports.add(entryChunk.fileName);
+
+  // App
+
+  const appId = app.dirs.root.relative(appChunk.facadeModuleId!);
+  collectChunks(viteManifest[appId]);
+  imports.add(appChunk.fileName);
+
+  // Layouts
+
+  const layoutChunks = page.layouts.map((index) =>
+    app.nodes.layouts.getByIndex(index),
+  );
+
+  for (const layout of layoutChunks) {
+    const chunk = viteManifest[layout.rootPath];
+    if (chunk) {
+      collectChunks(chunk);
+      imports.add(chunk.file);
+    }
+  }
+
+  // Modules
+
+  if (modules) {
+    for (const id of modules) {
+      const chunk = viteManifest[id];
+      if (chunk) {
+        collectChunks(viteManifest[id]);
+        imports.add(chunk.file);
+      }
+    }
+  }
+
+  // Page
+
+  const pageChunk = viteManifest[page.rootPath];
+
+  if (pageChunk) {
+    collectChunks(pageChunk, true);
+    imports.add(pageChunk.file);
+  }
 
   return {
-    imports: Array.from(
-      new Set([
-        ...entryChunk.imports.filter((i) => i !== appChunk.fileName),
-        ...appChunk.imports,
-        ...layoutChunks.map((chunk) => chunk.imports).flat(),
-        appChunk.fileName,
-        ...layoutChunks.map((chunk) => chunk.fileName),
-        ...(pageChunk?.imports ?? []),
-        pageChunk.fileName,
-      ]),
-    ),
-    dynamicImports: Array.from(
-      new Set([
-        ...[entryChunk, appChunk]
-          .map((chunk) =>
-            chunk.dynamicImports.filter(
-              (fileName) => !isPageChunk(fileName, chunks),
-            ),
-          )
-          .flat(),
-        ...layoutChunks.map((chunk) => chunk.dynamicImports).flat(),
-        ...(pageChunk?.dynamicImports ?? []),
-      ]),
-    ),
+    assets: Array.from(assets),
+    imports: Array.from(imports),
+    dynamicImports: Array.from(dynamicImports),
   };
-}
-
-export function resolveChunkByFilePath(
-  filePath: string,
-  chunks: OutputChunk[],
-) {
-  return chunks.find((chunk) => chunk.facadeModuleId === filePath);
-}
-
-export function resolvePageLayoutChunks(
-  app: App,
-  page: ServerPage,
-  chunks: OutputChunk[],
-) {
-  return page.layouts
-    .map((index) => app.nodes.layouts.getByIndex(index))
-    .map((layout) => resolveChunkByFilePath(layout!.filePath, chunks))
-    .filter(Boolean) as OutputChunk[];
-}
-
-export function isPageChunk(fileName: string, chunks: OutputChunk[]) {
-  return chunks.some((chunk) => chunk.isEntry && chunk.fileName === fileName);
 }

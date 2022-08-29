@@ -27,32 +27,44 @@ export function logRoutesList({ level, ...build }: RoutesLoggerInput) {
   const logs: string[] = [];
 
   if (level === 'info') {
-    logs.push('', `🛣️  ${kleur.bold(kleur.underline('ROUTES'))}`, '');
+    logs.push('', `📄 ${kleur.bold(kleur.underline('PAGES'))}`, '');
+
     for (const link of build.links.keys()) {
-      const page = build.links.get(link);
-
-      let pathname = '';
-      if (page && page.route?.dynamic) {
-        pathname = kleur.dim(
-          ` (${page.route.pathname.replace('{/}?{index}?{.html}?', '/')})`,
-        );
-      }
-
-      logs.push(`- ${link}${pathname}`);
+      const page = build.links.get(link)!;
+      const route = page.route.pathname
+        .replace('{/}?{index}?{.html}?', '')
+        .slice(1);
+      const pathname = link.slice(1, -1);
+      const pattern = pathname !== route ? kleur.dim(` (${route})`) : '';
+      logs.push(
+        `- ${kleur.cyan(link.length === 1 ? '/' : pathname)}${pattern}`,
+      );
     }
   }
 
-  if (/(warn|error)/.test(level) && build.redirects.size > 0) {
-    logs.push('', kleur.bold(kleur.underline('REDIRECTS')), '');
+  if (level === 'info') {
+    logs.push('', `⚙️  ${kleur.bold(kleur.underline('ENDPOINTS'))}`, '');
+    for (const link of build.endpoints.keys()) {
+      logs.push(`- ${kleur.cyan(link)}`);
+    }
+  }
+
+  if (/(info|warn)/.test(level) && build.redirects.size > 0) {
+    logs.push('', `➡️  ${kleur.bold(kleur.underline('REDIRECTS'))}`, '');
     for (const link of build.redirects.keys()) {
-      logs.push(kleur.yellow(`- ${link} -> ${build.redirects.get(link)!.to}`));
+      const redirect = build.redirects.get(link)!;
+      logs.push(
+        `- ${kleur.yellow(link)} -> ${kleur.yellow(redirect.to)} (${
+          redirect.statusCode
+        })`,
+      );
     }
   }
 
-  if (level === 'error' && build.badLinks.size > 0) {
-    logs.push('', kleur.bold(kleur.underline('NOT FOUND')), '');
+  if (/(info|warn|error)/.test(level) && build.badLinks.size > 0) {
+    logs.push('', `🛑 ${kleur.bold(kleur.underline('NOT FOUND'))}`, '');
     for (const link of build.badLinks.keys()) {
-      logs.push(kleur.red(`- ${link}`));
+      logs.push(`- ${kleur.red(link)} (404)`);
     }
   }
 
@@ -68,7 +80,11 @@ export function logRoutesTree({ level, ...build }: RoutesLoggerInput) {
     path: TreeDir[];
     link?: string;
     badLink?: boolean;
-    redirect?: string;
+    icon?: string;
+    redirect?: {
+      path: string;
+      statusCode: number;
+    };
   };
 
   const newDir = (name: string): TreeDir => ({
@@ -86,7 +102,12 @@ export function logRoutesTree({ level, ...build }: RoutesLoggerInput) {
     ? build.badLinks.keys()
     : warnOnly
     ? new Set([...build.badLinks.keys(), ...redirectLinks])
-    : new Set([...build.badLinks.keys(), ...build.links.keys()]);
+    : new Set([
+        ...build.badLinks.keys(),
+        ...redirectLinks,
+        ...build.links.keys(),
+        ...build.endpoints.keys(),
+      ]);
 
   for (const link of filteredLinks) {
     const segments = noslash(link).split('/');
@@ -100,18 +121,26 @@ export function logRoutesTree({ level, ...build }: RoutesLoggerInput) {
         current.path.push(nextDir);
       }
 
-      current.link = undefined;
+      // current.link = undefined;
       current = nextDir;
     }
 
     if (build.badLinks.has(link)) {
       current.badLink = true;
     } else if (build.redirects.has(link)) {
-      current.redirect = build.redirects.get(link)!.to;
+      const redirect = build.redirects.get(link)!;
+      current.redirect = {
+        path: redirect.to.slice(1, -1),
+        statusCode: redirect.statusCode,
+      };
     } else {
-      const route = build.links.get(link)!.route!;
-      const pathname = route.pathname.replace('{/}?{index}?{.html}?', '/');
-      current.link = kleur.dim(` (${pathname})`);
+      const route = build.endpoints.has(link)
+        ? build.endpoints.get(link)!.route!
+        : build.links.get(link)!.route!;
+      const pathname = route.pathname
+        .replace('{/}?{index}?{.html}?', '')
+        .replace('{/}?', '');
+      current.link = kleur.dim(` (${pathname.slice(1)})`);
     }
   }
 
@@ -133,13 +162,15 @@ export function logRoutesTree({ level, ...build }: RoutesLoggerInput) {
       const name = dir.badLink
         ? `${kleur.red(dir.name)} ${kleur.red(kleur.bold('(404)'))}`
         : dir.redirect
-        ? kleur.yellow(`${dir.name} -> ${dir.redirect} (307)`)
-        : kleur[dir.path.length === 0 ? 'cyan' : 'white'](
-            `${dir.name}${dir.link ?? ''}`,
-          );
+        ? kleur.yellow(
+            `${dir.name} -> ${dir.redirect.path} (${dir.redirect.statusCode})`,
+          )
+        : `${kleur[dir.link ? 'cyan' : 'white'](dir.name)}${kleur.dim(
+            dir.link ?? '',
+          )}`;
 
       line.push(isLast ? PRINT_SYMBOLS.LAST_BRANCH : PRINT_SYMBOLS.BRANCH);
-      line.push(kleur.bold(name));
+      line.push(kleur.bold(`${dir.icon ? `${dir.icon} ` : ''}${name}`));
       lines.push(line.join(''));
 
       const dirLines = print(
@@ -161,7 +192,7 @@ export function logRoutesTree({ level, ...build }: RoutesLoggerInput) {
 
   if (tree.path.length > 0) {
     if (level === 'info') {
-      console.log(`\n🛣️  ${kleur.bold(kleur.underline('ROUTES'))}`, '');
+      console.log(`\n🗺️  ${kleur.bold(kleur.underline('ROUTES'))}`, '');
     }
 
     console.log(kleur.bold(kleur.cyan('.')));

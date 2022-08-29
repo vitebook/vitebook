@@ -79,9 +79,14 @@ export type ServerLoaderCacheKeyBuilder = (
   input: ServerLoaderInput,
 ) => ServerLoaderCacheKey | Promise<ServerLoaderCacheKey>;
 
+export type ServerLoadedRedirect = {
+  path: string;
+  statusCode: number;
+};
+
 export type ServerLoadedOutput<Data = ServerLoadedData> = {
   data?: Data;
-  readonly redirect?: string;
+  readonly redirect?: string | { path: string; statusCode?: number };
   readonly cache?: ServerLoaderCacheKeyBuilder;
 };
 

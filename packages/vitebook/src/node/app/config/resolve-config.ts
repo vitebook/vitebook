@@ -15,7 +15,7 @@ export function resolveAppConfig(
   {
     build = {},
     dirs = {},
-    isDebug: debug = false,
+    isDebug = !!process.env.DEBUG,
     client = {},
     routes = {},
     markdown = {},
@@ -124,6 +124,6 @@ export function resolveAppConfig(
     sitemap: __sitemap,
     isBuild: false,
     isSSR: false,
-    isDebug: debug,
+    isDebug,
   };
 }

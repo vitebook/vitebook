@@ -1,7 +1,7 @@
 // @ts-check
 
+import { fileURLToPath } from 'node:url';
 import path from 'upath';
-import { fileURLToPath } from 'url';
 
 import { FileDirectory } from './FileDirectory.js';
 import { GitIgnore } from './GitIgnore.js';

@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import path from 'upath';
 import { type VitebookPluginOptions, VM_PREFIX } from 'vitebook/node';
 

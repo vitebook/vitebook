@@ -26,8 +26,7 @@ export function isNull(value: unknown): value is null {
  * Check if a value is a `number`.
  */
 export function isNumber(value: unknown): value is number {
-  // @ts-expect-error - No constructor definition
-  return value?.constructor === Number && !Number.isNaN(value);
+  return (value as any)?.constructor === Number && !Number.isNaN(value);
 }
 
 /**

@@ -2,6 +2,7 @@ import kleur from 'kleur';
 
 import { type BuildAdapterFactory } from './BuildAdapter';
 import { createStaticBuildAdapter } from './static';
+import { type VercelBuildAdapterConfig } from './vercel/adapter';
 
 export const adapters = [
   {
@@ -11,22 +12,28 @@ export const adapters = [
   },
 ];
 
+export type AutoBuildAdapterConfig = {
+  use?: 'static' | 'vercel';
+  vercel?: VercelBuildAdapterConfig;
+};
+
 export function createAutoBuildAdapter(
-  options: { use?: 'static' | 'vercel' } = {},
+  config?: AutoBuildAdapterConfig,
 ): BuildAdapterFactory {
   const using = (name: string) =>
     console.log(kleur.bold(kleur.magenta(`\n🏗️  Using ${name} build adapter`)));
 
   return async (...args) => {
     for (const adapter of adapters) {
-      if (options.use ? adapter.name === options.use : adapter.test()) {
+      if (adapter.name === config?.use || adapter.test()) {
         const { default: createAdapter } = await adapter.loader();
         using(adapter.name);
-        return createAdapter()(...args);
+        return createAdapter(config?.[adapter.name])(...args);
       }
     }
 
-    using('static');
-    return createStaticBuildAdapter()(...args);
+    const staticAdapter = createStaticBuildAdapter();
+    using(staticAdapter.name);
+    return staticAdapter(...args);
   };
 }

@@ -1,7 +1,7 @@
 import { globby } from 'globby';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
 import kleur from 'kleur';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 async function main() {
   const mjsFiles = await globby(['../packages/*/dist/node/**/*.js'], {

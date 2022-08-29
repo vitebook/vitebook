@@ -3,7 +3,7 @@ import { type ViteDevServer } from 'vite';
 
 import {
   coalesceToError,
-  DATA_ASSET_BASE_URL,
+  DATA_ASSET_BASE_PATH,
   noendslash,
 } from '../../../../shared';
 import { type App } from '../../App';
@@ -47,7 +47,7 @@ export function configureDevServer(app: App, server: ViteDevServer) {
         return await handleEndpoint(base, url, app, req, res);
       }
 
-      if (decodedUrl.startsWith(DATA_ASSET_BASE_URL)) {
+      if (decodedUrl.startsWith(DATA_ASSET_BASE_PATH)) {
         return await handleDataRequest(url, app, res);
       }
 

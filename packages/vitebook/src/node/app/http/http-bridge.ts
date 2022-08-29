@@ -1,8 +1,8 @@
 /**
- * FROM: https://github.dev/sveltejs/kit/blob/master/packages/kit/src/core/prerender/prerender.js
+ * FROM: https://github.com/sveltejs/kit/blob/master/packages/kit/src/exports/node/index.js
  */
 
-import type { IncomingMessage, ServerResponse } from 'http';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 import * as set_cookie_parser from 'set-cookie-parser';
 
 export async function getRequest(base: string, req: IncomingMessage) {

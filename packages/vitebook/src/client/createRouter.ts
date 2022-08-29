@@ -6,7 +6,7 @@ import {
   type ClientLoadedData,
   type ClientPage,
   type ClientPageModule,
-  DATA_ASSET_BASE_URL,
+  DATA_ASSET_BASE_PATH,
   inBrowser,
   isBoolean,
   isLoadedMarkdownPage,
@@ -127,7 +127,7 @@ export async function loadPage(
 
   /**
    * Loading is slightly different during dev because we need to check for a page redirect which
-   * is returned from the `/assets/data` endpoint. This is not needed in prod because the
+   * is returned from the `/_immutable/data` endpoint. This is not needed in prod because the
    * complete redirect table is injected into the rendered HTML.
    */
   if (import.meta.env.DEV) {
@@ -224,7 +224,7 @@ export async function loadData(
   try {
     const json = !router.started
       ? getDataFromScript(hashId)
-      : await (await fetch(`${DATA_ASSET_BASE_URL}/${hashId}.json`)).json();
+      : await (await fetch(`${DATA_ASSET_BASE_PATH}/${hashId}.json`)).json();
 
     return json;
   } catch (e) {

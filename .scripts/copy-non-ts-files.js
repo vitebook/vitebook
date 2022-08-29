@@ -1,11 +1,11 @@
 import fs from 'fs-extra';
 import chokidar from 'chokidar';
-import path from 'path';
 import minimist from 'minimist';
+import path from 'node:path';
+import { createRequire } from 'node:module';
 import { globbySync } from 'globby';
 import { preprocess } from 'svelte/compiler';
 import { transform } from 'esbuild';
-import { createRequire } from 'module';
 
 const args = minimist(process.argv.slice(2));
 const require = createRequire(import.meta.url);

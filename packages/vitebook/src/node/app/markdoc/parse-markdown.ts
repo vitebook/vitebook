@@ -1,10 +1,10 @@
 /* eslint-disable import/no-named-as-default-member */
 
 import Markdoc, { type RenderableTreeNode, type Tag } from '@markdoc/markdoc';
-import fs from 'fs';
 import matter from 'gray-matter';
 import yaml from 'js-yaml';
 import LRUCache from 'lru-cache';
+import fs from 'node:fs';
 import path from 'upath';
 
 import {

@@ -76,11 +76,11 @@ export function resolveRouteFromFilePath(
       .replace(/\/(README|index){.html}\?($|\?)/i, '{/}?{index}?{.html}?');
   };
 
-  const dynamic = isNotFound || isEndpoint || isRoutePathDynamic(route);
+  const dynamic = isNotFound || isRoutePathDynamic(route);
 
   const pathname = isNotFound
     ? `${route.replace(path.basename(route), '')}(.*?)`
-    : dynamic
+    : dynamic || isEndpoint
     ? slash(
         path
           .trimExt(route)

@@ -1,25 +1,30 @@
-import fs from 'fs';
 import kleur from 'kleur';
+import fs from 'node:fs';
 import type { OutputAsset, OutputBundle, OutputChunk } from 'rollup';
+import path from 'upath';
+import { type Manifest as ViteManifest } from 'vite';
 
 import {
   cleanRoutePath,
+  isFunction,
   isUndefined,
   matchRouteInfo,
+  ServerEndpoint,
   type ServerEntryModule,
   type ServerLoadedOutputMap,
+  type ServerLoadedRedirect,
   type ServerPage,
   type ServerRenderResult,
 } from '../../../shared';
 import type { App } from '../App';
 import { createAppEntries } from '../create/app-factory';
-import { handleFunctionRequest } from '../http';
+import { handleRequest } from '../http';
 import {
   buildServerLoadedDataMap,
   loadPageServerOutput,
 } from '../plugins/core';
 import { installPolyfills } from '../polyfills';
-import { getBuildAdapterUtils } from './adapter';
+import { createAutoBuildAdapter, getBuildAdapterUtils } from './adapter';
 
 export async function build(
   app: App,
@@ -31,7 +36,7 @@ export async function build(
     return;
   }
 
-  installPolyfills();
+  await installPolyfills();
 
   const ssrProtocol = app.vite.resolved!.server.https ? 'https' : 'http';
   const ssrOrigin = `${ssrProtocol}://ssr`;
@@ -39,14 +44,14 @@ export async function build(
   const pages = app.nodes.pages.toArray();
   const entries = createAppEntries(app, { isSSR: true });
   const entryFilenames = Object.keys(entries);
-  const ssrManifestPath = app.dirs.client.resolve('ssr-manifest.json');
+  const viteManifestPath = app.dirs.client.resolve('vite-manifest.json');
   const { chunks, assets } = collectOutput(clientBundle);
 
   const entryChunk = chunks.find(
-    (chunk) => chunk.isEntry && /^entry-/.test(chunk.fileName),
+    (chunk) => chunk.isEntry && /^_immutable\/entry-/.test(chunk.fileName),
   )!;
   const appChunk = chunks.find(
-    (chunk) => chunk.isEntry && /^app-/.test(chunk.fileName),
+    (chunk) => chunk.isEntry && /^_immutable\/app-/.test(chunk.fileName),
   )!;
   const appCSSAsset = assets.find((asset) => asset.fileName.endsWith('.css'))!;
 
@@ -59,6 +64,9 @@ export async function build(
       appCSSAsset,
       chunks,
       assets,
+      viteManifest: JSON.parse(
+        await fs.promises.readFile(viteManifestPath, 'utf-8'),
+      ),
     },
     server: {
       output: serverBundle,
@@ -72,17 +80,25 @@ export async function build(
     badLinks: new Map(),
     data: new Map(),
     redirects: new Map(),
+    endpoints: new Map(),
     loaded: new Map(),
     renders: new Map(),
-    ssrManifest: JSON.parse(
-      await fs.promises.readFile(ssrManifestPath, 'utf-8'),
-    ),
   };
 
   const $ = getBuildAdapterUtils(app, bundles, build);
-  const adapter = await app.config.build.adapter(app, bundles, build, $);
 
-  if (!app.config.isDebug) $.rimraf(ssrManifestPath);
+  const adapterFactory = isFunction(app.config.build.adapter)
+    ? app.config.build.adapter
+    : createAutoBuildAdapter(app.config.build.adapter);
+
+  const adapter = await adapterFactory(app, bundles, build, $);
+
+  for (const endpoint of app.nodes.endpoints) {
+    build.endpoints.set(
+      `/${path.dirname(app.dirs.app.relative(endpoint.rootPath))}/`,
+      endpoint,
+    );
+  }
 
   // -------------------------------------------------------------------------------------------
   // LOAD DATA
@@ -107,7 +123,7 @@ export async function build(
 
       const endpoint = app.nodes.endpoints.getByIndex(match.index);
 
-      return handleFunctionRequest(
+      return handleRequest(
         new Request(url, init),
         match.route.pattern,
         () => {
@@ -143,15 +159,16 @@ export async function build(
       const pathname = $.normalizeURL(url).pathname;
       build.redirects.set(pathname, {
         from: pathname,
-        to: result.redirect,
+        to: result.redirect.path,
         filename: $.resolveHTMLFilename(url),
-        html: $.createRedirectMetaTag(result.redirect),
+        html: $.createRedirectMetaTag(result.redirect.path),
+        statusCode: result.redirect.statusCode,
       });
       await adapter?.finishLoadingPage?.(
         pathname,
         page,
         result.output,
-        result.redirect,
+        result.redirect.path,
       );
       return result;
     }
@@ -214,10 +231,10 @@ export async function build(
 
     // Redirect.
     if (loadedOutput.redirect) {
-      const location = loadedOutput.redirect;
+      const location = loadedOutput.redirect.path;
       await buildPageFromHref(page, location);
       await adapter.finishRenderingPage?.(pathname, page, {
-        redirect: location,
+        redirect: loadedOutput.redirect,
       });
       return;
     }
@@ -292,10 +309,6 @@ export async function build(
   await adapter.finishRenderingPages?.();
   await adapter.write?.();
   await adapter.close?.();
-
-  if (!app.config.isDebug) {
-    $.rimraf(app.dirs.tmp.path);
-  }
 }
 
 function collectChunks(bundle: OutputBundle) {
@@ -334,6 +347,13 @@ export type BuildBundles = {
     appCSSAsset?: OutputAsset;
     chunks: OutputChunk[];
     assets: OutputAsset[];
+    /**
+     * Vite manifest that can be used to build preload/prefetch directives. The manifest contains
+     * mappings of module IDs to their associated chunks and asset files.
+     *
+     * @see {@link https://vitejs.dev/guide/ssr.html#generating-preload-directives}
+     */
+    viteManifest: ViteManifest;
   };
   server: {
     output: OutputBundle;
@@ -346,13 +366,6 @@ export type BuildData = {
    * Application entry files that are passed to Rollup's `input` option.
    */
   entries: Record<string, string>;
-  /**
-   * Vite SSR manifest that can be used to build preload/prefetch directives. The manifest contains
-   * mappings of module IDs to their associated chunks and asset files.
-   *
-   * @see {@link https://vitejs.dev/guide/ssr.html#generating-preload-directives}
-   */
-  ssrManifest: Record<string, string[]>;
   /**
    * Valid links and their respective server page that were found during the build process.
    */
@@ -376,8 +389,14 @@ export type BuildData = {
       filename: string;
       /** The HTML file content containing the redirect meta tag. */
       html: string;
+      /** HTTP status code used for the redirect. */
+      statusCode: number;
     }
   >;
+  /**
+   * Links and their respective server endpoint.
+   */
+  endpoints: Map<string, ServerEndpoint>;
   /**
    * Map of links (URL Pathname) and their respective loaded server output from calling the
    * page/layout `loader()`.
@@ -388,7 +407,7 @@ export type BuildData = {
       /** Map of data asset id to server loaded output object. */
       output: ServerLoadedOutputMap;
       /** Any redirect returned from the loaded output. */
-      redirect?: string;
+      redirect?: ServerLoadedRedirect;
     }
   >;
   /**

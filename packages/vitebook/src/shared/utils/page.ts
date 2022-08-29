@@ -40,7 +40,7 @@ export function isLoadedMarkdownPage(
 const splitRE = /\//g;
 const htmlExtRE = /(?:index)?\.html$/;
 
-export const DATA_ASSET_BASE_URL = '/assets/data';
+export const DATA_ASSET_BASE_PATH = '/_immutable/data';
 
 export function resolveDataAssetID(pathname: string, layoutIndex?: number) {
   const id = `${isNumber(layoutIndex) ? `$${layoutIndex}:` : ''}${pathname
@@ -57,7 +57,7 @@ export function parseDataAssetURL(url: URL): {
   layoutIndex: number;
 } {
   const pathname = noslash(
-    decodeURI(url.pathname).replace(DATA_ASSET_BASE_URL, ''),
+    decodeURI(url.pathname).replace(DATA_ASSET_BASE_PATH, ''),
   );
 
   const [layoutIndex, route] = layoutIndexRE.test(pathname)

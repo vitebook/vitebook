@@ -1,6 +1,6 @@
 // @ts-check
 
-import fs from 'fs';
+import fs from 'node:fs';
 import path from 'upath';
 
 export const GIT_IGNORE = [

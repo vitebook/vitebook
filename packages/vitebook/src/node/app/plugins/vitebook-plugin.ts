@@ -69,7 +69,7 @@ export function vitebookPlugin(
         app.vite.resolved = _viteConfig;
       },
       async configureServer(server) {
-        installPolyfills();
+        await installPolyfills();
         app.vite.server = server;
         return () => {
           configureDevServer(app, server);

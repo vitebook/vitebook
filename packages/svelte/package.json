@@ -72,6 +72,8 @@
     "esm",
     "fast",
     "lightweight",
+    "markdoc",
+    "markdown",
     "modern",
     "ssg",
     "svelte",

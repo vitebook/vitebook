@@ -2,9 +2,9 @@
 
 // @ts-check
 
-import fs from 'fs';
 import kleur from 'kleur';
 import minimist from 'minimist';
+import fs from 'node:fs';
 import path from 'upath';
 
 import { FRAMEWORKS } from '../src/constants.js';

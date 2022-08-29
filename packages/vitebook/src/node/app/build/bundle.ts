@@ -24,6 +24,7 @@ export async function createServerBundle(
 
 export function resolveBuildConfig(app: App): ViteConfig {
   const ssr = app.config.isSSR;
+  const immutableDir = '_immutable';
 
   const input = {
     entry: ssr ? app.entry.server : app.entry.client,
@@ -40,9 +41,10 @@ export function resolveBuildConfig(app: App): ViteConfig {
       emptyOutDir: true,
       ssr,
       target: ssr ? 'node16' : undefined,
-      ssrManifest: !ssr,
+      manifest: !ssr && `vite-manifest.json`,
+      ssrManifest: false,
       cssCodeSplit: false,
-      assetsDir: 'assets',
+      assetsDir: `${immutableDir}/assets`,
       minify: !ssr && !app.config.isDebug,
       polyfillModulePreload: false,
       outDir: ssr
@@ -52,9 +54,15 @@ export function resolveBuildConfig(app: App): ViteConfig {
         input,
         output: {
           format: 'esm',
-          entryFileNames: ssr ? '[name].js' : `[name]-[hash].js`,
-          chunkFileNames: ssr ? 'chunks/[name].js' : `chunks/[name]-[hash].js`,
-          assetFileNames: ssr ? '' : `assets/[name]-[hash].js`,
+          entryFileNames: ssr
+            ? `[name].js`
+            : `${immutableDir}/[name]-[hash].js`,
+          chunkFileNames: ssr
+            ? 'chunks/[name].js'
+            : `${immutableDir}/chunks/[name]-[hash].js`,
+          assetFileNames: ssr
+            ? ''
+            : `${immutableDir}/assets/[name]-[hash][extname]`,
           manualChunks: extendManualChunks(),
         },
         preserveEntrySignatures: 'strict',

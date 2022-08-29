@@ -48,8 +48,8 @@ export async function handlePageRequest(
   );
 
   if (redirect) {
-    res.statusCode = 307;
-    res.setHeader('Location', redirect).end();
+    res.statusCode = redirect.statusCode;
+    res.setHeader('Location', redirect.path).end();
     return;
   }
 

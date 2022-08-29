@@ -1,6 +1,6 @@
 import { createRequire } from 'module';
+import { fileURLToPath } from 'node:url';
 import path from 'upath';
-import { fileURLToPath } from 'url';
 
 import { isObject } from '../../shared';
 

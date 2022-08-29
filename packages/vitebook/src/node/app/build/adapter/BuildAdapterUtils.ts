@@ -1,10 +1,11 @@
-import fs from 'fs';
 import fsp from 'fs/promises';
 import kleur from 'kleur';
+import fs from 'node:fs';
 import ora from 'ora';
+import path from 'upath';
 
 import {
-  DATA_ASSET_BASE_URL,
+  DATA_ASSET_BASE_PATH,
   endslash,
   escapeHTML,
   isLinkExternal,
@@ -32,62 +33,10 @@ import { type RoutesLogLevel, type RoutesLogStyle } from '../../config';
 import { createDirectory } from '../../create/app-dirs';
 import { readIndexHtmlFile } from '../../plugins/core/index-html';
 import { type BuildBundles, type BuildData } from '../build';
-import { resolvePageImports } from '../chunks';
+import { resolvePageChunks } from '../chunks';
 import { crawl } from '../crawl';
 import { logBadLinks, logRoutesList, logRoutesTree } from '../log';
 import { buildSitemap } from '../sitemap';
-
-export type BuildAdapterUtils = {
-  logger: typeof logger;
-  color: typeof kleur;
-  icons: {
-    info: string;
-    tip: string;
-    success: string;
-    warn: string;
-    error: string;
-  };
-  crawl(html: string): string[];
-  hash(content: string): string;
-  normalizePath(path: string): string;
-  normalizeURL(url: URL): URL;
-  mkdirp(dirname: string): void;
-  rimraf(dirname: string): void;
-  readFile(filePath: string): Promise<string>;
-  writeFile(filePath: string, fileContent: string): Promise<void>;
-  copyFile(src: string, dest: string): void;
-  copyDir(src: string, dest: string): void;
-  ensureFile(filePath: string): Promise<void>;
-  ensureDir(dirname: string): Promise<void>;
-  noslash(path: string): string;
-  slash(path: string): string;
-  endslash(path: string): string;
-  noendslash(path: string): string;
-  isLinkExternal(path: string): boolean;
-  createSpinner: typeof ora;
-  resolveHTMLFilename(url: string | URL): string;
-  resolveDataFilename(name: string): string;
-  resolvePageImports(page: ServerPage): {
-    imports: string[];
-    dynamicImports: string[];
-  };
-  resolveImportsFromSSRManifest(modules: Set<string>): string[];
-  buildSitemaps(): Promise<[filename: string, content: string][]>;
-  createRedirectMetaTag(url: string): string;
-  createLinkTag(rel: string, pathname: string): string;
-  createPreloadTag(pathname: string): string;
-  createDataScriptTag(dataAssetIds: Set<string>): string;
-  guessPackageManager(): 'npm' | 'pnpm' | 'yarn';
-  findPreviewScriptName(): Promise<string | null | undefined>;
-  logBadLinks: () => void;
-  logRoutes(overrides?: {
-    level?: RoutesLogLevel;
-    style?: RoutesLogStyle;
-  }): void;
-  escapeHTML(content: string): string;
-  createDirectory: (dirname: string) => Directory;
-  getHTMLTemplate(): string;
-};
 
 export function getBuildAdapterUtils(
   app: App,
@@ -123,7 +72,10 @@ export function getBuildAdapterUtils(
     readFile: (filePath) => fsp.readFile(filePath, 'utf-8'),
     writeFile: (filePath, fileContent) =>
       fsp.writeFile(filePath, fileContent, 'utf-8'),
+    createFilesArray: () => [],
+    writeFiles,
     isLinkExternal: (path) => isLinkExternal(path, baseURL),
+    pluralize: (word, count) => (count === 1 ? word : `${word}s`),
     createSpinner: ora,
     resolveHTMLFilename: (url) => {
       const decodedRoute = decodeURI(isString(url) ? url : url.pathname);
@@ -133,10 +85,9 @@ export function getBuildAdapterUtils(
       return noslash(filePath);
     },
     resolveDataFilename: (name) =>
-      `${DATA_ASSET_BASE_URL}/${name}.json`.slice(1),
-    resolvePageImports: (page) => resolvePageImports(app, page, bundles.client),
-    resolveImportsFromSSRManifest: (modules) =>
-      resolveImportsFromSSRManifest(modules, build.ssrManifest),
+      `${DATA_ASSET_BASE_PATH}/${name}.json`.slice(1),
+    resolvePageChunks: (page, modules) =>
+      resolvePageChunks(app, page, bundles.client, modules),
     buildSitemaps: async () => {
       if (app.config.sitemap.length === 0) return [];
       const sitemaps = app.config.sitemap
@@ -193,7 +144,7 @@ function createLinkTag(app: App, rel: string, fileName?: string) {
   if (!fileName) return '';
   const baseUrl = noendslash(app.vite.resolved!.base);
   const href = `${baseUrl}${slash(fileName)}`;
-  return `<link rel="${rel}" href="${href}">`;
+  return `<link rel="${rel}" href="${href}" />`;
 }
 
 function createPreloadTag(app: App, fileName?: string) {
@@ -203,37 +154,22 @@ function createPreloadTag(app: App, fileName?: string) {
   const href = `${baseUrl}${slash(fileName)}`;
 
   if (fileName.endsWith('.js')) {
-    return `<link rel="modulepreload" crossorigin href="${href}">`;
+    return `<link rel="modulepreload" crossorigin href="${href}" />`;
   } else if (fileName.endsWith('.css')) {
-    return `<link rel="stylesheet" href="${href}">`;
+    return `<link rel="stylesheet" href="${href}" />`;
   } else if (fileName.endsWith('.woff')) {
-    return ` <link rel="preload" href="${href}" as="font" type="font/woff" crossorigin>`;
+    return ` <link rel="preload" href="${href}" as="font" type="font/woff" crossorigin />`;
   } else if (fileName.endsWith('.woff2')) {
-    return ` <link rel="preload" href="${href}" as="font" type="font/woff2" crossorigin>`;
+    return ` <link rel="preload" href="${href}" as="font" type="font/woff2" crossorigin />`;
   } else if (fileName.endsWith('.gif')) {
-    return ` <link rel="preload" href="${href}" as="image" type="image/gif">`;
+    return ` <link rel="preload" href="${href}" as="image" type="image/gif" />`;
   } else if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
-    return ` <link rel="preload" href="${href}" as="image" type="image/jpeg">`;
+    return ` <link rel="preload" href="${href}" as="image" type="image/jpeg" />`;
   } else if (fileName.endsWith('.png')) {
-    return ` <link rel="preload" href="${href}" as="image" type="image/png">`;
+    return ` <link rel="preload" href="${href}" as="image" type="image/png" />`;
   }
 
   return '';
-}
-
-function resolveImportsFromSSRManifest(
-  modules: Set<string>,
-  ssrManifest: Record<string, string[]>,
-) {
-  const imports = new Set<string>();
-
-  for (const filename of modules) {
-    ssrManifest[filename]?.forEach((file) => {
-      imports.add(noslash(file));
-    });
-  }
-
-  return Array.from(imports);
 }
 
 function guessPackageManager(app: App): 'npm' | 'yarn' | 'pnpm' {
@@ -267,3 +203,93 @@ async function findPreviewScriptName(app: App) {
 
   return null;
 }
+
+async function writeFiles(
+  files: { filename: string; content: string }[],
+  resolveFilePath: (filename: string) => string,
+  resolvePendingMessage: (filesCount: string) => string,
+  resolveSuccessMessage: (filesCount: string) => string,
+) {
+  const writingSpinner = ora();
+  const filesCount = kleur.underline(files.length);
+  const pendingMessage = resolvePendingMessage?.(filesCount);
+  const successMessage = resolveSuccessMessage?.(filesCount);
+
+  writingSpinner.start(kleur.bold(pendingMessage));
+
+  await Promise.all(
+    files.map(async ({ filename, content }) => {
+      const filePath = resolveFilePath(filename);
+      await ensureDir(path.dirname(filePath));
+      await fsp.writeFile(filePath, content);
+    }),
+  );
+
+  writingSpinner.stopAndPersist({
+    text: kleur.bold(successMessage),
+    symbol: LoggerIcon.Success,
+  });
+}
+
+export type BuildAdapterUtils = {
+  logger: typeof logger;
+  color: typeof kleur;
+  icons: {
+    info: string;
+    tip: string;
+    success: string;
+    warn: string;
+    error: string;
+  };
+  crawl(html: string): string[];
+  hash(content: string): string;
+  normalizePath(path: string): string;
+  normalizeURL(url: URL): URL;
+  mkdirp(dirname: string): void;
+  rimraf(dirname: string): void;
+  readFile(filePath: string): Promise<string>;
+  writeFile(filePath: string, fileContent: string): Promise<void>;
+  createFilesArray(): { filename: string; content: string }[];
+  writeFiles: (
+    files: { filename: string; content: string }[],
+    resolveFilePath: (filename: string) => string,
+    resolvePendingMessage: (filesCount: string) => string,
+    resolveSuccessMessage: (filesCount: string) => string,
+  ) => Promise<void>;
+  copyFile(src: string, dest: string): void;
+  copyDir(src: string, dest: string): void;
+  ensureFile(filePath: string): Promise<void>;
+  ensureDir(dirname: string): Promise<void>;
+  noslash(path: string): string;
+  slash(path: string): string;
+  endslash(path: string): string;
+  noendslash(path: string): string;
+  isLinkExternal(path: string): boolean;
+  createSpinner: typeof ora;
+  pluralize(word: string, count: number): string;
+  resolveHTMLFilename(url: string | URL): string;
+  resolveDataFilename(name: string): string;
+  resolvePageChunks(
+    page: ServerPage,
+    modules?: Set<string>,
+  ): {
+    assets: string[];
+    imports: string[];
+    dynamicImports: string[];
+  };
+  buildSitemaps(): Promise<[filename: string, content: string][]>;
+  createRedirectMetaTag(url: string): string;
+  createLinkTag(rel: string, pathname: string): string;
+  createPreloadTag(pathname: string): string;
+  createDataScriptTag(dataAssetIds: Set<string>): string;
+  guessPackageManager(): 'npm' | 'pnpm' | 'yarn';
+  findPreviewScriptName(): Promise<string | null | undefined>;
+  logBadLinks: () => void;
+  logRoutes(overrides?: {
+    level?: RoutesLogLevel;
+    style?: RoutesLogStyle;
+  }): void;
+  escapeHTML(content: string): string;
+  createDirectory: (dirname: string) => Directory;
+  getHTMLTemplate(): string;
+};

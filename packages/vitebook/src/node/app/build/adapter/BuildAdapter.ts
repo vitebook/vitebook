@@ -37,7 +37,7 @@ export type BuildAdapter = {
     pathname: string,
     page: ServerPage,
     result: {
-      redirect?: string;
+      redirect?: { path: string; statusCode: number };
       ssr?: ServerRenderResult | null;
       dataAssetIds?: Set<string>;
     },

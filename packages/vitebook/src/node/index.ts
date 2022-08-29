@@ -8,9 +8,11 @@ export type {
   BuildAdapterUtils,
 } from './app/build/adapter';
 export {
+  type AutoBuildAdapterConfig,
   createAutoBuildAdapter,
   createStaticBuildAdapter,
 } from './app/build/adapter';
+export type { VercelBuildAdapterConfig } from './app/build/adapter/vercel/adapter';
 export * from './app/config';
 export type {
   HighlightCodeBlock,

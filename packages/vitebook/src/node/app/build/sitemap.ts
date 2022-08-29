@@ -1,5 +1,5 @@
 import { createFilter } from '@rollup/pluginutils';
-import fs from 'fs';
+import fs from 'node:fs';
 
 import { isFunction, slash } from '../../../shared';
 import type { App } from '../App';

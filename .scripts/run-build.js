@@ -1,8 +1,8 @@
-import { spawn } from 'child_process';
-import { readdirSync } from 'fs';
 import Prompts from 'prompts';
+import { readdirSync } from 'node:fs';
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import path from 'upath';
-import { fileURLToPath } from 'url';
 
 const { prompts } = Prompts;
 

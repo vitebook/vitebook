@@ -1,4 +1,4 @@
-import { type ServerEndpoint } from '../../../shared';
+import { compareRoutes, type ServerEndpoint } from '../../../shared';
 import { type App } from '../App';
 import { FileNodes, type FileNodesCallbacks } from './FileNodes';
 
@@ -19,6 +19,7 @@ export class EndpointNodes extends FileNodes<ServerEndpoint> {
     };
 
     this._nodes.push(endpoint);
+    this._nodes = this._nodes.sort((a, b) => compareRoutes(a.route, b.route));
     this._options.onAdd?.(endpoint);
 
     return endpoint;

@@ -130,7 +130,7 @@ export function createAppEntries(app: App, { isSSR = false } = {}) {
 
 function resolvePageOutputFilename(app: App, page: ServerPage) {
   const name = path.trimExt(app.dirs.app.relative(page.rootPath));
-  return `chunks/pages/${name}`;
+  return `pages/${name}`;
 }
 
 function resolveLayoutOutputFilename(app: App, layout: ServerLayout) {
@@ -138,10 +138,10 @@ function resolveLayoutOutputFilename(app: App, layout: ServerLayout) {
     .trimExt(app.dirs.app.relative(layout.rootPath))
     .replace(/@layouts\//, '');
 
-  return `chunks/layouts/${name}`;
+  return `layouts/${name}`;
 }
 
 function resolveEndpointFilename(app: App, endpoint: ServerEndpoint) {
-  const name = path.trimExt(app.dirs.app.relative(endpoint.rootPath));
-  return `chunks/${name}`;
+  // /api/...
+  return path.trimExt(app.dirs.app.relative(endpoint.rootPath));
 }

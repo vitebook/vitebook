@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import os from 'os';
 import path from 'upath';
 

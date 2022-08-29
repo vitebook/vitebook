@@ -6,13 +6,9 @@
 > and certain [features to be missing](#missing-features). As much as we'll try not to break
 > existing API's, occasionally it _might_ happen.
 
-## Documentation
+## Docs
 
 See the [docs](./docs) directory.
-
-## Contributing
-
-See [contributing.md](./.github/contributing.md).
 
 ## License
 

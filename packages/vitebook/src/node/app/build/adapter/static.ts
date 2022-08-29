@@ -1,5 +1,3 @@
-import path from 'upath';
-
 import { type BuildAdapterFactory } from './BuildAdapter';
 
 export function createStaticBuildAdapter(
@@ -18,32 +16,33 @@ export function createStaticBuildAdapter(
       name: 'static',
       startRenderingPages() {
         renderingSpinner.start(
-          $.color.bold(`Rendering ${app.nodes.pages.size} pages...`),
+          $.color.bold(
+            `Rendering ${$.color.underline(app.nodes.pages.size)} pages...`,
+          ),
         );
       },
       finishRenderingPages() {
         renderingSpinner.stopAndPersist({
           symbol: $.icons.success,
           text: $.color.bold(
-            `Rendered ${$.color.underline(build.links.size)} pages`,
+            `Rendered ${$.color.underline(app.nodes.pages.size)} pages`,
           ),
         });
       },
 
       async write() {
-        const files: { filename: string; content: string }[] = [];
-
         // ---------------------------------------------------------------------------------------
         // REDIRECTS
         // ---------------------------------------------------------------------------------------
 
         let redirectsScriptTag = '';
+        const redirectFiles = $.createFilesArray();
 
         if (!options.skipRedirects) {
           const redirectsTable: Record<string, string> = {};
 
           for (const redirect of build.redirects.values()) {
-            files.push({
+            redirectFiles.push({
               filename: redirect.filename,
               content: redirect.html,
             });
@@ -59,9 +58,10 @@ export function createStaticBuildAdapter(
         // ---------------------------------------------------------------------------------------
 
         const dataTable: Record<string, string> = {};
+        const dataFiles = $.createFilesArray();
 
         for (const data of build.data.values()) {
-          files.push({
+          dataFiles.push({
             filename: data.filename,
             content: data.serializedData,
           });
@@ -75,27 +75,31 @@ export function createStaticBuildAdapter(
         // HTML Pages
         // ---------------------------------------------------------------------------------------
 
+        const htmlFiles = $.createFilesArray();
+
         const buildingSpinner = $.createSpinner();
         const htmlPagesCount = $.color.underline(build.renders.size);
+
         buildingSpinner.start(
           $.color.bold(`Building ${htmlPagesCount} HTML pages...`),
         );
 
         const template = $.getHTMLTemplate();
-        const entryScriptTag = `<script type="module" src="/${bundles.client.entryChunk.fileName}" defer></script>`;
+        const entrySrc = bundles.client.entryChunk.fileName;
+        const entryScriptTag = `<script type="module" src="/${entrySrc}" defer></script>`;
         const stylesheetTag = bundles.client.appCSSAsset
           ? $.createLinkTag('stylesheet', bundles.client.appCSSAsset.fileName)
           : '';
 
         for (const render of build.renders.values()) {
-          const { imports, dynamicImports } = $.resolvePageImports(render.page);
-          const manifestImports = $.resolveImportsFromSSRManifest(
+          const { assets, imports, dynamicImports } = $.resolvePageChunks(
+            render.page,
             render.ssr.context.modules,
           );
 
-          const preloadLinkTags = Array.from(
-            new Set([...imports, ...manifestImports]),
-          ).map((fileName) => $.createPreloadTag(fileName));
+          const preloadLinkTags = [...assets, ...imports].map((fileName) =>
+            $.createPreloadTag(fileName),
+          );
 
           const prefetchLinkTags = dynamicImports.map((fileName) =>
             $.createLinkTag('prefetch', fileName),
@@ -122,7 +126,7 @@ export function createStaticBuildAdapter(
             .replace(`<!--@vitebook/app-->`, render.ssr.html)
             .replace('<!--@vitebook/body-->', bodyTags);
 
-          files.push({
+          htmlFiles.push({
             filename: render.filename,
             content: pageHtml,
           });
@@ -139,15 +143,19 @@ export function createStaticBuildAdapter(
 
         if (app.config.sitemap.length > 0) {
           const sitemapsSpinner = $.createSpinner();
-          sitemapsSpinner.start($.color.bold('Building sitemaps...'));
+          const sitemapCount = $.color.underline(app.config.sitemap.length);
+
+          sitemapsSpinner.start(
+            $.color.bold(`Building ${sitemapCount} sitemaps...`),
+          );
 
           const sitemaps = await $.buildSitemaps();
           for (const [filename, content] of sitemaps) {
-            files.push({ filename, content });
+            htmlFiles.push({ filename, content });
           }
 
           sitemapsSpinner.stopAndPersist({
-            text: $.color.bold(`Built sitemaps`),
+            text: $.color.bold(`Built ${sitemapCount} sitemaps`),
             symbol: $.icons.success,
           });
         }
@@ -156,26 +164,30 @@ export function createStaticBuildAdapter(
         // WRITE
         // ---------------------------------------------------------------------------------------
 
-        const writingSpinner = $.createSpinner();
-        const filesCount = $.color.underline(files.length);
-        writingSpinner.start($.color.bold(`Writing ${filesCount} files...`));
-
-        await Promise.all(
-          files.map(async ({ filename, content }) => {
-            const filePath = app.dirs.client.resolve(filename);
-            await $.ensureDir(path.dirname(filePath));
-            await $.writeFile(filePath, content);
-          }),
+        await $.writeFiles(
+          htmlFiles,
+          (filename) => app.dirs.client.resolve(filename),
+          (count) => `Writing ${count} HTML files`,
+          (count) => `Committed ${count} HTML files`,
         );
 
-        if (!options.skipOutput) {
-          $.copyDir(app.dirs.client.path, app.dirs.build.path);
+        if (redirectFiles.length) {
+          await $.writeFiles(
+            dataFiles,
+            (filename) => app.dirs.client.resolve(filename),
+            (count) => `Writing ${count} HTML redirect files`,
+            (count) => `Committed ${count} HTML redirect files`,
+          );
         }
 
-        writingSpinner.stopAndPersist({
-          text: $.color.bold(`Committed ${filesCount} files`),
-          symbol: $.icons.success,
-        });
+        if (dataFiles.length) {
+          await $.writeFiles(
+            dataFiles,
+            (filename) => app.dirs.client.resolve(filename),
+            (count) => `Writing ${count} data files`,
+            (count) => `Committed ${count} data files`,
+          );
+        }
       },
       async close() {
         $.logBadLinks();

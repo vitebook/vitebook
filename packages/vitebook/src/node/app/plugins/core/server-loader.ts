@@ -4,10 +4,12 @@ import {
   execRouteMatch,
   isFunction,
   isLinkExternal,
+  isString,
   resolveDataAssetID,
   type ServerLoadedDataMap,
   type ServerLoadedOutput,
   type ServerLoadedOutputMap,
+  type ServerLoadedRedirect,
   type ServerLoader,
   type ServerLoaderCacheKeyBuilder,
   type ServerLoaderCacheMap,
@@ -69,7 +71,7 @@ export async function loadPageServerOutput(
   const pathname = decodeURI(url.pathname);
   const input = buildServerLoaderInput(url, page);
 
-  let redirect: string | undefined;
+  let redirect: ServerLoadedRedirect | undefined;
 
   // Load page first - if it has a redirect we'll skip loading layouts.
   await (async () => {
@@ -84,11 +86,24 @@ export async function loadPageServerOutput(
 
     map.set(id, output);
 
-    redirect =
-      output.redirect &&
-      !isLinkExternal(output.redirect, app.vite.resolved!.base)
-        ? slash(output.redirect)
-        : output.redirect;
+    if (output.redirect) {
+      const path = isString(output.redirect)
+        ? output.redirect
+        : output.redirect.path;
+
+      const statusCode = isString(output.redirect)
+        ? 302
+        : output.redirect.statusCode ?? 302;
+
+      const normalizedPath = !isLinkExternal(path, app.vite.resolved!.base)
+        ? slash(path)
+        : path;
+
+      redirect = {
+        path: normalizedPath,
+        statusCode,
+      };
+    }
   })();
 
   if (redirect) return { output: map, redirect };
