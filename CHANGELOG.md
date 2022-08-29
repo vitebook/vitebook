@@ -1,3 +1,9 @@
+## [0.201.5](https://github.com/vitebook/vitebook/compare/v0.201.4...v0.201.5) (2022-08-29)
+
+### Bug Fixes
+
+- do not install http polyfills on vercel edge ([c54414c](https://github.com/vitebook/vitebook/commit/c54414c9cc42045940b6ef57a3171876c59b8e80))
+
 ## [0.201.4](https://github.com/vitebook/vitebook/compare/v0.201.3...v0.201.4) (2022-08-29)
 
 ### Bug Fixes
