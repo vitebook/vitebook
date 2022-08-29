@@ -6,59 +6,43 @@ export function invariant<T>(
 ): asserts value is T;
 
 /**
- * Throws HTTP bad request (status code 400) if the value is `false`, `nul`, or `undefined`.
+ * Throws HTTP bad request (status code 400) if the value is `false`, `null`, or `undefined`.
  */
-export function invariant(value: unknown, message?: string) {
+export function invariant(value: unknown, message = 'invalid falsy value') {
   if (value === false || value === null || typeof value === 'undefined') {
-    throw new httpError(400, message);
+    throw new httpError(message, 400);
   }
 }
 
 /**
  * Throws HTTP validation error (status code 422) if the condition is false.
  */
-export function validate(condition: boolean, message?: string) {
-  if (!condition) throw new httpError(422, message);
+export function validate(condition: boolean, message = 'validation failed') {
+  if (!condition) throw new httpError(message, 422);
 }
 
 /**
  * Throws a `HTTPError` to easily escape handling the request and respond with the given status
  * code and optional message.
  */
-export function httpError(statusCode: number, message?: string) {
-  throw new HTTPError(statusCode, message);
-}
-
-/**
- * Throws a `HTTPError` to easily escape handling the request and respond with the given status
- * code and optional JSON data.
- */
-export function httpJSONError(
-  statusCode: number,
-  data: Record<string, unknown> = {},
+export function httpError(
+  message: string,
+  init?: number | ResponseInit,
+  data?: Record<string, unknown>,
 ) {
-  throw new HTTPJSONError(statusCode, data);
+  throw new HTTPError(message, init, data);
 }
 
 export class HTTPError extends Error {
-  constructor(public readonly statusCode: number, message?: string) {
-    super(message);
-  }
-}
-
-export class HTTPJSONError extends Error {
   constructor(
-    public readonly statusCode: number,
-    public readonly data: Record<string, unknown>,
+    message: string,
+    public readonly init?: number | ResponseInit,
+    public readonly data?: Record<string, unknown>,
   ) {
-    super();
+    super(message);
   }
 }
 
 export function isHTTPError(error: unknown): error is HTTPError {
   return error instanceof HTTPError;
-}
-
-export function isHTTPJSONError(error: unknown): error is HTTPJSONError {
-  return error instanceof HTTPJSONError;
 }

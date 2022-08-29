@@ -17,10 +17,10 @@ export async function handleRequest(
     typeof methodOverride === 'string' ? methodOverride : request.method
   ) as HTTPMethod;
 
-  if (methods && !methods.includes(method)) throw httpError(404, 'Not found');
+  if (methods && !methods.includes(method)) throw httpError('not found', 404);
 
   const url = new URL(request.url);
-  if (!urlPattern.test(url)) throw httpError(404, 'Not found');
+  if (!urlPattern.test(url)) throw httpError('not found', 404);
 
   const mod = await loader();
 
@@ -29,7 +29,7 @@ export async function handleRequest(
   if (!handler) handler = mod.ANY;
 
   if (!handler) {
-    return new Response(`${method} method not allowed`, {
+    throw httpError(`${method} method not allowed`, {
       status: 405,
       headers: {
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/405

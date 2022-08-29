@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
-import { isHTTPError, isHTTPJSONError } from './errors';
+import { httpError, isHTTPError } from './errors';
 import { getRequest, setResponse } from './http-bridge';
 import { handleRequest, type RequestModule } from './request';
 import { json } from './response';
@@ -24,8 +24,10 @@ export function createHTTPRequestHandler(
   const _handleUnknownError =
     options?.handleUnknownError ??
     ((_, res) => {
-      res.statusCode = 500;
-      res.end('Internal server error');
+      setResponse(
+        res,
+        json({ error: { message: 'internal server error' } }, 500),
+      );
     });
 
   return async (req: IncomingMessage, res: ServerResponse) => {
@@ -34,15 +36,12 @@ export function createHTTPRequestHandler(
     let request: Request;
 
     try {
-      request = await getRequest(_getBase(req), req);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      res.statusCode = error.status || 400;
-      res.end(error.reason || 'Invalid request body');
-      return;
-    }
+      try {
+        request = await getRequest(_getBase(req), req);
+      } catch (error) {
+        throw httpError('invalid request body', 400);
+      }
 
-    try {
       const response = await handleRequest(
         request,
         (_pattern ??= urlPattern()),
@@ -63,12 +62,13 @@ export function createHTTPRequestHandler(
 }
 
 export function handleHTTPError(error: unknown) {
-  if (isHTTPJSONError(error)) {
-    return json(error.data, error.statusCode);
-  } else if (isHTTPError(error)) {
-    return new Response(error.message, { status: error.statusCode });
+  if (isHTTPError(error)) {
+    return json(
+      { error: { message: error.message, data: error.data } },
+      error.init,
+    );
   } else {
-    return new Response('Internal server error', { status: 500 });
+    return json({ error: { message: 'internal server error' } }, 500);
   }
 }
 

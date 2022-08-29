@@ -204,7 +204,8 @@ export async function loadData(
 ): Promise<ClientLoadedData> {
   if (!module.loader) return {};
 
-  const pathname = prefetchURL?.pathname ?? get(router.navigation)!.to.pathname;
+  let pathname = prefetchURL?.pathname ?? get(router.navigation)!.to.pathname;
+  if (!pathname.endsWith('/')) pathname += '/';
 
   const id = resolveDataAssetID(decodeURI(pathname), layoutIndex);
 

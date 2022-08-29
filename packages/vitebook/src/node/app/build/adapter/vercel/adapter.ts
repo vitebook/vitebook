@@ -1,6 +1,7 @@
 import esbuild from 'esbuild';
 import path from 'node:path';
 
+import { requireShim } from '../../../../utils';
 import { HTTP_METHODS } from '../../../http';
 import { type BuildAdapterFactory } from '../BuildAdapter';
 import { createStaticBuildAdapter } from '../static';
@@ -115,11 +116,11 @@ export function createVercelBuildAdapter(
             const isEdge =
               !!config?.edge?.all || chunk.exports.includes('EDGE');
 
-            const code = resolveFunctionCode(
+            const resolveCode = isEdge ? resolveEdgeCode : resolveFunctionCode;
+            const code = resolveCode(
               endpoint.route.pathname,
               './@http.js',
               allowedMethods,
-              isEdge,
             );
 
             const vcConfig = isEdge
@@ -149,6 +150,7 @@ export function createVercelBuildAdapter(
               target: 'es2020',
               assetNames: 'assets/[name]-[hash]',
               chunkNames: 'chunks/[name]-[hash]',
+              banner: !isEdge ? { js: requireShim() } : undefined,
               bundle: true,
               splitting: true,
               minify: !app.config.isDebug,
@@ -194,15 +196,10 @@ function resolveFunctionCode(
   pattern: string,
   moduleId: string,
   methods: string[],
-  isEdge: boolean,
 ) {
   return [
-    isEdge
-      ? "import { createHTTPRequestHandler, installURLPattern as installPolyfills } from 'vitebook/http';"
-      : [
-          "import { createHTTPRequestHandler } from 'vitebook/http';",
-          "import { installPolyfills } from 'vitebook/http-polyfills';",
-        ].join('\n'),
+    "import { createHTTPRequestHandler } from 'vitebook/http';",
+    "import { installPolyfills } from 'vitebook/http-polyfills';",
     '',
     'export default createHTTPRequestHandler(',
     `  () => new URLPattern({ pathname: '${pattern}' }),`,
@@ -212,6 +209,20 @@ function resolveFunctionCode(
     '    getBase: (req) => `https://${req.headers.host}`,',
     "    getClientAddress: (req) => req.headers['x-forwarded-for'],",
     '    installPolyfills,',
+    '  }',
+    ');',
+    '',
+  ].join('\n');
+}
+
+function resolveEdgeCode(pattern: string, moduleId: string, methods: string[]) {
+  return [
+    "import { createEdgeRequestHandler } from 'vitebook/http-vercel';",
+    'export default createEdgeRequestHandler (',
+    `  new URLPattern({ pathname: '${pattern}' }),`,
+    `  () => import('${moduleId}'),`,
+    '  {',
+    `    methods: [${methods.map((method) => `'${method}'`).join(', ')}],`,
     '  }',
     ');',
     '',

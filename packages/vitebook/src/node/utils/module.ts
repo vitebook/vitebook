@@ -1,6 +1,14 @@
 import { createRequire } from 'module';
 
-/**
- * Node CJS `require` equivalent for ESM.
- */
 export const esmRequire = () => createRequire(import.meta.url);
+
+export function requireShim() {
+  return [
+    "import __path from 'node:path';",
+    "import { fileURLToPath as __fileURLToPath } from 'node:url';",
+    "import { createRequire as __createRequire } from 'node:module';",
+    'const require = __createRequire(import.meta.url);',
+    'const __filename = __fileURLToPath(import.meta.url);',
+    'const __dirname = __path.dirname(__filename);',
+  ].join('\n');
+}

@@ -2,7 +2,13 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 
 import { matchRouteInfo, type ServerEndpoint } from '../../../../shared';
 import { App } from '../../App';
-import { createHTTPRequestHandler, type RequestModule } from '../../http';
+import {
+  createHTTPRequestHandler,
+  handleHTTPError,
+  httpError,
+  type RequestModule,
+} from '../../http';
+import { setResponse } from '../../http/http-bridge';
 
 export async function handleEndpoint(
   base: string,
@@ -15,14 +21,13 @@ export async function handleEndpoint(
   const match = matchRouteInfo(url, app.nodes.endpoints.toArray());
 
   if (!match) {
-    res.statusCode = 404;
-    res.end('Not found');
+    setResponse(res, handleHTTPError(httpError('not found', 400)));
     return;
   }
 
   const endpoint = app.nodes.endpoints.getByIndex(match.index);
 
-  const handler = createHTTPRequestHandler(
+  const handler = await createHTTPRequestHandler(
     () => endpoint.route.pattern,
     () => loader(endpoint),
     {
@@ -33,5 +38,5 @@ export async function handleEndpoint(
     },
   );
 
-  return handler(req, res);
+  await handler(req, res);
 }
