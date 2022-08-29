@@ -1,3 +1,9 @@
+## [0.201.4](https://github.com/vitebook/vitebook/compare/v0.201.3...v0.201.4) (2022-08-29)
+
+### Bug Fixes
+
+- install polyfills in the correct order ([79ba143](https://github.com/vitebook/vitebook/commit/79ba143df184526800d5f7a96b64dbbb2c68514c))
+
 ## [0.201.3](https://github.com/vitebook/vitebook/compare/v0.201.2...v0.201.3) (2022-08-29)
 
 ### Bug Fixes
