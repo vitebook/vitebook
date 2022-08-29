@@ -1,3 +1,23 @@
+# [0.201.0](https://github.com/vitebook/vitebook/compare/v0.200.3...v0.201.0) (2022-08-29)
+
+### Bug Fixes
+
+- change `routes/` -> `app/` ([c6e9065](https://github.com/vitebook/vitebook/commit/c6e9065e5f7a9c8b5ce760943200c9b63bd92eb9))
+- clean up route logging ([0d3e7c4](https://github.com/vitebook/vitebook/commit/0d3e7c47ddae270f57ca74233949f7e34ab6e7c9))
+- drop cli in favour of vite ([844961f](https://github.com/vitebook/vitebook/commit/844961fb5827a5ad22c36e689062fc85f0bf054b))
+- drop client-side data lru-cache ([0f1ca75](https://github.com/vitebook/vitebook/commit/0f1ca7518be418fdf9d5be7f346893f3025d11c4))
+- refactor app nodes ([72649d4](https://github.com/vitebook/vitebook/commit/72649d47fc34220ba6d8c184fa7881871201b161))
+- refactor pages to routes ([23f03e7](https://github.com/vitebook/vitebook/commit/23f03e7ccd39d899aed2fa48d4b9691d51a31297))
+
+### Features
+
+- `[@page](https://github.com/page)` naming convention ([250ec56](https://github.com/vitebook/vitebook/commit/250ec565ce3ce2ab23e547e70de66eb1bb8620a3))
+- add build adapters ([6210501](https://github.com/vitebook/vitebook/commit/6210501999a4d5d7a06bac94964e3ca669565931))
+- add endpoint support to preview server ([75edc3c](https://github.com/vitebook/vitebook/commit/75edc3cc9453c3c3ea4b0aa87904466ed32c7bde))
+- add endpoints support ([fe0b624](https://github.com/vitebook/vitebook/commit/fe0b62447a1a5068c99b79a37111695584f73415))
+- add vercel adapter ([480e1fc](https://github.com/vitebook/vitebook/commit/480e1fc0ce78cb2e00b62132fa4a5dac36de9d95))
+- faster link crawler from svelte-kit ([e22a239](https://github.com/vitebook/vitebook/commit/e22a239e85cd50b74bbd39e239eef4c2c6e1b531))
+
 ## [0.200.3](https://github.com/vitebook/vitebook/compare/v0.200.2...v0.200.3) (2022-08-19)
 
 ### Bug Fixes
