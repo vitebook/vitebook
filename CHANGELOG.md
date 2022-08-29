@@ -1,3 +1,9 @@
+## [0.201.3](https://github.com/vitebook/vitebook/compare/v0.201.2...v0.201.3) (2022-08-29)
+
+### Bug Fixes
+
+- node imports should not be added to all build files for edge support ([53ff27e](https://github.com/vitebook/vitebook/commit/53ff27e46d583a78a99c577dfa4b2b00d43c6d58))
+
 ## [0.201.2](https://github.com/vitebook/vitebook/compare/v0.201.1...v0.201.2) (2022-08-29)
 
 ### Bug Fixes
