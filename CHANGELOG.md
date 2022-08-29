@@ -1,3 +1,9 @@
+## [0.201.1](https://github.com/vitebook/vitebook/compare/v0.201.0...v0.201.1) (2022-08-29)
+
+### Bug Fixes
+
+- move `esbuild` to peer deps ([485b5d5](https://github.com/vitebook/vitebook/commit/485b5d545cace769e9c3b259a2f23e74415781a1))
+
 # [0.201.0](https://github.com/vitebook/vitebook/compare/v0.200.3...v0.201.0) (2022-08-29)
 
 ### Bug Fixes
