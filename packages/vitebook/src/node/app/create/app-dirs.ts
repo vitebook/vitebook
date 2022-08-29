@@ -1,7 +1,8 @@
 import fs from 'node:fs';
-import path from 'upath';
+import path from 'node:path';
 import { searchForWorkspaceRoot } from 'vite';
 
+import { normalizePath } from '../../utils';
 import type { AppDirectories, Directory } from '../App';
 import type { ResolvedAppConfig } from '../config';
 
@@ -35,12 +36,12 @@ export function createAppDirectories(
 
 export function createDirectory(dirname: string): Directory {
   const resolve = (...args: string[]) =>
-    args.length === 1 && path.isAbsolute(args[0])
-      ? args[0]
-      : path.resolve(dirname, ...args);
+    args.length === 1 && path.posix.isAbsolute(normalizePath(args[0]))
+      ? normalizePath(args[0])
+      : path.posix.resolve(dirname, ...args.map(normalizePath));
 
   const relative = (...args: string[]) =>
-    path.relative(dirname, path.join(...args));
+    path.posix.relative(dirname, path.posix.join(...args.map(normalizePath)));
 
   const read = (filePath: string) =>
     fs.readFileSync(resolve(filePath), 'utf-8');

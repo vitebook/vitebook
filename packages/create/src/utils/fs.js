@@ -1,7 +1,7 @@
 // @ts-check
 
 import fs from 'node:fs';
-import path from 'upath';
+import path from 'node:path';
 
 export function emptyDir(dir) {
   if (!fs.existsSync(dir)) {

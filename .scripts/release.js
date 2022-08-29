@@ -2,14 +2,15 @@
  * Thanks: https://github.com/vuejs/vue-next/blob/master/scripts/release.js
  */
 
-import prompt from 'enquirer';
-import kleur from 'kleur';
-import execa from 'execa';
-import minimist from 'minimist';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import prompt from 'enquirer';
+import kleur from 'kleur';
+import execa from 'execa';
+import minimist from 'minimist';
 import semver from 'semver';
 
 const require = createRequire(import.meta.url);

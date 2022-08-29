@@ -51,13 +51,14 @@ export abstract class FileNodes<T extends ServerFile> implements Iterable<T> {
       absolute: true,
       cwd: this._app.dirs.app.path,
     })
-      .filter(this._filter)
-      .map(normalizePath);
+      .map(normalizePath)
+      .filter(this._filter);
   }
 
   abstract add(filePath: string): Promise<T>;
 
   remove(filePath: string) {
+    filePath = this.normalizePath(filePath);
     if (!this.has(filePath)) return -1;
     const index = this.findIndex(filePath);
     this._nodes.splice(index, 1);
@@ -70,6 +71,7 @@ export abstract class FileNodes<T extends ServerFile> implements Iterable<T> {
   }
 
   find(filePath: string) {
+    filePath = this.normalizePath(filePath);
     return this._nodes.find((node) => node.filePath === filePath);
   }
 
@@ -87,6 +89,7 @@ export abstract class FileNodes<T extends ServerFile> implements Iterable<T> {
   }
 
   is(filePath: string) {
+    filePath = this.normalizePath(filePath);
     return (
       this.has(filePath) ||
       (filePath.startsWith(this._app.dirs.app.path) && this._filter(filePath))
@@ -97,10 +100,14 @@ export abstract class FileNodes<T extends ServerFile> implements Iterable<T> {
     return HAS_LOADER_RE.test(fileContent);
   }
 
+  normalizePath(filePath: string) {
+    return normalizePath(filePath);
+  }
+
   resolveRoute(filePath: string) {
     return resolveRouteFromFilePath(
       this._app.dirs.app.path,
-      filePath,
+      this.normalizePath(filePath),
       this._app.config.routes.matchers,
     );
   }

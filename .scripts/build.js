@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { readFileSync } from 'node:fs';
+
 import minimist from 'minimist';
 import { globbySync } from 'globby';
 import { build } from 'esbuild';
@@ -19,10 +20,6 @@ if (!args.entry) {
 if (!args.outfile && !args.outdir) {
   args.outdir = IS_NODE ? 'dist/node' : 'dist/client';
 }
-
-const NODE_SHIMS = IS_NODE
-  ? [IS_NODE && requireShim()].filter(Boolean).join('\n')
-  : '';
 
 async function main() {
   const entryPoints = (
@@ -47,7 +44,6 @@ async function main() {
     watch: args.watch || args.w,
     chunkNames: '[name].[hash]',
     splitting: args.split,
-    banner: { js: NODE_SHIMS },
     minify: args.minify,
     legalComments: 'none',
     sourcemap: args.sourcemap,
@@ -91,17 +87,6 @@ function ignoreSveltePlugin() {
       });
     },
   };
-}
-
-function requireShim() {
-  return [
-    "import __path from 'node:path';",
-    "import { fileURLToPath as __fileURLToPath } from 'node:url';",
-    "import { createRequire as __createRequire } from 'node:module';",
-    'const require = __createRequire(import.meta.url);',
-    'const __filename = __fileURLToPath(import.meta.url);',
-    'const __dirname = __path.dirname(__filename);',
-  ].join('\n');
 }
 
 main().catch((e) => {

@@ -1,5 +1,5 @@
 import esbuild from 'esbuild';
-import path from 'upath';
+import path from 'node:path';
 
 import { HTTP_METHODS } from '../../../http';
 import { type BuildAdapterFactory } from '../BuildAdapter';
@@ -93,7 +93,7 @@ export function createVercelBuildAdapter(
 
         for (const endpoint of app.nodes.endpoints) {
           const apiPath = app.dirs.app.relative(endpoint.rootPath);
-          const apiDir = path.dirname(apiPath);
+          const apiDir = path.posix.dirname(apiPath);
           routes.push({
             src: `^${$.slash(apiDir.replace(matchersRE, '([^/]+?)'))}/?$`, // ^/api/foo/?$
             dest: $.slash(apiDir), // /api/foo
@@ -135,12 +135,12 @@ export function createVercelBuildAdapter(
                 };
 
             const apiPath = app.dirs.app.relative(endpoint.rootPath);
-            const fndir = `${path.dirname(apiPath)}.func`;
+            const fndir = `${path.posix.dirname(apiPath)}.func`;
             const outdir = vercelDirs.fns.resolve(fndir);
-            const chunkdir = path.dirname(
+            const chunkdir = path.posix.dirname(
               app.dirs.server.resolve(chunk.fileName),
             );
-            const entryPath = path.resolve(chunkdir, 'fn.js');
+            const entryPath = path.posix.resolve(chunkdir, 'fn.js');
 
             await $.writeFile(entryPath, code);
 
@@ -161,12 +161,12 @@ export function createVercelBuildAdapter(
             });
 
             await $.writeFile(
-              path.resolve(outdir, 'package.json'),
+              path.posix.resolve(outdir, 'package.json'),
               JSON.stringify({ type: 'module' }),
             );
 
             await $.writeFile(
-              path.resolve(outdir, '.vc-config.json'),
+              path.posix.resolve(outdir, '.vc-config.json'),
               JSON.stringify(vcConfig, null, 2),
             );
           }),

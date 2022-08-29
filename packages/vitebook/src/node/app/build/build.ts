@@ -1,7 +1,7 @@
 import kleur from 'kleur';
 import fs from 'node:fs';
+import path from 'node:path';
 import type { OutputAsset, OutputBundle, OutputChunk } from 'rollup';
-import path from 'upath';
 import { type Manifest as ViteManifest } from 'vite';
 
 import {

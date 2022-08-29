@@ -1,7 +1,7 @@
 // @ts-check
 
 import fs from 'node:fs';
-import path from 'upath';
+import path from 'node:path';
 
 import { sortObjectKeys } from './utils/obj.js';
 import { getVersion } from './utils/version.js';

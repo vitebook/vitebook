@@ -1,8 +1,8 @@
 import fsp from 'fs/promises';
 import kleur from 'kleur';
 import fs from 'node:fs';
+import path from 'node:path';
 import ora from 'ora';
-import path from 'upath';
 
 import {
   DATA_ASSET_BASE_PATH,
@@ -27,6 +27,7 @@ import {
   mkdirp,
   normalizePath,
   rimraf,
+  trimExt,
 } from '../../../utils';
 import type { App, Directory } from '../../App';
 import { type RoutesLogLevel, type RoutesLogStyle } from '../../config';
@@ -58,6 +59,7 @@ export function getBuildAdapterUtils(
     crawl,
     hash,
     normalizePath,
+    trimExt,
     normalizeURL,
     mkdirp,
     rimraf,
@@ -219,7 +221,7 @@ async function writeFiles(
 
   await Promise.all(
     files.map(async ({ filename, content }) => {
-      const filePath = resolveFilePath(filename);
+      const filePath = normalizePath(resolveFilePath(filename));
       await ensureDir(path.dirname(filePath));
       await fsp.writeFile(filePath, content);
     }),
@@ -244,6 +246,7 @@ export type BuildAdapterUtils = {
   crawl(html: string): string[];
   hash(content: string): string;
   normalizePath(path: string): string;
+  trimExt(path: string): string;
   normalizeURL(url: URL): URL;
   mkdirp(dirname: string): void;
   rimraf(dirname: string): void;

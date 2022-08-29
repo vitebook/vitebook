@@ -2,7 +2,7 @@ import Prompts from 'prompts';
 import { readdirSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import path from 'upath';
+import path from 'node:path';
 
 const { prompts } = Prompts;
 

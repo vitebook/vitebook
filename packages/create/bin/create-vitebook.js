@@ -5,7 +5,7 @@
 import kleur from 'kleur';
 import minimist from 'minimist';
 import fs from 'node:fs';
-import path from 'upath';
+import path from 'node:path';
 
 import { FRAMEWORKS } from '../src/constants.js';
 import { addEslintFeature } from '../src/features/eslint.js';

@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import path from 'upath';
+import path from 'node:path';
 
 import { isString, type ServerLayout } from '../../../shared';
 import { type App } from '../App';
@@ -18,15 +18,17 @@ export class LayoutNodes extends FileNodes<ServerLayout> {
   }
 
   async add(filePath: string) {
+    filePath = this.normalizePath(filePath);
+
     const name = await this._getName(filePath);
     const rootPath = this._getRootPath(filePath);
-    const owningDir = path.dirname(
+    const owningDir = path.posix.dirname(
       rootPath.replace(STRIP_LAYOUTS_PATH, '/root.md'),
     );
 
     const fileContent = fs.readFileSync(filePath, { encoding: 'utf-8' });
     const hasLoader = this.hasLoader(fileContent);
-    const reset = rootPath.includes(`.reset${path.extname(rootPath)}`);
+    const reset = rootPath.includes(`.reset${path.posix.extname(rootPath)}`);
 
     const layout: ServerLayout = {
       id: `/${rootPath}`,
@@ -45,7 +47,8 @@ export class LayoutNodes extends FileNodes<ServerLayout> {
 
       return segmentsA.length !== segmentsB.length
         ? segmentsA.length - segmentsB.length // shallow paths first
-        : path.basename(a.rootPath, path.extname(a.rootPath)) === '@layout'
+        : path.posix.basename(a.rootPath, path.posix.extname(a.rootPath)) ===
+          '@layout'
         ? -1
         : 1;
     });
@@ -84,8 +87,8 @@ export class LayoutNodes extends FileNodes<ServerLayout> {
   }
 
   protected _getName(filePath: string) {
-    const filename = path
-      .basename(filePath, path.extname(filePath))
+    const filename = path.posix
+      .basename(filePath, path.posix.extname(filePath))
       .replace(/\.reset($|\/)/, '');
     const match = filename.match(LAYOUT_NAME_RE)?.[1];
     return match && match.length > 0 ? match : filename;

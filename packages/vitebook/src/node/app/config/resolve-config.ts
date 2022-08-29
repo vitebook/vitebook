@@ -1,7 +1,7 @@
-import path from 'upath';
+import path from 'node:path';
 
 import { isArray } from '../../../shared';
-import { resolveRelativePath } from '../../utils';
+import { normalizePath, resolveRelativePath } from '../../utils';
 import { createAutoBuildAdapter } from '../build/adapter';
 import type { ResolvedBuildConfig } from '.';
 import type { AppConfig, ResolvedAppConfig } from './AppConfig';
@@ -22,7 +22,7 @@ export function resolveAppConfig(
     sitemap,
   }: AppConfig,
 ): ResolvedAppConfig {
-  const _cwd = path.resolve(process.cwd());
+  const _cwd = normalizePath(process.cwd());
   const _root = resolveRelativePath(_cwd, root);
   const _app = resolveRelativePath(_root, dirs.app ?? 'app');
   const _public = resolveRelativePath(_app, dirs.public ?? 'public');
@@ -34,7 +34,9 @@ export function resolveAppConfig(
 
   const __client: ResolvedClientConfig = {
     // Most likely set later by a plugin.
-    app: client.app ? path.relative(_root, client.app) : '',
+    app: client.app
+      ? path.posix.relative(_root, normalizePath(client.app))
+      : '',
     configFiles: client.configFiles ?? [],
   };
 

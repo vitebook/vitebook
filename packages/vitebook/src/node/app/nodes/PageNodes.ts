@@ -1,5 +1,5 @@
-import fs from 'fs/promises';
-import path from 'upath';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 import { compareRoutes, type ServerPage, slash } from '../../../shared';
 import type { App } from '../App';
@@ -19,11 +19,13 @@ export class PageNodes extends FileNodes<ServerPage> {
   }
 
   async add(filePath: string) {
+    filePath = this.normalizePath(filePath);
+
     this.remove(filePath);
 
     const rootPath = this._getRootPath(filePath);
     const id = slash(rootPath);
-    const ext = path.extname(rootPath);
+    const ext = path.posix.extname(rootPath);
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const layoutName = await this.getLayoutName(filePath, fileContent);
     const hasLoader = this.hasLoader(fileContent);
@@ -52,6 +54,8 @@ export class PageNodes extends FileNodes<ServerPage> {
     pageFilePath: string,
     fileContent?: string,
   ): Promise<string | undefined> {
+    pageFilePath = this.normalizePath(pageFilePath);
+
     const frontmatter = MD_FILE_RE.test(pageFilePath)
       ? getFrontmatter(
           fileContent ?? (await fs.readFile(pageFilePath, 'utf-8')),

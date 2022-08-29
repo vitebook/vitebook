@@ -1,5 +1,5 @@
 import kleur from 'kleur';
-import path from 'upath';
+import path from 'node:path';
 
 import { isString, type ServerFile, toPascalCase } from '../../../shared';
 import { type App } from '../App';
@@ -26,11 +26,13 @@ export class MarkdocNodes extends FileNodes<MarkdocFileNode> {
   }
 
   async add(filePath: string) {
+    filePath = this.normalizePath(filePath);
+
     const rootPath = this._getRootPath(filePath);
     const routePath = this._app.dirs.app.relative(filePath);
 
-    const name = path
-      .basename(routePath, path.extname(routePath))
+    const name = path.posix
+      .basename(routePath, path.posix.extname(routePath))
       .replace('@node', '')
       .replace('@inline', '');
 
@@ -48,7 +50,7 @@ export class MarkdocNodes extends FileNodes<MarkdocFileNode> {
 
     const cname = toPascalCase(name);
     const inline = /@inline/.test(routePath);
-    const owningDir = path.dirname(
+    const owningDir = path.posix.dirname(
       rootPath.replace(STRIP_MARKDOC_DIR_RE, '/root.md'),
     );
 
@@ -70,14 +72,17 @@ export class MarkdocNodes extends FileNodes<MarkdocFileNode> {
   }
 
   isNode(filePath: string) {
+    filePath = this.normalizePath(filePath);
     return this.isAnyNode(filePath) && filePath.includes('@node');
   }
 
   isTag(filePath: string) {
+    filePath = this.normalizePath(filePath);
     return this.isAnyNode(filePath) && !filePath.includes('@node');
   }
 
   isAnyNode(filePath: string) {
+    filePath = this.normalizePath(filePath);
     return filePath.includes('@markdoc') && this._filter(filePath);
   }
 

@@ -1,6 +1,10 @@
 import fs from 'node:fs';
-import path from 'upath';
-import { type VitebookPluginOptions, VM_PREFIX } from 'vitebook/node';
+import path from 'node:path';
+import {
+  normalizePath,
+  type VitebookPluginOptions,
+  VM_PREFIX,
+} from 'vitebook/node';
 
 import { renderMarkdoc, svelteMarkdocTags, transformTreeNode } from './markdoc';
 import { svelteSSRPlugin } from './svelte-ssr';
@@ -11,7 +15,7 @@ export function sveltePlugin(): VitebookPluginOptions {
   let appDir: string;
 
   function resolveAppId() {
-    const userAppFile = path.resolve(appDir, 'app.svelte');
+    const userAppFile = normalizePath(path.posix.resolve(appDir, 'app.svelte'));
     return fs.existsSync(userAppFile)
       ? { id: userAppFile }
       : { id: '@vitebook/svelte/App.svelte' };

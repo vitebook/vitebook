@@ -1,4 +1,3 @@
-import path from 'upath';
 import {
   type ConfigEnv,
   mergeConfig,
@@ -11,7 +10,7 @@ import {
   type ServerLayout,
   type ServerPage,
 } from '../../../shared';
-import { logger } from '../../utils';
+import { esmRequire, logger, normalizePath, trimExt } from '../../utils';
 import type { App, AppDetails, AppFactory } from '../App';
 import {
   type AppConfig,
@@ -54,6 +53,8 @@ export const createAppFactory = async (
   const entry =
     plugins.find((plugin) => plugin.vitebook?.entry)?.vitebook!.entry ??
     defaultEntry();
+
+  Object.keys(entry).forEach((key) => (entry[key] = normalizePath(entry[key])));
 
   const details: AppDetails = {
     version,
@@ -99,9 +100,10 @@ export const createAppFactory = async (
 };
 
 function defaultEntry(): App['entry'] {
+  const __require = esmRequire();
   return {
-    client: require.resolve(`vitebook/entry-client.js`),
-    server: require.resolve(`vitebook/entry-server.js`),
+    client: __require.resolve(`vitebook/entry-client.js`),
+    server: __require.resolve(`vitebook/entry-server.js`),
   };
 }
 
@@ -129,19 +131,18 @@ export function createAppEntries(app: App, { isSSR = false } = {}) {
 }
 
 function resolvePageOutputFilename(app: App, page: ServerPage) {
-  const name = path.trimExt(app.dirs.app.relative(page.rootPath));
+  const name = app.dirs.app.relative(page.rootPath);
   return `pages/${name}`;
 }
 
 function resolveLayoutOutputFilename(app: App, layout: ServerLayout) {
-  const name = path
-    .trimExt(app.dirs.app.relative(layout.rootPath))
-    .replace(/@layouts\//, '');
-
+  const name = trimExt(
+    app.dirs.app.relative(layout.rootPath).replace(/@layouts\//, ''),
+  );
   return `layouts/${name}`;
 }
 
 function resolveEndpointFilename(app: App, endpoint: ServerEndpoint) {
   // /api/...
-  return path.trimExt(app.dirs.app.relative(endpoint.rootPath));
+  return trimExt(app.dirs.app.relative(endpoint.rootPath));
 }

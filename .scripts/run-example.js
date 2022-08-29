@@ -1,9 +1,10 @@
 import { spawn } from 'node:child_process';
 import { readdirSync, readFileSync } from 'node:fs';
-import Prompts from 'prompts';
-import path from 'upath';
-import minimist from 'minimist';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import Prompts from 'prompts';
+import minimist from 'minimist';
 
 const { prompts } = Prompts;
 

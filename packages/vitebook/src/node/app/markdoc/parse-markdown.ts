@@ -5,7 +5,7 @@ import matter from 'gray-matter';
 import yaml from 'js-yaml';
 import LRUCache from 'lru-cache';
 import fs from 'node:fs';
-import path from 'upath';
+import path from 'node:path';
 
 import {
   escapeHTML,
@@ -320,8 +320,8 @@ function resolveLinks(tag: Tag, stuff: MarkdocTreeWalkStuff) {
     const rawHash = internalLinkMatch?.[2] ?? '';
 
     const absolutePath = rawPath?.startsWith('/')
-      ? path.resolve(stuff.appDir, '.' + rawPath)
-      : path.resolve(path.dirname(stuff.filePath), rawPath);
+      ? path.posix.resolve(stuff.appDir, '.' + rawPath)
+      : path.posix.resolve(path.posix.dirname(stuff.filePath), rawPath);
 
     const route = resolveStaticRouteFromFilePath(stuff.appDir, absolutePath);
 

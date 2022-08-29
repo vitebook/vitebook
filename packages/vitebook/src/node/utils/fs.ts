@@ -1,6 +1,8 @@
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
-import path from 'upath';
+import path from 'node:path';
+
+import { normalizePath } from './path';
 
 export const isTypeScriptFile = (filePath: string): boolean =>
   /\.(ts|tsx)($|\?)/.test(filePath);
@@ -57,16 +59,22 @@ export async function ensureDir(dir: string) {
 }
 
 export async function ensureFile(filePath: string) {
+  filePath = normalizePath(filePath);
   if (fs.existsSync(filePath)) return;
-  await ensureDir(path.dirname(filePath));
+  await ensureDir(path.posix.dirname(filePath));
   await fs.promises.writeFile(filePath, '', { encoding: 'utf-8' });
 }
 
 export function copyDir(srcDir: string, destDir: string) {
+  srcDir = normalizePath(srcDir);
+  destDir = normalizePath(destDir);
+
   fs.mkdirSync(destDir, { recursive: true });
-  for (const file of fs.readdirSync(srcDir)) {
-    const srcFile = path.resolve(srcDir, file);
-    const destFile = path.resolve(destDir, file);
+
+  for (let file of fs.readdirSync(srcDir)) {
+    file = normalizePath(file);
+    const srcFile = path.posix.resolve(srcDir, file);
+    const destFile = path.posix.resolve(destDir, file);
     copyFile(srcFile, destFile);
   }
 }
@@ -78,11 +86,6 @@ export function copyFile(src: string, dest: string) {
   } else {
     fs.copyFileSync(src, dest);
   }
-}
-
-export async function emptyDir(dir: string) {
-  await fs.promises.rm(dir, { recursive: true, force: true });
-  await fs.promises.mkdir(dir);
 }
 
 export function mkdirp(dir: string) {

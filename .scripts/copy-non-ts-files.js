@@ -1,8 +1,9 @@
+import path from 'node:path';
+import { createRequire } from 'node:module';
+
 import fs from 'fs-extra';
 import chokidar from 'chokidar';
 import minimist from 'minimist';
-import path from 'node:path';
-import { createRequire } from 'node:module';
 import { globbySync } from 'globby';
 import { preprocess } from 'svelte/compiler';
 import { transform } from 'esbuild';

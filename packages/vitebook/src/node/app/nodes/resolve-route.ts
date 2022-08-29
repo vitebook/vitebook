@@ -1,4 +1,4 @@
-import path from 'upath';
+import path from 'node:path';
 
 import {
   calcRoutePathScore,
@@ -11,11 +11,12 @@ import {
   slash,
   stripPageOrderFromPath,
 } from '../../../shared';
+import { normalizePath, trimExt } from '../../utils';
 
 const PAGE_ORDER_RE = /^\[(\d*)\]/;
 
 export function stripRouteMetaFromFilePath(filePath: string) {
-  const ext = path.extname(filePath);
+  const ext = path.posix.extname(filePath);
   const stripped = filePath.replace(
     new RegExp(`@(\\w|\\+)+\\.${ext.slice(1)}$`, 'i'),
     ext,
@@ -47,8 +48,10 @@ export function resolveRouteFromFilePath(
   filePath: string,
   matchers: RouteMatcherConfig = [],
 ): RouteInfo {
-  const routePath = path.relative(routesDir, filePath);
-  const basename = path.basename(routePath);
+  filePath = normalizePath(filePath);
+
+  const routePath = path.posix.relative(routesDir, filePath);
+  const basename = path.posix.basename(routePath);
   const orderMatch = basename.match(PAGE_ORDER_RE)?.[1];
   const order = orderMatch ? Number(orderMatch) : undefined;
 
@@ -79,15 +82,13 @@ export function resolveRouteFromFilePath(
   const dynamic = isNotFound || isRoutePathDynamic(route);
 
   const pathname = isNotFound
-    ? `${route.replace(path.basename(route), '')}(.*?)`
+    ? `${route.replace(path.posix.basename(route), '')}(.*?)`
     : dynamic || isEndpoint
     ? slash(
-        path
-          .trimExt(route)
-          .replace(
-            /\/(index)?(\.html)?$/,
-            isEndpoint ? '{/}?' : '{/}?{index}?{.html}?',
-          ),
+        trimExt(route).replace(
+          /\/(index)?(\.html)?$/,
+          isEndpoint ? '{/}?' : '{/}?{index}?{.html}?',
+        ),
       )
     : resolveStaticPath();
 
@@ -107,7 +108,7 @@ export function resolveStaticRouteFromFilePath(
   routesDir: string,
   filePath: string,
 ) {
-  const routePath = endslash(path.relative(routesDir, filePath));
+  const routePath = endslash(path.posix.relative(routesDir, filePath));
 
   const url = new URL(
     stripRouteInfoFromFilePath(routePath).toLowerCase(),

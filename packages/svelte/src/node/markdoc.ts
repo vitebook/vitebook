@@ -124,7 +124,10 @@ export const transformTreeNode: MarkdocTreeNodeTransformer = ({
 function resolveImg(tag: MarkdocTag, stuff: MarkdocTreeWalkStuff) {
   const src = tag.attributes.src;
 
-  const name = `${toPascalCase(path.basename(src, path.extname(src)))}Image`;
+  const name = `${toPascalCase(
+    path.posix.basename(src, path.posix.extname(src)),
+  )}Image`;
+
   stuff.imports.add(`import ${name} from "${src}";`);
 
   tag.attributes.src = markObj(name);
@@ -142,7 +145,10 @@ function resolveSvelteHead(tag: MarkdocTag, stuff: MarkdocTreeWalkStuff) {
 function resoleSvelteComponent(tag: MarkdocTag, stuff: MarkdocTreeWalkStuff) {
   const { file: filePath } = tag.attributes;
 
-  const cname = toPascalCase(path.basename(filePath, path.extname(filePath)));
+  const cname = toPascalCase(
+    path.posix.basename(filePath, path.posix.extname(filePath)),
+  );
+
   stuff.imports.add(`import ${cname} from "${filePath}";`);
 
   tag.name = cname;

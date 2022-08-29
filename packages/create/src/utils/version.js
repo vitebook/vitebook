@@ -1,7 +1,7 @@
 import { exec } from 'node:child_process';
 import fs from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import path from 'upath';
 import { promisify } from 'util';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

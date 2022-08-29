@@ -1,5 +1,5 @@
+import path from 'node:path';
 import type { OutputBundle } from 'rollup';
-import path from 'upath';
 import {
   type Plugin as VitePlugin,
   type ResolvedConfig as ViteResolvedConfig,
@@ -50,8 +50,8 @@ export function vitebookPlugin(
           server: {
             fs: {
               allow: [
-                path.dirname(app.entry.client),
-                path.dirname(app.entry.server),
+                path.posix.dirname(app.entry.client),
+                path.posix.dirname(app.entry.server),
                 app.dirs.cwd.path,
                 app.dirs.root.path,
                 app.dirs.app.path,
