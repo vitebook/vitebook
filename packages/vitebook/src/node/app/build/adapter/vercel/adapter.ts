@@ -31,13 +31,10 @@ export function createVercelBuildAdapter(
 
   return async (app, bundles, build, $) => {
     const vercelDirs = {
-      root: $.createDirectory(app.dirs.root.resolve(`${outputRoot}`)),
+      root: $.createDirectory(app.dirs.root.resolve(outputRoot)),
       static: $.createDirectory(app.dirs.root.resolve(`${outputRoot}/static`)),
       fns: $.createDirectory(app.dirs.root.resolve(`${outputRoot}/functions`)),
     };
-
-    $.rimraf(vercelDirs.root.path);
-    $.mkdirp(vercelDirs.root.path);
 
     const staticAdapter = await createStaticBuildAdapter({
       skipOutput: true,
@@ -48,6 +45,9 @@ export function createVercelBuildAdapter(
       ...staticAdapter,
       name: 'vercel',
       async write() {
+        $.rimraf(vercelDirs.root.path);
+        $.mkdirp(vercelDirs.root.path);
+
         await staticAdapter.write?.();
 
         $.copyDir(app.dirs.client.path, vercelDirs.static.path);
@@ -122,6 +122,7 @@ export function createVercelBuildAdapter(
               endpoint.route.pathname,
               './@http.js',
               allowedMethods,
+              isEdge,
             );
 
             const vcConfig = isEdge
@@ -196,9 +197,15 @@ function resolveFunctionCode(
   pattern: string,
   moduleId: string,
   methods: string[],
+  isEdge: boolean,
 ) {
   return [
-    "import { createHTTPRequestHandler, installPolyfills } from 'vitebook/http';",
+    isEdge
+      ? "import { createHTTPRequestHandler, installURLPattern as installPolyfills } from 'vitebook/http';"
+      : [
+          "import { createHTTPRequestHandler } from 'vitebook/http';",
+          "import { installPolyfills } from 'vitebook/http-polyfills';",
+        ].join('\n'),
     '',
     'export default createHTTPRequestHandler(',
     `  () => new URLPattern({ pathname: '${pattern}' }),`,

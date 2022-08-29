@@ -11,7 +11,7 @@ import type { App, AppFactory } from '../App';
 import { build, createServerBundle, resolveBuildConfig } from '../build';
 import type { AppConfig } from '../config/AppConfig';
 import { createAppFactory } from '../create/app-factory';
-import { installPolyfills } from '../polyfills';
+import { installPolyfills } from '../http/polyfills';
 import { configureDevServer } from './core/dev-server';
 import { configurePreviewServer } from './core/preview-server';
 import { markdownPlugin } from './markdown/markdown-plugin';

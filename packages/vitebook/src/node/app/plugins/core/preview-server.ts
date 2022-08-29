@@ -2,7 +2,7 @@ import { type PreviewServerHook } from 'vite';
 
 import { type ServerEndpoint } from '../../../../shared';
 import { type App } from '../../App';
-import { installPolyfills } from '../../polyfills';
+import { installPolyfills } from '../../http/polyfills';
 import { handleDevServerError } from './dev-server';
 import { handleEndpoint } from './handle-endpoint';
 

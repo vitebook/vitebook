@@ -19,11 +19,11 @@ import {
 import type { App } from '../App';
 import { createAppEntries } from '../create/app-factory';
 import { handleRequest } from '../http';
+import { installPolyfills } from '../http/polyfills';
 import {
   buildServerLoadedDataMap,
   loadPageServerOutput,
 } from '../plugins/core';
-import { installPolyfills } from '../polyfills';
 import { createAutoBuildAdapter, getBuildAdapterUtils } from './adapter';
 
 export async function build(

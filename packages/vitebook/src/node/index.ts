@@ -35,7 +35,6 @@ export {
   vitebookPlugin as vitebook,
   type VitebookPluginConfig,
 } from './app/plugins/vitebook-plugin';
-export * from './app/polyfills';
 export * from './utils';
 export type {
   Config as MarkdocConfig,

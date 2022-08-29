@@ -27,6 +27,7 @@
     "./*": "./dist/client/*",
     "./node": "./dist/node/index.js",
     "./http": "./dist/http.js",
+    "./http-polyfills": "./dist/http-polyfills.js",
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -34,6 +35,7 @@
     "build:client": "node ../../.scripts/build.js --entry=src/client/**/*.ts,src/shared/**/*.ts --outbase=src --outdir=dist",
     "build:node": "node ../../.scripts/build.js --platform=node --bundle --split",
     "build:http": "node ../../.scripts/build.js --entry=src/node/app/http/index.ts --platform=node --bundle --outfile=dist/http.js",
+    "build:http-polyfills": "node ../../.scripts/build.js --entry=src/node/app/http/polyfills.ts --platform=node --bundle --outfile=dist/http-polyfills.js",
     "build:types": "tsc -p tsconfig.json && run-p types:* && rimraf dist/*.d.ts",
     "types:client": "api-extractor run -c types.client.json",
     "types:node": "api-extractor run -c types.node.json",

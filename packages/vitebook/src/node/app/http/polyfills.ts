@@ -1,5 +1,3 @@
-// TODO: Let's review what's actually required here for node@16+
-
 const globals = {
   crypto: () => import('node:crypto'),
   URLPattern: async () => (await import('urlpattern-polyfill')).URLPattern,
