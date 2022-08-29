@@ -1,10 +1,12 @@
 import kleur from 'kleur';
-import { type ViteDevServer } from 'vite';
+import type { ServerResponse } from 'node:http';
+import type { Connect, ViteDevServer } from 'vite';
 
 import {
   coalesceToError,
   DATA_ASSET_BASE_PATH,
   noendslash,
+  type ServerEndpoint,
 } from '../../../../shared';
 import { type App } from '../../App';
 import { handleDataRequest } from './handle-data';
@@ -16,6 +18,9 @@ export function configureDevServer(app: App, server: ViteDevServer) {
 
   const fetch = globalThis.fetch;
   const protocol = server.config.server.https ? 'https' : 'http';
+
+  const loader = (endpoint: ServerEndpoint) =>
+    app.vite.server!.ssrLoadModule(endpoint.filePath);
 
   // Ensure devs can call local API endpoints using relative paths (e.g., `fetch('/api/foo')`).
   let origin: string;
@@ -44,7 +49,7 @@ export function configureDevServer(app: App, server: ViteDevServer) {
       const decodedUrl = decodeURI(new URL(base + req.url).pathname);
 
       if (decodedUrl.startsWith('/api')) {
-        return await handleEndpoint(base, url, app, req, res);
+        return await handleEndpoint(base, url, app, req, res, loader);
       }
 
       if (decodedUrl.startsWith(DATA_ASSET_BASE_PATH)) {
@@ -56,23 +61,8 @@ export function configureDevServer(app: App, server: ViteDevServer) {
         return await handlePageRequest(url, app, req, res);
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e) {
-      const error = coalesceToError(e);
-
-      app.logger.error(
-        error.message,
-        [
-          `\n${kleur.bold('URL:')} ${req.url ?? '?'}`,
-          `${kleur.bold('METHOD:')} ${req.method ?? '?'}`,
-          '',
-          '',
-        ].join('\n'),
-        error.stack,
-        '\n',
-      );
-
-      res.statusCode = 500;
-      res.end(error.stack);
+    } catch (error) {
+      handleDevServerError(app, req, res, error);
       return;
     }
 
@@ -87,4 +77,28 @@ function removeHtmlMiddlewares(server) {
       server.stack.splice(i, 1);
     }
   }
+}
+
+export function handleDevServerError(
+  app: App,
+  req: Connect.IncomingMessage,
+  res: ServerResponse,
+  e: unknown,
+) {
+  const error = coalesceToError(e);
+
+  app.logger.error(
+    error.message,
+    [
+      `\n${kleur.bold('URL:')} ${req.url ?? '?'}`,
+      `${kleur.bold('METHOD:')} ${req.method ?? '?'}`,
+      '',
+      '',
+    ].join('\n'),
+    error.stack,
+    '\n',
+  );
+
+  res.statusCode = 500;
+  res.end(error.stack);
 }

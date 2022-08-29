@@ -1,8 +1,8 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
-import { matchRouteInfo } from '../../../../shared';
+import { matchRouteInfo, type ServerEndpoint } from '../../../../shared';
 import { App } from '../../App';
-import { createHTTPRequestHandler } from '../../http';
+import { createHTTPRequestHandler, type RequestModule } from '../../http';
 
 export async function handleEndpoint(
   base: string,
@@ -10,6 +10,7 @@ export async function handleEndpoint(
   app: App,
   req: IncomingMessage,
   res: ServerResponse,
+  loader: (endpoint: ServerEndpoint) => Promise<RequestModule>,
 ) {
   const match = matchRouteInfo(url, app.nodes.endpoints.toArray());
 
@@ -23,7 +24,7 @@ export async function handleEndpoint(
 
   const handler = createHTTPRequestHandler(
     () => endpoint.route.pattern,
-    () => app.vite.server!.ssrLoadModule(endpoint.filePath),
+    () => loader(endpoint),
     {
       getBase: () => base,
       handleUnknownError(_req, _res, error) {
