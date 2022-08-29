@@ -199,7 +199,7 @@ function updatePackageDeps(pkg, depType, version) {
   if (!deps) return;
   Object.keys(deps).forEach((dep) => {
     if (
-      dep.startsWith('@vitebook') &&
+      (dep === 'vitebook' || dep.startsWith('@vitebook')) &&
       packages.includes(dep.replace(/^@vitebook\//, ''))
     ) {
       console.log(
