@@ -47,6 +47,8 @@
     "watch:client": "pnpm run build:client -w",
     "watch:node": "pnpm run build:node -w",
     "watch:http": "pnpm run build:http -w",
+    "watch:http-polyfills": "pnpm run build:http-polyfills -w",
+    "watch:http-vercel": "pnpm run build:http-vercel -w",
     "watch:types": "node ../../.scripts/run-on-change.js --glob=\"src/**/*.ts\" --script=build:types"
   },
   "dependencies": {
