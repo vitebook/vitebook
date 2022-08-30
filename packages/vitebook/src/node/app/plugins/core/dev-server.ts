@@ -16,14 +16,15 @@ import { handlePageRequest } from './handle-page';
 export function configureDevServer(app: App, server: ViteDevServer) {
   removeHtmlMiddlewares(server.middlewares);
 
-  const fetch = globalThis.fetch;
-  const protocol = server.config.server.https ? 'https' : 'http';
-
   const loader = (endpoint: ServerEndpoint) =>
     app.vite.server!.ssrLoadModule(endpoint.filePath);
 
   // Ensure devs can call local API endpoints using relative paths (e.g., `fetch('/api/foo')`).
   let origin: string;
+
+  const fetch = globalThis.fetch;
+  const protocol = server.config.server.https ? 'https' : 'http';
+
   globalThis.fetch = (input, init) => {
     return fetch(
       typeof input === 'string' && input.startsWith('/api')

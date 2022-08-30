@@ -112,6 +112,7 @@ export async function build(
         ?.replace(specialCharsRE, '_')}.js`,
     );
 
+  const fetch = globalThis.fetch;
   globalThis.fetch = (input, init) => {
     if (typeof input === 'string' && input.startsWith('/api')) {
       const url = new URL(`${ssrOrigin}${input}`);
