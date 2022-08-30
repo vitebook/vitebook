@@ -52,8 +52,14 @@ export function createVercelBuildAdapter(
 
         const redirects = Array.from(build.redirects.values()).map(
           (redirect) => ({
-            src: redirect.from,
-            headers: { Location: redirect.to },
+            src: redirect.from.replace(/\/$/, '/?'),
+            headers: {
+              Location: $.isLinkExternal(redirect.to)
+                ? redirect.to
+                : config?.trailingSlash
+                ? $.endslash(redirect.to)
+                : $.noendslash(redirect.to),
+            },
             status: redirect.statusCode,
           }),
         );
@@ -150,7 +156,7 @@ export function createVercelBuildAdapter(
               target: 'es2020',
               assetNames: 'assets/[name]-[hash]',
               chunkNames: 'chunks/[name]-[hash]',
-              banner: !isEdge ? { js: requireShim() } : undefined,
+              banner: !isEdge ? { js: requireShim } : undefined,
               bundle: true,
               splitting: true,
               minify: !app.config.isDebug,

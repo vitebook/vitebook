@@ -1,18 +1,28 @@
+async function interop<T>(loader: () => Promise<T>, specifier: keyof T) {
+  const mod = await loader();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return mod[specifier] ?? (mod as any).default[specifier];
+}
+
 const globals = {
   crypto: () => import('node:crypto'),
-  URLPattern: async () => (await import('urlpattern-polyfill')).URLPattern,
-  Headers: async () => (await import('undici')).Headers,
-  ReadableStream: async () => (await import('node:stream/web')).ReadableStream,
-  TransformStream: async () =>
-    (await import('node:stream/web')).TransformStream,
-  WritableStream: async () => (await import('node:stream/web')).WritableStream,
+  URLPattern: () => interop(() => import('urlpattern-polyfill'), 'URLPattern'),
+  Headers: () => interop(() => import('undici'), 'Headers'),
+  ReadableStream: () =>
+    interop(() => import('node:stream/web'), 'ReadableStream'),
+  TransformStream: () =>
+    interop(() => import('node:stream/web'), 'TransformStream'),
+  WritableStream: () =>
+    interop(() => import('node:stream/web'), 'WritableStream'),
   Request: async () => {
-    const { Readable } = await import('node:stream');
-    const { Request } = await import('undici');
-    const { Request: NodeFetchRequest } = await import('node-fetch');
+    const Readable = await interop(() => import('node:stream'), 'Readable');
+    const Request = await interop(() => import('undici'), 'Request');
+    const NodeFetchRequest = await interop(
+      () => import('node-fetch'),
+      'Request',
+    );
     // TODO: remove the superclass as soon as Undici supports formData (https://github.com/nodejs/undici/issues/974)
     return class extends Request {
-      // @ts-expect-error - .
       formData() {
         return new NodeFetchRequest(this.url, {
           method: this.method,
@@ -22,8 +32,8 @@ const globals = {
       }
     };
   },
-  Response: async () => (await import('undici')).Response,
-  fetch: async () => (await import('undici')).fetch,
+  Response: () => interop(() => import('undici'), 'Response'),
+  fetch: () => interop(() => import('undici'), 'fetch'),
 };
 
 let installed = false;
