@@ -1,3 +1,12 @@
+## [0.201.6](https://github.com/vitebook/vitebook/compare/v0.201.5...v0.201.6) (2022-08-30)
+
+### Bug Fixes
+
+- add custom vercel edge request handler ([2c071be](https://github.com/vitebook/vitebook/commit/2c071be8aaf73bc1e2679a7db3acc703ed22b99a))
+- always include client-side redirects ([24f3bf3](https://github.com/vitebook/vitebook/commit/24f3bf300032477b8f067f20bb2310ba19f3e0d2))
+- es interop required when installing pollyfils ([56b34af](https://github.com/vitebook/vitebook/commit/56b34af4cb4a1dfc76affd63a28902623f437738))
+- handle trailing slashes on vercel deploy ([5f67304](https://github.com/vitebook/vitebook/commit/5f67304524442a77d6a8c1e00aa49bb027b9a2e3))
+
 ## [0.201.5](https://github.com/vitebook/vitebook/compare/v0.201.4...v0.201.5) (2022-08-29)
 
 ### Bug Fixes
