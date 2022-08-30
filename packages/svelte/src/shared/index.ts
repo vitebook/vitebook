@@ -12,7 +12,7 @@ export type SvelteServerModule = {
   readonly default: {
     render(
       props: Record<string, unknown>,
-      options: { context: Map<string, unknown> },
+      options: { context: Map<string | symbol, unknown> },
     ): { html: string; head: string; css: string };
   };
 };

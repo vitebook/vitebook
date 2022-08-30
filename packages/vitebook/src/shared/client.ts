@@ -1,12 +1,12 @@
 import type { MarkdownMeta } from './markdown';
-import type { RouteInfo } from './route';
+import type { Route } from './route';
 import type { ServerLoader } from './server';
 
 export type ClientPage = {
   /** System file path relative to `<root>`. */
   readonly rootPath: string;
   /** Page route object. */
-  readonly route: RouteInfo;
+  readonly route: Route;
   /** Page file extension.  */
   readonly ext: string;
   /** Additional page metadata. */

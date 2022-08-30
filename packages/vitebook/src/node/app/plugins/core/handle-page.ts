@@ -28,7 +28,7 @@ export async function handlePageRequest(
   );
 
   const { render } = (await app.vite.server!.ssrLoadModule(
-    app.entry.server,
+    app.config.entry.server,
   )) as ServerEntryModule;
 
   const match = matchRouteInfo(url, app.nodes.pages.toArray());

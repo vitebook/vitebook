@@ -1,5 +1,5 @@
 import type { ClientLayout, ClientPage } from './client';
-import type { RouteInfo } from './route';
+import type { Route } from './route';
 
 export type ServerFile = {
   /** Absolute system file path to file.  */
@@ -10,7 +10,7 @@ export type ServerFile = {
 
 export type ServerEndpoint = ServerFile & {
   /** Routing object. */
-  readonly route: RouteInfo;
+  readonly route: Route;
 };
 
 export type ServerPage = ServerFile &
@@ -18,7 +18,7 @@ export type ServerPage = ServerFile &
     /** Module id used by the client-side router to dynamically load this page module.  */
     id: string;
     /** Routing object. */
-    readonly route: RouteInfo;
+    readonly route: Route;
     /** Page layout name. */
     layoutName?: string;
     /**
@@ -56,7 +56,7 @@ export type ServerLoaderInput<
 > = Readonly<{
   pathname: string;
   page: ServerPage;
-  route: RouteInfo;
+  route: Route;
   params: Params;
   /** Result from running `URLPattern.exec().pathname`. */
   match: URLPatternComponentResult;

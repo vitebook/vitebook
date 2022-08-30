@@ -14,13 +14,7 @@ import type { AppNodes } from './nodes';
 export type AppDetails = {
   version: string;
   dirs: AppDirectories;
-  entry: {
-    client: string;
-    server: string;
-  };
-  vite: {
-    env: ViteConfigEnv;
-  };
+  vite: { env: ViteConfigEnv };
   config: ResolvedAppConfig;
 };
 

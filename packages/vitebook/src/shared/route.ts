@@ -1,5 +1,12 @@
 export type WithRouteMatch<T> = T & { match: URLPatternComponentResult };
 
+export type WithRouteParams<T, U = RouteParams> = T & {
+  params: U;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type RouteParams = Record<string, any>;
+
 export type RouteMatcher = string | RegExp | null | undefined | void;
 
 export type SimpleRouterMatcher = {
@@ -14,7 +21,7 @@ export type ComplexRouteMatcher = (
 
 export type RouteMatcherConfig = (SimpleRouterMatcher | ComplexRouteMatcher)[];
 
-export type RouteInfo = {
+export type Route = {
   /** Order number if declared (e.g., `[1]page.md` would be 1). */
   readonly order?: number;
   /**

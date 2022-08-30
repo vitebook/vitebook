@@ -1,12 +1,8 @@
-// components
+export * from '../shared';
 export { default as App } from './App.svelte';
 export { default as PageLayouts } from './components/PageLayouts.svelte';
 export { default as PageView } from './components/PageView.svelte';
-// context
-export * from './context';
-// stores
+export { getRouter, getServerContext } from './context';
 export * from './stores';
-// view
-export * from './renderer';
-// shared
-export * from '../shared';
+export { layouts } from './stores/layouts';
+export { pages } from './stores/pages';

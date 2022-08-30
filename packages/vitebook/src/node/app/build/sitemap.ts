@@ -11,7 +11,7 @@ export async function buildSitemap(
   links: BuildData['links'],
   config: ResolvedSitemapConfig,
 ) {
-  const baseUrl = config.baseUrl;
+  const baseUrl = config.origin;
 
   if (!baseUrl) {
     app.logger.warn('Sitemap requires a base URL to build links');

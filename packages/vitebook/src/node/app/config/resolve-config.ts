@@ -16,6 +16,7 @@ export function resolveAppConfig(
     build = {},
     dirs = {},
     isDebug = !!process.env.DEBUG,
+    entry = { client: '', server: '' },
     client = {},
     routes = {},
     markdown = {},
@@ -98,7 +99,7 @@ export function resolveAppConfig(
   };
 
   const __sitemapConfig: ResolvedSitemapConfig = {
-    baseUrl: null,
+    origin: null,
     filename: 'sitemap.xml',
     changefreq: 'weekly',
     priority: 0.7,
@@ -120,6 +121,7 @@ export function resolveAppConfig(
       build: _output,
       public: _public,
     },
+    entry,
     client: __client,
     routes: __routes,
     markdown: __markdown,

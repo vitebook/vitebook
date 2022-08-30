@@ -238,7 +238,7 @@ export { createVercelBuildAdapter as default };
 
 export type VercelBuildAdapterConfig = {
   /**
-   * Whether trailing slashes should be kept or removed. The default behaviour is to remove
+   * Whether trailing slashes should be kept or removed. The default behavior is to remove
    * it (e.g., `foo.com/bar/` becomes `foo.com/bar`).
    *
    * @defaultValue false

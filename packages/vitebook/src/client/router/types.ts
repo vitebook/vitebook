@@ -1,27 +1,33 @@
-import {
-  type AppContextMap,
-  type LoadedClientPage,
-  type RouteInfo,
-  WithRouteMatch,
+import type {
+  LoadedClientPage,
+  Route,
+  RouteParams,
+  ServerContext,
+  WithRouteParams,
 } from '../../shared';
+import type { Reactive } from '../reactivity';
+import type { ScrollToTarget } from './scroll-delegate';
 
-export type RedirectRoute = (pathnameOrURL: string | URL) => void;
+export type RouteRedirect = (pathnameOrURL: string | URL) => void;
 
 export type RoutePrefetch = (info: {
   url: URL;
-  route: Route;
-  redirect: RedirectRoute;
+  route: MatchedRoute;
+  redirect: RouteRedirect;
 }) => void | Promise<void>;
 
 export type RouteLoader = (info: {
-  route: Route;
-  redirect: RedirectRoute;
+  route: MatchedRoute;
+  redirect: RouteRedirect;
 }) => void | LoadedClientPage | Promise<void | LoadedClientPage>;
 
-export type RouteDeclaration = Omit<RouteInfo, 'score'> & {
-  score?: number;
+export type RouteDeclaration = Route & {
   prefetch?: RoutePrefetch;
   loader: RouteLoader;
+};
+
+export type UserRouteDeclaration = Omit<RouteDeclaration, 'score'> & {
+  score?: number;
 };
 
 export type ScoredRouteDeclaration = RouteDeclaration & {
@@ -29,18 +35,19 @@ export type ScoredRouteDeclaration = RouteDeclaration & {
 };
 
 export type RouterOptions = {
-  target: HTMLElement | null;
-  context: AppContextMap;
   baseUrl: string;
   history: History;
   trailingSlash?: boolean;
-  routes?: RouteDeclaration[];
+  $route: Reactive<LoadedRoute>;
+  $navigation: Reactive<RouteNavigation>;
+  initialRoutes?: RouteDeclaration[];
+  serverContext?: ServerContext;
 };
 
-export type Route = RouteDeclaration & {
+export type MatchedRoute = RouteDeclaration & {
   readonly id: string;
   readonly url: URL;
-  readonly match: URLPatternComponentResult;
+  readonly params: RouteParams;
 };
 
 export type RouteNavigation = {
@@ -48,7 +55,7 @@ export type RouteNavigation = {
   to: URL;
 } | null;
 
-export type LoadedRoute = Route & {
+export type LoadedRoute = MatchedRoute & {
   page: LoadedClientPage;
 };
 
@@ -65,37 +72,18 @@ export type NavigationOptions = GoToRouteOptions & {
   blocked?: () => void;
 };
 
-export type RouterScrollBase = ScrollToOptions;
-
-export type ScrollTarget =
-  | void
-  | null
-  | false
-  | (ScrollToOptions & { el?: string | HTMLElement });
-
-export type ScrollToTarget = (info: { cancel: ScrollCancel }) => ScrollTarget;
-
-export type ScrollCancel = () => void;
-
-export type RouterScrollBehaviorHook = (info: {
-  from: LoadedRoute | null;
-  to: LoadedRoute;
-  cancel: ScrollCancel;
-  savedPosition?: { top?: number; left?: number };
-}) => ScrollTarget | Promise<ScrollTarget>;
-
 export type CancelNavigation = () => void;
 
 export type RouterBeforeNavigateHook = (navigation: {
   from: LoadedRoute | null;
-  to: WithRouteMatch<RouteDeclaration>;
-  match: URLPatternComponentResult;
+  to: WithRouteParams<RouteDeclaration>;
+  params: RouteParams;
   cancel: CancelNavigation;
-  redirect: RedirectRoute;
+  redirect: RouteRedirect;
 }) => void;
 
 export type RouterAfterNavigateHook = (navigation: {
   from: LoadedRoute | null;
   to: LoadedRoute;
-  match: URLPatternComponentResult;
+  params: RouteParams;
 }) => void | Promise<void>;

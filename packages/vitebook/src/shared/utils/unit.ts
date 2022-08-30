@@ -26,30 +26,28 @@ export function isNull(value: unknown): value is null {
  * Check if a value is a `number`.
  */
 export function isNumber(value: unknown): value is number {
-  return (value as any)?.constructor === Number && !Number.isNaN(value);
+  return typeof value === 'number' && !Number.isNaN(value);
 }
 
 /**
  * Check if a value is a `string`.
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
-export function isString(value: any): value is string {
-  return value?.constructor === String;
+export function isString(value: unknown): value is string {
+  return typeof value === 'string';
 }
 
 /**
  * Check if a value is a `boolean`.
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
-export function isBoolean(value: any): value is boolean {
-  return value?.constructor === Boolean;
+export function isBoolean(value: unknown): value is boolean {
+  return typeof value === 'boolean';
 }
 
 /**
  * Check if a value is an `array`.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-export function isArray(value: any): value is any[] {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isArray(value: unknown): value is any[] {
   return Array.isArray(value);
 }
 

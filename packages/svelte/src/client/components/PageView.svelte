@@ -1,7 +1,7 @@
 <script>
-  import { getPage } from '../context';
+  import { getPageStore } from '../context';
 
-  const page = getPage();
+  const page = getPageStore();
 </script>
 
 <svelte:component this={$page.default} {...$page.data} />

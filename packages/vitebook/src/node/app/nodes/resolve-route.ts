@@ -5,7 +5,7 @@ import {
   endslash,
   isFunction,
   isRoutePathDynamic,
-  type RouteInfo,
+  type Route,
   type RouteMatcher,
   type RouteMatcherConfig,
   slash,
@@ -47,7 +47,7 @@ export function resolveRouteFromFilePath(
   routesDir: string,
   filePath: string,
   matchers: RouteMatcherConfig = [],
-): RouteInfo {
+): Route {
   filePath = normalizePath(filePath);
 
   const routePath = path.posix.relative(routesDir, filePath);

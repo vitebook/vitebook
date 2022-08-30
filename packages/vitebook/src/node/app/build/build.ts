@@ -9,7 +9,7 @@ import {
   isFunction,
   isUndefined,
   matchRouteInfo,
-  ServerEndpoint,
+  type ServerEndpoint,
   type ServerEntryModule,
   type ServerLoadedOutputMap,
   type ServerLoadedRedirect,

@@ -1,52 +1,60 @@
 import app from ':virtual/vitebook/app';
 
 import {
-  type AppContextMap,
+  type ClientLayout,
   type ClientLayoutModule,
   type ClientLoadedData,
   type ClientPage,
   type ClientPageModule,
   DATA_ASSET_BASE_PATH,
-  inBrowser,
   isBoolean,
   isLoadedMarkdownPage,
   isString,
   type LoadedClientLayout,
+  type LoadedClientMarkdownPage,
   type LoadedClientPage,
   resolveDataAssetID,
+  type ServerContext,
 } from '../shared';
-import {
-  getContext,
-  PAGE_CTX_KEY,
-  ROUTER_CTX_KEY,
-  SERVER_CTX_KEY,
-} from './context';
+import type { Reactive } from './reactivity';
+import { createRouter } from './router/create-router';
 import { createMemoryHistory } from './router/history/memory';
-import { Router } from './router/Router';
-import type { RouteDeclaration } from './router/types';
-import { layouts as pageLayouts } from './stores/layouts';
-import { pages } from './stores/pages';
-import { get } from './stores/store';
-import type { ViewRenderer } from './view/ViewRenderer';
+import type { Router } from './router/Router';
+import type {
+  LoadedRoute,
+  RouteDeclaration,
+  RouteNavigation,
+} from './router/types';
 
-export async function createRouter({
-  context,
-  renderers,
-}: {
-  context: AppContextMap;
-  renderers: ViewRenderer[];
-}) {
-  const target = inBrowser ? document.getElementById('app') : null;
+export type RouterInitOptions = {
+  $route: Reactive<LoadedRoute>;
+  $navigation: Reactive<RouteNavigation>;
+  $pages: Reactive<ClientPage[]>;
+  $layouts: Reactive<ClientLayout[]>;
+  $currentPage: Reactive<LoadedClientPage>;
+  serverContext?: ServerContext;
+};
 
-  const router = new Router({
-    target,
-    context,
+export async function initRouter({
+  $route,
+  $navigation,
+  $pages,
+  $layouts,
+  $currentPage,
+  serverContext,
+}: RouterInitOptions) {
+  const router = createRouter({
     baseUrl: app.baseUrl,
-    trailingSlash: inBrowser ? window['__VBK_TRAILING_SLASH__'] : true,
-    history: inBrowser ? window.history : createMemoryHistory(),
+    trailingSlash: !import.meta.env.SSR
+      ? window['__VBK_TRAILING_SLASH__']
+      : true,
+    history: !import.meta.env.SSR ? window.history : createMemoryHistory(),
+    $route,
+    $navigation,
+    serverContext,
   });
 
-  if (inBrowser && import.meta.env.PROD) {
+  if (!import.meta.env.SSR && import.meta.env.PROD) {
     const redirects = window['__VBK_REDIRECTS_MAP__'] ?? {};
     for (const from of Object.keys(redirects)) {
       const to = redirects[from];
@@ -54,19 +62,13 @@ export async function createRouter({
     }
   }
 
-  context.set(ROUTER_CTX_KEY, router);
+  await Promise.all(app.configs.map((config) => config?.({ router })));
 
-  addRoutes(router, get(pages));
+  addRoutes(router, $pages.get(), $layouts.get(), $currentPage);
 
-  await Promise.all(
-    app.configs.map((config) => config({ context, router, renderers })),
-  );
-
-  handleHMR(router);
-
-  if (inBrowser) {
-    await router.go(location.href, { replace: true });
-    router.listen();
+  if (import.meta.hot) {
+    handlePageHMR($currentPage);
+    handlePagesHMR(router, $pages, $layouts, $currentPage);
   }
 
   return router;
@@ -74,18 +76,32 @@ export async function createRouter({
 
 let routes: RouteDeclaration[] = [];
 
-function addRoutes(router: Router, pages: Readonly<ClientPage[]>) {
+function addRoutes(
+  router: Router,
+  pages: ClientPage[],
+  layouts: ClientLayout[],
+  $currentPage: Reactive<LoadedClientPage>,
+) {
   for (const page of pages) {
     const route: RouteDeclaration = {
       ...page.route,
       loader: async ({ redirect }) => {
-        const pageOrRedirect = await loadPage(router, page);
+        const pageOrRedirect = await loadPage(
+          router,
+          page,
+          layouts,
+          $currentPage,
+        );
+
         return isString(pageOrRedirect)
           ? redirect(pageOrRedirect)
           : pageOrRedirect;
       },
       prefetch: async ({ url, redirect }) => {
-        const redirectTo = await loadPage(router, page, { prefetch: url });
+        const redirectTo = await loadPage(router, page, layouts, $currentPage, {
+          prefetch: url,
+        });
+
         return isString(redirectTo) ? redirect(redirectTo) : undefined;
       },
     };
@@ -95,12 +111,34 @@ function addRoutes(router: Router, pages: Readonly<ClientPage[]>) {
   }
 }
 
-function handleHMR(router: Router) {
+function handlePageHMR($currentPage: Reactive<LoadedClientPage>) {
+  if (import.meta.hot) {
+    import.meta.hot.on('vitebook::md_meta', ({ filePath, meta }) => {
+      const page = $currentPage.get();
+      if (isLoadedMarkdownPage(page) && filePath.endsWith(page.rootPath)) {
+        $currentPage.set({ ...page, meta } as LoadedClientMarkdownPage);
+      }
+    });
+
+    $currentPage.subscribe(($page) => {
+      import.meta.hot!.send('vitebook::page_change', {
+        rootPath: $page?.rootPath ?? '',
+      });
+    });
+  }
+}
+
+function handlePagesHMR(
+  router: Router,
+  $pages: Reactive<ClientPage[]>,
+  $layouts: Reactive<ClientLayout[]>,
+  $currentPage: Reactive<LoadedClientPage>,
+) {
   if (import.meta.hot) {
     const updatePages = (pages: ClientPage[]) => {
       routes.forEach((route) => router.removeRoute(route));
       routes = [];
-      addRoutes(router, pages);
+      addRoutes(router, pages, $layouts.get(), $currentPage);
     };
 
     let pagesUpdateTimer;
@@ -109,14 +147,16 @@ function handleHMR(router: Router) {
       pagesUpdateTimer = setTimeout(() => updatePages(pages), 100);
     };
 
-    pages.subscribe(($pages) => delayedPagesUpdate($pages));
-    pageLayouts.subscribe(() => delayedPagesUpdate(get(pages)));
+    $pages.subscribe(($pages) => delayedPagesUpdate($pages));
+    $layouts.subscribe(() => delayedPagesUpdate($pages.get()));
   }
 }
 
 export async function loadPage(
   router: Router,
-  page: ClientPage,
+  clientPage: ClientPage,
+  clientLayouts: ClientLayout[],
+  $currentPage: Reactive<LoadedClientPage>,
   { prefetch = false }: { prefetch?: boolean | URL } = {},
 ): Promise<string | LoadedClientPage> {
   const prefetchURL = isBoolean(prefetch) ? undefined : prefetch;
@@ -131,27 +171,32 @@ export async function loadPage(
    * complete redirect table is injected into the rendered HTML.
    */
   if (import.meta.env.DEV) {
-    pageModule = await page.loader();
+    pageModule = await clientPage.loader();
     pageData = await loadData(router, pageModule, undefined, prefetchURL);
 
     if (import.meta.env.DEV && isString(pageData.__redirect__)) {
       return pageData.__redirect__;
     }
 
-    layouts = await loadPageLayouts(router, page, prefetchURL);
+    layouts = await loadPageLayouts(
+      router,
+      clientPage,
+      clientLayouts,
+      prefetchURL,
+    );
   } else {
     [pageModule, layouts] = await Promise.all([
       (async () => {
-        const mod = await page.loader();
+        const mod = await clientPage.loader();
         pageData = await loadData(router, mod, undefined, prefetchURL);
         return mod;
       })(),
-      loadPageLayouts(router, page, prefetchURL),
+      loadPageLayouts(router, clientPage, clientLayouts, prefetchURL),
     ]);
   }
 
   const loadedPage: LoadedClientPage = {
-    ...page,
+    ...clientPage,
     $$loaded: true,
     module: pageModule,
     layouts,
@@ -165,8 +210,7 @@ export async function loadPage(
   };
 
   if (!prefetch) {
-    const store = getContext(router.context, PAGE_CTX_KEY);
-    store.__set(loadedPage);
+    $currentPage.set(loadedPage);
   }
 
   return loadedPage;
@@ -175,13 +219,12 @@ export async function loadPage(
 export function loadPageLayouts(
   router: Router,
   page: ClientPage,
+  layouts: ClientLayout[],
   prefetchURL?: URL,
 ): Promise<LoadedClientLayout[]> {
-  const $pageLayouts = get(pageLayouts);
-
   return Promise.all(
     page.layouts.map(async (index) => {
-      const layout = $pageLayouts[index];
+      const layout = layouts[index];
       const mod = await layout.loader();
       return {
         $$loaded: true as const,
@@ -204,7 +247,7 @@ export async function loadData(
 ): Promise<ClientLoadedData> {
   if (!module.loader) return {};
 
-  let pathname = prefetchURL?.pathname ?? get(router.navigation)!.to.pathname;
+  let pathname = prefetchURL?.pathname ?? router.navigation.get()!.to.pathname;
   if (!pathname.endsWith('/')) pathname += '/';
 
   const id = resolveDataAssetID(decodeURI(pathname), layoutIndex);
@@ -216,9 +259,8 @@ export async function loadData(
 
   if (!hashId) return {};
 
-  if (import.meta.env.SSR) {
-    const { data } = getContext(router.context, SERVER_CTX_KEY);
-    return data.get(hashId) ?? {};
+  if (import.meta.env.SSR && router.serverContext) {
+    return router.serverContext.data.get(hashId) ?? {};
   }
 
   try {
@@ -228,7 +270,7 @@ export async function loadData(
 
     return json;
   } catch (e) {
-    // TODO: handle this with error boundaries.
+    // TODO: handle this with error boundaries?
     console.error(e);
   }
 

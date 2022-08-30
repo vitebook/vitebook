@@ -1,22 +1,17 @@
+import { derived, writable } from 'svelte/store';
+import { type ClientPage } from 'vitebook';
+
 import allPages from ':virtual/vitebook/pages';
 
-import type { ClientPage } from '../../shared';
-import { derived, writable } from './store';
-import type { ReadableStore } from './types';
-
-const store = writable(allPages);
+const __pages = writable(allPages);
 
 if (import.meta.hot) {
   import.meta.hot.accept('/:virtual/vitebook/pages', (mod) => {
-    store.set(mod?.default ?? []);
+    __pages.set(mod?.default ?? []);
   });
 }
 
-export const pages: ReadableStore<ClientPage[]> = {
-  subscribe(fn) {
-    return derived(store, ($pages) => initURLPattern($pages)).subscribe(fn);
-  },
-};
+export const pages = derived(__pages, (pages) => initURLPattern(pages));
 
 /**
  * We init the pattern late to ensure the client entry has a chance to install the `URLPattern`

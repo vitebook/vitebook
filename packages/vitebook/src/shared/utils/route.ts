@@ -1,4 +1,4 @@
-import type { RouteInfo, WithRouteMatch } from '../route';
+import type { Route, WithRouteMatch } from '../route';
 import { noslash, slash } from './url';
 
 const PATH_SCORE = {
@@ -80,7 +80,7 @@ export function calcRoutePathScore(pathname: string): number {
   return score;
 }
 
-export function compareRoutes(routeA: RouteInfo, routeB: RouteInfo) {
+export function compareRoutes(routeA: Route, routeB: Route) {
   if (routeA.score !== routeB.score) {
     return routeB.score - routeA.score; // higher score first
   }
@@ -113,7 +113,7 @@ export function isRoutePathDynamic(pathname: string) {
   );
 }
 
-export function matchRoute<T extends RouteInfo>(
+export function matchRoute<T extends Route>(
   url: URL,
   routes: T[] | { route: T }[],
 ): WithRouteMatch<T> | undefined {
@@ -121,7 +121,7 @@ export function matchRoute<T extends RouteInfo>(
   return result ? { ...result.route, match: result.match } : undefined;
 }
 
-export function matchRouteInfo<T extends RouteInfo>(
+export function matchRouteInfo<T extends Route>(
   url: URL,
   routes: T[] | { route: T }[],
 ): WithRouteMatch<{ index: number; route: T }> | undefined {
@@ -138,7 +138,7 @@ export function matchRouteInfo<T extends RouteInfo>(
   return route && match ? { index, route, match } : undefined;
 }
 
-export function execRouteMatch<T extends RouteInfo>(url: URL, route?: T) {
+export function execRouteMatch<T extends Route>(url: URL, route?: T) {
   return route?.pattern.exec({ pathname: getRouteMatchingPathname(url) })
     ?.pathname;
 }

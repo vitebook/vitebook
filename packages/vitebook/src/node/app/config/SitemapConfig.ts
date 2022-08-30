@@ -13,12 +13,12 @@ export type SitemapPriority = number;
 
 export type ResolvedSitemapConfig = {
   /**
-   * The base url to use when building sitemap URL entries.
+   * The URL origin to use when building sitemap URL entries.
    *
    * @example 'http://mysite.com'
    * @defaultValue `null`
    */
-  baseUrl: string | null;
+  origin: string | null;
   /**
    * Filtern pattern used to determine which HTML pages to include in final sitemap.
    *

@@ -27,7 +27,7 @@ export function resolveBuildConfig(app: App): ViteConfig {
   const immutableDir = '_immutable';
 
   const input = {
-    entry: ssr ? app.entry.server : app.entry.client,
+    entry: ssr ? app.config.entry.server : app.config.entry.client,
     app: app.config.client.app,
     ...createAppEntries(app),
   };
@@ -65,7 +65,7 @@ export function resolveBuildConfig(app: App): ViteConfig {
             : `${immutableDir}/assets/[name]-[hash][extname]`,
           manualChunks: extendManualChunks(),
         },
-        preserveEntrySignatures: 'strict',
+        preserveEntrySignatures: 'allow-extension',
       },
     },
   };

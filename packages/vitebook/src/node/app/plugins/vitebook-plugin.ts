@@ -50,8 +50,8 @@ export function vitebookPlugin(
           server: {
             fs: {
               allow: [
-                path.posix.dirname(app.entry.client),
-                path.posix.dirname(app.entry.server),
+                path.posix.dirname(app.config.entry.client),
+                path.posix.dirname(app.config.entry.server),
                 app.dirs.cwd.path,
                 app.dirs.root.path,
                 app.dirs.app.path,
@@ -81,7 +81,7 @@ export function vitebookPlugin(
       },
       resolveId(id) {
         if (id === virtualModuleRequestPath.client) {
-          return { id: app.entry.client };
+          return { id: app.config.entry.client };
         }
 
         if (

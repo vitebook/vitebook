@@ -1,3 +1,4 @@
+import kleur from 'kleur';
 import {
   type ConfigEnv,
   mergeConfig,
@@ -10,7 +11,7 @@ import {
   type ServerLayout,
   type ServerPage,
 } from '../../../shared';
-import { esmRequire, logger, normalizePath, trimExt } from '../../utils';
+import { logger, normalizePath, trimExt } from '../../utils';
 import type { App, AppDetails, AppFactory } from '../App';
 import {
   type AppConfig,
@@ -50,16 +51,9 @@ export const createAppFactory = async (
     ...plugins.filter((plugin) => plugin.enforce === 'post'),
   ];
 
-  const entry =
-    plugins.find((plugin) => plugin.vitebook?.entry)?.vitebook!.entry ??
-    defaultEntry();
-
-  Object.keys(entry).forEach((key) => (entry[key] = normalizePath(entry[key])));
-
   const details: AppDetails = {
     version,
     dirs,
-    entry,
     config: { ...resolvedConfig },
     vite: { env },
   };
@@ -88,6 +82,29 @@ export const createAppFactory = async (
         }
       }
 
+      if (!$app.config.entry.client || !$app.config.entry.server) {
+        const frameworkPlugins = ['@vitebook/svelte']
+          .map((fw) => kleur.cyan(`- npm i ${fw}`))
+          .join('\n');
+
+        throw Error(
+          [
+            kleur.red(`Missing client/server entries.`),
+            kleur.bold(
+              "\n1. Make sure you've installed a framework-specific plugin:",
+            ),
+            `\n${frameworkPlugins}`,
+            kleur.bold(
+              "\n2. Next, check if you've added the plugin to `vite.config.*`.",
+            ),
+            '',
+          ].join('\n'),
+        );
+      }
+
+      app.config.entry.client = normalizePath(app.config.entry.client);
+      app.config.entry.server = normalizePath(app.config.entry.server);
+
       for (const plugin of plugins) {
         await plugin.vitebook?.configureApp?.($app);
       }
@@ -98,14 +115,6 @@ export const createAppFactory = async (
 
   return app;
 };
-
-function defaultEntry(): App['entry'] {
-  const __require = esmRequire();
-  return {
-    client: __require.resolve(`vitebook/entry-client.js`),
-    server: __require.resolve(`vitebook/entry-server.js`),
-  };
-}
 
 export function createAppEntries(app: App, { isSSR = false } = {}) {
   const entries: Record<string, string> = {};

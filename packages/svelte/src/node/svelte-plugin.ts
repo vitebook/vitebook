@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import {
   normalizePath,
@@ -21,6 +22,8 @@ export function sveltePlugin(): VitebookPluginOptions {
       : { id: '@vitebook/svelte/App.svelte' };
   }
 
+  const require = createRequire(import.meta.url);
+
   return [
     {
       name: '@vitebook/svelte',
@@ -40,6 +43,10 @@ export function sveltePlugin(): VitebookPluginOptions {
           appDir = config.dirs.app;
           const appId = resolveAppId().id;
           return {
+            entry: {
+              client: require.resolve('@vitebook/svelte/entry-client.js'),
+              server: require.resolve('@vitebook/svelte/entry-server.js'),
+            },
             client: {
               app: appId,
               configFiles: [config.isBuild ? appId : VIRTUAL_APP_ID],
