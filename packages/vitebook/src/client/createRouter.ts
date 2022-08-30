@@ -42,12 +42,12 @@ export async function createRouter({
     target,
     context,
     baseUrl: app.baseUrl,
+    trailingSlash: inBrowser ? window['__VBK_TRAILING_SLASH__'] : true,
     history: inBrowser ? window.history : createMemoryHistory(),
   });
 
   if (inBrowser && import.meta.env.PROD) {
-    // @ts-expect-error - .
-    const redirects = window.__VBK_REDIRECTS_MAP__ ?? {};
+    const redirects = window['__VBK_REDIRECTS_MAP__'] ?? {};
     for (const from of Object.keys(redirects)) {
       const to = redirects[from];
       router.addRedirect(from, to);
@@ -211,8 +211,7 @@ export async function loadData(
 
   const hashId =
     import.meta.env.PROD && !import.meta.env.SSR
-      ? // @ts-expect-error - .
-        window.__VBK_DATA_HASH_MAP__[await hashDataId(id)]
+      ? window['__VBK_DATA_HASH_MAP__'][await hashDataId(id)]
       : id;
 
   if (!hashId) return {};

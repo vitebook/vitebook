@@ -4,7 +4,7 @@ import path from 'node:path';
 import { requireShim } from '../../../../utils';
 import { HTTP_METHODS } from '../../../http';
 import { type BuildAdapterFactory } from '../BuildAdapter';
-import { createStaticBuildAdapter } from '../static';
+import { createStaticBuildAdapter } from '../static/adapter';
 import { trailingSlash } from './trailing-slash';
 
 const outputRoot = '.vercel/output';
@@ -35,8 +35,9 @@ export function createVercelBuildAdapter(
       fns: $.createDirectory(app.dirs.root.resolve(`${outputRoot}/functions`)),
     };
 
+    const useTrailingSlash = config?.trailingSlash ?? false;
     const staticAdapter = await createStaticBuildAdapter({
-      skipOutput: true,
+      trailingSlash: useTrailingSlash,
     })(app, bundles, build, $);
 
     return {
@@ -56,7 +57,7 @@ export function createVercelBuildAdapter(
             headers: {
               Location: $.isLinkExternal(redirect.to)
                 ? redirect.to
-                : config?.trailingSlash
+                : useTrailingSlash
                 ? $.endslash(redirect.to)
                 : $.noendslash(redirect.to),
             },
@@ -78,9 +79,7 @@ export function createVercelBuildAdapter(
           status?: number;
           handle?: string;
         }[] = [
-          ...(config?.trailingSlash
-            ? trailingSlash.keep
-            : trailingSlash.remove),
+          ...(useTrailingSlash ? trailingSlash.keep : trailingSlash.remove),
           ...redirects,
           {
             src: '/_immutable/.+',

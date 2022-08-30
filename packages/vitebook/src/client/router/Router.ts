@@ -83,6 +83,14 @@ export class Router {
   readonly baseUrl: string = '/';
 
   /**
+   * Whether a slash should be appended to the end of HTML routes. This is modified by adapters
+   * accordingly by injecting `__VBK_TRAILING_SLASH__` into the `window` object.
+   *
+   * @defaultValue `true`
+   */
+  readonly trailingSlash: boolean;
+
+  /**
    * Indicates how the browser should scroll when navigating to a new page.
    *
    * @defaultValue `'auto'`
@@ -154,11 +162,20 @@ export class Router {
     return this._currentRoute;
   }
 
-  constructor({ target, context, baseUrl, history, routes }: RouterOptions) {
+  constructor({
+    target,
+    context,
+    baseUrl,
+    history,
+    routes,
+    trailingSlash,
+  }: RouterOptions) {
+    this._history = history;
+
     this.target = target;
     this.context = context;
-    this._history = history;
     this.baseUrl = slash(baseUrl);
+    this.trailingSlash = trailingSlash ?? true;
 
     routes?.forEach((route) => {
       this.addRoute(route);
@@ -212,8 +229,14 @@ export class Router {
    * Redirect from a given pathname to another.
    */
   addRedirect(from: string | URL, to: string | URL) {
-    const fromURL = normalizeURL(isString(from) ? this.buildURL(from) : from);
-    const toURL = normalizeURL(isString(to) ? this.buildURL(to) : to);
+    const fromURL = normalizeURL(
+      isString(from) ? this.buildURL(from) : from,
+      this.trailingSlash,
+    );
+    const toURL = normalizeURL(
+      isString(to) ? this.buildURL(to) : to,
+      this.trailingSlash,
+    );
     this._redirects.set(fromURL.href, toURL.href);
   }
 
@@ -271,7 +294,7 @@ export class Router {
             : getBaseUri(this.baseUrl),
         );
 
-    return normalizeURL(url);
+    return normalizeURL(url, this.trailingSlash);
   }
 
   /**
@@ -400,7 +423,7 @@ export class Router {
     url: URL,
     handle: (url: URL) => Promise<void>,
   ): null | Promise<void> {
-    const href = normalizeURL(url).href;
+    const href = normalizeURL(url, this.trailingSlash).href;
 
     if (!this._redirects.has(href)) return null;
 

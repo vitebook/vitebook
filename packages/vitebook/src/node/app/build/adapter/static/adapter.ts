@@ -1,16 +1,22 @@
-import { type BuildAdapterFactory } from './BuildAdapter';
+import { type BuildAdapterFactory } from '../BuildAdapter';
+
+export type StaticBuildAdapterConfig = {
+  trailingSlash?: boolean;
+};
 
 export function createStaticBuildAdapter(
-  options: {
-    skipOutput?: boolean;
-    skipRedirects?: boolean;
-  } = {},
+  options: StaticBuildAdapterConfig = {},
 ): BuildAdapterFactory {
   return (app, bundles, build, $) => {
     $.logger.info($.color.bold(`vitebook@${app.version}`));
 
     const startTime = Date.now();
     const renderingSpinner = $.createSpinner();
+
+    const trailingSlash = options.trailingSlash ?? true;
+    const trailingSlashTag = !trailingSlash
+      ? `<script>window.__VBK_TRAILING_SLASH__ = false;</script>`
+      : '';
 
     return {
       name: 'static',
@@ -38,20 +44,18 @@ export function createStaticBuildAdapter(
         let redirectsScriptTag = '';
         const redirectFiles = $.createFilesArray();
 
-        if (!options.skipRedirects) {
-          const redirectsTable: Record<string, string> = {};
+        const redirectsTable: Record<string, string> = {};
 
-          for (const redirect of build.redirects.values()) {
-            redirectFiles.push({
-              filename: redirect.filename,
-              content: redirect.html,
-            });
-            redirectsTable[redirect.from] = redirect.to;
-          }
-
-          const serializedRedirectsTable = JSON.stringify(redirectsTable);
-          redirectsScriptTag = `<script id="__VBK_REDIRECTS_MAP__">window.__VBK_REDIRECTS_MAP__ = ${serializedRedirectsTable};</script>`;
+        for (const redirect of build.redirects.values()) {
+          redirectFiles.push({
+            filename: redirect.filename,
+            content: redirect.html,
+          });
+          redirectsTable[redirect.from] = redirect.to;
         }
+
+        const serializedRedirectsTable = JSON.stringify(redirectsTable);
+        redirectsScriptTag = `<script id="__VBK_REDIRECTS_MAP__">window.__VBK_REDIRECTS_MAP__ = ${serializedRedirectsTable};</script>`;
 
         // ---------------------------------------------------------------------------------------
         // Data
@@ -118,6 +122,7 @@ export function createStaticBuildAdapter(
             redirectsScriptTag,
             dataHashScriptTag,
             $.createDataScriptTag(render.dataAssetIds),
+            trailingSlashTag,
             entryScriptTag,
           ].join('');
 
@@ -227,3 +232,5 @@ export function createStaticBuildAdapter(
     };
   };
 }
+
+export { createStaticBuildAdapter as default };

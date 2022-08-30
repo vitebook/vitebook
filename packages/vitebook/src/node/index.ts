@@ -10,8 +10,8 @@ export type {
 export {
   type AutoBuildAdapterConfig,
   createAutoBuildAdapter,
-  createStaticBuildAdapter,
 } from './app/build/adapter';
+export type { StaticBuildAdapterConfig } from './app/build/adapter/static/adapter';
 export type { VercelBuildAdapterConfig } from './app/build/adapter/vercel/adapter';
 export * from './app/config';
 export type {

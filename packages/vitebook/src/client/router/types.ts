@@ -33,6 +33,7 @@ export type RouterOptions = {
   context: AppContextMap;
   baseUrl: string;
   history: History;
+  trailingSlash?: boolean;
   routes?: RouteDeclaration[];
 };
 
