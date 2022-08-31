@@ -28,13 +28,17 @@ export function resolvePageChunks(
   const dynamicImports = new Set<string>();
   const assets = new Set<string>();
 
+  const pageSrc = new Set(
+    app.nodes.pages.toArray().map((page) => page.rootPath),
+  );
+
+  const layoutSrc = new Set(
+    app.nodes.layouts.toArray().map((layout) => layout.rootPath),
+  );
+
   const seen = new WeakSet<ViteManifestChunk>();
-  const collectChunks = (chunk?: ViteManifestChunk, isPage = false) => {
-    if (
-      !chunk ||
-      seen.has(chunk) ||
-      (!isPage && chunk.file.includes('@page'))
-    ) {
+  const collectChunks = (chunk?: ViteManifestChunk, page = false) => {
+    if (!chunk || seen.has(chunk) || (!page && pageSrc.has(chunk.src!))) {
       return;
     }
 
@@ -61,8 +65,8 @@ export function resolvePageChunks(
         if (
           chunk &&
           !imports.has(chunk.file) &&
-          !chunk.file.includes('@page') &&
-          !chunk.file.includes('@layout')
+          !pageSrc.has(chunk.src!) &&
+          !layoutSrc.has(chunk.src!)
         ) {
           dynamicImports.add(chunk.file);
         }

@@ -24,4 +24,14 @@ export class EndpointNodes extends FileNodes<ServerEndpoint> {
 
     return endpoint;
   }
+
+  test(pathname: string) {
+    for (let i = 0; i < this._nodes.length; i++) {
+      if (this._nodes[i].route.pattern.test({ pathname })) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 }

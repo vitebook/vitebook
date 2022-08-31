@@ -114,7 +114,7 @@ export async function build(
 
   const fetch = globalThis.fetch;
   globalThis.fetch = (input, init) => {
-    if (typeof input === 'string' && input.startsWith('/api')) {
+    if (typeof input === 'string' && app.nodes.endpoints.test(input)) {
       const url = new URL(`${ssrOrigin}${input}`);
       const match = matchRouteInfo(url, app.nodes.endpoints.toArray());
 
@@ -128,7 +128,7 @@ export async function build(
         new Request(url, init),
         match.route.pattern,
         () => {
-          throw new Error('Can not resolve `clientAddres` during SSR');
+          throw new Error('Can not resolve `clientAddress` during SSR');
         },
         () => import(resolveServerChunkPath(endpoint.filePath)),
       );

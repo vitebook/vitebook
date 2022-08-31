@@ -68,4 +68,18 @@ export class PageNodes extends FileNodes<ServerPage> {
       undefined
     );
   }
+
+  test(pathname: string) {
+    for (let i = 0; i < this._nodes.length; i++) {
+      const node = this._nodes[i];
+      if (
+        !node.rootPath.includes('@404') &&
+        node.route.pattern.test({ pathname })
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 }

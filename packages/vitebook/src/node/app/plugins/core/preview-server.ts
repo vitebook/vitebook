@@ -38,7 +38,10 @@ export async function configurePreviewServer(
       const url = new URL(base + req.url);
       const decodedUrl = decodeURI(new URL(base + req.url).pathname);
 
-      if (decodedUrl.startsWith('/api')) {
+      if (
+        !app.nodes.pages.test(decodedUrl) &&
+        app.nodes.endpoints.test(decodedUrl)
+      ) {
         await handleEndpoint(base, url, app, req, res, loader);
         return;
       }

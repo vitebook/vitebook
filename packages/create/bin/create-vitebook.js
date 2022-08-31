@@ -101,7 +101,6 @@ async function main() {
   // Core
   builder.pkg.addVitebookDependency('vitebook');
   builder.pkg.addVitebookDependency('svelte');
-  builder.pkg.addDependency('@maverick-js/observables', '^4.0.0');
   builder.pkg.addDependency('vite', '^3.0.0', { dev: true });
 
   // Svelte

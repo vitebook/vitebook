@@ -27,7 +27,7 @@ export function configureDevServer(app: App, server: ViteDevServer) {
 
   globalThis.fetch = (input, init) => {
     return fetch(
-      typeof input === 'string' && input.startsWith('/api')
+      typeof input === 'string' && app.nodes.endpoints.test(input)
         ? `${(origin ??= noendslash(
             server.resolvedUrls?.local[0] ?? `${protocol}://localhost:5173`,
           ))}${input}`
@@ -49,19 +49,18 @@ export function configureDevServer(app: App, server: ViteDevServer) {
       const url = new URL(base + req.url);
       const decodedUrl = decodeURI(new URL(base + req.url).pathname);
 
-      if (decodedUrl.startsWith('/api')) {
-        return await handleEndpoint(base, url, app, req, res, loader);
-      }
-
       if (decodedUrl.startsWith(DATA_ASSET_BASE_PATH)) {
         return await handleDataRequest(url, app, res);
       }
 
-      if (decodedUrl.endsWith('/') || decodedUrl.endsWith('.html')) {
+      if (app.nodes.pages.test(decodedUrl)) {
         url.pathname = url.pathname.replace('/index.html', '/');
         return await handlePageRequest(url, app, req, res);
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+      if (app.nodes.endpoints.test(decodedUrl)) {
+        return await handleEndpoint(base, url, app, req, res, loader);
+      }
     } catch (error) {
       handleDevServerError(app, req, res, error);
       return;
