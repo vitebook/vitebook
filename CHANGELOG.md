@@ -1,3 +1,14 @@
+# [0.202.0](https://github.com/vitebook/vitebook/compare/v0.201.6...v0.202.0) (2022-08-31)
+
+### Bug Fixes
+
+- allow endpoints to exist outside api dir ([87ab344](https://github.com/vitebook/vitebook/commit/87ab344b470201ddb782644ed9bf0e7d0bad07c0))
+- avoid infinite fetch recursion ([1871e2a](https://github.com/vitebook/vitebook/commit/1871e2a0219dbfeb18c53b29a48bea1f542e86ea))
+
+### Features
+
+- refactor router and client entries ([e12574e](https://github.com/vitebook/vitebook/commit/e12574e241601ed40f123bf9b047042ce91ea0b3))
+
 ## [0.201.6](https://github.com/vitebook/vitebook/compare/v0.201.5...v0.201.6) (2022-08-30)
 
 ### Bug Fixes

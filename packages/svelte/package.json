@@ -1,6 +1,6 @@
 {
   "name": "@vitebook/svelte",
-  "version": "0.201.6",
+  "version": "0.202.0",
   "type": "module",
   "types": "index.d.ts",
   "sideEffects": false,
@@ -49,7 +49,7 @@
   },
   "peerDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.0",
-    "vitebook": "0.201.6",
+    "vitebook": "0.202.0",
     "svelte": "^3.40.0"
   },
   "devDependencies": {
