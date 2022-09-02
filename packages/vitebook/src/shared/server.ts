@@ -99,6 +99,9 @@ export type MaybeServerLoadedOutput<Data = ServerLoadedData> =
   | null
   | ServerLoadedOutput<Data>;
 
-export type ServerLoader<Data = ServerLoadedData> = (
-  input: ServerLoaderInput,
+export type ServerLoader<
+  Params extends ServerLoaderParams = ServerLoaderParams,
+  Data extends ServerLoadedData = ServerLoadedData,
+> = (
+  input: ServerLoaderInput<Params>,
 ) => MaybeServerLoadedOutput<Data> | Promise<MaybeServerLoadedOutput<Data>>;

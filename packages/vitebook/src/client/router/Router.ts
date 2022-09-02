@@ -20,11 +20,6 @@ export type Router = {
    */
   readonly url: URL;
   /**
-   * Manager used to handle scrolling-related tasks. A manager doesn't exist by default and needs
-   * to be added via `addScrollManager(...)`
-   */
-  readonly scroll: ScrollDelegate;
-  /**
    * Whether the router is disabled. Disabling the router means the browser will handle all
    * navigation and calling `goto` will be a no-op.
    *
@@ -64,6 +59,20 @@ export type Router = {
    * The currently loaded route.
    */
   readonly currentRoute: LoadedRoute | null;
+  /**
+   * Delegate used to handle scroll-related tasks. The default delegate simply saves scroll
+   * positions for pages during certain navigation events. You can set a more complex scroll
+   * delegate like so:
+   *
+   * ```ts
+   * import { createComplexScrollDelegate } from 'vitebook';
+   *
+   * export function configureApp({ router }) {
+   *  router.setScrollDelegate(createComplexScrollDelegate());
+   * }
+   * ```
+   */
+  readonly scroll: ScrollDelegate;
   /**
    * Start the router and begin listening for link clicks we can intercept them and handle SPA
    * navigation.
@@ -137,7 +146,7 @@ export type Router = {
    */
   prefetch(pathnameOrURL: string | URL): Promise<void>;
   /**
-   * Set a new target for delegating scroll tasks to.
+   * Set a new delegate for handling scroll-related tasks.
    */
   setScrollDelegate<T extends ScrollDelegate>(
     manager: T | ScrollDelegateFactory<T>,
