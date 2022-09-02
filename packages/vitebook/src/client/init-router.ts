@@ -278,16 +278,7 @@ export async function loadData(
 }
 
 function getDataFromScript(id: string) {
-  const dataScript = document.getElementById('__VBK_DATA__');
-
-  try {
-    const content = JSON.parse(dataScript!.textContent!);
-    return content[id] ?? {};
-  } catch (e) {
-    // no-op
-  }
-
-  return {};
+  return window['__VBK_DATA__']?.[id] ?? {};
 }
 
 // Used in production to hash data id.

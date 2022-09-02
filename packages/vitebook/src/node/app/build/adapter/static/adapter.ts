@@ -15,7 +15,7 @@ export function createStaticBuildAdapter(
 
     const trailingSlash = options.trailingSlash ?? true;
     const trailingSlashTag = !trailingSlash
-      ? `<script>window.__VBK_TRAILING_SLASH__ = false;</script>`
+      ? `<script>__VBK_TRAILING_SLASH__ = false;</script>`
       : '';
 
     return {
@@ -54,8 +54,12 @@ export function createStaticBuildAdapter(
           redirectsTable[redirect.from] = redirect.to;
         }
 
-        const serializedRedirectsTable = JSON.stringify(redirectsTable);
-        redirectsScriptTag = `<script id="__VBK_REDIRECTS_MAP__">window.__VBK_REDIRECTS_MAP__ = ${serializedRedirectsTable};</script>`;
+        // Embedded as a string and `JSON.parsed` from the client because it's faster than
+        // embedding as a JS object literal.
+        const serializedRedirectsTable = JSON.stringify(
+          JSON.stringify(redirectsTable),
+        );
+        redirectsScriptTag = `<script>__VBK_REDIRECTS_MAP__ = JSON.parse(${serializedRedirectsTable});</script>`;
 
         // ---------------------------------------------------------------------------------------
         // Data
@@ -72,8 +76,10 @@ export function createStaticBuildAdapter(
           dataTable[data.idHash] = data.contentHash;
         }
 
-        const serializedDataTable = JSON.stringify(dataTable);
-        const dataHashScriptTag = `<script id="__VBK_DATA_HASH_MAP__">window.__VBK_DATA_HASH_MAP__ = ${serializedDataTable};</script>`;
+        // Embedded as a string and `JSON.parsed` from the client because it's faster than
+        // embedding as a JS object literal.
+        const serializedDataTable = JSON.stringify(JSON.stringify(dataTable));
+        const dataHashScriptTag = `<script>__VBK_DATA_HASH_MAP__ = JSON.parse(${serializedDataTable});</script>`;
 
         // ---------------------------------------------------------------------------------------
         // HTML Pages

@@ -30,8 +30,8 @@ export function createDataScriptTag(map: ServerLoadedDataMap) {
   }
 
   return [
-    '<script id="__VBK_DATA__" type="application/json">',
-    JSON.stringify(table),
+    '<script>',
+    `__VBK_DATA__ = JSON.parse(${JSON.stringify(JSON.stringify(table))});`,
     '</script>',
   ].join('');
 }
