@@ -2,13 +2,7 @@
 
 [![package-badge]][package]
 
-> 🚨&nbsp;&nbsp;Vitebook is still in early stages of development, so this means you can expect bugs
-> and certain [features to be missing](#missing-features). As much as we'll try not to break
-> existing API's, occasionally it _might_ happen.
-
-## Docs
-
-See the [docs](./docs) directory.
+WIP.
 
 ## License
 
