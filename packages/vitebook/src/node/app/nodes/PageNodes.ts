@@ -1,9 +1,11 @@
+import { getFrontmatter } from 'node/markdoc';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { compareRoutes } from 'router';
+import type { ServerPage } from 'server/types';
+import { slash } from 'shared/utils/url';
 
-import { compareRoutes, type ServerPage, slash } from '../../../shared';
 import type { App } from '../App';
-import { getFrontmatter } from '../markdoc';
 import { FileNodes, type FileNodesCallbacks } from './FileNodes';
 
 const MD_FILE_RE = /\.md($|\/)/;
@@ -28,7 +30,8 @@ export class PageNodes extends FileNodes<ServerPage> {
     const ext = path.posix.extname(rootPath);
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const layoutName = await this.getLayoutName(filePath, fileContent);
-    const hasLoader = this.hasLoader(fileContent);
+    const hasStaticLoader = this.hasStaticLoader(fileContent);
+    const hasServerLoader = this.hasServerLoader(fileContent);
     const route = this.resolveRoute(filePath);
 
     const page: ServerPage = {
@@ -39,7 +42,11 @@ export class PageNodes extends FileNodes<ServerPage> {
       route,
       layouts: [],
       layoutName,
-      hasLoader,
+      get hasAnyLoader() {
+        return hasStaticLoader || hasServerLoader;
+      },
+      hasStaticLoader,
+      hasServerLoader,
       context: {},
     };
 

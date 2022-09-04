@@ -1,19 +1,21 @@
-export * from '../shared';
-export * from './app/alias';
+/// <reference types="node" />
+
 export * from './app/App';
-export type { BuildBundles, BuildData } from './app/build';
+export * from './app/config';
+export * from './app/nodes';
+export type { BuildBundles, BuildData } from './build';
 export type {
   BuildAdapter,
   BuildAdapterFactory,
   BuildAdapterUtils,
-} from './app/build/adapter';
+} from './build/adapter';
 export {
   type AutoBuildAdapterConfig,
   createAutoBuildAdapter,
-} from './app/build/adapter';
-export type { StaticBuildAdapterConfig } from './app/build/adapter/static/adapter';
-export type { VercelBuildAdapterConfig } from './app/build/adapter/vercel/adapter';
-export * from './app/config';
+} from './build/adapter';
+export type { StaticBuildAdapterConfig } from './build/adapter/static/adapter';
+export type { VercelBuildAdapterConfig } from './build/adapter/vercel/adapter';
+export * from './http';
 export type {
   HighlightCodeBlock,
   MarkdocAstTransformer,
@@ -26,16 +28,16 @@ export type {
   MarkdocTreeWalkStuff,
   ParseMarkdownConfig,
   RenderMarkdocConfig,
-} from './app/markdoc';
-export { renderMarkdocToHTML } from './app/markdoc';
-export * from './app/nodes';
-export * from './app/plugins/Plugin';
+} from './markdoc';
+export { renderMarkdocToHTML } from './markdoc';
+export * from './utils';
+export * from './vite/alias';
+export * from './vite/Plugin';
 export {
   vitebookPlugin as default,
   vitebookPlugin as vitebook,
   type VitebookPluginConfig,
-} from './app/plugins/vitebook-plugin';
-export * from './utils';
+} from './vite/vitebook-plugin';
 export type {
   Config as MarkdocConfig,
   Node as MarkdocNode,

@@ -1,8 +1,8 @@
+import { createAutoBuildAdapter } from 'node/build/adapter';
+import { normalizePath, resolveRelativePath } from 'node/utils';
 import path from 'node:path';
+import { isArray } from 'shared/utils/unit';
 
-import { isArray } from '../../../shared';
-import { normalizePath, resolveRelativePath } from '../../utils';
-import { createAutoBuildAdapter } from '../build/adapter';
 import type { ResolvedBuildConfig } from '.';
 import type { AppConfig, ResolvedAppConfig } from './AppConfig';
 import type { ResolvedClientConfig } from './ClientConfig';
@@ -15,7 +15,7 @@ export function resolveAppConfig(
   {
     build = {},
     dirs = {},
-    isDebug = !!process.env.DEBUG,
+    debug: isDebug = !!process.env.DEBUG,
     entry = { client: '', server: '' },
     client = {},
     routes = {},
@@ -128,6 +128,6 @@ export function resolveAppConfig(
     sitemap: __sitemap,
     isBuild: false,
     isSSR: false,
-    isDebug,
+    debug: isDebug,
   };
 }

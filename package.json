@@ -7,17 +7,14 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "node .scripts/run-build.js",
-    "build:all": "pnpm -F \"./packages/**\" build",
+    "build": "pnpm -F \"./packages/**\" build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "docs:dev": "pnpm -F docs dev",
     "docs:build": "pnpm -F docs build",
     "docs:preview": "pnpm -F docs preview",
-    "example": "node .scripts/run-example.js",
     "preinstall": "node .scripts/check-for-pnpm.js && node .scripts/check-node-version.js",
     "prepare": "husky install",
     "release": "node .scripts/release.js",
-    "sandbox": "node .scripts/run-sandbox.js",
     "test:node-esm": "node .scripts/test-node-esm.js"
   },
   "lint-staged": {
@@ -27,20 +24,17 @@
   "devDependencies": {
     "@commitlint/cli": "^13.2.1",
     "@commitlint/config-conventional": "^13.2.0",
-    "@types/node": "^16.11.6",
+    "@types/node": "^16.0.0",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
-    "chokidar": "^3.5.2",
     "conventional-changelog-cli": "^2.1.1",
     "enquirer": "^2.3.6",
-    "esbuild": "^0.15.5",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "execa": "^5.1.1",
-    "fs-extra": "^10.0.0",
     "globby": "^13.1.1",
     "husky": "^7.0.4",
     "kleur": "^4.1.4",
@@ -48,11 +42,8 @@
     "minimist": "^1.2.5",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.4.1",
-    "prompts": "^2.4.2",
     "rimraf": "^3.0.2",
     "semver": "^7.3.5",
-    "svelte": "^3.44.1",
-    "svelte2tsx": "^0.5.9",
     "typescript": "^4.7.4"
   },
   "engines": {

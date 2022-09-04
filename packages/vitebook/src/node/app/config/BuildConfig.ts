@@ -1,7 +1,7 @@
 import type {
   AutoBuildAdapterConfig,
   BuildAdapterFactory,
-} from '../build/adapter';
+} from 'node/build/adapter';
 
 export type ResolvedBuildConfig = {
   adapter: BuildAdapterFactory | AutoBuildAdapterConfig;

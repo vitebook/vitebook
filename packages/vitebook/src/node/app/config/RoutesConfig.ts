@@ -1,5 +1,5 @@
-import type { RouteMatcherConfig } from '../../../shared';
-import type { BuildData } from '../build';
+import type { BuildData } from 'node/build';
+import type { RouteMatcherConfig } from 'router';
 
 export type ResolvedRoutesConfig = {
   /**

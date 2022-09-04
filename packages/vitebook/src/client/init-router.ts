@@ -1,30 +1,30 @@
-import app from ':virtual/vitebook/app';
-
-import {
-  type ClientLayout,
-  type ClientLayoutModule,
-  type ClientLoadedData,
-  type ClientPage,
-  type ClientPageModule,
-  DATA_ASSET_BASE_PATH,
-  isBoolean,
-  isLoadedMarkdownPage,
-  isString,
-  type LoadedClientLayout,
-  type LoadedClientMarkdownPage,
-  type LoadedClientPage,
-  resolveDataAssetID,
-  type ServerContext,
-} from '../shared';
-import type { Reactive } from './reactivity';
-import { createRouter } from './router/create-router';
-import { createMemoryHistory } from './router/history/memory';
-import type { Router } from './router/Router';
 import type {
   LoadedRoute,
   RouteDeclaration,
   RouteNavigation,
-} from './router/types';
+  Router,
+} from 'router';
+import { createMemoryHistory, createRouter } from 'router';
+import type { Reactive } from 'router/reactivity';
+import type { ServerContext, StaticLoadedData } from 'server/types';
+import {
+  resolveStaticDataAssetID,
+  STATIC_DATA_ASSET_BASE_PATH,
+} from 'shared/data';
+import { isBoolean, isString } from 'shared/utils/unit';
+
+import app from ':virtual/vitebook/app';
+
+import type {
+  ClientLayout,
+  ClientLayoutModule,
+  ClientPage,
+  ClientPageModule,
+  LoadedClientLayout,
+  LoadedClientMarkdownPage,
+  LoadedClientPage,
+} from './types';
+import { isLoadedMarkdownPage } from './utils';
 
 export type RouterInitOptions = {
   $route: Reactive<LoadedRoute>;
@@ -162,7 +162,7 @@ export async function loadPage(
   const prefetchURL = isBoolean(prefetch) ? undefined : prefetch;
 
   let pageModule: ClientPageModule;
-  let pageData: ClientLoadedData;
+  let pageStaticData: StaticLoadedData;
   let layouts: LoadedClientLayout[];
 
   /**
@@ -172,10 +172,16 @@ export async function loadPage(
    */
   if (import.meta.env.DEV) {
     pageModule = await clientPage.loader();
-    pageData = await loadData(router, pageModule, undefined, prefetchURL);
 
-    if (import.meta.env.DEV && isString(pageData.__redirect__)) {
-      return pageData.__redirect__;
+    pageStaticData = await loadStaticData(
+      router,
+      pageModule,
+      undefined,
+      prefetchURL,
+    );
+
+    if (import.meta.env.DEV && isString(pageStaticData.__redirect__)) {
+      return pageStaticData.__redirect__;
     }
 
     layouts = await loadPageLayouts(
@@ -188,7 +194,12 @@ export async function loadPage(
     [pageModule, layouts] = await Promise.all([
       (async () => {
         const mod = await clientPage.loader();
-        pageData = await loadData(router, mod, undefined, prefetchURL);
+        pageStaticData = await loadStaticData(
+          router,
+          mod,
+          undefined,
+          prefetchURL,
+        );
         return mod;
       })(),
       loadPageLayouts(router, clientPage, clientLayouts, prefetchURL),
@@ -200,7 +211,7 @@ export async function loadPage(
     $$loaded: true,
     module: pageModule,
     layouts,
-    data: pageData!,
+    staticData: pageStaticData!,
     get default() {
       return pageModule.default;
     },
@@ -230,7 +241,7 @@ export function loadPageLayouts(
         $$loaded: true as const,
         ...layout,
         module: mod,
-        data: await loadData(router, mod, index, prefetchURL),
+        staticData: await loadStaticData(router, mod, index, prefetchURL),
         get default() {
           return mod.default;
         },
@@ -239,18 +250,18 @@ export function loadPageLayouts(
   );
 }
 
-export async function loadData(
+export async function loadStaticData(
   router: Router,
   module: ClientPageModule | ClientLayoutModule,
   layoutIndex?: number,
   prefetchURL?: URL,
-): Promise<ClientLoadedData> {
+): Promise<StaticLoadedData> {
   if (!module.loader) return {};
 
   let pathname = prefetchURL?.pathname ?? router.navigation.get()!.to.pathname;
   if (!pathname.endsWith('/')) pathname += '/';
 
-  const id = resolveDataAssetID(decodeURI(pathname), layoutIndex);
+  const id = resolveStaticDataAssetID(decodeURI(pathname), layoutIndex);
 
   const hashId =
     import.meta.env.PROD && !import.meta.env.SSR
@@ -265,8 +276,10 @@ export async function loadData(
 
   try {
     const json = !router.started
-      ? getDataFromScript(hashId)
-      : await (await fetch(`${DATA_ASSET_BASE_PATH}/${hashId}.json`)).json();
+      ? getStaticDataFromScript(hashId)
+      : await (
+          await fetch(`${STATIC_DATA_ASSET_BASE_PATH}/${hashId}.json`)
+        ).json();
 
     return json;
   } catch (e) {
@@ -277,8 +290,8 @@ export async function loadData(
   return {};
 }
 
-function getDataFromScript(id: string) {
-  return window['__VBK_DATA__']?.[id] ?? {};
+function getStaticDataFromScript(id: string) {
+  return window['__VBK_STATIC_DATA__']?.[id] ?? {};
 }
 
 // Used in production to hash data id.

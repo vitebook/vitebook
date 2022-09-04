@@ -1,8 +1,8 @@
+import { normalizePath } from 'node/utils';
 import fs from 'node:fs';
 import path from 'node:path';
 import { searchForWorkspaceRoot } from 'vite';
 
-import { normalizePath } from '../../utils';
 import type { AppDirectories, Directory } from '../App';
 import type { ResolvedAppConfig } from '../config';
 

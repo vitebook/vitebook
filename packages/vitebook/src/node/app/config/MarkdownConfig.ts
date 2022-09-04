@@ -1,9 +1,8 @@
 import { type Config as MarkdocConfig } from '@markdoc/markdoc';
 import type { FilterPattern } from '@rollup/pluginutils';
 import { type Options as HastToHtmlConfig } from 'hast-util-to-html';
+import type { HighlightCodeBlock, ParseMarkdownConfig } from 'node/markdoc';
 import type { HighlighterOptions as ShikiConfig } from 'shiki';
-
-import type { HighlightCodeBlock, ParseMarkdownConfig } from '../markdoc';
 
 export type ResolvedMarkdownConfig = {
   /**

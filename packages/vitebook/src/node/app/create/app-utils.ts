@@ -1,4 +1,4 @@
-import { esmRequire } from '../../utils/module';
+import { esmRequire } from 'node/utils/module';
 
 export const getAppVersion = (): string => {
   return esmRequire()('vitebook/package.json').version;

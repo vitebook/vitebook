@@ -1,4 +1,6 @@
-import { compareRoutes, type ServerEndpoint } from '../../../shared';
+import { compareRoutes } from 'router';
+import type { ServerEndpoint } from 'server/types';
+
 import { type App } from '../App';
 import { FileNodes, type FileNodesCallbacks } from './FileNodes';
 

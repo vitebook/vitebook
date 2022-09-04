@@ -1,3 +1,5 @@
+import { type MarkdocSchema } from 'node/markdoc';
+import { type logger } from 'node/utils';
 import type {
   ConfigEnv as ViteConfigEnv,
   ResolvedConfig as ViteResolvedConfig,
@@ -5,10 +7,8 @@ import type {
   ViteDevServer,
 } from 'vite';
 
-import type { logger } from '../utils';
 import type { ResolvedAppConfig } from './config/AppConfig';
 import type { DisposalBin } from './create/DisposalBin';
-import type { MarkdocSchema } from './markdoc';
 import type { AppNodes } from './nodes';
 
 export type AppDetails = {

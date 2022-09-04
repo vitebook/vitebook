@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/vitebook/vitebook.git",
-    "directory": "packages/core"
+    "directory": "packages/vitebook"
   },
   "bugs": {
     "url": "https://github.com/vitebook/vitebook/issues"
@@ -23,33 +23,25 @@
     "node.d.ts"
   ],
   "exports": {
-    ".": "./dist/client/index.js",
-    "./*": "./dist/client/*",
-    "./node": "./dist/node/index.js",
-    "./http": "./dist/http.js",
-    "./http-polyfills": "./dist/http-polyfills.js",
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./dist/client.js"
+    },
+    "./node": {
+      "types": "./node.d.ts",
+      "default": "./dist/node.js"
+    },
+    "./http": {
+      "types": "./http.d.ts",
+      "default": "./dist/http.js"
+    },
     "./http-vercel": "./dist/http-vercel.js",
+    "./http-pollyfills": "./dist/http-polyfills.js",
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "run-s clean build:*",
-    "build:client": "node ../../.scripts/build.js --entry=src/client/**/*.ts,src/shared/**/*.ts --outbase=src --outdir=dist",
-    "build:node": "node ../../.scripts/build.js --platform=node --bundle --split",
-    "build:http": "node ../../.scripts/build.js --entry=src/node/app/http/index.ts --platform=node --bundle --outfile=dist/http.js",
-    "build:http-polyfills": "node ../../.scripts/build.js --entry=src/node/app/http/polyfills.ts --platform=node --bundle --outfile=dist/http-polyfills.js",
-    "build:http-vercel": "node ../../.scripts/build.js --entry=src/node/app/http/vercel.ts --platform=node --bundle --outfile=dist/http-vercel.js",
-    "build:types": "tsc -p tsconfig.json && run-p types:* && rimraf dist/*.d.ts",
-    "types:client": "api-extractor run -c types.client.json",
-    "types:node": "api-extractor run -c types.node.json",
-    "types:http": "api-extractor run -c types.http.json",
-    "clean": "rimraf dist dist-*",
-    "dev": "pnpm clean && run-p watch:*",
-    "watch:client": "pnpm run build:client -w",
-    "watch:node": "pnpm run build:node -w",
-    "watch:http": "pnpm run build:http -w",
-    "watch:http-polyfills": "pnpm run build:http-polyfills -w",
-    "watch:http-vercel": "pnpm run build:http-vercel -w",
-    "watch:types": "node ../../.scripts/run-on-change.js --glob=\"src/**/*.ts\" --script=build:types"
+    "build": "rimraf dist && tsup",
+    "dev": "pnpm run build --watch"
   },
   "dependencies": {
     "@markdoc/markdoc": "^0.1.2",
@@ -83,14 +75,12 @@
     }
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.20.0",
+    "@types/node": "^16.0.0",
     "@wooorm/starry-night": "^1.0.0",
-    "chokidar": "^3.5.2",
     "kleur": "^4.1.4",
-    "lit": "^2.2.4",
-    "rimraf": "^3.0.2",
     "rollup": "^2.58.0",
     "shiki": "^0.10.1",
+    "tsup": "^6.2.3",
     "typescript": "^4.7.4",
     "vite": "^3.0.0"
   },
@@ -102,14 +92,18 @@
   },
   "keywords": [
     "alternative",
+    "edge",
     "esm",
     "fast",
     "lightweight",
     "markdoc",
     "markdown",
     "modern",
+    "nextjs",
     "ssg",
+    "ssr",
     "vite",
-    "vitebook"
+    "vitebook",
+    "vercel"
   ]
 }

@@ -1,6 +1,5 @@
 import LRUCache from 'lru-cache';
-
-import { slashedSplit } from '../../shared';
+import { slashedSplit } from 'shared/utils/url';
 
 const orderedPageTokenRE = /^\[(\d)\]/;
 

@@ -102,7 +102,7 @@ $: pnpm build client
 $: pnpm run build client --watch
 
 # Build all packages in the `packages/` directory.
-$: pnpm build:all
+$: pnpm build
 
 # Run a script located inside an example in the `examples/` directory.
 $: pnpm example
@@ -131,7 +131,7 @@ can also handle symlinking the `@vitebook/*` packages.
 
 ```bash
 # 1. - make sure all local packages are built.
-$: yarn build:all
+$: yarn build
 # 2. - scaffold an application for local development.
 $: yarn create vitebook sandbox/svelte --template svelte --theme default --link ../../packages
 # 3.

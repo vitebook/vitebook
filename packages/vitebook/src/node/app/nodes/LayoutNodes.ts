@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type { ServerLayout } from 'server/types';
+import { isString } from 'shared/utils/unit';
 
-import { isString, type ServerLayout } from '../../../shared';
 import { type App } from '../App';
 import { FileNodes, type FileNodesCallbacks } from './FileNodes';
 
@@ -27,7 +28,8 @@ export class LayoutNodes extends FileNodes<ServerLayout> {
     );
 
     const fileContent = fs.readFileSync(filePath, { encoding: 'utf-8' });
-    const hasLoader = this.hasLoader(fileContent);
+    const hasStaticLoader = this.hasStaticLoader(fileContent);
+    const hasServerLoader = this.hasServerLoader(fileContent);
     const reset = rootPath.includes(`.reset${path.posix.extname(rootPath)}`);
 
     const layout: ServerLayout = {
@@ -36,7 +38,11 @@ export class LayoutNodes extends FileNodes<ServerLayout> {
       filePath,
       rootPath,
       owningDir,
-      hasLoader,
+      get hasAnyLoader() {
+        return hasStaticLoader || hasServerLoader;
+      },
+      hasStaticLoader,
+      hasServerLoader,
       reset,
     };
 

@@ -59,26 +59,3 @@ export const isLinkExternal = (link: string, base = '/'): boolean => {
 
   return false;
 };
-
-/**
- * Determine if a link is a `mailto` address or not.
- */
-export const isLinkMailto = (link: string): boolean => /^mailto:/.test(link);
-
-/**
- * Determine if a link is a `tel` address or not
- */
-export const isLinkTel = (link: string): boolean => /^tel:/.test(link);
-
-export const HASH_RE = /#.*$/s;
-export const QUERY_RE = /\?.*$/s;
-
-export const cleanUrl = (url: string): string =>
-  url.replace(HASH_RE, '').replace(QUERY_RE, '');
-
-export const resolveRoutePathFromUrl = (url: string, baseUrl = '/'): string =>
-  url
-    // Remove url origin
-    .replace(/^(https?:)?\/\/[^/]*/, '')
-    // Remove site base
-    .replace(new RegExp(`^${baseUrl}`), '/');

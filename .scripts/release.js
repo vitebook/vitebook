@@ -125,7 +125,7 @@ async function main() {
   // build all packages
   step('Building all packages...');
   if (!skipBuild && !isDryRun) {
-    await run('npm', ['run', 'build:all']);
+    await run('npm', ['run', 'build']);
   } else {
     console.log(`(skipped)`);
   }

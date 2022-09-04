@@ -2,9 +2,6 @@ dist/
 dist-*/
 
 packages/*/temp
-packages/*/index.d.ts
-packages/*/node.d.ts
-packages/*/http.d.ts
 packages/*/types/
 
 sandbox/*

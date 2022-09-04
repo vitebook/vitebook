@@ -39,7 +39,7 @@ export function getRawTSConfig(compilerOptions = {}) {
       forceConsistentCasingInFileNames: true,
       lib: ['dom', 'dom.iterable', 'esnext'],
       module: 'esnext',
-      moduleResolution: 'node',
+      moduleResolution: 'nodenext',
       newLine: 'lf',
       noImplicitAny: false,
       noImplicitReturns: true,

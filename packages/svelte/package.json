@@ -49,16 +49,15 @@
   },
   "peerDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.0",
-    "vitebook": "0.202.0",
-    "svelte": "^3.40.0"
+    "svelte": "^3.40.0",
+    "vitebook": "0.202.0"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.20.0",
-    "vitebook": "workspace:*",
-    "rimraf": "^3.0.2",
+    "@types/node": "^16.0.0",
     "svelte": "^3.40.0",
     "typescript": "^4.7.4",
-    "vite": "^3.0.0"
+    "vite": "^3.0.0",
+    "vitebook": "workspace:*"
   },
   "engines": {
     "node": ">=16"
@@ -68,15 +67,19 @@
   },
   "keywords": [
     "alternative",
+    "edge",
     "esm",
     "fast",
     "lightweight",
     "markdoc",
     "markdown",
     "modern",
+    "nextjs",
     "ssg",
+    "ssr",
     "svelte",
     "vite",
-    "vitebook"
+    "vitebook",
+    "vercel"
   ]
 }

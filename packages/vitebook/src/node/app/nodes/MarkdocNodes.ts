@@ -1,7 +1,9 @@
 import kleur from 'kleur';
 import path from 'node:path';
+import type { ServerFile } from 'server/types';
+import { toPascalCase } from 'shared/utils/string';
+import { isString } from 'shared/utils/unit';
 
-import { isString, type ServerFile, toPascalCase } from '../../../shared';
 import { type App } from '../App';
 import { FileNodes, type FileNodesCallbacks } from './FileNodes';
 

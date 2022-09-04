@@ -1,26 +1,26 @@
 import kleur from 'kleur';
+import { MarkdocSchema } from 'node/markdoc/MarkdocSchema';
+import { logger, normalizePath, trimExt } from 'node/utils';
+import type { VitebookPlugin } from 'node/vite/Plugin';
+import {
+  type ServerEndpoint,
+  type ServerLayout,
+  type ServerPage,
+} from 'server/types';
+import { installURLPattern } from 'shared/polyfills';
 import {
   type ConfigEnv,
   mergeConfig,
   type UserConfig as ViteUserConfig,
 } from 'vite';
 
-import {
-  installURLPattern,
-  type ServerEndpoint,
-  type ServerLayout,
-  type ServerPage,
-} from '../../../shared';
-import { logger, normalizePath, trimExt } from '../../utils';
 import type { App, AppDetails, AppFactory } from '../App';
 import {
   type AppConfig,
   resolveAppConfig,
   type ResolvedAppConfig,
 } from '../config';
-import { MarkdocSchema } from '../markdoc/MarkdocSchema';
 import { AppNodes } from '../nodes';
-import type { VitebookPlugin } from '../plugins/Plugin';
 import { createAppDirectories } from './app-dirs';
 import { getAppVersion } from './app-utils';
 import { DisposalBin } from './DisposalBin';

@@ -1,13 +1,16 @@
 import { createFilter } from '@rollup/pluginutils';
 import { globbySync } from 'globby';
+import { normalizePath } from 'node/utils';
+import type { ServerFile } from 'server/types';
 
-import { type ServerFile } from '../../../shared';
-import { normalizePath } from '../../utils';
 import type { App } from '../App';
 import { resolveRouteFromFilePath } from './resolve-route';
 
-const HAS_LOADER_RE =
-  /(export function loader|export async function loader|export const loader)/;
+const STATIC_LOADER_RE =
+  /(export function staticLoader|export async function staticLoader|export const staticLoader)/;
+
+const SERVER_LOADER_RE =
+  /(export function serverLoader|export async function serverLoader|export const serverLoader)/;
 
 export type FileNodesOptions<T> = FileNodesCallbacks<T> & {
   include: string[];
@@ -96,8 +99,12 @@ export abstract class FileNodes<T extends ServerFile> implements Iterable<T> {
     );
   }
 
-  hasLoader(fileContent: string) {
-    return HAS_LOADER_RE.test(fileContent);
+  hasStaticLoader(fileContent: string) {
+    return STATIC_LOADER_RE.test(fileContent);
+  }
+
+  hasServerLoader(fileContent: string) {
+    return SERVER_LOADER_RE.test(fileContent);
   }
 
   normalizePath(filePath: string) {
