@@ -4,35 +4,29 @@ import { normalizePath } from 'node/utils';
 import type { ServerFile } from 'server/types';
 
 import type { App } from '../App';
-import { resolveRouteFromFilePath } from './resolve-route';
+import { resolveRouteFromFilePath } from './resolve-file-route';
 
-const STATIC_LOADER_RE =
-  /(export function staticLoader|export async function staticLoader|export const staticLoader)/;
-
-const SERVER_LOADER_RE =
-  /(export function serverLoader|export async function serverLoader|export const serverLoader)/;
-
-export type FileNodesOptions<T> = FileNodesCallbacks<T> & {
+export type FilesOptions<T> = FilesCallbacks<T> & {
   include: string[];
   exclude?: (string | RegExp)[];
 };
 
-export type FileNodesCallbacks<T> = {
+export type FilesCallbacks<T> = {
   onAdd?: (node: T) => void;
   onRemove?: (index: number) => void;
 };
 
-export abstract class FileNodes<T extends ServerFile> implements Iterable<T> {
+export abstract class Files<T extends ServerFile> implements Iterable<T> {
   protected _app!: App;
-  protected _nodes: T[] = [];
-  protected _options!: FileNodesOptions<T>;
+  protected _files: T[] = [];
+  protected _options!: FilesOptions<T>;
   protected _filter!: (id: string) => boolean;
 
   get size() {
-    return this._nodes.length;
+    return this._files.length;
   }
 
-  async init(app: App, options: FileNodesOptions<T>) {
+  async init(app: App, options: FilesOptions<T>) {
     this._app = app;
     this._options = options;
     this._filter = createFilter(options.include, options.exclude);
@@ -64,23 +58,23 @@ export abstract class FileNodes<T extends ServerFile> implements Iterable<T> {
     filePath = this.normalizePath(filePath);
     if (!this.has(filePath)) return -1;
     const index = this.findIndex(filePath);
-    this._nodes.splice(index, 1);
+    this._files.splice(index, 1);
     this._options.onRemove?.(index);
     return index;
   }
 
   getByIndex(index: number) {
-    return this._nodes[index];
+    return this._files[index];
   }
 
   find(filePath: string) {
     filePath = this.normalizePath(filePath);
-    return this._nodes.find((node) => node.filePath === filePath);
+    return this._files.find((node) => node.filePath === filePath);
   }
 
   findIndex(filePath: string) {
     const node = this.find(filePath);
-    return this._nodes.findIndex((n) => n === node);
+    return this._files.findIndex((n) => n === node);
   }
 
   has(filePath: string) {
@@ -88,7 +82,7 @@ export abstract class FileNodes<T extends ServerFile> implements Iterable<T> {
   }
 
   clear() {
-    this._nodes = [];
+    this._files = [];
   }
 
   is(filePath: string) {
@@ -97,14 +91,6 @@ export abstract class FileNodes<T extends ServerFile> implements Iterable<T> {
       this.has(filePath) ||
       (filePath.startsWith(this._app.dirs.app.path) && this._filter(filePath))
     );
-  }
-
-  hasStaticLoader(fileContent: string) {
-    return STATIC_LOADER_RE.test(fileContent);
-  }
-
-  hasServerLoader(fileContent: string) {
-    return SERVER_LOADER_RE.test(fileContent);
   }
 
   normalizePath(filePath: string) {
@@ -120,15 +106,15 @@ export abstract class FileNodes<T extends ServerFile> implements Iterable<T> {
   }
 
   toArray() {
-    return this._nodes;
+    return this._files;
   }
 
   [Symbol.iterator]() {
     let index = 0;
     return {
       next: () => {
-        if (index < this._nodes.length) {
-          return { value: this._nodes[index++], done: false };
+        if (index < this._files.length) {
+          return { value: this._files[index++], done: false };
         } else {
           return { done: true };
         }

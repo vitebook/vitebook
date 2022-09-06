@@ -51,7 +51,7 @@ export function createVercelBuildAdapter(
 
         $.copyDir(app.dirs.client.path, vercelDirs.static.path);
 
-        const redirects = Array.from(build.redirects.values()).map(
+        const redirects = Array.from(build.staticRedirects.values()).map(
           (redirect) => ({
             src: redirect.from.replace(/\/$/, '/?'),
             headers: {
@@ -89,12 +89,12 @@ export function createVercelBuildAdapter(
         ];
 
         const bundlingFunctionsSpinner = $.createSpinner();
-        const fnCount = $.color.underline(app.nodes.endpoints.size);
+        const fnCount = $.color.underline(app.files.endpoints.size);
         bundlingFunctionsSpinner.start(
           $.color.bold(`Bundling ${fnCount} functions...`),
         );
 
-        for (const endpoint of app.nodes.endpoints) {
+        for (const endpoint of app.files.endpoints) {
           const apiPath = app.dirs.app.relative(endpoint.rootPath);
           const apiDir = path.posix.dirname(apiPath);
           routes.push({
@@ -105,7 +105,7 @@ export function createVercelBuildAdapter(
 
         const serverChunks = bundles.server.chunks;
         await Promise.all(
-          Array.from(app.nodes.endpoints).map(async (endpoint) => {
+          Array.from(app.files.endpoints).map(async (endpoint) => {
             const chunk = serverChunks.find(
               (chunk) => chunk.facadeModuleId === endpoint.filePath,
             );
@@ -203,17 +203,13 @@ function resolveFunctionCode(
   methods: string[],
 ) {
   return [
-    "import { createHTTPRequestHandler } from 'vitebook/node';",
-    "import { installPolyfills } from 'vitebook/http-polyfills';",
+    "import { createEndpointHandler } from 'vitebook/vercel/fn.js';",
     '',
-    'export default createHTTPRequestHandler(',
+    'export default createEndpointHandler(',
     `  () => new URLPattern({ pathname: '${pattern}' }),`,
     `  () => import('${moduleId}'),`,
     '  {',
     `    methods: [${methods.map((method) => `'${method}'`).join(', ')}],`,
-    '    install: installPolyfills,',
-    '    getBase: (req) => `https://${req.headers.host}`,',
-    "    getClientAddress: (req) => req.headers['x-forwarded-for'],",
     '  }',
     ');',
     '',
@@ -222,8 +218,9 @@ function resolveFunctionCode(
 
 function resolveEdgeCode(pattern: string, moduleId: string, methods: string[]) {
   return [
-    "import { createEdgeRequestHandler } from 'vitebook/http-vercel';",
-    'export default createEdgeRequestHandler (',
+    "import { createEndpointHandler } from 'vitebook/vercel/edge.js';",
+    '',
+    'export default createEndpointHandler (',
     `  new URLPattern({ pathname: '${pattern}' }),`,
     `  () => import('${moduleId}'),`,
     '  {',

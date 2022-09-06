@@ -2,7 +2,7 @@
 
 export * from './app/App';
 export * from './app/config';
-export * from './app/nodes';
+export * from './app/files';
 export type { BuildBundles, BuildData } from './build';
 export type {
   BuildAdapter,

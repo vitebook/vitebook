@@ -1,9 +1,9 @@
-import type { ServerLayout, ServerPage } from 'server/types';
+import type { ServerLayoutFile, ServerPageFile } from 'server/types';
 import { prettyJsonStr, stripImportQuotesFromJson } from 'shared/utils/json';
 
 const STRIP_URL_PATTERN_QUOTES_RE = /"new URLPattern(.*?)"/g;
 
-export function loadPagesModule(pages: ServerPage[]) {
+export function loadPagesModule(pages: ServerPageFile[]) {
   return `export default ${stripImportQuotesFromJson(
     prettyJsonStr(
       pages.map((page) => ({
@@ -16,15 +16,13 @@ export function loadPagesModule(pages: ServerPage[]) {
         ext: page.ext,
         layoutName: page.layoutName,
         layouts: page.layouts,
-        context:
-          Object.keys(page.context).length > 0 ? page.context : undefined,
         loader: `() => import('${page.id}')`,
       })),
     ),
   )}`.replace(STRIP_URL_PATTERN_QUOTES_RE, 'new URLPattern$1');
 }
 
-export function loadLayoutsModule(layouts: ServerLayout[]) {
+export function loadLayoutsModule(layouts: ServerLayoutFile[]) {
   return `export default ${stripImportQuotesFromJson(
     prettyJsonStr(
       layouts.map((layout) => {

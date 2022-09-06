@@ -31,18 +31,22 @@ export class MemoryHistory implements History {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   pushState(data: any, _: string, url?: string | URL | null): void {
     if (!url) return;
     this.setLocation(isString(url) ? url : url.pathname);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   replaceState(state: any, _: string, url?: string | URL | null): void {
     if (!url) return;
     this._state = state;
     this.history.splice(this.position--, 1);
     this.setLocation(isString(url) ? url : url.pathname);
+  }
+
+  clearState() {
+    this.position = 0;
+    this.history = [];
+    this._state = {};
   }
 
   protected setLocation(location: string) {

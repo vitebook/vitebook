@@ -46,7 +46,6 @@ export function isBoolean(value: unknown): value is boolean {
 /**
  * Check if a value is an `array`.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isArray(value: unknown): value is any[] {
   return Array.isArray(value);
 }
@@ -62,7 +61,6 @@ export function isFunction(value: unknown): value is Function {
 /**
  * Check if a value is plain `object`.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isObject = <T extends Record<any, any> = Record<any, any>>(
   val: unknown,
 ): val is T => Object.prototype.toString.call(val) === '[object Object]';

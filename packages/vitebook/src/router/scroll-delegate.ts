@@ -180,7 +180,6 @@ export type ScrollDelegate = {
   /**
    * Expected to return the saved scroll position given the history state object.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getSavedPosition?(state: Record<string, any>): ScrollPosition;
   /**
    * Called when scroll positions should be persisted (i.e., local/session storage).

@@ -21,7 +21,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import ora from 'ora';
 import { normalizeURL } from 'router';
-import type { ServerPage } from 'server/types';
+import type { ServerPageFile } from 'server/types';
 import { STATIC_DATA_ASSET_BASE_PATH } from 'shared/data';
 import { escapeHTML } from 'shared/utils/html';
 import { isString } from 'shared/utils/unit';
@@ -275,7 +275,7 @@ export type BuildAdapterUtils = {
   resolveHTMLFilename(url: string | URL): string;
   resolveDataFilename(name: string): string;
   resolvePageChunks(
-    page: ServerPage,
+    page: ServerPageFile,
     modules?: Set<string>,
   ): {
     assets: string[];

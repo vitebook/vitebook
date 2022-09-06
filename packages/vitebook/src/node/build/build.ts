@@ -1,20 +1,21 @@
 import kleur from 'kleur';
 import type { App } from 'node/app/App';
 import { createAppEntries } from 'node/app/create/app-factory';
-import { callStaticLoaders, createStaticLoaderOutputMap } from 'node/vite/core';
+import { callStaticLoaders } from 'node/vite/core';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { OutputAsset, OutputBundle, OutputChunk } from 'rollup';
 import { cleanRoutePath, matchRouteInfo } from 'router';
-import { handleRequest } from 'server/http';
+import { createStaticLoaderDataMap } from 'server';
+import { createEndpointHandler } from 'server/http';
 import { installPolyfills } from 'server/polyfills';
-import {
-  type ServerEndpoint,
-  type ServerEntryModule,
-  type ServerPage,
-  type ServerRedirect,
-  type ServerRenderResult,
-  type StaticLoaderOutputMap,
+import type {
+  ServerEndpointFile,
+  ServerEntryModule,
+  ServerPageFile,
+  ServerRedirect,
+  ServerRenderResult,
+  StaticLoaderOutputMap,
 } from 'server/types';
 import { isFunction, isUndefined } from 'shared/utils/unit';
 import { type Manifest as ViteManifest } from 'vite';
@@ -26,7 +27,7 @@ export async function build(
   clientBundle: OutputBundle,
   serverBundle: OutputBundle,
 ): Promise<void> {
-  if (app.nodes.pages.size === 0) {
+  if (app.files.pages.size === 0) {
     console.log(kleur.bold(`❓ No pages were resolved`));
     return;
   }
@@ -36,7 +37,7 @@ export async function build(
   const ssrProtocol = app.vite.resolved!.server.https ? 'https' : 'http';
   const ssrOrigin = `${ssrProtocol}://ssr`;
 
-  const pages = app.nodes.pages.toArray();
+  const pages = app.files.pages.toArray();
   const entries = createAppEntries(app, { isSSR: true });
   const entryFilenames = Object.keys(entries);
   const viteManifestPath = app.dirs.client.resolve('vite-manifest.json');
@@ -73,9 +74,9 @@ export async function build(
     entries,
     links: new Map(),
     badLinks: new Map(),
-    staticData: new Map(),
-    redirects: new Map(),
     endpoints: new Map(),
+    staticData: new Map(),
+    staticRedirects: new Map(),
     staticLoaderOutput: new Map(),
     staticRenders: new Map(),
   };
@@ -88,7 +89,7 @@ export async function build(
 
   const adapter = await adapterFactory(app, bundles, build, $);
 
-  for (const endpoint of app.nodes.endpoints) {
+  for (const endpoint of app.files.endpoints) {
     build.endpoints.set(
       `/${path.dirname(app.dirs.app.relative(endpoint.rootPath))}/`,
       endpoint,
@@ -109,31 +110,32 @@ export async function build(
 
   const fetch = globalThis.fetch;
   globalThis.fetch = (input, init) => {
-    if (typeof input === 'string' && app.nodes.endpoints.test(input)) {
+    if (typeof input === 'string' && app.files.endpoints.test(input)) {
       const url = new URL(`${ssrOrigin}${input}`);
-      const match = matchRouteInfo(url, app.nodes.endpoints.toArray());
+      const match = matchRouteInfo(url, app.files.endpoints.toArray());
 
       if (!match) {
         return Promise.resolve(new Response('Not found', { status: 404 }));
       }
 
-      const endpoint = app.nodes.endpoints.getByIndex(match.index);
+      const endpoint = app.files.endpoints.getByIndex(match.index);
 
-      return handleRequest(
-        new Request(url, init),
-        match.route.pattern,
-        () => {
+      const handler = createEndpointHandler({
+        pattern: match.route.pattern,
+        getClientAddress: () => {
           throw new Error('Can not resolve `clientAddress` during SSR');
         },
-        () => import(resolveServerChunkPath(endpoint.filePath)),
-      );
+        loader: () => import(resolveServerChunkPath(endpoint.filePath)),
+      });
+
+      return handler(new Request(url, init));
     }
 
     return fetch(input, init);
   };
 
   // eslint-disable-next-line no-inner-declarations
-  async function loadStaticOutput(url: URL, page: ServerPage) {
+  async function loadStaticOutput(url: URL, page: ServerPageFile) {
     const pathname = $.normalizeURL(url).pathname;
 
     if (build.staticLoaderOutput.has(pathname)) {
@@ -146,14 +148,14 @@ export async function build(
       url,
       app,
       page,
-      (filePath) => import(resolveServerChunkPath(filePath)),
+      (filePath) => import(resolveServerChunkPath(filePath!)),
     );
 
     build.staticLoaderOutput.set(pathname, result);
 
     if (result.redirect) {
       const pathname = $.normalizeURL(url).pathname;
-      build.redirects.set(pathname, {
+      build.staticRedirects.set(pathname, {
         from: pathname,
         to: result.redirect.path,
         filename: $.resolveHTMLFilename(url),
@@ -206,7 +208,7 @@ export async function build(
   const validPathname = /(\/|\.html)$/;
 
   // eslint-disable-next-line no-inner-declarations
-  async function buildPage(url: URL, page: ServerPage) {
+  async function buildPage(url: URL, page: ServerPageFile) {
     const pathname = $.normalizeURL(url).pathname;
 
     if (build.links.has(pathname) || build.badLinks.has(pathname)) {
@@ -236,14 +238,14 @@ export async function build(
       return;
     }
 
-    const serverData = createStaticLoaderOutputMap(loadedOutput.output);
-    const ssr = await render(url, { data: serverData });
+    const staticData = createStaticLoaderDataMap(loadedOutput.output);
+    const ssr = await render(url, { staticData });
 
     const result = {
       filename: $.resolveHTMLFilename(url),
       page,
       ssr,
-      dataAssetIds: new Set(serverData.keys()),
+      dataAssetIds: new Set(staticData.keys()),
     };
 
     build.staticRenders.set(pathname, result);
@@ -255,9 +257,8 @@ export async function build(
     }
   }
 
-  const notFoundRE = /\/@404\./;
   // eslint-disable-next-line no-inner-declarations
-  async function buildPageFromHref(page: ServerPage, href: string) {
+  async function buildPageFromHref(page: ServerPageFile, href: string) {
     if (href.startsWith('#') || $.isLinkExternal(href)) return;
 
     const url = new URL(`${ssrOrigin}${$.slash(href)}`);
@@ -268,7 +269,7 @@ export async function build(
     const { index } = matchRouteInfo(url, pages) ?? {};
     const foundPage = !isUndefined(index) && index >= 0 ? pages[index] : null;
 
-    if (foundPage && !notFoundRE.test(foundPage.id)) {
+    if (foundPage && !foundPage.is404) {
       await buildPage(url, foundPage);
       return;
     }
@@ -366,16 +367,21 @@ export type BuildData = {
   /**
    * Valid links and their respective server page that were found during the build process.
    */
-  links: Map<string, ServerPage>;
+  links: Map<string, ServerPageFile>;
   /**
    * Map of invalid links that were either malformed or matched no route pattern during the build
    * process. The key contains the bad URL pathname.
    */
-  badLinks: Map<string, { page?: ServerPage; reason: string }>;
+  badLinks: Map<string, { page?: ServerPageFile; reason: string }>;
   /**
-   * Redirects object where the keys are the URL pathname being redirected from.
+   * Links and their respective server endpoint.
    */
-  redirects: Map<
+  endpoints: Map<string, ServerEndpointFile>;
+  /**
+   * Redirects returned from `staticLoader` calls. The object keys are the URL pathname being
+   * redirected from.
+   */
+  staticRedirects: Map<
     string,
     {
       /** The URL pathname being redirected from. */
@@ -390,10 +396,6 @@ export type BuildData = {
       statusCode: number;
     }
   >;
-  /**
-   * Links and their respective server endpoint.
-   */
-  endpoints: Map<string, ServerEndpoint>;
   /**
    * Map of links (URL Pathname) and their respective loaded server output from calling the
    * page/layout `staticLoader()`.
@@ -417,7 +419,7 @@ export type BuildData = {
       /** The HTML file name which can be used to output file relative to build directory. */
       filename: string;
       /** The matching server page for this path. */
-      page: ServerPage;
+      page: ServerPageFile;
       /** The SSR results containing head, css, and HTML renders. */
       ssr: ServerRenderResult;
       /**
@@ -428,8 +430,9 @@ export type BuildData = {
     }
   >;
   /**
-   * JSON data that has been loaded by pages and layouts. The key is a unique data asset ID for the
-   * given page/layouts combination. You can find data ID's in the `renders` map for each page.
+   * Static JSON data that has been loaded by pages and layouts. The key is a unique data asset ID
+   * for the given page/layouts combination. You can find data ID's in the `renders` map for each
+   * page.
    */
   staticData: Map<
     string,

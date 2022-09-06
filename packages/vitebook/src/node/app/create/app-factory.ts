@@ -2,10 +2,10 @@ import kleur from 'kleur';
 import { MarkdocSchema } from 'node/markdoc/MarkdocSchema';
 import { logger, normalizePath, trimExt } from 'node/utils';
 import type { VitebookPlugin } from 'node/vite/Plugin';
-import {
-  type ServerEndpoint,
-  type ServerLayout,
-  type ServerPage,
+import type {
+  ServerEndpointFile,
+  ServerLayoutFile,
+  ServerPageFile,
 } from 'server/types';
 import { installURLPattern } from 'shared/polyfills';
 import {
@@ -20,7 +20,7 @@ import {
   resolveAppConfig,
   type ResolvedAppConfig,
 } from '../config';
-import { AppNodes } from '../nodes';
+import type { AppFiles } from '../files';
 import { createAppDirectories } from './app-dirs';
 import { getAppVersion } from './app-utils';
 import { DisposalBin } from './DisposalBin';
@@ -66,7 +66,7 @@ export const createAppFactory = async (
         logger,
         vite: { user: viteConfig, env },
         context: new Map(),
-        nodes: new AppNodes(),
+        files: new AppFiles(),
         markdoc: new MarkdocSchema(),
         disposal: new DisposalBin(),
         destroy: () => $app.disposal.empty(),
@@ -119,18 +119,18 @@ export const createAppFactory = async (
 export function createAppEntries(app: App, { isSSR = false } = {}) {
   const entries: Record<string, string> = {};
 
-  for (const page of app.nodes.pages) {
+  for (const page of app.files.pages) {
     const filename = resolvePageOutputFilename(app, page);
     entries[filename] = page.filePath;
   }
 
-  for (const layout of app.nodes.layouts) {
+  for (const layout of app.files.layouts) {
     const filename = resolveLayoutOutputFilename(app, layout);
     entries[filename] = layout.filePath;
   }
 
   if (isSSR || app.config.isSSR) {
-    for (const endpoint of app.nodes.endpoints) {
+    for (const endpoint of app.files.endpoints) {
       const filename = resolveEndpointFilename(app, endpoint);
       entries[filename] = endpoint.filePath;
     }
@@ -139,19 +139,19 @@ export function createAppEntries(app: App, { isSSR = false } = {}) {
   return entries;
 }
 
-function resolvePageOutputFilename(app: App, page: ServerPage) {
+function resolvePageOutputFilename(app: App, page: ServerPageFile) {
   const name = app.dirs.app.relative(page.rootPath);
   return `pages/${name}`;
 }
 
-function resolveLayoutOutputFilename(app: App, layout: ServerLayout) {
+function resolveLayoutOutputFilename(app: App, layout: ServerLayoutFile) {
   const name = trimExt(
     app.dirs.app.relative(layout.rootPath).replace(/@layouts\//, ''),
   );
   return `layouts/${name}`;
 }
 
-function resolveEndpointFilename(app: App, endpoint: ServerEndpoint) {
+function resolveEndpointFilename(app: App, endpoint: ServerEndpointFile) {
   // /api/...
   return trimExt(app.dirs.app.relative(endpoint.rootPath));
 }

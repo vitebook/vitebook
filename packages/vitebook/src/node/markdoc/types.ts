@@ -11,7 +11,6 @@ export type HighlightCodeBlock = (
 ) => string | undefined | null;
 
 export type MarkdocTreeWalkStuff = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [id: string]: any;
   baseUrl: string;
   filePath: string;

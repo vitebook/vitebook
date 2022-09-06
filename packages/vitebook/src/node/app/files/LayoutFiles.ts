@@ -1,16 +1,17 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { ServerLayout } from 'server/types';
+import type { ServerLayoutFile } from 'server/types';
 import { isString } from 'shared/utils/unit';
 
 import { type App } from '../App';
-import { FileNodes, type FileNodesCallbacks } from './FileNodes';
+import { type FilesCallbacks } from './Files';
+import { LoadableFiles } from './LoadableFiles';
 
-const STRIP_LAYOUTS_PATH = /\/@_nodes\/.+/;
+const STRIP_LAYOUTS_PATH = /\/@layouts\/.+/;
 const LAYOUT_NAME_RE = /(.*?)@layout/;
 
-export class LayoutNodes extends FileNodes<ServerLayout> {
-  init(app: App, options?: FileNodesCallbacks<ServerLayout>) {
+export class LayoutFiles extends LoadableFiles<ServerLayoutFile> {
+  init(app: App, options?: FilesCallbacks<ServerLayoutFile>) {
     return super.init(app, {
       include: app.config.routes.layouts.include,
       exclude: app.config.routes.layouts.exclude,
@@ -30,24 +31,23 @@ export class LayoutNodes extends FileNodes<ServerLayout> {
     const fileContent = fs.readFileSync(filePath, { encoding: 'utf-8' });
     const hasStaticLoader = this.hasStaticLoader(fileContent);
     const hasServerLoader = this.hasServerLoader(fileContent);
+    const hasServerAction = this.hasServerAction(fileContent);
     const reset = rootPath.includes(`.reset${path.posix.extname(rootPath)}`);
 
-    const layout: ServerLayout = {
+    const layout: ServerLayoutFile = {
       id: `/${rootPath}`,
       name,
       filePath,
       rootPath,
       owningDir,
-      get hasAnyLoader() {
-        return hasStaticLoader || hasServerLoader;
-      },
       hasStaticLoader,
       hasServerLoader,
+      hasServerAction,
       reset,
     };
 
-    this._nodes.push(layout);
-    this._nodes = this._nodes.sort((a, b) => {
+    this._files.push(layout);
+    this._files = this._files.sort((a, b) => {
       const segmentsA = a.rootPath.split(/\//g);
       const segmentsB = b.rootPath.split(/\//g);
 
@@ -65,7 +65,7 @@ export class LayoutNodes extends FileNodes<ServerLayout> {
   }
 
   isOwnedBy(
-    layout: string | ServerLayout,
+    layout: string | ServerLayoutFile,
     ownerFilePath: string,
     layoutName?: string,
   ) {
@@ -81,8 +81,8 @@ export class LayoutNodes extends FileNodes<ServerLayout> {
   getOwnedLayoutIndicies(ownerFilePath: string, layoutName?: string) {
     let indicies: number[] = [];
 
-    for (let i = 0; i < this._nodes.length; i++) {
-      const layout = this._nodes[i];
+    for (let i = 0; i < this._files.length; i++) {
+      const layout = this._files[i];
       if (this.isOwnedBy(layout.filePath, ownerFilePath, layoutName)) {
         if (layout.reset) indicies = [];
         indicies.push(i);

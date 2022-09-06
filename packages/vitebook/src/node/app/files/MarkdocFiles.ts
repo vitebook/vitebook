@@ -5,11 +5,11 @@ import { toPascalCase } from 'shared/utils/string';
 import { isString } from 'shared/utils/unit';
 
 import { type App } from '../App';
-import { FileNodes, type FileNodesCallbacks } from './FileNodes';
+import { Files, type FilesCallbacks } from './Files';
 
 const STRIP_MARKDOC_DIR_RE = /\/@markdoc\/.+/;
 
-export type MarkdocFileNode = ServerFile & {
+export type MarkdocFile = ServerFile & {
   type: 'node' | 'tag';
   name: string;
   cname: string;
@@ -18,8 +18,8 @@ export type MarkdocFileNode = ServerFile & {
   owningDir: string;
 };
 
-export class MarkdocNodes extends FileNodes<MarkdocFileNode> {
-  init(app: App, options?: FileNodesCallbacks<MarkdocFileNode>) {
+export class MarkdocFiles extends Files<MarkdocFile> {
+  init(app: App, options?: FilesCallbacks<MarkdocFile>) {
     return super.init(app, {
       include: app.config.markdown.nodes.include,
       exclude: app.config.markdown.nodes.exclude,
@@ -56,7 +56,7 @@ export class MarkdocNodes extends FileNodes<MarkdocFileNode> {
       rootPath.replace(STRIP_MARKDOC_DIR_RE, '/root.md'),
     );
 
-    const node: MarkdocFileNode = {
+    const node: MarkdocFile = {
       name,
       type,
       cname,
@@ -67,7 +67,7 @@ export class MarkdocNodes extends FileNodes<MarkdocFileNode> {
       owningDir,
     };
 
-    this._nodes.push(node);
+    this._files.push(node);
     this._options.onAdd?.(node);
 
     return node;
@@ -88,14 +88,14 @@ export class MarkdocNodes extends FileNodes<MarkdocFileNode> {
     return filePath.includes('@markdoc') && this._filter(filePath);
   }
 
-  isOwnedBy(node: string | MarkdocFileNode, ownerFilePath: string) {
+  isOwnedBy(node: string | MarkdocFile, ownerFilePath: string) {
     const rootPath = this._getRootPath(ownerFilePath);
     const _node = isString(node) ? this.find(node) : node;
     return _node && rootPath.startsWith(_node.owningDir);
   }
 
   getOwnedNodes(ownerFilePath: string, type: '*' | 'node' | 'tag') {
-    return Array.from(this._nodes).filter(
+    return Array.from(this._files).filter(
       (node) =>
         (type === '*' || node.type === type) &&
         this.isOwnedBy(node, ownerFilePath),

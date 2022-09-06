@@ -11,7 +11,7 @@ import type {
   UserRouteDeclaration,
   WithRouteParams,
 } from 'router/types';
-import type { ServerContext } from 'server/types';
+import type { ServerEntryContext } from 'server/types';
 
 import type { RoutesComparatorFactory } from './comparators/types';
 import type { ScrollDelegate, ScrollDelegateFactory } from './scroll-delegate';
@@ -37,7 +37,7 @@ export type Router = {
   /**
    * Available during SSR.
    */
-  readonly serverContext?: ServerContext;
+  readonly serverContext?: ServerEntryContext;
   /**
    * Whether a slash should be appended to the end of HTML routes. This is modified by adapters
    * accordingly by injecting `__VBK_TRAILING_SLASH__` into the `window` object.

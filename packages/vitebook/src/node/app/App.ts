@@ -9,7 +9,7 @@ import type {
 
 import type { ResolvedAppConfig } from './config/AppConfig';
 import type { DisposalBin } from './create/DisposalBin';
-import type { AppNodes } from './nodes';
+import type { AppFiles } from './files';
 
 export type AppDetails = {
   version: string;
@@ -26,7 +26,7 @@ export type App = AppDetails & {
   /** Plugin extensions. */
   [x: string]: unknown;
   context: Map<string, unknown>;
-  nodes: AppNodes;
+  files: AppFiles;
   markdoc: MarkdocSchema;
   disposal: DisposalBin;
   logger: typeof logger;

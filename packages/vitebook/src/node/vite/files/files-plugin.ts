@@ -2,10 +2,10 @@ import type { App } from 'node/app/App';
 
 import { virtualModuleRequestPath } from '../alias';
 import type { VitebookPlugin } from '../Plugin';
+import { handleFilesHMR } from './files-hmr';
 import { loadLayoutsModule, loadPagesModule } from './load';
-import { handleNodesHMR } from './nodes-hmr';
 
-export function nodesPlugin(): VitebookPlugin {
+export function filesPlugin(): VitebookPlugin {
   let app: App;
 
   return {
@@ -14,20 +14,20 @@ export function nodesPlugin(): VitebookPlugin {
     vitebook: {
       async configureApp(_app) {
         app = _app;
-        await app.nodes.init(app);
+        await app.files.init(app);
       },
     },
     async configureServer(server) {
       server.watcher.add(app.dirs.app.path);
-      handleNodesHMR(app);
+      handleFilesHMR(app);
     },
     async load(id) {
       if (id === virtualModuleRequestPath.pages) {
-        return loadPagesModule(app.nodes.pages.toArray());
+        return loadPagesModule(app.files.pages.toArray());
       }
 
       if (id === virtualModuleRequestPath.layouts) {
-        return loadLayoutsModule(app.nodes.layouts.toArray());
+        return loadLayoutsModule(app.files.layouts.toArray());
       }
 
       return null;

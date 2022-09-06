@@ -31,12 +31,11 @@
       "types": "./node.d.ts",
       "default": "./dist/node.js"
     },
-    "./http": {
-      "types": "./http.d.ts",
-      "default": "./dist/http.js"
+    "./server": {
+      "types": "./server.d.ts",
+      "default": "./dist/server.js"
     },
-    "./http-vercel": "./dist/http-vercel.js",
-    "./http-pollyfills": "./dist/http-polyfills.js",
+    "./vercel/*": "./dist/vercel/*",
     "./package.json": "./package.json"
   },
   "scripts": {

@@ -1,9 +1,11 @@
 import type { ServerResponse } from 'http';
 import type { App } from 'node/app/App';
 import { matchRouteInfo } from 'router';
+import { createStaticLoaderInput } from 'server';
+import type { ServerNodeLoader } from 'server/types';
 import { parseStaticDataAssetURL } from 'shared/data';
 
-import { callStaticLoader, createStaticLoaderInput } from './static-loader';
+import { callStaticLoader } from './static-loader';
 
 export async function handleStaticDataRequest(
   url: URL,
@@ -12,7 +14,7 @@ export async function handleStaticDataRequest(
 ) {
   const { url: route, layoutIndex } = parseStaticDataAssetURL(url);
 
-  const match = matchRouteInfo(route, app.nodes.pages.toArray());
+  const match = matchRouteInfo(route, app.files.pages.toArray());
 
   if (!match) {
     res.statusCode = 404;
@@ -20,15 +22,15 @@ export async function handleStaticDataRequest(
     return;
   }
 
-  const page = app.nodes.pages.getByIndex(match.index);
+  const page = app.files.pages.getByIndex(match.index);
   const module =
-    layoutIndex >= 0 ? app.nodes.layouts.getByIndex(layoutIndex) : page;
+    layoutIndex >= 0 ? app.files.layouts.getByIndex(layoutIndex) : page;
 
   const output = await callStaticLoader(
     app,
     module.filePath,
     createStaticLoaderInput(route, page),
-    app.vite.server!.ssrLoadModule,
+    app.vite.server!.ssrLoadModule as ServerNodeLoader,
   );
 
   if (output.redirect) {

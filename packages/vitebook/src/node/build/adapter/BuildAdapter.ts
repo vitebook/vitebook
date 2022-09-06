@@ -1,6 +1,6 @@
 import { type App } from 'node/app/App';
 import type {
-  ServerPage,
+  ServerPageFile,
   ServerRenderResult,
   StaticLoaderOutputMap,
 } from 'server/types';
@@ -23,13 +23,13 @@ export type BuildAdapter = {
   /** Started loading static data for page (includes any layouts). */
   startLoadingStaticData?(
     pathname: string,
-    page: ServerPage,
+    page: ServerPageFile,
   ): void | Promise<void>;
 
   /** Finished loading static data for page (includes any layouts). */
   finishLoadingStaticData?(
     pathname: string,
-    page: ServerPage,
+    page: ServerPageFile,
     data: StaticLoaderOutputMap,
     redirect?: string,
   ): void | Promise<void>;
@@ -38,11 +38,14 @@ export type BuildAdapter = {
 
   startRenderingPages?(): void | Promise<void>;
 
-  startRenderingPage?(pathname: string, page: ServerPage): void | Promise<void>;
+  startRenderingPage?(
+    pathname: string,
+    page: ServerPageFile,
+  ): void | Promise<void>;
 
   finishRenderingPage?(
     pathname: string,
-    page: ServerPage,
+    page: ServerPageFile,
     result: {
       redirect?: { path: string; statusCode: number };
       ssr?: ServerRenderResult | null;

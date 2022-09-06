@@ -1,14 +1,14 @@
 import { type App } from '../App';
-import { EndpointNodes } from './EndpointNodes';
-import { LayoutNodes } from './LayoutNodes';
-import { MarkdocNodes } from './MarkdocNodes';
-import { PageNodes } from './PageNodes';
+import { EndpointFiles } from './EndpointFiles';
+import { LayoutFiles } from './LayoutFiles';
+import { MarkdocFiles } from './MarkdocFiles';
+import { PageFiles } from './PageFiles';
 
-export class AppNodes {
-  pages = new PageNodes();
-  layouts = new LayoutNodes();
-  endpoints = new EndpointNodes();
-  markdoc = new MarkdocNodes();
+export class AppFiles {
+  pages = new PageFiles();
+  layouts = new LayoutFiles();
+  endpoints = new EndpointFiles();
+  markdoc = new MarkdocFiles();
 
   async init(app: App) {
     await this.layouts.init(app, {

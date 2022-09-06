@@ -1,20 +1,20 @@
 import kleur from 'kleur';
 import type { App } from 'node/app/App';
 import type { ServerResponse } from 'node:http';
-import type { ServerEndpoint } from 'server/types';
+import type { ServerEndpointFile } from 'server/types';
 import { STATIC_DATA_ASSET_BASE_PATH } from 'shared/data';
 import { coalesceToError } from 'shared/utils/error';
 import { noendslash } from 'shared/utils/url';
 import type { Connect, ViteDevServer } from 'vite';
 
-import { handleEndpoint } from './handle-endpoint';
+import { handleEndpointRequest } from './handle-endpoint';
 import { handlePageRequest } from './handle-page';
 import { handleStaticDataRequest } from './handle-static-data';
 
 export function configureDevServer(app: App, server: ViteDevServer) {
   removeHtmlMiddlewares(server.middlewares);
 
-  const loader = (endpoint: ServerEndpoint) =>
+  const loader = (endpoint: ServerEndpointFile) =>
     app.vite.server!.ssrLoadModule(endpoint.filePath);
 
   // Ensure devs can call local API endpoints using relative paths (e.g., `fetch('/api/foo')`).
@@ -25,7 +25,7 @@ export function configureDevServer(app: App, server: ViteDevServer) {
 
   globalThis.fetch = (input, init) => {
     return fetch(
-      typeof input === 'string' && app.nodes.endpoints.test(input)
+      typeof input === 'string' && app.files.endpoints.test(input)
         ? `${(origin ??= noendslash(
             server.resolvedUrls?.local[0] ?? `${protocol}://localhost:5173`,
           ))}${input}`
@@ -51,13 +51,13 @@ export function configureDevServer(app: App, server: ViteDevServer) {
         return await handleStaticDataRequest(url, app, res);
       }
 
-      if (app.nodes.pages.test(decodedUrl)) {
+      if (app.files.pages.test(decodedUrl, (page) => !page.is404)) {
         url.pathname = url.pathname.replace('/index.html', '/');
-        return await handlePageRequest(url, app, req, res);
+        return await handlePageRequest(base, url, app, req, res);
       }
 
-      if (app.nodes.endpoints.test(decodedUrl)) {
-        return await handleEndpoint(base, url, app, req, res, loader);
+      if (app.files.endpoints.test(decodedUrl)) {
+        return await handleEndpointRequest(base, url, app, req, res, loader);
       }
     } catch (error) {
       handleDevServerError(app, req, res, error);
@@ -77,14 +77,11 @@ function removeHtmlMiddlewares(server) {
   }
 }
 
-export function handleDevServerError(
+export function logDevError(
   app: App,
   req: Connect.IncomingMessage,
-  res: ServerResponse,
-  e: unknown,
+  error: Error,
 ) {
-  const error = coalesceToError(e);
-
   app.logger.error(
     error.message,
     [
@@ -96,7 +93,16 @@ export function handleDevServerError(
     error.stack,
     '\n',
   );
+}
 
+export function handleDevServerError(
+  app: App,
+  req: Connect.IncomingMessage,
+  res: ServerResponse,
+  e: unknown,
+) {
+  const error = coalesceToError(e);
+  logDevError(app, req, error);
   res.statusCode = 500;
   res.end(error.stack);
 }

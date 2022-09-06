@@ -1,38 +1,50 @@
 import type { App } from 'node/app/App';
-import { createHTTPRequestHandler } from 'node/http';
+import { handleHTTPRequest } from 'node/http';
 import { setResponse } from 'node/http/http-bridge';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { matchRouteInfo } from 'router';
-import { handleHTTPError, httpError, type RequestModule } from 'server/http';
-import type { ServerEndpoint } from 'server/types';
+import {
+  createEndpointHandler,
+  handleHTTPError,
+  httpError,
+  type RequestModule,
+} from 'server/http';
+import type { ServerEndpointFile } from 'server/types';
+import { coalesceToError } from 'shared/utils/error';
 
-export async function handleEndpoint(
+import { handleDevServerError, logDevError } from './dev-server';
+
+export async function handleEndpointRequest(
   base: string,
   url: URL,
   app: App,
   req: IncomingMessage,
   res: ServerResponse,
-  loader: (endpoint: ServerEndpoint) => Promise<RequestModule>,
+  loader: (endpoint: ServerEndpointFile) => Promise<RequestModule>,
 ) {
-  const match = matchRouteInfo(url, app.nodes.endpoints.toArray());
+  const match = matchRouteInfo(url, app.files.endpoints.toArray());
 
   if (!match) {
-    setResponse(res, handleHTTPError(httpError('not found', 400)));
+    await setResponse(res, handleHTTPError(httpError('not found', 400)));
     return;
   }
 
-  const endpoint = app.nodes.endpoints.getByIndex(match.index);
+  const endpoint = app.files.endpoints.getByIndex(match.index);
 
-  const handler = await createHTTPRequestHandler(
-    () => endpoint.route.pattern,
-    () => loader(endpoint),
-    {
-      getBase: () => base,
-      handleUnknownError(_req, _res, error) {
-        throw error;
-      },
+  const handler = createEndpointHandler({
+    pattern: endpoint.route.pattern,
+    loader: () => loader(endpoint),
+    getClientAddress: () => req.socket.remoteAddress,
+    onError: (error) => {
+      logDevError(app, req, coalesceToError(error));
     },
-  );
+  });
 
-  await handler(req, res);
+  try {
+    await handleHTTPRequest(base, req, res, handler, (error) => {
+      logDevError(app, req, coalesceToError(error));
+    });
+  } catch (error) {
+    handleDevServerError(app, req, res, error);
+  }
 }

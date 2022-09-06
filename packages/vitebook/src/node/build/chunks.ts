@@ -1,6 +1,6 @@
 import type { App } from 'node/app/App';
 import type { GetManualChunk } from 'rollup';
-import type { ServerPage } from 'server/types';
+import type { ServerPageFile } from 'server/types';
 import { type ManifestChunk as ViteManifestChunk } from 'vite';
 
 import type { BuildBundles } from './build';
@@ -20,7 +20,7 @@ export function extendManualChunks(): GetManualChunk {
 
 export function resolvePageChunks(
   app: App,
-  page: ServerPage,
+  page: ServerPageFile,
   { entryChunk, appChunk, viteManifest }: BuildBundles['client'],
   modules?: Set<string>,
 ) {
@@ -29,11 +29,11 @@ export function resolvePageChunks(
   const assets = new Set<string>();
 
   const pageSrc = new Set(
-    app.nodes.pages.toArray().map((page) => page.rootPath),
+    app.files.pages.toArray().map((page) => page.rootPath),
   );
 
   const layoutSrc = new Set(
-    app.nodes.layouts.toArray().map((layout) => layout.rootPath),
+    app.files.layouts.toArray().map((layout) => layout.rootPath),
   );
 
   const seen = new WeakSet<ViteManifestChunk>();
@@ -91,7 +91,7 @@ export function resolvePageChunks(
   // Layouts
 
   const layoutChunks = page.layouts.map((index) =>
-    app.nodes.layouts.getByIndex(index),
+    app.files.layouts.getByIndex(index),
   );
 
   for (const layout of layoutChunks) {

@@ -1,17 +1,17 @@
 import fs from 'fs/promises';
 import type { App } from 'node/app/App';
 import { normalizePath } from 'node/utils';
-import type { ServerPage } from 'server/types';
+import type { ServerPageFile } from 'server/types';
 import type { ViteDevServer } from 'vite';
 
 import { clearMarkdownCache } from '../../markdoc';
 import { virtualModuleRequestPath } from '../alias';
 import { clearStaticLoaderCache } from '../core/static-loader';
 
-export function handleNodesHMR(app: App) {
-  const pages = app.nodes.pages;
-  const layouts = app.nodes.layouts;
-  const endpoints = app.nodes.endpoints;
+export function handleFilesHMR(app: App) {
+  const pages = app.files.pages;
+  const layouts = app.files.layouts;
+  const endpoints = app.files.endpoints;
   const server = app.vite.server!;
 
   const isPage = (filePath) => pages.is(filePath);
@@ -50,27 +50,38 @@ export function handleNodesHMR(app: App) {
     const page = pages.find(filePath);
     const layoutName = await pages.getLayoutName(filePath);
     const fileContent = await fs.readFile(filePath, 'utf-8');
-    const hasAnyLoader =
-      pages.hasStaticLoader(fileContent) || pages.hasServerLoader(fileContent);
+    const hasStaticLoader = pages.hasStaticLoader(fileContent);
+    const hasServerLoader = pages.hasServerLoader(fileContent);
+    const hasServerAction = pages.hasServerAction(fileContent);
 
-    if (page && page.layoutName !== layoutName) {
+    let reload = false;
+
+    if (!page) {
+      pages.remove(filePath);
+      return { reload: true };
+    }
+
+    if (page.layoutName !== layoutName) {
       page.layouts = layouts.getOwnedLayoutIndicies(
         page.filePath,
         page.layoutName,
       );
-      return { reload: true };
+      reload = true;
     }
 
-    if (page && page.hasAnyLoader !== hasAnyLoader) {
-      page.hasStaticLoader = hasAnyLoader;
-      return { reload: true };
-    }
-
-    if (hasAnyLoader) {
+    if (
+      page.hasStaticLoader !== hasStaticLoader ||
+      page.hasServerLoader !== hasServerLoader ||
+      page.hasServerAction !== hasServerAction
+    ) {
+      page.hasStaticLoader = hasStaticLoader;
+      page.hasServerLoader = hasServerLoader;
+      page.hasServerAction = hasServerAction;
       clearStaticLoaderCache(filePath);
+      reload = true;
     }
 
-    return null;
+    return reload ? { reload: true } : null;
   });
 
   onFileEvent(isLayout, 'add', async (filePath) => {
@@ -82,20 +93,30 @@ export function handleNodesHMR(app: App) {
   onFileEvent(isLayout, 'change', async (filePath) => {
     const layout = layouts.find(filePath);
     const fileContent = await fs.readFile(filePath, 'utf-8');
-    const hasAnyLoader =
-      layouts.hasStaticLoader(fileContent) ||
-      layouts.hasServerLoader(fileContent);
+    const hasStaticLoader = pages.hasStaticLoader(fileContent);
+    const hasServerLoader = pages.hasServerLoader(fileContent);
+    const hasServerAction = pages.hasServerAction(fileContent);
 
-    if (layout && layout.hasAnyLoader !== hasAnyLoader) {
-      layout.hasStaticLoader = hasAnyLoader;
+    let reload = false;
+
+    if (!layout) {
+      layouts.remove(filePath);
       return { reload: true };
     }
 
-    if (hasAnyLoader) {
+    if (
+      layout.hasStaticLoader !== hasStaticLoader ||
+      layout.hasServerLoader !== hasServerLoader ||
+      layout.hasServerAction !== hasServerAction
+    ) {
+      layout.hasStaticLoader = hasStaticLoader;
+      layout.hasServerLoader = hasServerLoader;
+      layout.hasServerAction = hasServerAction;
       clearStaticLoaderCache(filePath);
+      reload = true;
     }
 
-    return null;
+    return reload ? { reload: true } : null;
   });
 
   onFileEvent(isLayout, 'unlink', async (filePath) => {
@@ -134,7 +155,10 @@ export function handleNodesHMR(app: App) {
   }
 }
 
-export function invalidatePageModule(server: ViteDevServer, page: ServerPage) {
+export function invalidatePageModule(
+  server: ViteDevServer,
+  page: ServerPageFile,
+) {
   const module = server.moduleGraph
     .getModulesByFile(page.filePath)
     ?.values()

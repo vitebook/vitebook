@@ -1,10 +1,10 @@
 import type { App } from 'node/app/App';
 import { installPolyfills } from 'server/polyfills';
-import type { ServerEndpoint } from 'server/types';
-import { type PreviewServerHook } from 'vite';
+import type { ServerEndpointFile } from 'server/types';
+import type { PreviewServerHook } from 'vite';
 
 import { handleDevServerError } from './dev-server';
-import { handleEndpoint } from './handle-endpoint';
+import { handleEndpointRequest } from './handle-endpoint';
 
 export async function configurePreviewServer(
   app: App,
@@ -17,7 +17,7 @@ export async function configurePreviewServer(
       ? 'https'
       : 'http';
 
-  const loader = (endpoint: ServerEndpoint) => {
+  const loader = (endpoint: ServerEndpointFile) => {
     return import(
       app.dirs.server
         .resolve(app.dirs.app.relative(endpoint.rootPath))
@@ -39,12 +39,14 @@ export async function configurePreviewServer(
       const decodedUrl = decodeURI(new URL(base + req.url).pathname);
 
       if (
-        !app.nodes.pages.test(decodedUrl) &&
-        app.nodes.endpoints.test(decodedUrl)
+        !app.files.pages.test(decodedUrl, (page) => !page.is404) &&
+        app.files.endpoints.test(decodedUrl)
       ) {
-        await handleEndpoint(base, url, app, req, res, loader);
+        await handleEndpointRequest(base, url, app, req, res, loader);
         return;
       }
+
+      // TODO: handle dynamic pages here (SSR) -- load from manifest.
     } catch (error) {
       handleDevServerError(app, req, res, error);
       return;

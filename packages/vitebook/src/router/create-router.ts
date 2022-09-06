@@ -175,7 +175,6 @@ export function createRouter({
     if (redirecting) return redirecting;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const changeHistoryState = (url: URL, state: any, replace: boolean) => {
     const change = replace ? 0 : 1;
     state[_historyKey] = _historyIndex += change;

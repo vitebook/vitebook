@@ -1,6 +1,5 @@
 async function interop<T>(loader: () => Promise<T>, specifier: keyof T) {
   const mod = await loader();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return mod[specifier] ?? (mod as any).default[specifier];
 }
 

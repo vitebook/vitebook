@@ -1,5 +1,110 @@
-import type { ClientLayout, ClientPage } from 'client/types';
-import type { Route } from 'router/types';
+import type { Route, Router } from 'router';
+
+import type { RequestEvent, RequestParams } from './http/request';
+
+// ---------------------------------------------------------------------------------------
+// SSR
+// ---------------------------------------------------------------------------------------
+
+export type ServerBuild = {
+  template: string;
+  trailingSlash: boolean;
+
+  // staticDataHashMap
+  // staticRedirects {from; to; }[]
+
+  entry: {
+    filename: string;
+    loader: () => Promise<ServerEntryModule>;
+  };
+
+  app: {
+    filename: string;
+    loader: () => Promise<ServerEntryModule>;
+  };
+
+  // NODE
+  // id => root path
+  // pattern: URLPattern;
+  // head: string
+  // body: string
+  // loader
+  // layouts: number[]
+  // staticData: JSONData
+
+  // layouts
+  // loader
+
+  // errors -> maybe not needed here ... just handle it client-side? -- server side we'll store a reference
+  // to where the error occurred and find boundary ... -> last seen module???
+  // pattern: URLPattern;
+  // loader
+  // layouts: number[]
+
+  // router needs to be able to load page/catch/error (different modes? - default/catch/error)
+  // catchRoutes
+  // errorRoutes
+  // maybe just forward a loader and let router handle it
+
+  // endpoints so we can handle them locally (without http)
+};
+
+export type ServerRenderState = {
+  // Nothing for now - not used yet.
+};
+
+export type ServerEntryContext = {
+  state: ServerRenderState;
+  modules: Set<string>;
+  staticData: StaticLoaderDataMap;
+  /** We store router during SSR so we don't have to rebuild it on each request. */
+  serverRouter?: Router;
+};
+
+export type ServerEntryModule = {
+  render: ServerRenderer;
+};
+
+export type ServerRenderer = (
+  url: URL,
+  context: Partial<ServerEntryContext>,
+) => Promise<ServerRenderResult>;
+
+export type ServerRenderResult = {
+  head?: string;
+  css?: string;
+  html: string;
+  context: ServerEntryContext;
+  /** Return router so we can use it on subsequent SSR requests. */
+  router: Router;
+};
+
+export type ServerNode = {
+  loader: ServerNodeLoader;
+};
+
+export type ServerNodeModule = {
+  staticLoader?: StaticLoader;
+  serverLoader?: ServerLoader;
+  serverAction?: ServerAction;
+};
+
+export type ServerNodeLoader = (
+  id?: string,
+) => ServerNodeModule | Promise<ServerNodeModule>;
+
+export type ServerRequestHandler = (request: Request) => Promise<Response>;
+
+export type ServerRedirect = {
+  path: string;
+  statusCode: number;
+};
+
+export type JSONData = Record<string, unknown>;
+
+// ---------------------------------------------------------------------------------------
+// Server Files
+// ---------------------------------------------------------------------------------------
 
 export type ServerFile = {
   /** Absolute system file path to file.  */
@@ -8,158 +113,118 @@ export type ServerFile = {
   readonly rootPath: string;
 };
 
-export type ServerEndpoint = ServerFile & {
+export type ServerEndpointFile = ServerFile & {
   /** Routing object. */
   readonly route: Route;
 };
 
-export type ServerPage = ServerFile &
-  Omit<ClientPage, 'loader' | 'layouts'> & {
-    /** Module id used by the client-side router to dynamically load this page module.  */
-    id: string;
-    /** Routing object. */
-    readonly route: Route;
-    /** Page layout name. */
-    layoutName?: string;
-    /**
-     * Indentifies layout files that belong to this page. Each number is an index to a layout
-     * client layout file in the `layouts` store.
-     */
-    layouts: number[];
-    /**
-     * Additional data to be included with the page. This will be included in the client-side
-     * response.
-     */
-    context: Record<string, unknown>;
-    /** Whether the page has any server-side loader. */
-    hasAnyLoader: boolean;
-    /** Whether the page has a `staticLoader` function. */
-    hasStaticLoader: boolean;
-    /** Whether the page has a `serverLoader` function. */
-    hasServerLoader: boolean;
-  };
-
-export type ServerLayout = ServerFile &
-  Omit<ClientLayout, 'loader'> & {
-    /** Module id used by the client-side router to dynamically load this layout module.  */
-    id: string;
-    /** The root directory that this layout belongs to. */
-    readonly owningDir: string;
-    /** Whether the page has any server-side loader. */
-    hasAnyLoader: boolean;
-    /** Whether the page has a `staticLoader` function. */
-    hasStaticLoader: boolean;
-    /** Whether the page has a `serverLoader` function. */
-    hasServerLoader: boolean;
-    /** Whether the current layout resets the layout stack.  */
-    reset: boolean;
-  };
-
-export type ServerLoaderParams = {
-  [param: string]: string | undefined;
+export type ServerPageFile = ServerFile & {
+  /** Module id used by the client-side router to dynamically load this page module.  */
+  readonly id: string;
+  /** System file path relative to `<root>`. */
+  readonly rootPath: string;
+  /** Page file extension.  */
+  readonly ext: string;
+  /** Routing information. */
+  readonly route: Route;
+  /** Page layout name. */
+  readonly layoutName?: string;
+  /** Layout files that belong to this page. Each number is an index to a layout node. */
+  layouts: number[];
+  /** Whether this is a 404 page. */
+  is404: boolean;
+  /** Whether the page has a `staticLoader` export. */
+  hasStaticLoader: boolean;
+  /** Whether the page has a `serverLoader` export. */
+  hasServerLoader: boolean;
+  /** Whether the page has a `serverAction` export. */
+  hasServerAction: boolean;
 };
 
-export type ServerRedirect = {
-  path: string;
-  statusCode: number;
+export type ServerLayoutFile = ServerFile & {
+  /** Module id used by the client-side router to dynamically load this layout module.  */
+  readonly id: string;
+  /** Layout name. */
+  readonly name: string;
+  /** System file path relative to `<root>`. */
+  readonly rootPath: string;
+  /** The root directory that this layout belongs to. */
+  readonly owningDir: string;
+  /** Whether the layout has a `staticLoader` export. */
+  hasStaticLoader: boolean;
+  /** Whether the layout has a `serverLoader` export. */
+  hasServerLoader: boolean;
+  /** Whether the layout has a `serverAction` export. */
+  hasServerAction: boolean;
+  /** Whether the current layout resets the layout stack.  */
+  readonly reset: boolean;
 };
 
 // ---------------------------------------------------------------------------------------
 // Static Loader
 // ---------------------------------------------------------------------------------------
 
-export type StaticLoaderInput<
-  Params extends ServerLoaderParams = ServerLoaderParams,
-> = Readonly<{
-  pathname: string;
-  page: ServerPage;
-  route: Route;
-  params: Partial<Params>;
-  /** Result from running `URLPattern.exec().pathname`. */
-  match: URLPatternComponentResult;
-}>;
-
-export type StaticLoadedData = Record<string, unknown>;
+export type StaticLoaderInput<Params extends RequestParams = RequestParams> =
+  Readonly<{
+    pathname: string;
+    page: ServerPageFile;
+    route: Route;
+    params: Partial<Params>;
+    /** Result from running `URLPattern.exec().pathname`. */
+    match: URLPatternComponentResult;
+  }>;
 
 /** Map of data asset id to server loaded data object. */
-export type StaticLoaderDataMap = Map<string, StaticLoadedData>;
+export type StaticLoaderDataMap = Map<string, JSONData>;
 
 /** Map of data asset id to server loaded output object. */
-export type StaticLoaderOutputMap = Map<string, StaticLoadedOutput>;
+export type StaticLoaderOutputMap = Map<string, StaticLoaderOutput>;
 
 /** Key can be anything but only truthy values are cached. */
 export type StaticLoaderCacheKey = unknown;
 
 export type StaticLoaderCacheMap = Map<
   StaticLoaderCacheKey,
-  StaticLoadedOutput
+  StaticLoaderOutput
 >;
 
 export type StaticLoaderCacheKeyBuilder = (
   input: StaticLoaderInput,
 ) => StaticLoaderCacheKey | Promise<StaticLoaderCacheKey>;
 
-export type StaticLoadedOutput<Data = StaticLoadedData> = {
+export type StaticLoader<
+  Params extends RequestParams = RequestParams,
+  Data extends JSONData = JSONData,
+> = (
+  input: StaticLoaderInput<Params>,
+) => MaybeStaticLoaderOutput<Data> | Promise<MaybeStaticLoaderOutput<Data>>;
+
+export type StaticLoaderOutput<Data = JSONData> = {
   data?: Data;
   readonly redirect?: string | { path: string; statusCode?: number };
   readonly cache?: StaticLoaderCacheKeyBuilder;
 };
 
-export type MaybeStaticLoadedOutput<Data = StaticLoadedData> =
+export type MaybeStaticLoaderOutput<Data = JSONData> =
   | void
   | undefined
   | null
-  | StaticLoadedOutput<Data>;
-
-export type StaticLoader<
-  Params extends ServerLoaderParams = ServerLoaderParams,
-  Data extends StaticLoadedData = StaticLoadedData,
-> = (
-  input: StaticLoaderInput<Params>,
-) => MaybeStaticLoadedOutput<Data> | Promise<MaybeStaticLoadedOutput<Data>>;
+  | StaticLoaderOutput<Data>;
 
 // ---------------------------------------------------------------------------------------
 // Server Loader
 // ---------------------------------------------------------------------------------------
 
-export type ServerLoaderInput<
-  Params extends ServerLoaderParams = ServerLoaderParams,
-> = {
-  request: Request;
-  params: Partial<Params>;
-  /** Result from running `URLPattern.exec().pathname`. */
-  match: URLPatternComponentResult;
-};
-
-export type ServerLoaderOutput = Response | Record<string, unknown>;
-
-export type ServerLoader<
-  Params extends ServerLoaderParams = ServerLoaderParams,
-> = (
-  input: ServerLoaderInput<Params>,
+export type ServerLoader<Params extends RequestParams = RequestParams> = (
+  event: RequestEvent<Params>,
 ) => ServerLoaderOutput | Promise<ServerLoaderOutput>;
 
+export type ServerLoaderOutput = Response | JSONData;
+
 // ---------------------------------------------------------------------------------------
-// SSR
+// Server Action
 // ---------------------------------------------------------------------------------------
 
-export type ServerContext = {
-  modules: Set<string>;
-  data: StaticLoaderDataMap;
-};
-
-export type ServerEntryModule = {
-  render: ServerRenderer;
-};
-
-export type ServerRenderResult = {
-  head?: string;
-  css?: string;
-  html: string;
-  context: ServerContext;
-};
-
-export type ServerRenderer = (
-  url: URL,
-  context: { data: ServerContext['data'] },
-) => Promise<ServerRenderResult>;
+export type ServerAction<Params extends RequestParams = RequestParams> = (
+  event: RequestEvent<Params>,
+) => ServerLoaderOutput | Promise<ServerLoaderOutput>;

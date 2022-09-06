@@ -92,7 +92,6 @@ export function mkdirp(dir: string) {
   try {
     fs.mkdirSync(dir, { recursive: true });
   } catch (e) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((e as any).code === 'EEXIST') return;
     throw e;
   }

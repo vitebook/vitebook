@@ -1,5 +1,5 @@
 import type { LoadedClientPage } from 'client/types';
-import type { ServerContext } from 'server/types';
+import type { ServerEntryContext } from 'server/types';
 
 import type { Reactive } from './reactivity';
 import type { ScrollToTarget } from './scroll-delegate';
@@ -13,7 +13,7 @@ export type Route = {
    */
   readonly score: number;
   /**
-   * `URLPattern` used to match a pattern against a route.
+   * `URLPattern` used to match a pattern against a URL.
    *
    * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/URL_Pattern_API}
    */
@@ -64,7 +64,7 @@ export type RouterOptions = {
   $route: Reactive<LoadedRoute>;
   $navigation: Reactive<RouteNavigation>;
   initialRoutes?: RouteDeclaration[];
-  serverContext?: ServerContext;
+  serverContext?: ServerEntryContext;
 };
 
 export type MatchedRoute = RouteDeclaration & {
@@ -86,7 +86,6 @@ export type GoToRouteOptions = {
   scroll?: ScrollToTarget | null;
   keepfocus?: boolean;
   replace?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   state?: any;
 };
 
@@ -117,7 +116,6 @@ export type WithRouteParams<T, U = RouteParams> = T & {
   params: U;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RouteParams = Record<string, any>;
 
 export type RouteMatcher = string | RegExp | null | undefined | void;

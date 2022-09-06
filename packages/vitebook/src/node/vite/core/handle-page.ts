@@ -1,38 +1,33 @@
 import type { ServerResponse } from 'http';
 import type { App } from 'node/app/App';
+import { handleHTTPRequest } from 'node/http';
 import { matchRouteInfo } from 'router';
-import type { ServerEntryModule } from 'server/types';
+import { createPageHandler } from 'server/http';
+import type {
+  ServerEntryModule,
+  ServerNodeLoader,
+  ServerPageFile,
+} from 'server/types';
+import { coalesceToError } from 'shared/utils/error';
 import type { Connect, ModuleNode, ViteDevServer } from 'vite';
 
 import { virtualModuleId } from '../alias';
+import { handleDevServerError, logDevError } from './dev-server';
 import { readIndexHtmlFile } from './index-html';
-import {
-  callStaticLoaders,
-  createStaticDataScriptTag,
-  createStaticLoaderOutputMap,
-} from './static-loader';
+import { callStaticLoaders } from './static-loader';
 
 export async function handlePageRequest(
+  base: string,
   url: URL,
   app: App,
   req: Connect.IncomingMessage,
   res: ServerResponse,
 ) {
   const pathname = decodeURI(url.pathname);
-
   const index = readIndexHtmlFile(app);
-  const transformedIndex = await app.vite.server!.transformIndexHtml(
-    pathname,
-    index,
-    req.originalUrl,
-  );
 
-  const { render } = (await app.vite.server!.ssrLoadModule(
-    app.config.entry.server,
-  )) as ServerEntryModule;
-
-  const match = matchRouteInfo(url, app.nodes.pages.toArray());
-  const page = app.nodes.pages.getByIndex(match?.index ?? -1);
+  const match = matchRouteInfo(url, app.files.pages.toArray());
+  const page = app.files.pages.getByIndex(match?.index ?? -1);
 
   if (!page) {
     res.statusCode = 404;
@@ -40,24 +35,51 @@ export async function handlePageRequest(
     return;
   }
 
-  const { output: staticLoaderOutput, redirect } = await callStaticLoaders(
-    url,
-    app,
-    page,
-    app.vite.server!.ssrLoadModule,
-  );
+  try {
+    // We're loading static data first to check for redirects because it supersedes server-side work.
+    // Filesystem > Server-Side
+    const { output: staticData, redirect } = await callStaticLoaders(
+      url,
+      app,
+      page,
+      app.vite.server!.ssrLoadModule as ServerNodeLoader,
+    );
 
-  if (redirect) {
-    res.statusCode = redirect.statusCode;
-    res.setHeader('Location', redirect.path).end();
-    return;
+    if (redirect) {
+      res.statusCode = redirect.statusCode;
+      res.setHeader('Location', redirect.path).end();
+      return;
+    }
+
+    const template = await app.vite.server!.transformIndexHtml(
+      pathname,
+      index,
+      req.originalUrl,
+    );
+
+    const entryLoader = async () =>
+      (await app.vite.server!.ssrLoadModule(
+        app.config.entry.server,
+      )) as ServerEntryModule;
+
+    // pattern: page.route.pattern,
+    // template,
+    // loader,
+    // getClientAddress: () => req.socket.remoteAddress,
+    // head: () => loadStyleTag(app, page),
+    // staticData: () => staticDataMap,
+
+    const handler = createPageHandler();
+
+    await handleHTTPRequest(base, req, res, handler, (error) => {
+      logDevError(app, req, coalesceToError(error));
+    });
+  } catch (error) {
+    handleDevServerError(app, req, res, error);
   }
+}
 
-  const staticDataMap = createStaticLoaderOutputMap(staticLoaderOutput);
-  const staticDataScript = createStaticDataScriptTag(staticDataMap);
-
-  const { html: appHtml, head } = await render(url, { data: staticDataMap });
-
+async function loadStyleTag(app: App, page: ServerPageFile) {
   const appFilePath = app.vite
     .server!.moduleGraph.getModuleById(`/${virtualModuleId.app}`)!
     .importedModules.values()
@@ -67,27 +89,18 @@ export async function handlePageRequest(
     [
       appFilePath,
       ...page.layouts.map(
-        (index) => app.nodes.layouts.getByIndex(index).filePath,
+        (index) => app.files.layouts.getByIndex(index).filePath,
       ),
       page.filePath,
     ].map((file) => getStylesByFile(app.vite.server!, file)),
   );
 
   // Prevent FOUC during development.
-  const styles = [
+  return [
     '<style id="__VBK_SSR_STYLES__" type="text/css">',
     stylesMap.map(Object.values).flat().join('\n'),
     '</style>',
   ].join('\n');
-
-  const html = transformedIndex
-    .replace(`<!--@vitebook/head-->`, head + styles)
-    .replace(`<!--@vitebook/app-->`, appHtml)
-    .replace('<!--@vitebook/body-->', staticDataScript);
-
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/html');
-  res.end(html);
 }
 
 // Vite doesn't expose this so we just copy the list for now

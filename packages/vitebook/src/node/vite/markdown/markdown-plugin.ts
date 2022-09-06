@@ -9,18 +9,18 @@ import {
   parseMarkdown,
   type ParseMarkdownResult,
 } from 'node/markdoc';
-import type { ServerPage } from 'server/types';
+import type { ServerPageFile } from 'server/types';
 import type { MarkdownMeta } from 'shared/markdown';
 import type { ViteDevServer } from 'vite';
 
-import { invalidatePageModule } from '../nodes/nodes-hmr';
+import { invalidatePageModule } from '../files/files-hmr';
 import { type VitebookPlugin } from '../Plugin';
 import { handleMarkdownHMR } from './hmr';
 
 export function markdownPlugin(): VitebookPlugin {
   let app: App;
   let filter: (id: string) => boolean;
-  let currentPage: ServerPage | undefined = undefined;
+  let currentPage: ServerPageFile | undefined = undefined;
   let parse: (filePath: string, content: string) => ParseMarkdownResult;
   let highlight: HighlightCodeBlock | null = null;
 
@@ -100,7 +100,7 @@ export function markdownPlugin(): VitebookPlugin {
       handleMarkdownHMR(app);
       server.ws.on('vitebook::page_change', ({ rootPath }) => {
         const filePath = app.dirs.root.resolve(rootPath);
-        currentPage = app.nodes.pages.find(filePath);
+        currentPage = app.files.pages.find(filePath);
       });
     },
     transform(content, id) {
@@ -117,7 +117,7 @@ export function markdownPlugin(): VitebookPlugin {
       if (filter(file)) {
         const content = await read();
 
-        const layoutIndex = app.nodes.layouts.findIndex(file);
+        const layoutIndex = app.files.layouts.findIndex(file);
         const isLayoutFile = layoutIndex >= 0;
 
         if (isLayoutFile && currentPage?.layouts.includes(layoutIndex)) {

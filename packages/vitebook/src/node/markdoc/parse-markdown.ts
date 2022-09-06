@@ -8,7 +8,7 @@ import { resolveStaticRouteFromFilePath } from 'node';
 import type { App } from 'node/app/App';
 import fs from 'node:fs';
 import path from 'node:path';
-import type { ServerPage } from 'server/types';
+import type { ServerPageFile } from 'server/types';
 import type {
   MarkdownFrontmatter,
   MarkdownHeading,
@@ -103,7 +103,7 @@ export function parseMarkdown(
     lastUpdated,
   };
 
-  const page = app.nodes.pages.find(filePath);
+  const page = app.files.pages.find(filePath);
   if (page) mergeLayoutMeta(app, page, meta, opts);
 
   for (const transformer of opts.transformMeta ?? []) {
@@ -140,12 +140,12 @@ export function getFrontmatter(source: string | Buffer): MarkdownFrontmatter {
 
 function mergeLayoutMeta(
   app: App,
-  page: ServerPage,
+  page: ServerPageFile,
   meta: MarkdownMeta,
   opts: Partial<ParseMarkdownConfig> = {},
 ) {
   const layoutFiles = page.layouts.map(
-    (index) => app.nodes.layouts.getByIndex(index).filePath,
+    (index) => app.files.layouts.getByIndex(index).filePath,
   );
 
   for (const layoutFile of layoutFiles.reverse()) {

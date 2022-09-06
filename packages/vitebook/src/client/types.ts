@@ -1,5 +1,5 @@
 import type { Route } from 'router/types';
-import type { StaticLoadedData } from 'server/types';
+import type { JSONData } from 'server/types';
 import type { MarkdownMeta } from 'shared/markdown';
 
 export type ClientPage = {
@@ -9,8 +9,6 @@ export type ClientPage = {
   readonly route: Route;
   /** Page file extension.  */
   readonly ext: string;
-  /** Additional page metadata. */
-  readonly context?: Record<string, unknown>;
   /** Page layout name. */
   readonly layoutName?: string;
   /** Page layouts identifiers. */
@@ -30,7 +28,7 @@ export type LoadedClientPage = Omit<ClientPage, 'layouts'> & {
   readonly module: ClientPageModule;
   readonly default: unknown;
   readonly layouts: LoadedClientLayout[];
-  readonly staticData: StaticLoadedData;
+  readonly staticData: JSONData;
 };
 
 export type LoadedClientMarkdownPage = LoadedClientPage & {
@@ -52,7 +50,7 @@ export type LoadedClientLayout = ClientLayout & {
   readonly $$loaded: true;
   readonly module: ClientLayoutModule;
   readonly default: unknown;
-  readonly staticData: StaticLoadedData;
+  readonly staticData: JSONData;
 };
 
 export {};

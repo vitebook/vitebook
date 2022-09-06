@@ -2,17 +2,18 @@ import { getFrontmatter } from 'node/markdoc';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { compareRoutes } from 'router';
-import type { ServerPage } from 'server/types';
+import type { ServerPageFile } from 'server/types';
 import { slash } from 'shared/utils/url';
 
 import type { App } from '../App';
-import { FileNodes, type FileNodesCallbacks } from './FileNodes';
+import { type FilesCallbacks } from './Files';
+import { LoadableFiles } from './LoadableFiles';
 
 const MD_FILE_RE = /\.md($|\/)/;
 const PAGE_LAYOUT_NAME_RE = /\+(.*?)\./;
 
-export class PageNodes extends FileNodes<ServerPage> {
-  init(app: App, options?: FileNodesCallbacks<ServerPage>) {
+export class PageFiles extends LoadableFiles<ServerPageFile> {
+  init(app: App, options?: FilesCallbacks<ServerPageFile>) {
     return super.init(app, {
       include: app.config.routes.pages.include,
       exclude: app.config.routes.pages.exclude,
@@ -30,11 +31,13 @@ export class PageNodes extends FileNodes<ServerPage> {
     const ext = path.posix.extname(rootPath);
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const layoutName = await this.getLayoutName(filePath, fileContent);
+    const is404 = id.includes('@404');
     const hasStaticLoader = this.hasStaticLoader(fileContent);
     const hasServerLoader = this.hasServerLoader(fileContent);
+    const hasServerAction = this.hasServerAction(fileContent);
     const route = this.resolveRoute(filePath);
 
-    const page: ServerPage = {
+    const page: ServerPageFile = {
       id,
       filePath,
       rootPath,
@@ -42,16 +45,14 @@ export class PageNodes extends FileNodes<ServerPage> {
       route,
       layouts: [],
       layoutName,
-      get hasAnyLoader() {
-        return hasStaticLoader || hasServerLoader;
-      },
+      is404,
       hasStaticLoader,
       hasServerLoader,
-      context: {},
+      hasServerAction,
     };
 
-    this._nodes.push(page);
-    this._nodes = this._nodes.sort((a, b) => compareRoutes(a.route, b.route));
+    this._files.push(page);
+    this._files = this._files.sort((a, b) => compareRoutes(a.route, b.route));
     this._options.onAdd?.(page);
 
     return page;
@@ -76,13 +77,13 @@ export class PageNodes extends FileNodes<ServerPage> {
     );
   }
 
-  test(pathname: string) {
-    for (let i = 0; i < this._nodes.length; i++) {
-      const node = this._nodes[i];
-      if (
-        !node.rootPath.includes('@404') &&
-        node.route.pattern.test({ pathname })
-      ) {
+  test(
+    pathname: string,
+    filter: (page: ServerPageFile) => boolean = () => true,
+  ) {
+    for (let i = 0; i < this._files.length; i++) {
+      const page = this._files[i];
+      if (filter(page) && page.route.pattern.test({ pathname })) {
         return true;
       }
     }

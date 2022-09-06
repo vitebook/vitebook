@@ -6,7 +6,7 @@ import type {
 } from 'router';
 import { createMemoryHistory, createRouter } from 'router';
 import type { Reactive } from 'router/reactivity';
-import type { ServerContext, StaticLoadedData } from 'server/types';
+import type { JSONData, ServerEntryContext } from 'server/types';
 import {
   resolveStaticDataAssetID,
   STATIC_DATA_ASSET_BASE_PATH,
@@ -32,7 +32,7 @@ export type RouterInitOptions = {
   $pages: Reactive<ClientPage[]>;
   $layouts: Reactive<ClientLayout[]>;
   $currentPage: Reactive<LoadedClientPage>;
-  serverContext?: ServerContext;
+  serverContext?: ServerEntryContext;
 };
 
 export async function initRouter({
@@ -55,7 +55,7 @@ export async function initRouter({
   });
 
   if (!import.meta.env.SSR && import.meta.env.PROD) {
-    const redirects = window['__VBK_REDIRECTS_MAP__'] ?? {};
+    const redirects = window['__VBK_STATIC_REDIRECTS_MAP__'] ?? {};
     for (const from of Object.keys(redirects)) {
       const to = redirects[from];
       router.addRedirect(from, to);
@@ -162,7 +162,7 @@ export async function loadPage(
   const prefetchURL = isBoolean(prefetch) ? undefined : prefetch;
 
   let pageModule: ClientPageModule;
-  let pageStaticData: StaticLoadedData;
+  let pageStaticData: JSONData;
   let layouts: LoadedClientLayout[];
 
   /**
@@ -255,7 +255,7 @@ export async function loadStaticData(
   module: ClientPageModule | ClientLayoutModule,
   layoutIndex?: number,
   prefetchURL?: URL,
-): Promise<StaticLoadedData> {
+): Promise<JSONData> {
   if (!module.loader) return {};
 
   let pathname = prefetchURL?.pathname ?? router.navigation.get()!.to.pathname;
@@ -265,13 +265,13 @@ export async function loadStaticData(
 
   const hashId =
     import.meta.env.PROD && !import.meta.env.SSR
-      ? window['__VBK_DATA_HASH_MAP__'][await hashDataId(id)]
+      ? window['__VBK_STATIC_DATA_HASH_MAP__'][await hashDataId(id)]
       : id;
 
   if (!hashId) return {};
 
   if (import.meta.env.SSR && router.serverContext) {
-    return router.serverContext.data.get(hashId) ?? {};
+    return router.serverContext.staticData.get(hashId) ?? {};
   }
 
   try {

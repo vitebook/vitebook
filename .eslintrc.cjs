@@ -33,6 +33,7 @@ module.exports = {
       'error',
       { varsIgnorePattern: '(^_)|(^props$)' },
     ],
+    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     // Typescript handles these.

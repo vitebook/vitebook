@@ -5,9 +5,9 @@ export * from './types';
 export { isLoadedMarkdownPage, isLoadedPage } from './utils';
 export * from 'router';
 export type {
-  ServerContext,
-  StaticLoadedData as ServerLoadedData,
-  StaticLoaderDataMap as ServerLoadedDataMap,
+  JSONData,
+  ServerEntryContext,
+  StaticLoaderDataMap,
 } from 'server/types';
 export * from 'shared/markdown';
 export { installURLPattern } from 'shared/polyfills';

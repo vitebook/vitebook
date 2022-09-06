@@ -5,7 +5,6 @@ export type MarkdownMeta = {
   lastUpdated: number;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type MarkdownFrontmatter = Record<string, any>;
 
 export type MarkdownHeading = {

@@ -49,10 +49,10 @@ export function logRoutesList({ level, ...build }: RoutesLoggerInput) {
     }
   }
 
-  if (/(info|warn)/.test(level) && build.redirects.size > 0) {
+  if (/(info|warn)/.test(level) && build.staticRedirects.size > 0) {
     logs.push('', `➡️  ${kleur.bold(kleur.underline('REDIRECTS'))}`, '');
-    for (const link of build.redirects.keys()) {
-      const redirect = build.redirects.get(link)!;
+    for (const link of build.staticRedirects.keys()) {
+      const redirect = build.staticRedirects.get(link)!;
       logs.push(
         `- ${kleur.yellow(link)} -> ${kleur.yellow(redirect.to)} (${
           redirect.statusCode
@@ -96,7 +96,7 @@ export function logRoutesTree({ level, ...build }: RoutesLoggerInput) {
 
   const warnOnly = level === 'warn';
   const errorOnly = level === 'error';
-  const redirectLinks = new Set(build.redirects.keys());
+  const redirectLinks = new Set(build.staticRedirects.keys());
 
   const filteredLinks = errorOnly
     ? build.badLinks.keys()
@@ -127,8 +127,8 @@ export function logRoutesTree({ level, ...build }: RoutesLoggerInput) {
 
     if (build.badLinks.has(link)) {
       current.badLink = true;
-    } else if (build.redirects.has(link)) {
-      const redirect = build.redirects.get(link)!;
+    } else if (build.staticRedirects.has(link)) {
+      const redirect = build.staticRedirects.get(link)!;
       current.redirect = {
         path: redirect.to.slice(1, -1),
         statusCode: redirect.statusCode,

@@ -4,13 +4,13 @@ import { normalizePath } from 'node/utils';
 
 export function handleMarkdownHMR(app: App) {
   const schema = app.markdoc;
-  const nodes = app.nodes.markdoc;
+  const nodes = app.files.markdoc;
   const isNode = (filePath) => nodes.isAnyNode(filePath);
 
   onFileEvent(isNode, 'add', async (filePath) => {
     nodes.add(filePath);
 
-    for (const page of app.nodes.pages) {
+    for (const page of app.files.pages) {
       if (nodes.isOwnedBy(filePath, page.filePath)) {
         clearMarkdownCache(page.filePath);
         invalidateFile(page.filePath);

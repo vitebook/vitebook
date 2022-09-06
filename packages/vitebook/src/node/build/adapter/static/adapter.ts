@@ -23,7 +23,7 @@ export function createStaticBuildAdapter(
       startRenderingPages() {
         renderingSpinner.start(
           $.color.bold(
-            `Rendering ${$.color.underline(app.nodes.pages.size)} pages...`,
+            `Rendering ${$.color.underline(app.files.pages.size)} pages...`,
           ),
         );
       },
@@ -31,7 +31,7 @@ export function createStaticBuildAdapter(
         renderingSpinner.stopAndPersist({
           symbol: $.icons.success,
           text: $.color.bold(
-            `Rendered ${$.color.underline(app.nodes.pages.size)} pages`,
+            `Rendered ${$.color.underline(app.files.pages.size)} pages`,
           ),
         });
       },
@@ -46,7 +46,7 @@ export function createStaticBuildAdapter(
 
         const redirectsTable: Record<string, string> = {};
 
-        for (const redirect of build.redirects.values()) {
+        for (const redirect of build.staticRedirects.values()) {
           redirectFiles.push({
             filename: redirect.filename,
             content: redirect.html,
@@ -59,7 +59,7 @@ export function createStaticBuildAdapter(
         const serializedRedirectsTable = JSON.stringify(
           JSON.stringify(redirectsTable),
         );
-        redirectsScriptTag = `<script>__VBK_REDIRECTS_MAP__ = JSON.parse(${serializedRedirectsTable});</script>`;
+        redirectsScriptTag = `<script>__VBK_STATIC_REDIRECTS_MAP__ = JSON.parse(${serializedRedirectsTable});</script>`;
 
         // ---------------------------------------------------------------------------------------
         // Data
@@ -79,7 +79,7 @@ export function createStaticBuildAdapter(
         // Embedded as a string and `JSON.parsed` from the client because it's faster than
         // embedding as a JS object literal.
         const serializedDataTable = JSON.stringify(JSON.stringify(dataTable));
-        const dataHashScriptTag = `<script>__VBK_DATA_HASH_MAP__ = JSON.parse(${serializedDataTable});</script>`;
+        const dataHashScriptTag = `<script>__VBK_STATIC_DATA_HASH_MAP__ = JSON.parse(${serializedDataTable});</script>`;
 
         // ---------------------------------------------------------------------------------------
         // HTML Pages

@@ -2,23 +2,23 @@
 
 import Markdoc, { type Config as MarkdocConfig } from '@markdoc/markdoc';
 import type { App } from 'node/app/App';
-import { type MarkdocNodes } from 'node/app/nodes/MarkdocNodes';
+import type { MarkdocFiles } from 'node/app/files';
 
 export class MarkdocSchema {
   protected _app!: App;
-  protected _nodes!: MarkdocNodes;
+  protected _files!: MarkdocFiles;
 
   /** track files for HMR. */
   hmrFiles = new Map<string, Set<string>>();
 
   init(app: App) {
     this._app = app;
-    this._nodes = app.nodes.markdoc;
+    this._files = app.files.markdoc;
   }
 
   getOwnedConfig(ownerFilePath: string): MarkdocConfig {
     const base = this._app.config.markdown.markdoc;
-    const isPage = this._app.nodes.pages.is(ownerFilePath);
+    const isPage = this._app.files.pages.is(ownerFilePath);
     const nodes = isPage ? this._getOwnedNodesConfig(ownerFilePath) : {};
     const tags = isPage ? this._getOwnedTagsConfig(ownerFilePath) : {};
 
@@ -57,7 +57,7 @@ export class MarkdocSchema {
   }
 
   resolveOwnedImports(ownerFilePath: string) {
-    return this._nodes
+    return this._files
       .getOwnedNodes(ownerFilePath, '*')
       .map((node) => {
         const rootPath = this._app.dirs.root.relative(node.filePath);
@@ -69,7 +69,7 @@ export class MarkdocSchema {
   protected _getOwnedNodesConfig(ownerFilePath: string) {
     const nodes: MarkdocConfig['nodes'] = {};
 
-    for (const node of this._nodes.getOwnedNodes(ownerFilePath, 'node')) {
+    for (const node of this._files.getOwnedNodes(ownerFilePath, 'node')) {
       nodes[node.name] = {
         render: node.cname,
         transform: (_node, config) => {
@@ -90,7 +90,7 @@ export class MarkdocSchema {
   protected _getOwnedTagsConfig(ownerFilePath: string) {
     const tags: MarkdocConfig['tags'] = {};
 
-    for (const tag of this._nodes.getOwnedNodes(ownerFilePath, 'tag')) {
+    for (const tag of this._files.getOwnedNodes(ownerFilePath, 'tag')) {
       tags[tag.name] = {
         render: tag.cname,
         selfClosing: tag.inline,
