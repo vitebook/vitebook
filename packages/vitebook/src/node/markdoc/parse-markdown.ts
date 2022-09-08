@@ -4,11 +4,10 @@ import Markdoc, { type RenderableTreeNode, type Tag } from '@markdoc/markdoc';
 import matter from 'gray-matter';
 import yaml from 'js-yaml';
 import LRUCache from 'lru-cache';
-import { resolveStaticRouteFromFilePath } from 'node';
+import { PageFile, resolveStaticRouteFromFilePath } from 'node';
 import type { App } from 'node/app/App';
 import fs from 'node:fs';
 import path from 'node:path';
-import type { ServerPageFile } from 'server/types';
 import type {
   MarkdownFrontmatter,
   MarkdownHeading,
@@ -103,8 +102,9 @@ export function parseMarkdown(
     lastUpdated,
   };
 
-  const page = app.files.pages.find(filePath);
-  if (page) mergeLayoutMeta(app, page, meta, opts);
+  const pageLike =
+    app.files.pages.find(filePath) || app.files.errors.find(filePath);
+  if (pageLike) mergeLayoutMeta(app, pageLike, meta, opts);
 
   for (const transformer of opts.transformMeta ?? []) {
     transformer({ filePath, meta, imports, stuff });
@@ -140,12 +140,12 @@ export function getFrontmatter(source: string | Buffer): MarkdownFrontmatter {
 
 function mergeLayoutMeta(
   app: App,
-  page: ServerPageFile,
+  page: PageFile,
   meta: MarkdownMeta,
   opts: Partial<ParseMarkdownConfig> = {},
 ) {
   const layoutFiles = page.layouts.map(
-    (index) => app.files.layouts.getByIndex(index).filePath,
+    (index) => app.files.layouts.getByIndex(index).path,
   );
 
   for (const layoutFile of layoutFiles.reverse()) {

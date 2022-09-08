@@ -97,23 +97,14 @@ export function vitebookPlugin(
         if (id === virtualModuleRequestPath.app) {
           const id = app.config.client.app;
           const baseUrl = app.vite.resolved!.base;
-          const configs = app.config.client.configFiles;
           return [
             `import * as App from "${id}";`,
             '',
-            configs
-              .map(
-                (id, i) =>
-                  `import { configureApp as configureApp$${i} } from "${id}";`,
-              )
-              .join('\n'),
-            '',
-            `export default {
-            id: "${id}",
-            baseUrl: "${baseUrl}",
-            module: App,
-            configs: [${configs.map((_, i) => `configureApp$${i}`).join(', ')}]
-          };`,
+            'export default {',
+            `  id: "${id}",`,
+            `  baseUrl: "${baseUrl}",`,
+            `  module: App,`,
+            `};`,
           ].join('\n');
         }
 

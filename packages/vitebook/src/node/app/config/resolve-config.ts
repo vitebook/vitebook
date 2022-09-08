@@ -38,7 +38,6 @@ export function resolveAppConfig(
     app: client.app
       ? path.posix.relative(_root, normalizePath(client.app))
       : '',
-    configFiles: client.configFiles ?? [],
   };
 
   const pageExts = `md,svelte,vue,jsx,tsx`;
@@ -51,28 +50,29 @@ export function resolveAppConfig(
       { name: 'int', matcher: /\d+/ },
       { name: 'str', matcher: /\w+/ },
       { name: 'bool', matcher: /(true|false)/ },
-      (route) => route.replace(/\[\.\.\.(.*?)\]/g, ':$1*'),
+      (route) => route.replace(/\[\[\.\.\.(.*?)\]\]/g, ':$1*'),
+      (route) => route.replace(/\[\.\.\.(.*?)\]/g, ':$1+'),
       (route) => route.replace(/\[(.*?)\]/g, ':$1'),
     ],
     log: routes.log ?? 'tree',
     logLevel: routes.logLevel ?? 'warn',
     pages: {
-      include: [`**/@404.{${pageExts}}`, `**/*@page*.{${pageExts}}`],
+      include: [`**/+page.{${pageExts}}`],
       exclude: [],
       ...routes.pages,
     },
     layouts: {
-      include: [
-        `**/*@layout.{${pageExts}}`,
-        `**/*@layout.reset.{${pageExts}}`,
-        `**/@layouts/**/*.{${pageExts}}`,
-        `**/@layouts/**/*.reset.{${pageExts}}`,
-      ],
+      include: [`**/+layout*.{${pageExts}}`],
       exclude: [],
-      ...routes.layouts,
+      ...routes.pages,
+    },
+    errors: {
+      include: [`**/+error.{${pageExts}}`],
+      exclude: [],
+      ...routes.errors,
     },
     endpoints: {
-      include: [`**/@http.{${endpointExts}}`],
+      include: [`**/+http.{${endpointExts}}`],
       exclude: [],
       ...routes.endpoints,
     },
@@ -86,7 +86,7 @@ export function resolveAppConfig(
     shiki: { theme: 'material-palenight', langs: [] },
     hastToHtml: {},
     nodes: {
-      include: [`**/@markdoc/**/*.{${pageExts}}`],
+      include: [`**/.markdoc/**/*.{${pageExts}}`],
       exclude: [],
       ...markdown.nodes,
     },

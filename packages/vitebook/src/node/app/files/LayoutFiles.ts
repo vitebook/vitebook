@@ -1,17 +1,23 @@
-import fs from 'node:fs';
+import { comparePathDepth } from 'node/utils';
 import path from 'node:path';
-import type { ServerLayoutFile } from 'server/types';
 import { isString } from 'shared/utils/unit';
+import { slash } from 'shared/utils/url';
 
-import { type App } from '../App';
-import { type FilesCallbacks } from './Files';
-import { LoadableFiles } from './LoadableFiles';
+import type { App } from '../App';
+import {
+  type SystemFileMeta,
+  SystemFiles,
+  type SystemFilesOptions,
+} from './SystemFiles';
 
-const STRIP_LAYOUTS_PATH = /\/@layouts\/.+/;
-const LAYOUT_NAME_RE = /(.*?)@layout/;
+export type LayoutFile = SystemFileMeta & {
+  readonly moduleId: string;
+  readonly owningDir: string;
+  readonly reset: boolean;
+};
 
-export class LayoutFiles extends LoadableFiles<ServerLayoutFile> {
-  init(app: App, options?: FilesCallbacks<ServerLayoutFile>) {
+export class LayoutFiles extends SystemFiles<LayoutFile> {
+  init(app: App, options?: Partial<SystemFilesOptions>) {
     return super.init(app, {
       include: app.config.routes.layouts.include,
       exclude: app.config.routes.layouts.exclude,
@@ -20,83 +26,48 @@ export class LayoutFiles extends LoadableFiles<ServerLayoutFile> {
   }
 
   async add(filePath: string) {
-    filePath = this.normalizePath(filePath);
+    filePath = this._normalizePath(filePath);
 
-    const name = await this._getName(filePath);
     const rootPath = this._getRootPath(filePath);
-    const owningDir = path.posix.dirname(
-      rootPath.replace(STRIP_LAYOUTS_PATH, '/root.md'),
-    );
+    const ext = this._ext(rootPath);
+    const owningDir = path.posix.dirname(rootPath);
+    const reset = path.posix.basename(rootPath).includes('.reset.');
 
-    const fileContent = fs.readFileSync(filePath, { encoding: 'utf-8' });
-    const hasStaticLoader = this.hasStaticLoader(fileContent);
-    const hasServerLoader = this.hasServerLoader(fileContent);
-    const hasServerAction = this.hasServerAction(fileContent);
-    const reset = rootPath.includes(`.reset${path.posix.extname(rootPath)}`);
-
-    const layout: ServerLayoutFile = {
-      id: `/${rootPath}`,
-      name,
-      filePath,
+    const layout: LayoutFile = {
+      moduleId: slash(rootPath),
+      path: filePath,
       rootPath,
+      ext,
       owningDir,
-      hasStaticLoader,
-      hasServerLoader,
-      hasServerAction,
       reset,
     };
 
     this._files.push(layout);
-    this._files = this._files.sort((a, b) => {
-      const segmentsA = a.rootPath.split(/\//g);
-      const segmentsB = b.rootPath.split(/\//g);
-
-      return segmentsA.length !== segmentsB.length
-        ? segmentsA.length - segmentsB.length // shallow paths first
-        : path.posix.basename(a.rootPath, path.posix.extname(a.rootPath)) ===
-          '@layout'
-        ? -1
-        : 1;
-    });
-
-    this._options.onAdd?.(layout);
+    this._files = this._files.sort((a, b) =>
+      comparePathDepth(a.rootPath, b.rootPath),
+    );
+    this._callAddCallbacks(layout);
 
     return layout;
   }
 
-  isOwnedBy(
-    layout: string | ServerLayoutFile,
-    ownerFilePath: string,
-    layoutName?: string,
-  ) {
+  isOwnedBy(layout: string | LayoutFile, ownerFilePath: string) {
     const rootPath = this._getRootPath(ownerFilePath);
     const _layout = isString(layout) ? this.find(layout) : layout;
-    return (
-      _layout &&
-      rootPath.startsWith(_layout.owningDir) &&
-      (_layout.name === '@layout' || _layout.name === layoutName)
-    );
+    return _layout && rootPath.startsWith(_layout.owningDir);
   }
 
-  getOwnedLayoutIndicies(ownerFilePath: string, layoutName?: string) {
+  getOwnedLayoutIndicies(ownerFilePath: string) {
     let indicies: number[] = [];
 
     for (let i = 0; i < this._files.length; i++) {
       const layout = this._files[i];
-      if (this.isOwnedBy(layout.filePath, ownerFilePath, layoutName)) {
+      if (this.isOwnedBy(layout.path, ownerFilePath)) {
         if (layout.reset) indicies = [];
         indicies.push(i);
       }
     }
 
     return indicies;
-  }
-
-  protected _getName(filePath: string) {
-    const filename = path.posix
-      .basename(filePath, path.posix.extname(filePath))
-      .replace(/\.reset($|\/)/, '');
-    const match = filename.match(LAYOUT_NAME_RE)?.[1];
-    return match && match.length > 0 ? match : filename;
   }
 }

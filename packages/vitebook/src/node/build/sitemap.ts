@@ -32,7 +32,7 @@ export async function buildSitemap(
   const lastmodCache = new Map<string, string>();
   const lastmod = async (pathname: string) => {
     if (lastmodCache.has(pathname)) return lastmodCache.get(pathname);
-    const filePath = links.get(pathname)!.filePath;
+    const filePath = links.get(pathname)!.path;
     const mtime = (await fs.promises.stat(filePath)).mtime;
     const date = mtime.toISOString().split('T')[0];
     lastmodCache.set(pathname, date);

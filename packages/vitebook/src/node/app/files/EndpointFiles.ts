@@ -1,11 +1,19 @@
-import { compareRoutes } from 'router';
-import type { ServerEndpointFile } from 'server/types';
+import { comparePathDepth } from 'node/utils';
+import { slash } from 'shared/utils/url';
 
-import { type App } from '../App';
-import { Files, type FilesCallbacks } from './Files';
+import type { App } from '../App';
+import {
+  type SystemFileMeta,
+  SystemFiles,
+  type SystemFilesOptions,
+} from './SystemFiles';
 
-export class EndpointFiles extends Files<ServerEndpointFile> {
-  init(app: App, options?: FilesCallbacks<ServerEndpointFile>) {
+export type EndpointFile = SystemFileMeta & {
+  readonly moduleId: string;
+};
+
+export class EndpointFiles extends SystemFiles<EndpointFile> {
+  init(app: App, options?: Partial<SystemFilesOptions>) {
     return super.init(app, {
       include: app.config.routes.endpoints.include,
       exclude: app.config.routes.endpoints.exclude,
@@ -14,26 +22,21 @@ export class EndpointFiles extends Files<ServerEndpointFile> {
   }
 
   async add(filePath: string) {
-    const endpoint: ServerEndpointFile = {
-      filePath,
-      rootPath: this._getRootPath(filePath),
-      route: this.resolveRoute(filePath),
+    const rootPath = this._getRootPath(filePath);
+
+    const endpoint: EndpointFile = {
+      moduleId: slash(rootPath),
+      path: filePath,
+      rootPath,
+      ext: this._ext(filePath),
     };
 
     this._files.push(endpoint);
-    this._files = this._files.sort((a, b) => compareRoutes(a.route, b.route));
-    this._options.onAdd?.(endpoint);
+    this._files = this._files.sort((a, b) =>
+      comparePathDepth(a.rootPath, b.rootPath),
+    );
+    this._callAddCallbacks(endpoint);
 
     return endpoint;
-  }
-
-  test(pathname: string) {
-    for (let i = 0; i < this._files.length; i++) {
-      if (this._files[i].route.pattern.test({ pathname })) {
-        return true;
-      }
-    }
-
-    return false;
   }
 }

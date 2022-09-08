@@ -12,3 +12,7 @@ export type MarkdownHeading = {
   title: string;
   id: string;
 };
+
+export type MarkdownModule = {
+  __markdownMeta: MarkdownMeta;
+};

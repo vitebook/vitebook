@@ -23,7 +23,7 @@ const defaultEdgeConfig = {
   entrypoint: 'index.js',
 };
 
-const matchersRE = /\[(?:.*?)\]/g;
+const matchersRE = /\[?\[(?:.*?)\]\]?/g;
 
 export function createVercelBuildAdapter(
   config?: VercelBuildAdapterConfig,
@@ -89,13 +89,13 @@ export function createVercelBuildAdapter(
         ];
 
         const bundlingFunctionsSpinner = $.createSpinner();
-        const fnCount = $.color.underline(app.files.endpoints.size);
+        const fnCount = $.color.underline(app.routes.endpoints.size);
         bundlingFunctionsSpinner.start(
           $.color.bold(`Bundling ${fnCount} functions...`),
         );
 
-        for (const endpoint of app.files.endpoints) {
-          const apiPath = app.dirs.app.relative(endpoint.rootPath);
+        for (const route of app.routes.endpoints) {
+          const apiPath = app.dirs.app.relative(route.file.rootPath);
           const apiDir = path.posix.dirname(apiPath);
           routes.push({
             src: `^${$.slash(apiDir.replace(matchersRE, '([^/]+?)'))}/?$`, // ^/api/foo/?$
@@ -105,9 +105,9 @@ export function createVercelBuildAdapter(
 
         const serverChunks = bundles.server.chunks;
         await Promise.all(
-          Array.from(app.files.endpoints).map(async (endpoint) => {
+          Array.from(app.routes.endpoints).map(async (route) => {
             const chunk = serverChunks.find(
-              (chunk) => chunk.facadeModuleId === endpoint.filePath,
+              (chunk) => chunk.facadeModuleId === route.file.path,
             );
 
             const allowedMethods = chunk?.exports.filter((id) =>
@@ -122,9 +122,10 @@ export function createVercelBuildAdapter(
               !!config?.edge?.all || chunk.exports.includes('EDGE');
 
             const resolveCode = isEdge ? resolveEdgeCode : resolveFunctionCode;
+
             const code = resolveCode(
-              endpoint.route.pathname,
-              './@http.js',
+              route.pattern.pathname,
+              './+http.js',
               allowedMethods,
             );
 
@@ -138,7 +139,7 @@ export function createVercelBuildAdapter(
                   ...config?.functions,
                 };
 
-            const apiPath = app.dirs.app.relative(endpoint.rootPath);
+            const apiPath = app.dirs.app.relative(route.file.rootPath);
             const fndir = `${path.posix.dirname(apiPath)}.func`;
             const outdir = vercelDirs.fns.resolve(fndir);
             const chunkdir = path.posix.dirname(

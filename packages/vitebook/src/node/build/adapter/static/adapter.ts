@@ -23,7 +23,7 @@ export function createStaticBuildAdapter(
       startRenderingPages() {
         renderingSpinner.start(
           $.color.bold(
-            `Rendering ${$.color.underline(app.files.pages.size)} pages...`,
+            `Rendering ${$.color.underline(app.routes.pages.size)} pages...`,
           ),
         );
       },
@@ -31,7 +31,7 @@ export function createStaticBuildAdapter(
         renderingSpinner.stopAndPersist({
           symbol: $.icons.success,
           text: $.color.bold(
-            `Rendered ${$.color.underline(app.files.pages.size)} pages`,
+            `Rendered ${$.color.underline(app.routes.pages.size)} pages`,
           ),
         });
       },
@@ -103,7 +103,7 @@ export function createStaticBuildAdapter(
 
         for (const render of build.staticRenders.values()) {
           const { assets, imports, dynamicImports } = $.resolvePageChunks(
-            render.page,
+            render.route,
             render.ssr.context.modules,
           );
 

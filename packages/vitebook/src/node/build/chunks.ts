@@ -1,7 +1,7 @@
 import type { App } from 'node/app/App';
+import type { PageFileRoute } from 'node/app/routes';
 import type { GetManualChunk } from 'rollup';
-import type { ServerPageFile } from 'server/types';
-import { type ManifestChunk as ViteManifestChunk } from 'vite';
+import type { ManifestChunk as ViteManifestChunk } from 'vite';
 
 import type { BuildBundles } from './build';
 
@@ -20,7 +20,7 @@ export function extendManualChunks(): GetManualChunk {
 
 export function resolvePageChunks(
   app: App,
-  page: ServerPageFile,
+  route: PageFileRoute,
   { entryChunk, appChunk, viteManifest }: BuildBundles['client'],
   modules?: Set<string>,
 ) {
@@ -90,7 +90,7 @@ export function resolvePageChunks(
 
   // Layouts
 
-  const layoutChunks = page.layouts.map((index) =>
+  const layoutChunks = route.file.layouts.map((index) =>
     app.files.layouts.getByIndex(index),
   );
 
@@ -116,7 +116,7 @@ export function resolvePageChunks(
 
   // Page
 
-  const pageChunk = viteManifest[page.rootPath];
+  const pageChunk = viteManifest[route.file.rootPath];
 
   if (pageChunk) {
     collectChunks(pageChunk, true);

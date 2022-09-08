@@ -1,9 +1,9 @@
 import kleur from 'kleur';
 import type { App } from 'node/app/App';
+import type { PageFileRoute } from 'node/app/routes';
 import { createStaticLoaderInput } from 'server';
 import type {
   ServerNodeLoader,
-  ServerPageFile,
   ServerRedirect,
   StaticLoaderCacheKeyBuilder,
   StaticLoaderCacheMap,
@@ -18,20 +18,20 @@ import { isLinkExternal, slash } from 'shared/utils/url';
 export async function callStaticLoaders(
   url: URL,
   app: App,
-  page: ServerPageFile,
+  route: PageFileRoute,
   loader: ServerNodeLoader,
 ) {
   const map: StaticLoaderOutputMap = new Map();
 
   const pathname = decodeURI(url.pathname);
-  const input = createStaticLoaderInput(url, page);
+  const input = createStaticLoaderInput(url, route);
 
   let redirect: ServerRedirect | undefined;
 
   // Load page first - if it has a redirect we'll skip loading layouts.
   await (async () => {
     const id = resolveStaticDataAssetID(pathname);
-    const output = await callStaticLoader(app, page.filePath, input, loader);
+    const output = await callStaticLoader(app, route.file.path, input, loader);
 
     map.set(id, output);
 
@@ -58,16 +58,11 @@ export async function callStaticLoaders(
   if (redirect) return { output: map, redirect };
 
   await Promise.all(
-    page.layouts.map(async (index) => {
+    route.file.layouts.map(async (index) => {
       const id = resolveStaticDataAssetID(pathname, index);
       const layout = app.files.layouts.getByIndex(index);
 
-      const output = await callStaticLoader(
-        app,
-        layout.filePath,
-        input,
-        loader,
-      );
+      const output = await callStaticLoader(app, layout.path, input, loader);
 
       map.set(id, output);
     }),
@@ -95,11 +90,11 @@ export async function callStaticLoader(
 ): Promise<StaticLoaderOutput> {
   if (!filePath) return {};
 
-  const module = app.files.layouts.is(filePath)
+  const file = app.files.layouts.is(filePath)
     ? app.files.layouts.find(filePath)
     : app.files.pages.find(filePath);
 
-  if (!module || !module.hasStaticLoader) {
+  if (!file) {
     clearStaticLoaderCache(filePath);
     return {};
   }
@@ -113,9 +108,14 @@ export async function callStaticLoader(
     }
   }
 
-  const { staticLoader } = await loader(module.filePath);
+  const { staticLoader } = await loader(file.path);
 
-  const output = (await staticLoader?.(input)) ?? {};
+  if (!staticLoader) {
+    clearStaticLoaderCache(filePath);
+    return {};
+  }
+
+  const output = (await staticLoader(input)) ?? {};
 
   const data = output.data;
   const buildCacheKey = output.cache;

@@ -1,4 +1,5 @@
-import { calcRoutePathScore, compareRoutes, matchRoute } from '../match';
+import { calcRoutePathScore, compareRoutes, matchRoute } from 'shared/routing';
+
 import type { RoutesComparator } from './types';
 
 /**
@@ -11,10 +12,7 @@ export function createURLPatternRouteMatcher(): RoutesComparator {
     match(url, routes) {
       const route = matchRoute(url, routes);
       return route
-        ? {
-            ...route,
-            params: route?.match.groups ?? {},
-          }
+        ? { url, ...route, params: route?.match.groups ?? {} }
         : null;
     },
     score(route) {

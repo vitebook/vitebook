@@ -1,6 +1,6 @@
 import { noslash, slash } from 'shared/utils/url';
 
-import type { Route, WithRouteMatch } from './types';
+import type { MatchableRoute, Route, WithRouteMatch } from './types';
 
 const PATH_SCORE = {
   Segment: 6,
@@ -86,12 +86,12 @@ export function compareRoutes(routeA: Route, routeB: Route) {
     return routeB.score - routeA.score; // higher score first
   }
 
-  const segmentsA = splitRoutePath(routeA.pathname).length;
-  const segmentsB = splitRoutePath(routeB.pathname).length;
+  const segmentsA = splitRoutePath(routeA.pattern.pathname).length;
+  const segmentsB = splitRoutePath(routeB.pattern.pathname).length;
 
   return segmentsA != segmentsB
     ? segmentsB - segmentsA // deeper path first
-    : routeB.pathname.length - routeA.pathname.length; // longer path first
+    : routeB.pattern.pathname.length - routeA.pattern.pathname.length; // longer path first
 }
 
 const trailingHtmlExtGroupRE = /{\.html}\?$/;
@@ -114,7 +114,7 @@ export function isRoutePathDynamic(pathname: string) {
   );
 }
 
-export function matchRoute<T extends Route>(
+export function matchRoute<T extends MatchableRoute>(
   url: URL,
   routes: T[] | { route: T }[],
 ): WithRouteMatch<T> | undefined {
@@ -122,7 +122,7 @@ export function matchRoute<T extends Route>(
   return result ? { ...result.route, match: result.match } : undefined;
 }
 
-export function matchRouteInfo<T extends Route>(
+export function matchRouteInfo<T extends MatchableRoute>(
   url: URL,
   routes: T[] | { route: T }[],
 ): WithRouteMatch<{ index: number; route: T }> | undefined {
@@ -139,7 +139,7 @@ export function matchRouteInfo<T extends Route>(
   return route && match ? { index, route, match } : undefined;
 }
 
-export function execRouteMatch<T extends Route>(url: URL, route?: T) {
+export function execRouteMatch<T extends MatchableRoute>(url: URL, route?: T) {
   return route?.pattern.exec({ pathname: getRouteMatchingPathname(url) })
     ?.pathname;
 }
@@ -150,7 +150,7 @@ export function getRouteMatchingPathname(url: URL) {
 }
 
 export function normalizeURL(url: URL, trailingSlash = true) {
-  url.pathname = url.pathname.replace('/index.hmtl', '/');
+  url.pathname = url.pathname.replace('/index.html', '/');
   if (!trailingSlash) url.pathname = url.pathname.replace(/\/$/, '');
   return url;
 }

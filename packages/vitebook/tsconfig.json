@@ -6,7 +6,8 @@
     "declarationDir": "types",
     "tsBuildInfoFile": ".tsbuildinfo",
     "paths": {
-      ":virtual/vitebook/app": ["virtual/app"]
+      ":virtual/vitebook/app": ["virtual/app"],
+      ":virtual/vitebook/routes": ["virtual/routes"]
     }
   },
   "include": ["src"]

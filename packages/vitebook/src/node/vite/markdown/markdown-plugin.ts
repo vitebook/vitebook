@@ -3,13 +3,13 @@ import { readFile } from 'fs/promises';
 import { toHtml } from 'hast-util-to-html';
 import kleur from 'kleur';
 import type { App } from 'node/app/App';
+import type { PageFile } from 'node/app/files';
 import {
   clearMarkdownCache,
   type HighlightCodeBlock,
   parseMarkdown,
   type ParseMarkdownResult,
 } from 'node/markdoc';
-import type { ServerPageFile } from 'server/types';
 import type { MarkdownMeta } from 'shared/markdown';
 import type { ViteDevServer } from 'vite';
 
@@ -20,7 +20,7 @@ import { handleMarkdownHMR } from './hmr';
 export function markdownPlugin(): VitebookPlugin {
   let app: App;
   let filter: (id: string) => boolean;
-  let currentPage: ServerPageFile | undefined = undefined;
+  let currentPage: PageFile | undefined = undefined;
   let parse: (filePath: string, content: string) => ParseMarkdownResult;
   let highlight: HighlightCodeBlock | null = null;
 
@@ -98,8 +98,8 @@ export function markdownPlugin(): VitebookPlugin {
     },
     async configureServer(server) {
       handleMarkdownHMR(app);
-      server.ws.on('vitebook::page_change', ({ rootPath }) => {
-        const filePath = app.dirs.root.resolve(rootPath);
+      server.ws.on('vitebook::route_change', ({ id }) => {
+        const filePath = app.dirs.root.resolve(id);
         currentPage = app.files.pages.find(filePath);
       });
     },
@@ -121,15 +121,15 @@ export function markdownPlugin(): VitebookPlugin {
         const isLayoutFile = layoutIndex >= 0;
 
         if (isLayoutFile && currentPage?.layouts.includes(layoutIndex)) {
-          clearMarkdownCache(currentPage.filePath);
+          clearMarkdownCache(currentPage.path);
           invalidatePageModule(server, currentPage);
 
           const { meta } = parse(
-            currentPage.filePath,
-            await readFile(currentPage.filePath, { encoding: 'utf-8' }),
+            currentPage.path,
+            await readFile(currentPage.path, { encoding: 'utf-8' }),
           );
 
-          handleMarkdownMetaHMR(server, currentPage.filePath, meta);
+          handleMarkdownMetaHMR(server, currentPage.path, meta);
         }
 
         const { output, meta } = parse(file, content);

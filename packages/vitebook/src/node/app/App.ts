@@ -10,6 +10,7 @@ import type {
 import type { ResolvedAppConfig } from './config/AppConfig';
 import type { DisposalBin } from './create/DisposalBin';
 import type { AppFiles } from './files';
+import type { AppRoutes } from './routes';
 
 export type AppDetails = {
   version: string;
@@ -27,6 +28,7 @@ export type App = AppDetails & {
   [x: string]: unknown;
   context: Map<string, unknown>;
   files: AppFiles;
+  routes: AppRoutes;
   markdoc: MarkdocSchema;
   disposal: DisposalBin;
   logger: typeof logger;

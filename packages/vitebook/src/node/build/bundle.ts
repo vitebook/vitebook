@@ -46,7 +46,7 @@ export function resolveBuildConfig(app: App): ViteConfig {
       cssCodeSplit: false,
       assetsDir: `${immutableDir}/assets`,
       minify: !ssr && !app.config.debug,
-      polyfillModulePreload: false,
+      polyfillModulePreload: true,
       outDir: ssr
         ? app.dirs.root.relative(app.dirs.server.path)
         : app.dirs.root.relative(app.dirs.client.path),

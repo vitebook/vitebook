@@ -1,15 +1,15 @@
 import type { App } from 'node/app/App';
+import type { EndpointFile } from 'node/app/files';
 import { handleHTTPRequest } from 'node/http';
 import { setResponse } from 'node/http/http-bridge';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { matchRouteInfo } from 'router';
 import {
   createEndpointHandler,
   handleHTTPError,
   httpError,
   type RequestModule,
 } from 'server/http';
-import type { ServerEndpointFile } from 'server/types';
+import { matchRouteInfo } from 'shared/routing';
 import { coalesceToError } from 'shared/utils/error';
 
 import { handleDevServerError, logDevError } from './dev-server';
@@ -20,20 +20,20 @@ export async function handleEndpointRequest(
   app: App,
   req: IncomingMessage,
   res: ServerResponse,
-  loader: (endpoint: ServerEndpointFile) => Promise<RequestModule>,
+  loader: (endpoint: EndpointFile) => Promise<RequestModule>,
 ) {
-  const match = matchRouteInfo(url, app.files.endpoints.toArray());
+  const match = matchRouteInfo(url, app.routes.endpoints.toArray());
 
   if (!match) {
     await setResponse(res, handleHTTPError(httpError('not found', 400)));
     return;
   }
 
-  const endpoint = app.files.endpoints.getByIndex(match.index);
+  const route = app.routes.endpoints.getByIndex(match.index);
 
   const handler = createEndpointHandler({
-    pattern: endpoint.route.pattern,
-    loader: () => loader(endpoint),
+    pattern: route.pattern,
+    loader: () => loader(route.file),
     getClientAddress: () => req.socket.remoteAddress,
     onError: (error) => {
       logDevError(app, req, coalesceToError(error));

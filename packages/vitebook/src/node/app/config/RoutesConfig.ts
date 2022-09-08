@@ -1,5 +1,4 @@
 import type { BuildData } from 'node/build';
-import type { RouteMatcherConfig } from 'router';
 
 export type ResolvedRoutesConfig = {
   /**
@@ -9,7 +8,7 @@ export type ResolvedRoutesConfig = {
   entries: string[];
   /**
    * Route matchers are used to inject pattern matching into file paths. For example, a file path
-   * like `[int]/@page.md` has a matcher named `int` which can then be defined at `routes.matchers`
+   * like `[int]/+page.md` has a matcher named `int` which can then be defined at `routes.matchers`
    * in your Vitebook config. The `[int]` will be replaced with the string or Regex you provide.
    * You can provide multiple placeholders for a single file name or path.
    *
@@ -68,6 +67,19 @@ export type ResolvedRoutesConfig = {
      */
     exclude: (string | RegExp)[];
   };
+  /**
+   * Error routing configuration object.
+   */
+  errors: {
+    /**
+     * Globs indicating error files to be included in Vitebook (relative to `<app>`).
+     */
+    include: string[];
+    /**
+     * Globs or RegExp indicating error files to be excluded from Vitebook (relative to `<app>`).
+     */
+    exclude: (string | RegExp)[];
+  };
   endpoints: {
     /**
      * Globs indicating serverless/edge functions to be included in Vitebook (relative to `<app>`).
@@ -94,10 +106,24 @@ export type RoutesLoggerInput = {
   level: RoutesLogLevel;
 } & BuildData;
 
+export type RouteMatcher = string | RegExp | null | undefined | void;
+
+export type SimpleRouteMatcher = {
+  name: string;
+  matcher: RouteMatcher;
+};
+
+export type ComplexRouteMatcher = (
+  route: string,
+  info: { filePath: string },
+) => string | null | undefined | void;
+
+export type RouteMatcherConfig = (SimpleRouteMatcher | ComplexRouteMatcher)[];
+
 export type RoutesConfig = Partial<
-  Omit<ResolvedRoutesConfig, 'pages' | 'layouts' | 'endpoints'>
+  Omit<ResolvedRoutesConfig, 'pages' | 'errors' | 'endpoints'>
 > & {
   pages?: Partial<ResolvedRoutesConfig['pages']>;
-  layouts?: Partial<ResolvedRoutesConfig['layouts']>;
+  errors?: Partial<ResolvedRoutesConfig['errors']>;
   endpoints?: Partial<ResolvedRoutesConfig['endpoints']>;
 };

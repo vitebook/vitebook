@@ -10,10 +10,10 @@ export function handleMarkdownHMR(app: App) {
   onFileEvent(isNode, 'add', async (filePath) => {
     nodes.add(filePath);
 
-    for (const page of app.files.pages) {
-      if (nodes.isOwnedBy(filePath, page.filePath)) {
-        clearMarkdownCache(page.filePath);
-        invalidateFile(page.filePath);
+    for (const pageFile of app.files.pages) {
+      if (nodes.isOwnedBy(filePath, pageFile.path)) {
+        clearMarkdownCache(pageFile.path);
+        invalidateFile(pageFile.path);
       }
     }
 

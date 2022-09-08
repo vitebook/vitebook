@@ -80,7 +80,7 @@ export const renderMarkdoc: MarkdocRenderer = ({
 
   const scriptModule = [
     '<script context="module">',
-    `  export const meta = ${JSON.stringify(meta)};`,
+    `  export const __markdownMeta = ${JSON.stringify(meta)};`,
     '</script>',
   ].join('\n');
 

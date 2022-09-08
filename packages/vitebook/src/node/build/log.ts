@@ -14,10 +14,10 @@ export function logBadLinks(badLinks: BuildData['badLinks']) {
     '',
   ];
 
-  for (const [pathname, { page, reason }] of badLinks) {
+  for (const [pathname, { route, reason }] of badLinks) {
     logs.push(`- ${kleur.bold(pathname)}`);
     logs.push(`  - Reason: ${reason}`);
-    if (page) logs.push(`  - Location: ${page.rootPath}`);
+    if (route) logs.push(`  - Location: ${route.file.rootPath}`);
   }
 
   console.log(logs.join('\n'));
@@ -31,7 +31,7 @@ export function logRoutesList({ level, ...build }: RoutesLoggerInput) {
 
     for (const link of build.links.keys()) {
       const page = build.links.get(link)!;
-      const route = page.route.pathname
+      const route = page.pattern.pathname
         .replace('{/}?{index}?{.html}?', '')
         .slice(1);
       const pathname = link.slice(1, -1);
@@ -135,9 +135,9 @@ export function logRoutesTree({ level, ...build }: RoutesLoggerInput) {
       };
     } else {
       const route = build.endpoints.has(link)
-        ? build.endpoints.get(link)!.route!
-        : build.links.get(link)!.route!;
-      const pathname = route.pathname
+        ? build.endpoints.get(link)!
+        : build.links.get(link)!;
+      const pathname = route.pattern.pathname
         .replace('{/}?{index}?{.html}?', '')
         .replace('{/}?', '');
       current.link = kleur.dim(` (${pathname.slice(1)})`);

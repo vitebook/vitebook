@@ -1,7 +1,7 @@
 import kleur from 'kleur';
 import type { App } from 'node/app/App';
+import type { EndpointFile } from 'node/app/files';
 import type { ServerResponse } from 'node:http';
-import type { ServerEndpointFile } from 'server/types';
 import { STATIC_DATA_ASSET_BASE_PATH } from 'shared/data';
 import { coalesceToError } from 'shared/utils/error';
 import { noendslash } from 'shared/utils/url';
@@ -14,8 +14,8 @@ import { handleStaticDataRequest } from './handle-static-data';
 export function configureDevServer(app: App, server: ViteDevServer) {
   removeHtmlMiddlewares(server.middlewares);
 
-  const loader = (endpoint: ServerEndpointFile) =>
-    app.vite.server!.ssrLoadModule(endpoint.filePath);
+  const endpointLoader = (endpoint: EndpointFile) =>
+    app.vite.server!.ssrLoadModule(endpoint.path);
 
   // Ensure devs can call local API endpoints using relative paths (e.g., `fetch('/api/foo')`).
   let origin: string;
@@ -25,7 +25,7 @@ export function configureDevServer(app: App, server: ViteDevServer) {
 
   globalThis.fetch = (input, init) => {
     return fetch(
-      typeof input === 'string' && app.files.endpoints.test(input)
+      typeof input === 'string' && app.routes.endpoints.test(input)
         ? `${(origin ??= noendslash(
             server.resolvedUrls?.local[0] ?? `${protocol}://localhost:5173`,
           ))}${input}`
@@ -51,13 +51,20 @@ export function configureDevServer(app: App, server: ViteDevServer) {
         return await handleStaticDataRequest(url, app, res);
       }
 
-      if (app.files.pages.test(decodedUrl, (page) => !page.is404)) {
+      if (app.routes.pages.test(decodedUrl)) {
         url.pathname = url.pathname.replace('/index.html', '/');
         return await handlePageRequest(base, url, app, req, res);
       }
 
-      if (app.files.endpoints.test(decodedUrl)) {
-        return await handleEndpointRequest(base, url, app, req, res, loader);
+      if (app.routes.endpoints.test(decodedUrl)) {
+        return await handleEndpointRequest(
+          base,
+          url,
+          app,
+          req,
+          res,
+          endpointLoader,
+        );
       }
     } catch (error) {
       handleDevServerError(app, req, res, error);

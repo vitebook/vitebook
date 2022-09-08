@@ -18,9 +18,13 @@ export class MarkdocSchema {
 
   getOwnedConfig(ownerFilePath: string): MarkdocConfig {
     const base = this._app.config.markdown.markdoc;
-    const isPage = this._app.files.pages.is(ownerFilePath);
-    const nodes = isPage ? this._getOwnedNodesConfig(ownerFilePath) : {};
-    const tags = isPage ? this._getOwnedTagsConfig(ownerFilePath) : {};
+
+    const isPageLike =
+      this._app.files.pages.is(ownerFilePath) ||
+      this._app.files.errors.is(ownerFilePath);
+
+    const nodes = isPageLike ? this._getOwnedNodesConfig(ownerFilePath) : {};
+    const tags = isPageLike ? this._getOwnedTagsConfig(ownerFilePath) : {};
 
     const config: MarkdocConfig = {
       ...base,
@@ -60,7 +64,7 @@ export class MarkdocSchema {
     return this._files
       .getOwnedNodes(ownerFilePath, '*')
       .map((node) => {
-        const rootPath = this._app.dirs.root.relative(node.filePath);
+        const rootPath = this._app.dirs.root.relative(node.path);
         return `import ${node.cname} from "/${rootPath}";`;
       })
       .filter(Boolean);
@@ -81,7 +85,7 @@ export class MarkdocSchema {
         },
       };
 
-      this._markFileForHMR(node.filePath, ownerFilePath);
+      this._markFileForHMR(node.path, ownerFilePath);
     }
 
     return nodes;
@@ -103,7 +107,7 @@ export class MarkdocSchema {
         },
       };
 
-      this._markFileForHMR(tag.filePath, ownerFilePath);
+      this._markFileForHMR(tag.path, ownerFilePath);
     }
 
     return tags;

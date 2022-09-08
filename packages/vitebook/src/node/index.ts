@@ -3,6 +3,7 @@
 export * from './app/App';
 export * from './app/config';
 export * from './app/files';
+export * from './app/routes';
 export type { BuildBundles, BuildData } from './build';
 export type {
   BuildAdapter,

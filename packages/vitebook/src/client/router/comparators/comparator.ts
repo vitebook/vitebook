@@ -1,4 +1,5 @@
-import { execRouteMatch } from '../match';
+import { execRouteMatch } from 'shared/routing';
+
 import type { RoutesComparator } from './types';
 
 /**
@@ -14,17 +15,21 @@ export function createSimpleRoutesComparator(): RoutesComparator {
 
       if (route) {
         const match = execRouteMatch(url, route);
-        return { ...route, params: match?.groups ?? {} };
+        return { url, ...route, params: match?.groups ?? {} };
       }
 
       return null;
     },
     score() {
+      // TODO: perform some basic scoring at the minimum (i.e., depth).
+
       // By default we don't score anything and just push new routes to the top. We're relying on
       // the fact that routes are scored server-side.
       return 1000;
     },
     sort(routes) {
+      // TODO: perform basic sorting at the minimum (i.e., depth).
+
       // By default we don't sort routes and rely on them being sorted server-side.
       return routes;
     },

@@ -1,9 +1,6 @@
-import { type App } from 'node/app/App';
-import type {
-  ServerPageFile,
-  ServerRenderResult,
-  StaticLoaderOutputMap,
-} from 'server/types';
+import type { App } from 'node/app/App';
+import type { PageFileRoute } from 'node/app/routes';
+import type { ServerRenderResult, StaticLoaderOutputMap } from 'server/types';
 
 import { type BuildBundles, type BuildData } from '../build';
 import { type BuildAdapterUtils } from './BuildAdapterUtils';
@@ -23,13 +20,13 @@ export type BuildAdapter = {
   /** Started loading static data for page (includes any layouts). */
   startLoadingStaticData?(
     pathname: string,
-    page: ServerPageFile,
+    route: PageFileRoute,
   ): void | Promise<void>;
 
   /** Finished loading static data for page (includes any layouts). */
   finishLoadingStaticData?(
     pathname: string,
-    page: ServerPageFile,
+    route: PageFileRoute,
     data: StaticLoaderOutputMap,
     redirect?: string,
   ): void | Promise<void>;
@@ -40,12 +37,12 @@ export type BuildAdapter = {
 
   startRenderingPage?(
     pathname: string,
-    page: ServerPageFile,
+    route: PageFileRoute,
   ): void | Promise<void>;
 
   finishRenderingPage?(
     pathname: string,
-    page: ServerPageFile,
+    route: PageFileRoute,
     result: {
       redirect?: { path: string; statusCode: number };
       ssr?: ServerRenderResult | null;

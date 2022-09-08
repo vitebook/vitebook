@@ -1,7 +1,6 @@
-import { execRouteMatch } from 'router';
+import { execRouteMatch, type Route } from 'shared/routing';
 
 import type {
-  ServerPageFile,
   StaticLoaderDataMap,
   StaticLoaderInput,
   StaticLoaderOutputMap,
@@ -9,13 +8,12 @@ import type {
 
 export function createStaticLoaderInput(
   url: URL,
-  page: ServerPageFile,
+  route: Route,
 ): StaticLoaderInput {
-  const match = execRouteMatch(url, page.route)!;
+  const match = execRouteMatch(url, route)!;
   return {
     pathname: url.pathname,
-    page,
-    route: page.route,
+    route,
     params: match.groups,
     match,
   };

@@ -1,13 +1,10 @@
 import type { ServerResponse } from 'http';
 import type { App } from 'node/app/App';
+import type { PageFile } from 'node/app/files';
 import { handleHTTPRequest } from 'node/http';
-import { matchRouteInfo } from 'router';
 import { createPageHandler } from 'server/http';
-import type {
-  ServerEntryModule,
-  ServerNodeLoader,
-  ServerPageFile,
-} from 'server/types';
+import type { ServerEntryModule, ServerNodeLoader } from 'server/types';
+import { matchRouteInfo } from 'shared/routing';
 import { coalesceToError } from 'shared/utils/error';
 import type { Connect, ModuleNode, ViteDevServer } from 'vite';
 
@@ -26,10 +23,10 @@ export async function handlePageRequest(
   const pathname = decodeURI(url.pathname);
   const index = readIndexHtmlFile(app);
 
-  const match = matchRouteInfo(url, app.files.pages.toArray());
-  const page = app.files.pages.getByIndex(match?.index ?? -1);
+  const match = matchRouteInfo(url, app.routes.pages.toArray());
+  const route = app.routes.pages.getByIndex(match?.index ?? -1);
 
-  if (!page) {
+  if (!route) {
     res.statusCode = 404;
     res.end('Not found');
     return;
@@ -41,7 +38,7 @@ export async function handlePageRequest(
     const { output: staticData, redirect } = await callStaticLoaders(
       url,
       app,
-      page,
+      route,
       app.vite.server!.ssrLoadModule as ServerNodeLoader,
     );
 
@@ -79,7 +76,7 @@ export async function handlePageRequest(
   }
 }
 
-async function loadStyleTag(app: App, page: ServerPageFile) {
+async function loadStyleTag(app: App, page: PageFile) {
   const appFilePath = app.vite
     .server!.moduleGraph.getModuleById(`/${virtualModuleId.app}`)!
     .importedModules.values()
@@ -88,10 +85,8 @@ async function loadStyleTag(app: App, page: ServerPageFile) {
   const stylesMap = await Promise.all(
     [
       appFilePath,
-      ...page.layouts.map(
-        (index) => app.files.layouts.getByIndex(index).filePath,
-      ),
-      page.filePath,
+      ...page.layouts.map((index) => app.files.layouts.getByIndex(index).path),
+      page.path,
     ].map((file) => getStylesByFile(app.vite.server!, file)),
   );
 

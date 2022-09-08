@@ -1,4 +1,4 @@
-import type { Route, Router } from 'router';
+import type { Route } from 'shared/routing';
 
 import type { RequestEvent, RequestParams } from './http/request';
 
@@ -35,14 +35,16 @@ export type ServerBuild = {
   // layouts
   // loader
 
+  // TODO: REFACTOR ROUTES AS FIRST-CLASS -> page? layouts/errors
+  // router has current nodes list { module: ..., props: {} }
+
   // errors -> maybe not needed here ... just handle it client-side? -- server side we'll store a reference
   // to where the error occurred and find boundary ... -> last seen module???
   // pattern: URLPattern;
   // loader
   // layouts: number[]
 
-  // router needs to be able to load page/catch/error (different modes? - default/catch/error)
-  // catchRoutes
+  // router needs to be able to load page/error (different modes? - default/error)
   // errorRoutes
   // maybe just forward a loader and let router handle it
 
@@ -57,8 +59,6 @@ export type ServerEntryContext = {
   state: ServerRenderState;
   modules: Set<string>;
   staticData: StaticLoaderDataMap;
-  /** We store router during SSR so we don't have to rebuild it on each request. */
-  serverRouter?: Router;
 };
 
 export type ServerEntryModule = {
@@ -75,8 +75,6 @@ export type ServerRenderResult = {
   css?: string;
   html: string;
   context: ServerEntryContext;
-  /** Return router so we can use it on subsequent SSR requests. */
-  router: Router;
 };
 
 export type ServerNode = {
@@ -96,69 +94,11 @@ export type ServerNodeLoader = (
 export type ServerRequestHandler = (request: Request) => Promise<Response>;
 
 export type ServerRedirect = {
-  path: string;
-  statusCode: number;
+  readonly path: string;
+  readonly statusCode: number;
 };
 
 export type JSONData = Record<string, unknown>;
-
-// ---------------------------------------------------------------------------------------
-// Server Files
-// ---------------------------------------------------------------------------------------
-
-export type ServerFile = {
-  /** Absolute system file path to file.  */
-  readonly filePath: string;
-  /** System file path relative to `<root>` to associated file. */
-  readonly rootPath: string;
-};
-
-export type ServerEndpointFile = ServerFile & {
-  /** Routing object. */
-  readonly route: Route;
-};
-
-export type ServerPageFile = ServerFile & {
-  /** Module id used by the client-side router to dynamically load this page module.  */
-  readonly id: string;
-  /** System file path relative to `<root>`. */
-  readonly rootPath: string;
-  /** Page file extension.  */
-  readonly ext: string;
-  /** Routing information. */
-  readonly route: Route;
-  /** Page layout name. */
-  readonly layoutName?: string;
-  /** Layout files that belong to this page. Each number is an index to a layout node. */
-  layouts: number[];
-  /** Whether this is a 404 page. */
-  is404: boolean;
-  /** Whether the page has a `staticLoader` export. */
-  hasStaticLoader: boolean;
-  /** Whether the page has a `serverLoader` export. */
-  hasServerLoader: boolean;
-  /** Whether the page has a `serverAction` export. */
-  hasServerAction: boolean;
-};
-
-export type ServerLayoutFile = ServerFile & {
-  /** Module id used by the client-side router to dynamically load this layout module.  */
-  readonly id: string;
-  /** Layout name. */
-  readonly name: string;
-  /** System file path relative to `<root>`. */
-  readonly rootPath: string;
-  /** The root directory that this layout belongs to. */
-  readonly owningDir: string;
-  /** Whether the layout has a `staticLoader` export. */
-  hasStaticLoader: boolean;
-  /** Whether the layout has a `serverLoader` export. */
-  hasServerLoader: boolean;
-  /** Whether the layout has a `serverAction` export. */
-  hasServerAction: boolean;
-  /** Whether the current layout resets the layout stack.  */
-  readonly reset: boolean;
-};
 
 // ---------------------------------------------------------------------------------------
 // Static Loader
@@ -166,9 +106,8 @@ export type ServerLayoutFile = ServerFile & {
 
 export type StaticLoaderInput<Params extends RequestParams = RequestParams> =
   Readonly<{
-    pathname: string;
-    page: ServerPageFile;
     route: Route;
+    pathname: string;
     params: Partial<Params>;
     /** Result from running `URLPattern.exec().pathname`. */
     match: URLPatternComponentResult;

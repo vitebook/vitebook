@@ -1,32 +1,39 @@
 import { createFilter } from '@rollup/pluginutils';
 import { globbySync } from 'globby';
 import { normalizePath } from 'node/utils';
-import type { ServerFile } from 'server/types';
+import path from 'path';
 
 import type { App } from '../App';
-import { resolveRouteFromFilePath } from './resolve-file-route';
 
-export type FilesOptions<T> = FilesCallbacks<T> & {
+export type SystemFileMeta = {
+  /** Absolute system file path. */
+  readonly path: string;
+  /** System file path relative to app `<root>` dir. */
+  readonly rootPath: string;
+  /** File extension name (e.g., `.tsx`). */
+  readonly ext: string;
+};
+
+export type SystemFilesOptions = {
   include: string[];
   exclude?: (string | RegExp)[];
 };
 
-export type FilesCallbacks<T> = {
-  onAdd?: (node: T) => void;
-  onRemove?: (index: number) => void;
-};
-
-export abstract class Files<T extends ServerFile> implements Iterable<T> {
+export abstract class SystemFiles<T extends SystemFileMeta>
+  implements Iterable<T>
+{
   protected _app!: App;
   protected _files: T[] = [];
-  protected _options!: FilesOptions<T>;
+  protected _options!: SystemFilesOptions;
   protected _filter!: (id: string) => boolean;
+  protected _onAdd = new Set<(file: T) => void>();
+  protected _onRemove = new Set<(file: T, index: number) => void>();
 
   get size() {
     return this._files.length;
   }
 
-  async init(app: App, options: FilesOptions<T>) {
+  async init(app: App, options: SystemFilesOptions) {
     this._app = app;
     this._options = options;
     this._filter = createFilter(options.include, options.exclude);
@@ -55,11 +62,12 @@ export abstract class Files<T extends ServerFile> implements Iterable<T> {
   abstract add(filePath: string): Promise<T>;
 
   remove(filePath: string) {
-    filePath = this.normalizePath(filePath);
+    filePath = this._normalizePath(filePath);
     if (!this.has(filePath)) return -1;
     const index = this.findIndex(filePath);
+    const file = this._files[index];
     this._files.splice(index, 1);
-    this._options.onRemove?.(index);
+    for (const callback of this._onRemove) callback(file, index);
     return index;
   }
 
@@ -68,8 +76,8 @@ export abstract class Files<T extends ServerFile> implements Iterable<T> {
   }
 
   find(filePath: string) {
-    filePath = this.normalizePath(filePath);
-    return this._files.find((node) => node.filePath === filePath);
+    filePath = this._normalizePath(filePath);
+    return this._files.find((node) => node.path === filePath);
   }
 
   findIndex(filePath: string) {
@@ -86,27 +94,35 @@ export abstract class Files<T extends ServerFile> implements Iterable<T> {
   }
 
   is(filePath: string) {
-    filePath = this.normalizePath(filePath);
+    filePath = this._normalizePath(filePath);
     return (
       this.has(filePath) ||
       (filePath.startsWith(this._app.dirs.app.path) && this._filter(filePath))
     );
   }
 
-  normalizePath(filePath: string) {
-    return normalizePath(filePath);
+  onAdd(callback: (file: T) => void) {
+    this._onAdd.add(callback);
   }
 
-  resolveRoute(filePath: string) {
-    return resolveRouteFromFilePath(
-      this._app.dirs.app.path,
-      this.normalizePath(filePath),
-      this._app.config.routes.matchers,
-    );
+  onRemove(callback: (file: T, index: number) => void) {
+    this._onRemove.add(callback);
   }
 
   toArray() {
     return this._files;
+  }
+
+  protected _ext(filePath: string) {
+    return path.posix.extname(this._normalizePath(filePath));
+  }
+
+  protected _normalizePath(filePath: string) {
+    return normalizePath(filePath);
+  }
+
+  protected _callAddCallbacks(file: T) {
+    for (const callback of this._onAdd) callback(file);
   }
 
   [Symbol.iterator]() {

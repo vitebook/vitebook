@@ -5,13 +5,10 @@ import app from ':virtual/vitebook/app';
 import { type SvelteServerModule } from '../shared';
 import { init } from './init';
 
-export const render: ServerRenderer = async (
-  url,
-  { serverRouter, staticData },
-) => {
+export const render: ServerRenderer = async (url, { staticData }) => {
   const serverContext: ServerEntryContext = { modules: new Set(), staticData };
 
-  const { router, context } = await init({ serverRouter, serverContext });
+  const { router, context } = await init({ serverContext });
 
   await router.go(decodeURI(url.pathname));
 

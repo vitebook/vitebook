@@ -1,6 +1,12 @@
 import LRUCache from 'lru-cache';
 import { slashedSplit } from 'shared/utils/url';
 
+export function comparePathDepth(pathA: string, pathB: string) {
+  const segmentsA = pathA.split('/');
+  const segmentsB = pathB.split('/');
+  return segmentsA.length - segmentsB.length; // shallow paths first
+}
+
 const orderedPageTokenRE = /^\[(\d)\]/;
 
 const sortCache = new LRUCache<string, number>({ max: 2048 });

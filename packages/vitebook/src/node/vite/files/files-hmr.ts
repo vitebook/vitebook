@@ -1,28 +1,33 @@
-import fs from 'fs/promises';
 import type { App } from 'node/app/App';
+import type { PageFile } from 'node/app/files';
 import { normalizePath } from 'node/utils';
-import type { ServerPageFile } from 'server/types';
 import type { ViteDevServer } from 'vite';
 
 import { clearMarkdownCache } from '../../markdoc';
 import { virtualModuleRequestPath } from '../alias';
-import { clearStaticLoaderCache } from '../core/static-loader';
 
 export function handleFilesHMR(app: App) {
   const pages = app.files.pages;
+  const errors = app.files.errors;
   const layouts = app.files.layouts;
   const endpoints = app.files.endpoints;
   const server = app.vite.server!;
 
   const isPage = (filePath) => pages.is(filePath);
+  const isError = (filePath) => errors.is(filePath);
   const isLayout = (filePath) => layouts.is(filePath);
   const isEndpoint = (filePath) => endpoints.is(filePath);
+
+  const pageLikeFiles = [
+    [isPage, pages],
+    [isError, errors],
+  ] as const;
 
   function clearLayoutChildrenMarkdownCache(layoutFilePath: string) {
     const layoutIndex = layouts.findIndex(layoutFilePath);
     for (const page of pages) {
       if (page.layouts.includes(layoutIndex)) {
-        clearMarkdownCache(page.filePath);
+        clearMarkdownCache(page.path);
         invalidatePageModule(server, page);
       }
     }
@@ -36,53 +41,28 @@ export function handleFilesHMR(app: App) {
     endpoints.remove(filePath);
   });
 
-  onFileEvent(isPage, 'add', async (filePath) => {
-    pages.add(filePath);
-    return { reload: true };
-  });
-
-  onFileEvent(isPage, 'unlink', async (filePath) => {
-    pages.remove(filePath);
-    return { reload: true };
-  });
-
-  onFileEvent(isPage, 'change', async (filePath) => {
-    const page = pages.find(filePath);
-    const layoutName = await pages.getLayoutName(filePath);
-    const fileContent = await fs.readFile(filePath, 'utf-8');
-    const hasStaticLoader = pages.hasStaticLoader(fileContent);
-    const hasServerLoader = pages.hasServerLoader(fileContent);
-    const hasServerAction = pages.hasServerAction(fileContent);
-
-    let reload = false;
-
-    if (!page) {
-      pages.remove(filePath);
+  for (const [is, files] of pageLikeFiles) {
+    onFileEvent(is, 'add', async (filePath) => {
+      files.add(filePath);
       return { reload: true };
-    }
+    });
 
-    if (page.layoutName !== layoutName) {
-      page.layouts = layouts.getOwnedLayoutIndicies(
-        page.filePath,
-        page.layoutName,
-      );
-      reload = true;
-    }
+    onFileEvent(is, 'unlink', async (filePath) => {
+      files.remove(filePath);
+      return { reload: true };
+    });
 
-    if (
-      page.hasStaticLoader !== hasStaticLoader ||
-      page.hasServerLoader !== hasServerLoader ||
-      page.hasServerAction !== hasServerAction
-    ) {
-      page.hasStaticLoader = hasStaticLoader;
-      page.hasServerLoader = hasServerLoader;
-      page.hasServerAction = hasServerAction;
-      clearStaticLoaderCache(filePath);
-      reload = true;
-    }
+    onFileEvent(is, 'change', async (filePath) => {
+      const file = files.find(filePath);
 
-    return reload ? { reload: true } : null;
-  });
+      if (!file) {
+        files.remove(filePath);
+        return { reload: true };
+      }
+
+      return null;
+    });
+  }
 
   onFileEvent(isLayout, 'add', async (filePath) => {
     layouts.add(filePath);
@@ -92,31 +72,13 @@ export function handleFilesHMR(app: App) {
 
   onFileEvent(isLayout, 'change', async (filePath) => {
     const layout = layouts.find(filePath);
-    const fileContent = await fs.readFile(filePath, 'utf-8');
-    const hasStaticLoader = pages.hasStaticLoader(fileContent);
-    const hasServerLoader = pages.hasServerLoader(fileContent);
-    const hasServerAction = pages.hasServerAction(fileContent);
-
-    let reload = false;
 
     if (!layout) {
       layouts.remove(filePath);
       return { reload: true };
     }
 
-    if (
-      layout.hasStaticLoader !== hasStaticLoader ||
-      layout.hasServerLoader !== hasServerLoader ||
-      layout.hasServerAction !== hasServerAction
-    ) {
-      layout.hasStaticLoader = hasStaticLoader;
-      layout.hasServerLoader = hasServerLoader;
-      layout.hasServerAction = hasServerAction;
-      clearStaticLoaderCache(filePath);
-      reload = true;
-    }
-
-    return reload ? { reload: true } : null;
+    return null;
   });
 
   onFileEvent(isLayout, 'unlink', async (filePath) => {
@@ -144,8 +106,7 @@ export function handleFilesHMR(app: App) {
   }
 
   function fullReload() {
-    invalidateModuleByID(virtualModuleRequestPath.pages);
-    invalidateModuleByID(virtualModuleRequestPath.layouts);
+    invalidateModuleByID(virtualModuleRequestPath.routes);
     server.ws.send({ type: 'full-reload' });
   }
 
@@ -155,12 +116,9 @@ export function handleFilesHMR(app: App) {
   }
 }
 
-export function invalidatePageModule(
-  server: ViteDevServer,
-  page: ServerPageFile,
-) {
+export function invalidatePageModule(server: ViteDevServer, page: PageFile) {
   const module = server.moduleGraph
-    .getModulesByFile(page.filePath)
+    .getModulesByFile(page.path)
     ?.values()
     .next();
 

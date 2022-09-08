@@ -1,6 +1,11 @@
 import fsp from 'fs/promises';
 import kleur from 'kleur';
-import type { Directory, RoutesLogLevel, RoutesLogStyle } from 'node';
+import type {
+  Directory,
+  PageFileRoute,
+  RoutesLogLevel,
+  RoutesLogStyle,
+} from 'node';
 import type { App } from 'node/app/App';
 import { createDirectory } from 'node/app/create/app-dirs';
 import {
@@ -20,9 +25,8 @@ import { readIndexHtmlFile } from 'node/vite/core';
 import fs from 'node:fs';
 import path from 'node:path';
 import ora from 'ora';
-import { normalizeURL } from 'router';
-import type { ServerPageFile } from 'server/types';
 import { STATIC_DATA_ASSET_BASE_PATH } from 'shared/data';
+import { normalizeURL } from 'shared/routing';
 import { escapeHTML } from 'shared/utils/html';
 import { isString } from 'shared/utils/unit';
 import {
@@ -88,8 +92,8 @@ export function getBuildAdapterUtils(
     },
     resolveDataFilename: (name) =>
       `${STATIC_DATA_ASSET_BASE_PATH}/${name}.json`.slice(1),
-    resolvePageChunks: (page, modules) =>
-      resolvePageChunks(app, page, bundles.client, modules),
+    resolvePageChunks: (route, modules) =>
+      resolvePageChunks(app, route, bundles.client, modules),
     buildSitemaps: async () => {
       if (app.config.sitemap.length === 0) return [];
       const sitemaps = app.config.sitemap
@@ -275,7 +279,7 @@ export type BuildAdapterUtils = {
   resolveHTMLFilename(url: string | URL): string;
   resolveDataFilename(name: string): string;
   resolvePageChunks(
-    page: ServerPageFile,
+    route: PageFileRoute,
     modules?: Set<string>,
   ): {
     assets: string[];

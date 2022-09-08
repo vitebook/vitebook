@@ -19,7 +19,7 @@ export function sveltePlugin(): VitebookPluginOptions {
     const userAppFile = normalizePath(path.posix.resolve(appDir, 'app.svelte'));
     return fs.existsSync(userAppFile)
       ? { id: userAppFile }
-      : { id: '@vitebook/svelte/App.svelte' };
+      : { id: '@vitebook/svelte/app.svelte' };
   }
 
   const require = createRequire(import.meta.url);

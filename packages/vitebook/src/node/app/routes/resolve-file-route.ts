@@ -4,16 +4,18 @@ import {
   calcRoutePathScore,
   isRoutePathDynamic,
   type Route,
-  type RouteMatcher,
-  type RouteMatcherConfig,
-} from 'router';
+} from 'shared/routing';
 import { isFunction } from 'shared/utils/unit';
 import { endslash, slash } from 'shared/utils/url';
 
-const PAGE_ORDER_RE = /^\[(\d*)\]/;
+import type { RouteMatcher, RouteMatcherConfig } from '../config';
 
-const STRIP_PAGE_ORDER_RE = /\/\[(\d*)\]/g;
-export function stripPageOrderFromPath(filePath: string) {
+const PAGE_ORDER_RE = /^\[(\d+)\]/;
+
+const STRIP_PAGE_ORDER_RE = /\/\[(\d+)\]/g;
+const STRIP_ROUTE_GROUPS_RE = /\/\(.*?\)\//g;
+
+export function stripPageOrder(filePath: string) {
   return filePath.replace(STRIP_PAGE_ORDER_RE, '/');
 }
 
@@ -33,24 +35,20 @@ export function sortOrderedPageFiles(files: string[]): string[] {
     .sort(
       (fileA, fileB) => calcPageOrderScore(fileA) - calcPageOrderScore(fileB),
     )
-    .map(stripPageOrderFromPath);
+    .map(stripPageOrder);
 }
 
-export function stripRouteMetaFromFilePath(filePath: string) {
-  const ext = path.posix.extname(filePath);
-  const stripped = filePath.replace(
-    new RegExp(`@(\\w|\\+)+\\.${ext.slice(1)}$`, 'i'),
-    ext,
-  );
-  return stripped === ext
-    ? `index${ext}`
-    : ext
-    ? stripped.replace(`/${ext}`, `/index${ext}`)
-    : stripped.replace(/\/?$/, '/index.html');
+export function stripRouteMeta(filePath: string) {
+  const basename = path.posix.basename(filePath);
+  return filePath.replace(basename, 'index.html');
 }
 
-export function stripRouteInfoFromFilePath(filePath: string) {
-  return stripRouteMetaFromFilePath(stripPageOrderFromPath(filePath));
+export function stripRouteGroups(filePath: string) {
+  return filePath.replace(STRIP_ROUTE_GROUPS_RE, '');
+}
+
+export function stripRouteInfo(filePath: string) {
+  return stripRouteMeta(stripPageOrder(filePath));
 }
 
 function normalizeTransformMatcher(value: RouteMatcher) {
@@ -68,6 +66,7 @@ export function resolveRouteFromFilePath(
   routesDir: string,
   filePath: string,
   matchers: RouteMatcherConfig = [],
+  isEndpoint = false,
 ): Route {
   filePath = normalizePath(filePath);
 
@@ -76,10 +75,7 @@ export function resolveRouteFromFilePath(
   const orderMatch = basename.match(PAGE_ORDER_RE)?.[1];
   const order = orderMatch ? Number(orderMatch) : undefined;
 
-  const isNotFound = basename.includes('@404');
-  const isEndpoint = basename.includes('@http');
-
-  let route = stripRouteInfoFromFilePath(routePath);
+  let route = stripRouteInfo(routePath);
 
   for (const matcher of matchers) {
     if (isFunction(matcher)) {
@@ -100,26 +96,26 @@ export function resolveRouteFromFilePath(
       .replace(/\/(README|index){.html}\?($|\?)/i, '{/}?{index}?{.html}?');
   };
 
-  const dynamic = isNotFound || isRoutePathDynamic(route);
+  const dynamic = isRoutePathDynamic(route);
 
-  const pathname = isNotFound
-    ? `${route.replace(path.posix.basename(route), '')}(.*?)`
-    : dynamic || isEndpoint
-    ? slash(
-        trimExt(route).replace(
-          /\/(index)?(\.html)?$/,
-          isEndpoint ? '{/}?' : '{/}?{index}?{.html}?',
-        ),
-      )
-    : resolveStaticPath();
+  const pathname =
+    dynamic || isEndpoint
+      ? slash(
+          trimExt(route).replace(
+            /\/(index)?(\.html)?$/,
+            isEndpoint ? '{/}?' : '{/}?{index}?{.html}?',
+          ),
+        )
+      : resolveStaticPath();
 
   const score = calcRoutePathScore(pathname);
   const pattern = new URLPattern({ pathname });
 
   return {
+    id: routePath,
+    pathname,
     pattern,
     dynamic,
-    pathname,
     order,
     score,
   };
@@ -132,7 +128,7 @@ export function resolveStaticRouteFromFilePath(
   const routePath = endslash(path.posix.relative(routesDir, filePath));
 
   const url = new URL(
-    stripRouteInfoFromFilePath(routePath).toLowerCase(),
+    stripRouteInfo(routePath).toLowerCase(),
     'http://localhost',
   );
 

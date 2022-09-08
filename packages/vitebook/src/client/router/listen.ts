@@ -1,9 +1,7 @@
 import type { Router } from './Router';
 import { scrollPosition } from './scroll-delegate';
 
-export function listen(router: Router, history: History) {
-  if (import.meta.env.SSR) return;
-
+export function listen(router: Router) {
   history.scrollRestoration = 'manual';
 
   // Adopted from Nuxt.js
@@ -85,7 +83,7 @@ export function listen(router: Router, history: History) {
     if (hash !== undefined && base === location.href.split('#')[0]) {
       hashNavigation = true;
       router.hashChanged(hash);
-      router.scroll.savePosition?.();
+      router.scrollDelegate.savePosition?.();
       return;
     }
 
@@ -100,8 +98,8 @@ export function listen(router: Router, history: History) {
 
   addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
-      router.scroll.savePosition?.();
-      router.scroll.commit?.();
+      router.scrollDelegate.savePosition?.();
+      router.scrollDelegate.commit?.();
     }
   });
 
@@ -113,7 +111,7 @@ export function listen(router: Router, history: History) {
     if (event.state[router._historyKey] === router._historyIndex) return;
 
     router._navigate(new URL(location.href), {
-      scroll: () => router.scroll.getSavedPosition?.(event.state),
+      scroll: () => router.scrollDelegate.getSavedPosition?.(event.state),
       keepfocus: false,
       accepted: () => {
         router._historyIndex = event.state[router._historyKey];

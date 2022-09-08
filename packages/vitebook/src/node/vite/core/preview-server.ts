@@ -1,6 +1,6 @@
 import type { App } from 'node/app/App';
+import type { EndpointFile } from 'node/app/files';
 import { installPolyfills } from 'server/polyfills';
-import type { ServerEndpointFile } from 'server/types';
 import type { PreviewServerHook } from 'vite';
 
 import { handleDevServerError } from './dev-server';
@@ -17,7 +17,7 @@ export async function configurePreviewServer(
       ? 'https'
       : 'http';
 
-  const loader = (endpoint: ServerEndpointFile) => {
+  const loader = (endpoint: EndpointFile) => {
     return import(
       app.dirs.server
         .resolve(app.dirs.app.relative(endpoint.rootPath))
@@ -39,8 +39,8 @@ export async function configurePreviewServer(
       const decodedUrl = decodeURI(new URL(base + req.url).pathname);
 
       if (
-        !app.files.pages.test(decodedUrl, (page) => !page.is404) &&
-        app.files.endpoints.test(decodedUrl)
+        !app.routes.pages.test(decodedUrl) &&
+        app.routes.endpoints.test(decodedUrl)
       ) {
         await handleEndpointRequest(base, url, app, req, res, loader);
         return;

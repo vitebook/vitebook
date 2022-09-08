@@ -1,12 +1,16 @@
-import type { LoadedClientMarkdownPage, LoadedClientPage } from './types';
+import type { MarkdownModule } from 'shared/markdown';
 
-export function isLoadedPage(page: unknown): page is LoadedClientPage {
-  // @ts-expect-error - .
-  return typeof page === 'object' && '$$loaded' in page;
+import type { RouteModule } from './router/types';
+
+export function isMarkdownModule<T extends RouteModule>(
+  mod: T,
+): mod is T & { module: T['module'] & MarkdownModule } {
+  return '__markdownMeta' in mod;
 }
 
-export function isLoadedMarkdownPage(
-  page: unknown,
-): page is LoadedClientMarkdownPage {
-  return isLoadedPage(page) && page.ext === '.md';
+export function removeSSRStyles() {
+  if (import.meta.env.DEV && !import.meta.env.SSR) {
+    const styles = document.getElementById('__VBK_SSR_STYLES__');
+    styles?.remove();
+  }
 }

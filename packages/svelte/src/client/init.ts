@@ -29,27 +29,24 @@ import { layouts } from './stores/layouts';
 import { pages } from './stores/pages';
 
 export type InitOptions = {
-  serverRouter?: Router;
   serverContext?: ServerContext;
 };
 
-export async function init({ serverRouter, serverContext }: InitOptions = {}) {
+export async function init({ serverContext }: InitOptions = {}) {
   const route = writable<LoadedRoute>();
   const navigation = writable<RouteNavigation>();
   const page = writable<LoadedClientPage>();
   const markdown = createMarkdownStore(page);
   const frontmatter = createFronmatterStore(markdown);
 
-  const router =
-    serverRouter ??
-    (await initRouter({
-      $route: toReactive(route),
-      $navigation: toReactive(navigation),
-      $pages: toReactive(pages),
-      $layouts: toReactive(layouts),
-      $currentPage: toReactive(page),
-      serverContext,
-    }));
+  const router = await initRouter({
+    $route: toReactive(route),
+    $navigation: toReactive(navigation),
+    $pages: toReactive(pages),
+    $layouts: toReactive(layouts),
+    $currentPage: toReactive(page),
+    serverContext,
+  });
 
   const context = new Map<string | symbol, unknown>();
   context.set(ROUTE_KEY, { subscribe: route.subscribe });
