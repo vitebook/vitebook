@@ -48,7 +48,7 @@ export type RequestModule = {
   [httpMethod: string]: RequestHandler | undefined;
 };
 
-export type HTTPMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+export type HttpMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 export const HTTP_METHODS: Set<string> = new Set([
   'GET',

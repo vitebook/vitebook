@@ -1,67 +1,105 @@
+import type { JSONData } from 'server/types';
+import type { MarkdownMeta } from 'shared/markdown';
 import type { Route, RouteParams } from 'shared/routing';
 
+import type { ClientHttpError } from './errors';
 import type { ScrollToTarget } from './scroll-delegate';
 
-export type ClientRoute = LoadableRoute & {
-  // ...
-  // we need to know if this and other stuff has loaders.
+// ---------------------------------------------------------------------------------------
+// Client Module
+// ---------------------------------------------------------------------------------------
+
+export type ClientModuleLoader = () => Promise<ClientModule>;
+
+export type ClientModule = {
+  [id: string]: unknown;
+  __markdownMeta?: MarkdownMeta;
 };
 
-// __markdownMeta?: MarkdownMeta;
-
-export type LoadedClientRoute = LoadedRoute;
-
-export type LoadedRoute = MatchedRoute & {
-  readonly module: RouteModule;
+export type LoadedClientModule = ClientModule & {
+  readonly staticData?: JSONData;
+  readonly serverData?: JSONData;
+  readonly error?: Error | ClientHttpError | null;
 };
 
-// -----------------------------------------
+// ---------------------------------------------------------------------------------------
+// Client Route
+// ---------------------------------------------------------------------------------------
 
-export type CSRRoute = {
-  id: string;
-  errors: Array<CSRPageNodeLoader | undefined>;
-  layouts: Array<[boolean, CSRPageNodeLoader] | undefined>;
-  leaf: [boolean, CSRPageNodeLoader];
+export type ClientRoute = Route & {
+  /**
+   * Called when a matching link is about to be interacted with. The `prefetch` function can
+   * be used to start loading assets before navigation begins.
+   */
+  readonly prefetch?: ClientRoutePrefetch;
+  /**
+   * Called when the current route is being navigated to. Generally this should return a JS
+   * module.
+   */
+  readonly loader: ClientRouteLoader;
+  /**
+   * Whether this route can fetch data from the server. This is is `true` if a page has defined a
+   * `serverLoader`. In dev mode it will attempt a fetch regardless.
+   */
+  readonly fetch?: boolean;
+  /**
+   * Whether this is a layout route. More than one layout route can be active at a time and can
+   * wrap child routes.
+   */
+  readonly layout?: boolean;
+  /**
+   * Whether this is an error route. Error routes are matched when a layout or page fails during
+   * the data loading process.
+   */
+  readonly error?: boolean;
 };
 
-export type NavigationIntent = {
-  /** `url.pathname + url.search` */
-  id: string;
+export type ClientRouteLoader = (info: {
   url: URL;
-  route: MatchedRoute;
-};
+  route: MatchedClientRoute;
+}) => Promise<ClientModule>;
 
-export type NavigationResult = NavigationRedirect | NavigationFinished;
-
-export type NavigationRedirect = {
-  type: 'redirect';
-  location: string;
-};
-
-export type NavigationFinished = {
-  type: 'loaded';
-  state: NavigationState;
-  props: Record<string, any>;
-};
-
-export interface NavigationState {
+export type ClientRoutePrefetch = (info: {
   url: URL;
-  error: Error | null;
-  params: Record<string, string>;
-  route: ClientRoute | null;
-  branch: Array<BranchNode | undefined>;
-}
+  route: MatchedClientRoute;
+}) => void | Promise<void>;
 
-// -----------------------------------------
+export type ClientRouteDeclaration = Omit<
+  ClientRoute,
+  'id' | 'score' | 'pattern'
+> & {
+  id?: string | symbol;
+  score?: number;
+};
 
-export type GoToRouteOptions = {
+export type MatchedClientRoute<Params extends RouteParams = RouteParams> =
+  ClientRoute & {
+    readonly url: URL;
+    readonly params: Params;
+  };
+
+export type LoadedClientRoute = MatchedClientRoute & {
+  readonly module: LoadedClientModule;
+  readonly layouts: LoadedClientRoute[];
+};
+
+// ---------------------------------------------------------------------------------------
+// Client Navigation
+// ---------------------------------------------------------------------------------------
+
+export type Navigation = {
+  from: URL | null;
+  to: URL;
+} | null;
+
+export type RouterGoOptions = {
   scroll?: ScrollToTarget | null;
   keepfocus?: boolean;
   replace?: boolean;
   state?: any;
 };
 
-export type NavigationOptions = GoToRouteOptions & {
+export type NavigationOptions = RouterGoOptions & {
   accepted?: () => void;
   blocked?: () => void;
   redirects?: string[];
@@ -69,64 +107,46 @@ export type NavigationOptions = GoToRouteOptions & {
 
 export type CancelNavigation = () => void;
 
-export type RouterBeforeNavigateHook = (navigation: {
-  from: LoadedRoute | null;
-  to: MatchedRoute;
-  params: RouteParams;
+export type NavigationRedirector = (pathnameOrURL: string | URL) => void;
+
+export type BeforeNavigateHook = (navigation: {
+  from: LoadedClientRoute | null;
+  to: MatchedClientRoute;
   cancel: CancelNavigation;
-  redirect: RouteRedirector;
+  redirect: NavigationRedirector;
 }) => void;
 
-export type RouterAfterNavigateHook = (navigation: {
-  from: LoadedRoute | null;
-  to: LoadedRoute;
-  params: RouteParams;
+export type AfterNavigateHook = (navigation: {
+  from: LoadedClientRoute | null;
+  to: LoadedClientRoute;
 }) => void | Promise<void>;
 
-export type RouteRedirector = (pathnameOrURL: string | URL) => void;
+// ---------------------------------------------------------------------------------------
+// Client Manifest
+// ---------------------------------------------------------------------------------------
 
-export type RouteModule = {
-  [id: string]: unknown;
+/**
+ * ```ts
+ * import manifest from ":virtual/vitebook/manifest";
+ * ```
+ */
+export type ClientManifest = {
+  /** URL pathname and scores - stored like this to save bytes. */
+  paths: [pathname: string, score: number][];
+  /** Page, layout, and error module loaders - stored like this to save bytes. */
+  loaders: ClientModuleLoader[];
+  /** Contains loader indicies ^ who can fetch data from the server. */
+  fetch: number[];
+  routes: {
+    /** id - only available during dev where it's the file system path relative to <root>. */
+    i?: string;
+    /** pathname = index of path in `paths`. */
+    p: number;
+    /** module loader = index of loader in `loaders`. */
+    m: number;
+    /** layout = whether this is a layout. */
+    l?: 1;
+    /** error = whether this is an error boundary. */
+    e?: 1;
+  }[];
 };
-
-export type RoutePrefetch = (info: {
-  url: URL;
-  route: MatchedRoute;
-}) => void | Promise<void>;
-
-export type RouteLoader = (info: {
-  url: URL;
-  route: MatchedRoute;
-}) => RouteModule | Promise<RouteModule>;
-
-export type RouteDeclaration = Omit<
-  LoadableRoute,
-  'id' | 'score' | 'pattern'
-> & {
-  id?: string | symbol;
-  score?: number;
-};
-
-export type LoadableRoute = Route & {
-  /**
-   * Called when a matching link is about to be interacted with. The `prefetch` function can
-   * be used to start loading assets before navigation begins.
-   */
-  readonly prefetch?: RoutePrefetch;
-  /**
-   * Called when the current route is being navigated to. Generally this should return a JS
-   * module.
-   */
-  readonly loader: RouteLoader;
-};
-
-export type MatchedRoute<Params extends RouteParams = RouteParams> =
-  LoadableRoute & {
-    readonly url: URL;
-    readonly params: Params;
-  };
-
-export type RouteTransition = {
-  from: URL;
-  to: URL;
-} | null;

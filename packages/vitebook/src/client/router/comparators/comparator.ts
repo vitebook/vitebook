@@ -21,17 +21,10 @@ export function createSimpleRoutesComparator(): RoutesComparator {
       return null;
     },
     score() {
-      // TODO: perform some basic scoring at the minimum (i.e., depth).
-
-      // By default we don't score anything and just push new routes to the top. We're relying on
-      // the fact that routes are scored server-side.
       return 1000;
     },
     sort(routes) {
-      // TODO: perform basic sorting at the minimum (i.e., depth).
-
-      // By default we don't sort routes and rely on them being sorted server-side.
-      return routes;
+      return routes.sort((a, b) => b.score - a.score);
     },
   };
 }

@@ -1,6 +1,6 @@
 import { isString, isUndefined } from 'shared/utils/unit';
 
-import type { LoadedRoute } from '../router';
+import type { LoadedClientRoute } from '../router';
 import type { Router } from './Router';
 
 const SCROLL_KEY = 'vitebook:scroll';
@@ -208,14 +208,14 @@ export type ScrollBase = ScrollToOptions;
 
 export type ScrollOptions = {
   hash?: string;
-  from?: LoadedRoute | null;
-  to?: LoadedRoute;
+  from?: LoadedClientRoute | null;
+  to?: LoadedClientRoute;
   target?: ScrollToTarget | null;
 };
 
 export type ScrollBehaviorHook = (info: {
-  from: LoadedRoute | null;
-  to: LoadedRoute;
+  from: LoadedClientRoute | null;
+  to: LoadedClientRoute;
   cancel: ScrollCancel;
   savedPosition?: { top?: number; left?: number };
 }) => ScrollTarget | Promise<ScrollTarget>;

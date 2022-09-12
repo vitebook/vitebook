@@ -12,7 +12,7 @@ import {
 
 export type LayoutFile = SystemFileMeta & {
   readonly moduleId: string;
-  readonly owningDir: string;
+  readonly rootDir: string;
   readonly reset: boolean;
 };
 
@@ -30,15 +30,15 @@ export class LayoutFiles extends SystemFiles<LayoutFile> {
 
     const rootPath = this._getRootPath(filePath);
     const ext = this._ext(rootPath);
-    const owningDir = path.posix.dirname(rootPath);
+    const rootDir = path.posix.dirname(rootPath);
     const reset = path.posix.basename(rootPath).includes('.reset.');
 
     const layout: LayoutFile = {
       moduleId: slash(rootPath),
       path: filePath,
       rootPath,
+      rootDir,
       ext,
-      owningDir,
       reset,
     };
 
@@ -54,7 +54,7 @@ export class LayoutFiles extends SystemFiles<LayoutFile> {
   isOwnedBy(layout: string | LayoutFile, ownerFilePath: string) {
     const rootPath = this._getRootPath(ownerFilePath);
     const _layout = isString(layout) ? this.find(layout) : layout;
-    return _layout && rootPath.startsWith(_layout.owningDir);
+    return _layout && rootPath.startsWith(_layout.rootDir);
   }
 
   getOwnedLayoutIndicies(ownerFilePath: string) {

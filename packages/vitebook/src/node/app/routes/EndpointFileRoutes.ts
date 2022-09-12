@@ -5,8 +5,9 @@ import { type FileRoute, FileRoutes } from './FileRoutes';
 export type EndpointFileRoute = FileRoute<EndpointFile>;
 
 export class EndpointFileRoutes extends FileRoutes<EndpointFile> {
+  protected _endpoints = true;
+
   init(app: App): void {
-    this._endpoints = true;
     super.init(app);
     for (const endpoint of app.files.endpoints) this.add(endpoint);
     app.files.endpoints.onAdd((file) => this.add(file));

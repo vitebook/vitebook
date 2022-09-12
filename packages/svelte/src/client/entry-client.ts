@@ -1,23 +1,18 @@
-import { installURLPattern } from 'vitebook';
-
-import app from ':virtual/vitebook/app';
+import App from ':virtual/vitebook/app';
 
 import { type SvelteModule } from '../shared';
-import { init } from './init';
+import { initClient } from './init-client';
 
 async function mount() {
-  await installURLPattern();
-
-  const { router, context } = await init();
+  const { router, context } = await initClient();
 
   await router.go(location.href, { replace: true });
-  router.listen();
 
-  const target = document.getElementById('app')!;
-  const mod = app.module as SvelteModule;
-  new mod.default({ target, context, hydrate: true });
-
-  removeSSRStyles();
+  router.start(() => {
+    const target = document.getElementById('app')!;
+    const mod = App.module as SvelteModule;
+    new mod.default({ target, context, hydrate: true });
+  });
 }
 
 mount();

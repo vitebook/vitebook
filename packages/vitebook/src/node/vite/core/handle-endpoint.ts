@@ -5,7 +5,7 @@ import { setResponse } from 'node/http/http-bridge';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import {
   createEndpointHandler,
-  handleHTTPError,
+  handleHttpError,
   httpError,
   type RequestModule,
 } from 'server/http';
@@ -25,7 +25,7 @@ export async function handleEndpointRequest(
   const match = matchRouteInfo(url, app.routes.endpoints.toArray());
 
   if (!match) {
-    await setResponse(res, handleHTTPError(httpError('not found', 400)));
+    await setResponse(res, handleHttpError(httpError('not found', 400)));
     return;
   }
 

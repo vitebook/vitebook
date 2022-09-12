@@ -32,10 +32,10 @@ export function httpError(
   init?: number | ResponseInit,
   data?: Record<string, unknown>,
 ) {
-  throw new HTTPError(message, init, data);
+  throw new HttpError(message, init, data);
 }
 
-export class HTTPError extends Error {
+export class HttpError extends Error {
   constructor(
     message: string,
     public readonly init?: number | ResponseInit,
@@ -45,12 +45,12 @@ export class HTTPError extends Error {
   }
 }
 
-export function isHTTPError(error: unknown): error is HTTPError {
-  return error instanceof HTTPError;
+export function isHttpError(error: unknown): error is HttpError {
+  return error instanceof HttpError;
 }
 
-export function handleHTTPError(error: unknown) {
-  if (isHTTPError(error)) {
+export function handleHttpError(error: unknown) {
+  if (isHttpError(error)) {
     return json(
       { error: { message: error.message, data: error.data } },
       error.init,

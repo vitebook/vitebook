@@ -8,7 +8,6 @@ import {
 } from 'vitebook/node';
 
 import { renderMarkdoc, svelteMarkdocTags, transformTreeNode } from './markdoc';
-import { svelteSSRPlugin } from './svelte-ssr';
 
 const VIRTUAL_APP_ID = `${VM_PREFIX}/svelte/app` as const;
 
@@ -67,6 +66,5 @@ export function sveltePlugin(): VitebookPluginOptions {
         return null;
       },
     },
-    svelteSSRPlugin(),
   ];
 }

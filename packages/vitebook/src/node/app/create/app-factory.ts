@@ -15,13 +15,7 @@ import {
   resolveAppConfig,
   type ResolvedAppConfig,
 } from '../config';
-import {
-  AppFiles,
-  type EndpointFile,
-  type ErrorFile,
-  type LayoutFile,
-  type PageFile,
-} from '../files';
+import { AppFiles } from '../files';
 import { AppRoutes } from '../routes';
 import { createAppDirectories } from './app-dirs';
 import { getAppVersion } from './app-utils';
@@ -122,47 +116,17 @@ export const createAppFactory = async (
 export function createAppEntries(app: App, { isSSR = false } = {}) {
   const entries: Record<string, string> = {};
 
-  for (const page of app.files.pages) {
-    const filename = resolvePageOutputFilename(app, page);
-    entries[filename] = page.path;
-  }
+  const nodes = [
+    ...app.files.layouts.toArray(),
+    ...app.files.errors.toArray(),
+    ...app.files.pages.toArray(),
+    ...(isSSR || app.config.isSSR ? app.files.endpoints.toArray() : []),
+  ];
 
-  for (const error of app.files.errors) {
-    const filename = resolveErrorOutputFilename(app, error);
-    entries[filename] = error.path;
-  }
-
-  for (const layout of app.files.layouts) {
-    const filename = resolveLayoutOutputFilename(app, layout);
-    entries[filename] = layout.path;
-  }
-
-  if (isSSR || app.config.isSSR) {
-    for (const endpoint of app.files.endpoints) {
-      const filename = resolveEndpointFilename(app, endpoint);
-      entries[filename] = endpoint.path;
-    }
+  for (const node of nodes) {
+    const name = trimExt(node.rootPath);
+    entries[`nodes/${name}`] = node.path;
   }
 
   return entries;
-}
-
-function resolvePageOutputFilename(app: App, page: PageFile) {
-  const name = trimExt(app.dirs.app.relative(page.rootPath));
-  return `pages/${name}`;
-}
-
-function resolveErrorOutputFilename(app: App, error: ErrorFile) {
-  const name = trimExt(app.dirs.app.relative(error.rootPath));
-  return `errors/${name}`;
-}
-
-function resolveLayoutOutputFilename(app: App, layout: LayoutFile) {
-  const name = trimExt(app.dirs.app.relative(layout.rootPath));
-  return `layouts/${name}`;
-}
-
-function resolveEndpointFilename(app: App, endpoint: EndpointFile) {
-  // /api/...
-  return trimExt(app.dirs.app.relative(endpoint.rootPath));
 }

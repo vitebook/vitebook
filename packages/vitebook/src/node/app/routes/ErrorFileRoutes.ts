@@ -5,6 +5,8 @@ import { type FileRoute, FileRoutes } from './FileRoutes';
 export type ErrorFileRoute = FileRoute<ErrorFile>;
 
 export class ErrorFileRoutes extends FileRoutes<ErrorFile> {
+  protected _errors = true;
+
   init(app: App): void {
     super.init(app);
     for (const error of app.files.errors) this.add(error);

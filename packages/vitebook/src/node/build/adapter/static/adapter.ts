@@ -104,7 +104,6 @@ export function createStaticBuildAdapter(
         for (const render of build.staticRenders.values()) {
           const { assets, imports, dynamicImports } = $.resolvePageChunks(
             render.route,
-            render.ssr.context.modules,
           );
 
           const preloadLinkTags = [...assets, ...imports].map((fileName) =>

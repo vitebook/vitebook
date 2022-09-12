@@ -49,7 +49,7 @@ export async function callStaticLoaders(
         : path;
 
       redirect = {
-        path: normalizedPath,
+        pathname: normalizedPath,
         statusCode,
       };
     }

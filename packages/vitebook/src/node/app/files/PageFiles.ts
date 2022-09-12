@@ -1,4 +1,5 @@
 import { comparePathDepth } from 'node/utils';
+import path from 'node:path';
 import { slash } from 'shared/utils/url';
 
 import type { App } from '../App';
@@ -10,6 +11,7 @@ import {
 
 export type PageFile = SystemFileMeta & {
   readonly moduleId: string;
+  readonly rootDir: string;
   layouts: number[];
 };
 
@@ -29,12 +31,14 @@ export class PageFiles extends SystemFiles<PageFile> {
 
     const rootPath = this._getRootPath(filePath);
     const moduleId = slash(rootPath);
+    const rootDir = path.posix.dirname(rootPath);
     const ext = this._ext(rootPath);
 
     const page: PageFile = {
       moduleId,
       path: filePath,
       rootPath,
+      rootDir,
       ext,
       layouts: [],
     };

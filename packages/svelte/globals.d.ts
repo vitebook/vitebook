@@ -4,11 +4,8 @@ declare module '*.svelte' {
 }
 
 declare module '*.md' {
-  import type { MarkdownMeta } from 'vitebook';
-
-  const __markdownMeta: MarkdownMeta;
+  const __markdownMeta: import('vitebook').MarkdownMeta;
   export { __markdownMeta };
-
   const component: typeof import('svelte').SvelteComponent;
   export default component;
 }

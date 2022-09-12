@@ -22,7 +22,6 @@ export function resolvePageChunks(
   app: App,
   route: PageFileRoute,
   { entryChunk, appChunk, viteManifest }: BuildBundles['client'],
-  modules?: Set<string>,
 ) {
   const imports = new Set<string>();
   const dynamicImports = new Set<string>();
@@ -99,18 +98,6 @@ export function resolvePageChunks(
     if (chunk) {
       collectChunks(chunk);
       imports.add(chunk.file);
-    }
-  }
-
-  // Modules
-
-  if (modules) {
-    for (const id of modules) {
-      const chunk = viteManifest[id];
-      if (chunk) {
-        collectChunks(viteManifest[id]);
-        imports.add(chunk.file);
-      }
     }
   }
 

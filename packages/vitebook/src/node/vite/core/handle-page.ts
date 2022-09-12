@@ -33,20 +33,20 @@ export async function handlePageRequest(
   }
 
   try {
-    // We're loading static data first to check for redirects because it supersedes server-side work.
-    // Filesystem > Server-Side
-    const { output: staticData, redirect } = await callStaticLoaders(
-      url,
-      app,
-      route,
-      app.vite.server!.ssrLoadModule as ServerNodeLoader,
-    );
+    // // We're loading static data first to check for redirects because it supersedes server-side work.
+    // // Filesystem > Server-Side
+    // const { output: staticData, redirect } = await callStaticLoaders(
+    //   url,
+    //   app,
+    //   route,
+    //   app.vite.server!.ssrLoadModule as ServerNodeLoader,
+    // );
 
-    if (redirect) {
-      res.statusCode = redirect.statusCode;
-      res.setHeader('Location', redirect.path).end();
-      return;
-    }
+    // if (redirect) {
+    //   res.statusCode = redirect.statusCode;
+    //   res.setHeader('Location', redirect.path).end();
+    //   return;
+    // }
 
     const template = await app.vite.server!.transformIndexHtml(
       pathname,
@@ -54,10 +54,10 @@ export async function handlePageRequest(
       req.originalUrl,
     );
 
-    const entryLoader = async () =>
-      (await app.vite.server!.ssrLoadModule(
-        app.config.entry.server,
-      )) as ServerEntryModule;
+    // const entryLoader = async () =>
+    //   (await app.vite.server!.ssrLoadModule(
+    //     app.config.entry.server,
+    //   )) as ServerEntryModule;
 
     // pattern: page.route.pattern,
     // template,
@@ -66,11 +66,13 @@ export async function handlePageRequest(
     // head: () => loadStyleTag(app, page),
     // staticData: () => staticDataMap,
 
-    const handler = createPageHandler();
+    // const handler = createPageHandler();
 
-    await handleHTTPRequest(base, req, res, handler, (error) => {
-      logDevError(app, req, coalesceToError(error));
-    });
+    // await handleHTTPRequest(base, req, res, handler, (error) => {
+    //   logDevError(app, req, coalesceToError(error));
+    // });
+
+    res.end(template);
   } catch (error) {
     handleDevServerError(app, req, res, error);
   }

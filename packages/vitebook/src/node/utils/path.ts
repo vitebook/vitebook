@@ -12,7 +12,7 @@ export const resolveRelativePath = (base: string, filePath: string): string => {
   return path.posix.isAbsolute(filePath)
     ? filePath
     : path.posix.resolve(
-        fs.lstatSync(base).isDirectory() ? base : path.dirname(base),
+        fs.lstatSync(base).isDirectory() ? base : path.posix.dirname(base),
         filePath,
       );
 };

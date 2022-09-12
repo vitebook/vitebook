@@ -7,6 +7,9 @@ import { resolveRouteFromFilePath } from './resolve-file-route';
 
 export type FileRoute<T extends SystemFileMeta> = Route & {
   file: T;
+  layout?: boolean;
+  error?: boolean;
+  endpoint?: boolean;
 };
 
 export class FileRoutes<T extends SystemFileMeta>
@@ -15,7 +18,11 @@ export class FileRoutes<T extends SystemFileMeta>
   protected _routesDir!: string;
   protected _matchers!: RouteMatcherConfig;
   protected _routes: FileRoute<T>[] = [];
-  protected _endpoints = false;
+
+  // Refactor this later doesn't matter right now.
+  protected _layouts: boolean | undefined;
+  protected _errors: boolean | undefined;
+  protected _endpoints: boolean | undefined;
 
   get size() {
     return this._routes.length;
@@ -29,6 +36,9 @@ export class FileRoutes<T extends SystemFileMeta>
   add(file: T) {
     const route: FileRoute<T> = {
       file,
+      layout: this._layouts,
+      error: this._errors,
+      endpoint: this._endpoints,
       ...resolveRouteFromFilePath(
         this._routesDir,
         file.rootPath,

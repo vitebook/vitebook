@@ -90,7 +90,7 @@ export async function build(
 
   for (const route of app.routes.endpoints) {
     build.endpoints.set(
-      `/${path.dirname(app.dirs.app.relative(route.file.rootPath))}/`,
+      `/${path.posix.dirname(app.dirs.app.relative(route.file.rootPath))}/`,
       route,
     );
   }
@@ -156,16 +156,16 @@ export async function build(
       const pathname = $.normalizeURL(url).pathname;
       build.staticRedirects.set(pathname, {
         from: pathname,
-        to: result.redirect.path,
+        to: result.redirect.pathname,
         filename: $.resolveHTMLFilename(url),
-        html: $.createRedirectMetaTag(result.redirect.path),
+        html: $.createRedirectMetaTag(result.redirect.pathname),
         statusCode: result.redirect.statusCode,
       });
       await adapter?.finishLoadingStaticData?.(
         pathname,
         route,
         result.output,
-        result.redirect.path,
+        result.redirect.pathname,
       );
       return result;
     }
@@ -225,19 +225,19 @@ export async function build(
     build.links.set(pathname, route);
     await adapter.startRenderingPage?.(pathname, route);
 
-    const loadedOutput = await loadStaticOutput(url, route);
+    const loadResult = await loadStaticOutput(url, route);
 
     // Redirect.
-    if (loadedOutput.redirect) {
-      const location = loadedOutput.redirect.path;
+    if (loadResult.redirect) {
+      const location = loadResult.redirect.pathname;
       await buildPageFromHref(route, location);
       await adapter.finishRenderingPage?.(pathname, route, {
-        redirect: loadedOutput.redirect,
+        redirect: loadResult.redirect,
       });
       return;
     }
 
-    const staticData = createStaticLoaderDataMap(loadedOutput.output);
+    const staticData = createStaticLoaderDataMap(loadResult.output);
     const ssr = await render(url, { staticData });
 
     const result = {

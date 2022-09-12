@@ -16,11 +16,16 @@ export class AppFiles {
     await Promise.all([
       this.layouts.init(app),
       this.pages.init(app),
-      this.markdoc.init(app),
+      this.errors.init(app),
       this.endpoints.init(app),
+      this.markdoc.init(app),
     ]);
 
     for (const files of [this.pages, this.errors]) {
+      for (const node of files) {
+        node.layouts = this.layouts.getOwnedLayoutIndicies(node.path);
+      }
+
       this.layouts.onAdd(() => {
         for (const node of files) {
           node.layouts = this.layouts.getOwnedLayoutIndicies(node.path);

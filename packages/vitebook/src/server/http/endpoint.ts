@@ -1,16 +1,16 @@
 import type { ServerRequestHandler } from 'server/types';
 
-import { handleHTTPError, httpError, isHTTPError } from './errors';
+import { handleHttpError, httpError, isHttpError } from './errors';
 import {
   createRequestEvent,
   getAllowedMethods,
-  HTTPMethod,
+  HttpMethod,
   type RequestModule,
 } from './request';
 
 export type EndpointHandlerInit = {
   pattern: URLPattern;
-  methods?: HTTPMethod[];
+  methods?: HttpMethod[];
   loader: () => RequestModule | Promise<RequestModule>;
   getClientAddress: (request: Request) => unknown;
   onError?: (error: unknown) => void;
@@ -30,7 +30,7 @@ export function createEndpointHandler(
 
       const method = (
         typeof methodOverride === 'string' ? methodOverride : request.method
-      ) as HTTPMethod;
+      ) as HttpMethod;
 
       if (methods && !methods.includes(method)) {
         throw httpError('not found', 404);
@@ -78,13 +78,13 @@ export function createEndpointHandler(
 
       return response;
     } catch (error) {
-      if (isHTTPError(error)) {
-        return handleHTTPError(error);
+      if (isHttpError(error)) {
+        return handleHttpError(error);
       } else if (error instanceof Response) {
         return error;
       } else {
         onError?.(error);
-        return handleHTTPError(httpError('internal server error', 500));
+        return handleHttpError(httpError('internal server error', 500));
       }
     }
   };

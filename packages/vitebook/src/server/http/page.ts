@@ -34,6 +34,7 @@ export function handleDataRequest(
 ): Response {
   // __data = layout index or -1 for page
   // this can be either an action or
+  return {} as any;
 }
 
 export function handlePageRequest(
@@ -49,4 +50,5 @@ export function handlePageRequest(
   //   .replace(`<!--@vitebook/head-->`, head + styles)
   //   .replace(`<!--@vitebook/app-->`, appHtml)
   //   .replace('<!--@vitebook/body-->', staticDataScript);
+  return {} as any;
 }

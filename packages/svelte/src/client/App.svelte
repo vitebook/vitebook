@@ -1,6 +1,6 @@
 <script>
-  import PageLayouts from './components/PageLayouts.svelte';
-  import PageView from './components/PageView.svelte';
+  import PageLayouts from './PageLayouts.svelte';
+  import PageView from './PageView.svelte';
 </script>
 
 <PageLayouts>

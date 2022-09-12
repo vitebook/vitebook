@@ -47,3 +47,5 @@ export type {
   Tag as MarkdocTag,
 } from '@markdoc/markdoc';
 export { default as Markdoc } from '@markdoc/markdoc';
+export { escapeHTML, unescapeHTML } from 'shared/utils/html';
+export { toPascalCase } from 'shared/utils/string';

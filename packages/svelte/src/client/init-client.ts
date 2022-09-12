@@ -6,58 +6,41 @@ import {
   writable,
 } from 'svelte/store';
 import {
-  initRouter,
-  isLoadedMarkdownPage,
-  type LoadedClientPage,
-  type LoadedRoute,
+  init,
+  isMarkdownModule,
+  type LoadedClientRoute,
+  type Navigation,
   type Reactive,
-  type RouteNavigation,
-  type ServerContext,
 } from 'vitebook';
 
 import {
   FRONTMATTER_KEY,
   MARKDOWN_KEY,
   NAVIGATION_KEY,
-  PAGE_KEY,
   ROUTE_KEY,
   ROUTER_KEY,
-  SERVER_CONTEXT_KEY,
 } from './context-keys';
-import type { FrontmatterStore, MarkdownStore, PageStore } from './stores';
-import { layouts } from './stores/layouts';
-import { pages } from './stores/pages';
+import type { FrontmatterStore, MarkdownStore, RouteStore } from './stores';
 
-export type InitOptions = {
-  serverContext?: ServerContext;
-};
-
-export async function init({ serverContext }: InitOptions = {}) {
-  const route = writable<LoadedRoute>();
-  const navigation = writable<RouteNavigation>();
-  const page = writable<LoadedClientPage>();
-  const markdown = createMarkdownStore(page);
+export async function initClient() {
+  const route = writable<LoadedClientRoute>();
+  const navigation = writable<Navigation>();
+  const markdown = createMarkdownStore(route);
   const frontmatter = createFronmatterStore(markdown);
 
-  const router = await initRouter({
+  const router = await init({
     $route: toReactive(route),
     $navigation: toReactive(navigation),
-    $pages: toReactive(pages),
-    $layouts: toReactive(layouts),
-    $currentPage: toReactive(page),
-    serverContext,
   });
 
   const context = new Map<string | symbol, unknown>();
   context.set(ROUTE_KEY, { subscribe: route.subscribe });
   context.set(NAVIGATION_KEY, { subscribe: navigation.subscribe });
-  context.set(PAGE_KEY, { subscribe: page.subscribe });
   context.set(MARKDOWN_KEY, markdown);
   context.set(FRONTMATTER_KEY, frontmatter);
   context.set(ROUTER_KEY, router);
-  context.set(SERVER_CONTEXT_KEY, serverContext);
 
-  return { page, router, context };
+  return { router, context };
 }
 
 function toReactive<T>(store: Readable<T> | Writable<T>): Reactive<T> {
@@ -69,9 +52,11 @@ function toReactive<T>(store: Readable<T> | Writable<T>): Reactive<T> {
   };
 }
 
-function createMarkdownStore(page: PageStore): MarkdownStore {
-  return derived(page, ($page) =>
-    isLoadedMarkdownPage($page) ? $page.meta : undefined,
+function createMarkdownStore(route: RouteStore): MarkdownStore {
+  return derived(route, ($route) =>
+    isMarkdownModule($route.leaf.module)
+      ? $route.leaf.module.__markdownMeta
+      : undefined,
   );
 }
 

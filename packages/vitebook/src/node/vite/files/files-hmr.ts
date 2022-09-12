@@ -106,7 +106,7 @@ export function handleFilesHMR(app: App) {
   }
 
   function fullReload() {
-    invalidateModuleByID(virtualModuleRequestPath.routes);
+    invalidateModuleByID(virtualModuleRequestPath.manifest);
     server.ws.send({ type: 'full-reload' });
   }
 

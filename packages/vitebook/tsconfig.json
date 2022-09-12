@@ -7,7 +7,7 @@
     "tsBuildInfoFile": ".tsbuildinfo",
     "paths": {
       ":virtual/vitebook/app": ["virtual/app"],
-      ":virtual/vitebook/routes": ["virtual/routes"]
+      ":virtual/vitebook/manifest": ["virtual/manifest"]
     }
   },
   "include": ["src"]

@@ -1,6 +1,10 @@
 import type { App } from 'node/app/App';
 import type { PageFileRoute } from 'node/app/routes';
-import type { ServerRenderResult, StaticLoaderOutputMap } from 'server/types';
+import type {
+  ServerRedirect,
+  ServerRenderResult,
+  StaticLoaderOutputMap,
+} from 'server/types';
 
 import { type BuildBundles, type BuildData } from '../build';
 import { type BuildAdapterUtils } from './BuildAdapterUtils';
@@ -44,7 +48,7 @@ export type BuildAdapter = {
     pathname: string,
     route: PageFileRoute,
     result: {
-      redirect?: { path: string; statusCode: number };
+      redirect?: ServerRedirect;
       ssr?: ServerRenderResult | null;
       dataAssetIds?: Set<string>;
     },

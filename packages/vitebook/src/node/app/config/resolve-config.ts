@@ -57,22 +57,22 @@ export function resolveAppConfig(
     log: routes.log ?? 'tree',
     logLevel: routes.logLevel ?? 'warn',
     pages: {
-      include: [`**/+page.{${pageExts}}`],
+      include: [`**/+page.{${pageExts}}`, `**/page.{${pageExts}}`],
       exclude: [],
       ...routes.pages,
     },
     layouts: {
-      include: [`**/+layout*.{${pageExts}}`],
+      include: [`**/+layout*.{${pageExts}}`, `**/layout*.{${pageExts}}`],
       exclude: [],
       ...routes.pages,
     },
     errors: {
-      include: [`**/+error.{${pageExts}}`],
+      include: [`**/+error.{${pageExts}}`, `**/error.{${pageExts}}`],
       exclude: [],
       ...routes.errors,
     },
     endpoints: {
-      include: [`**/+http.{${endpointExts}}`],
+      include: [`**/+http.{${endpointExts}}`, `**/http.{${endpointExts}}`],
       exclude: [],
       ...routes.endpoints,
     },

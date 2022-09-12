@@ -92,8 +92,7 @@ export function getBuildAdapterUtils(
     },
     resolveDataFilename: (name) =>
       `${STATIC_DATA_ASSET_BASE_PATH}/${name}.json`.slice(1),
-    resolvePageChunks: (route, modules) =>
-      resolvePageChunks(app, route, bundles.client, modules),
+    resolvePageChunks: (route) => resolvePageChunks(app, route, bundles.client),
     buildSitemaps: async () => {
       if (app.config.sitemap.length === 0) return [];
       const sitemaps = app.config.sitemap
@@ -228,7 +227,7 @@ async function writeFiles(
   await Promise.all(
     files.map(async ({ filename, content }) => {
       const filePath = normalizePath(resolveFilePath(filename));
-      await ensureDir(path.dirname(filePath));
+      await ensureDir(path.posix.dirname(filePath));
       await fsp.writeFile(filePath, content);
     }),
   );
@@ -278,10 +277,7 @@ export type BuildAdapterUtils = {
   pluralize(word: string, count: number): string;
   resolveHTMLFilename(url: string | URL): string;
   resolveDataFilename(name: string): string;
-  resolvePageChunks(
-    route: PageFileRoute,
-    modules?: Set<string>,
-  ): {
+  resolvePageChunks(route: PageFileRoute): {
     assets: string[];
     imports: string[];
     dynamicImports: string[];

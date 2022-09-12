@@ -1,69 +1,51 @@
 import type { Route } from 'shared/routing';
 
-import type { RequestEvent, RequestParams } from './http/request';
+import type {
+  RequestEvent,
+  RequestModule,
+  RequestParams,
+} from './http/request';
 
 // ---------------------------------------------------------------------------------------
 // SSR
 // ---------------------------------------------------------------------------------------
 
 export type ServerBuild = {
+  mode: 'development' | 'production';
+
   template: string;
   trailingSlash: boolean;
 
-  // staticDataHashMap
-  // staticRedirects {from; to; }[]
-
   entry: {
     filename: string;
-    loader: () => Promise<ServerEntryModule>;
+    loader: ServerEntryLoader;
   };
 
-  app: {
-    filename: string;
-    loader: () => Promise<ServerEntryModule>;
+  statics: {
+    data: Record<string, StaticDataLoader>;
+    dataHashMap: Record<string, string>;
+    redirects: { from: string; to: string }[];
   };
 
-  // NODE
-  // id => root path
-  // pattern: URLPattern;
-  // head: string
-  // body: string
-  // loader
-  // layouts: number[]
-  // staticData: JSONData
+  // id => head/body
 
-  // layouts
-  // loader
-
-  // TODO: REFACTOR ROUTES AS FIRST-CLASS -> page? layouts/errors
-  // router has current nodes list { module: ..., props: {} }
-
-  // errors -> maybe not needed here ... just handle it client-side? -- server side we'll store a reference
-  // to where the error occurred and find boundary ... -> last seen module???
-  // pattern: URLPattern;
-  // loader
-  // layouts: number[]
-
-  // router needs to be able to load page/error (different modes? - default/error)
-  // errorRoutes
-  // maybe just forward a loader and let router handle it
-
-  // endpoints so we can handle them locally (without http)
-};
-
-export type ServerRenderState = {
-  // Nothing for now - not used yet.
+  routes: {
+    pages: ServerNodeRoute[];
+    layouts: ServerNodeRoute[];
+    errors: ServerNodeRoute[];
+    endpoints: ServerNodeRoute<ServerEndpointLoader>[];
+  };
 };
 
 export type ServerEntryContext = {
-  state: ServerRenderState;
-  modules: Set<string>;
   staticData: StaticLoaderDataMap;
 };
 
 export type ServerEntryModule = {
   render: ServerRenderer;
 };
+
+export type ServerEntryLoader = () => Promise<ServerEntryModule>;
 
 export type ServerRenderer = (
   url: URL,
@@ -74,14 +56,9 @@ export type ServerRenderResult = {
   head?: string;
   css?: string;
   html: string;
-  context: ServerEntryContext;
 };
 
 export type ServerNode = {
-  loader: ServerNodeLoader;
-};
-
-export type ServerNodeModule = {
   staticLoader?: StaticLoader;
   serverLoader?: ServerLoader;
   serverAction?: ServerAction;
@@ -89,16 +66,26 @@ export type ServerNodeModule = {
 
 export type ServerNodeLoader = (
   id?: string,
-) => ServerNodeModule | Promise<ServerNodeModule>;
+) => ServerNode | Promise<ServerNode>;
+
+export type ServerNodeRoute<Loader = ServerNodeLoader> = {
+  pathname: string;
+  fetch?: boolean;
+  loader: Loader;
+};
 
 export type ServerRequestHandler = (request: Request) => Promise<Response>;
 
 export type ServerRedirect = {
-  readonly path: string;
+  readonly pathname: string;
   readonly statusCode: number;
 };
 
+export type ServerEndpointLoader = () => Promise<RequestModule>;
+
 export type JSONData = Record<string, unknown>;
+
+export type StaticDataLoader = () => Promise<JSONData>;
 
 // ---------------------------------------------------------------------------------------
 // Static Loader

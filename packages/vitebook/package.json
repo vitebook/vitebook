@@ -76,6 +76,7 @@
   "devDependencies": {
     "@types/node": "^16.0.0",
     "@wooorm/starry-night": "^1.0.0",
+    "fast-glob": "^3.2.11",
     "kleur": "^4.1.4",
     "rollup": "^2.58.0",
     "shiki": "^0.10.1",

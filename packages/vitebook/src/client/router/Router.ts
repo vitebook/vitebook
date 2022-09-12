@@ -8,6 +8,7 @@ import { normalizeURL } from 'shared/routing';
 import { isFunction, isString } from 'shared/utils/unit';
 import { slash } from 'shared/utils/url';
 
+import { removeSSRStyles, tick } from '../utils';
 import {
   createSimpleRoutesComparator,
   type RoutesComparator,
@@ -21,49 +22,57 @@ import {
   type ScrollDelegateFactory,
 } from './scroll-delegate';
 import type {
-  GoToRouteOptions,
-  LoadableRoute,
-  LoadedRoute,
-  MatchedRoute,
+  AfterNavigateHook,
+  BeforeNavigateHook,
+  ClientRoute,
+  ClientRouteDeclaration,
+  LoadedClientRoute,
+  MatchedClientRoute,
+  Navigation,
   NavigationOptions,
-  RouteDeclaration,
-  RouterAfterNavigateHook,
-  RouterBeforeNavigateHook,
-  RouteRedirector,
-  RouteTransition,
+  NavigationRedirector,
+  RouterGoOptions,
 } from './types';
 
 export type RouterOptions = {
   baseUrl: string;
   trailingSlash?: boolean;
-  $route: Reactive<LoadedRoute>;
-  $transition: Reactive<RouteTransition>;
+  $route: Reactive<LoadedClientRoute>;
+  $navigation: Reactive<Navigation>;
 };
 
 export class Router {
-  /**
-   * Key used to save navigation state in this._history state object.
-   */
-  _historyKey = 'vbk::index';
-  /**
-   * Keeps track of the this._history index in order to prevent popstate navigation
-   * events (if needed).
-   */
-  _historyIndex!: number;
-
   protected _url: URL;
   protected _listening = false;
   protected _scrollDelegate: ScrollDelegate;
   protected _comparator: RoutesComparator;
-  protected _routes: LoadableRoute[] = [];
-  protected _currentRoute: LoadedRoute | null = null;
+  protected _routes: ClientRoute[] = [];
   protected _redirectsMap = new Map<string, string>();
 
-  protected _$route: RouterOptions['$route'];
-  protected _$transition: RouterOptions['$transition'];
+  protected _current: LoadedClientRoute | null = null;
 
-  protected _beforeNavigate: RouterBeforeNavigateHook[] = [];
-  protected _afterNavigate: RouterAfterNavigateHook[] = [];
+  protected _$route: RouterOptions['$route'];
+  protected _$navigation: RouterOptions['$navigation'];
+
+  protected _beforeNavigate: BeforeNavigateHook[] = [];
+  protected _afterNavigate: AfterNavigateHook[] = [];
+
+  /** Key used to save navigation state in this._history state object. */
+  _historyKey = 'vbk::index';
+  /** Keeps track of the this._history index in order to prevent popstate navigation events. */
+  _historyIndex!: number;
+
+  protected get _pages() {
+    return this._routes.filter((route) => !route.layout && !route.error);
+  }
+
+  protected get _layouts() {
+    return this._routes.filter((route) => route.layout);
+  }
+
+  protected get _errors() {
+    return this._routes.filter((route) => route.error);
+  }
 
   /**
    * The current URL.
@@ -94,8 +103,8 @@ export class Router {
   /**
    * Reactive route navigation.
    */
-  get transition() {
-    return this._$transition;
+  get navigation(): Omit<RouterOptions['$navigation'], 'set'> {
+    return this._$navigation;
   }
   /**
    * Whether the router has loaded the first route and started listening for link clicks to handle
@@ -108,7 +117,7 @@ export class Router {
    * The currently loaded route.
    */
   get currentRoute() {
-    return this._currentRoute;
+    return this._current;
   }
   /**
    * Delegate used to handle scroll-related tasks. The default delegate simply saves scroll
@@ -120,7 +129,7 @@ export class Router {
 
   constructor(options: RouterOptions) {
     this._$route = options.$route;
-    this._$transition = options.$transition;
+    this._$navigation = options.$navigation;
     this._comparator = createSimpleRoutesComparator();
 
     this.baseUrl = options.baseUrl;
@@ -173,7 +182,7 @@ export class Router {
    */
   owns(url: URL): boolean {
     return (
-      url.origin !== location.origin || !url.pathname.startsWith(this.baseUrl)
+      url.origin === location.origin && url.pathname.startsWith(this.baseUrl)
     );
   }
 
@@ -182,17 +191,17 @@ export class Router {
    */
   test(pathnameOrURL: string | URL): boolean {
     const url = this.createURL(pathnameOrURL);
-    return this._comparator.match(url, this._routes) !== null;
+    return this._comparator.match(url, this._pages) !== null;
   }
 
   /**
    * Attempts to match route to given a pathname or URL and return a `MatchedRoute` object.
    */
-  match(pathnameOrURL: string | URL): MatchedRoute | null {
+  match(pathnameOrURL: string | URL): MatchedClientRoute | null {
     const url = this.createURL(pathnameOrURL);
 
     if (this.owns(url)) {
-      const route = this._comparator.match(url, this._routes);
+      const route = this._comparator.match(url, this._pages);
       if (!route) return null;
       const pathname = decodeURI(
         slash(url.pathname.slice(this.baseUrl.length)),
@@ -208,13 +217,11 @@ export class Router {
   /**
    * Registers a new route given a declaration.
    */
-  add(route: RouteDeclaration): LoadableRoute {
-    const exists =
-      route.id && this._routes.find((route) => route.id === route.id);
-
+  add(route: ClientRouteDeclaration): ClientRoute {
+    const exists = route.id && this._routes.find((r) => r.id === route.id);
     if (exists) return exists;
 
-    const normalized: LoadableRoute = {
+    const normalized: ClientRoute = {
       id: route.id ?? Symbol(),
       ...route,
       pattern: new URLPattern({ pathname: route.pathname }),
@@ -228,6 +235,13 @@ export class Router {
   }
 
   /**
+   * @internal Quickly adds a batch of predefined routes.
+   */
+  _addAll(routes: ClientRoute[]) {
+    for (const route of routes) this._routes.push(route);
+  }
+
+  /**
    * Deregisters a route given it's id.
    */
   remove(id: string | symbol): void {
@@ -237,7 +251,7 @@ export class Router {
   /**
    * Attempts to find a registered route given a route `id`.
    */
-  findById(id: string | symbol): LoadableRoute | undefined {
+  findById(id: string | symbol): ClientRoute | undefined {
     return this._routes.find((route) => route.id === id);
   }
 
@@ -260,7 +274,7 @@ export class Router {
       replace = false,
       keepfocus = false,
       state = {},
-    }: GoToRouteOptions = {},
+    }: RouterGoOptions = {},
   ): Promise<void> {
     if (isString(path) && path.startsWith('#')) {
       const hash = path;
@@ -314,7 +328,7 @@ export class Router {
   async prefetch(pathnameOrURL: string | URL): Promise<void> {
     const url = this.createURL(pathnameOrURL);
 
-    const redirecting = this._redirection(url, (to) => this.prefetch(to));
+    const redirecting = this._redirectCheck(url, (to) => this.prefetch(to));
     if (redirecting) return redirecting;
 
     const route = this.match(url);
@@ -325,8 +339,8 @@ export class Router {
       );
     }
 
-    // TODO: LOAD ROUTE
     await route.prefetch?.({ route, url });
+    // TODO: LOAD ROUTE
   }
 
   normalizeURL(url: URL) {
@@ -337,8 +351,10 @@ export class Router {
    * Start the router and begin listening for link clicks we can intercept them and handle SPA
    * navigation.
    */
-  listen(): void {
+  async start(mount: () => void | Promise<void>): Promise<void> {
     if (!this._listening) {
+      await mount();
+      removeSSRStyles();
       listen(this);
       this._listening = true;
     }
@@ -350,7 +366,7 @@ export class Router {
    *
    * @defaultValue undefined
    */
-  beforeNavigate(hook: RouterBeforeNavigateHook): void {
+  beforeNavigate(hook: BeforeNavigateHook): void {
     this._beforeNavigate.push(hook);
   }
 
@@ -359,7 +375,7 @@ export class Router {
    *
    * @defaultValue undefined
    */
-  afterNavigate(hook: RouterAfterNavigateHook): void {
+  afterNavigate(hook: AfterNavigateHook): void {
     this._afterNavigate.push(hook);
   }
 
@@ -386,9 +402,9 @@ export class Router {
    */
   hashChanged(hash: string) {
     this._url.hash = hash;
-    if (this._currentRoute) {
+    if (this._current) {
       this._$route?.set({
-        ...this._currentRoute!,
+        ...this._current!,
         url: this._url,
       });
     }
@@ -409,12 +425,14 @@ export class Router {
   ) {
     let cancelled = false;
     const cancel = () => {
-      this.transition.set(null);
+      this._$navigation.set(null);
       if (!cancelled) blocked?.();
       cancelled = true;
     };
 
-    const redirectNavigation = (url: URL) => {
+    // TODO: check for redirect loop here?? -> load first matching error page?
+
+    const handleRedirect = (url: URL) => {
       redirects.push(url.pathname);
       return this._navigate(url, {
         keepfocus,
@@ -426,7 +444,7 @@ export class Router {
       });
     };
 
-    let redirecting = this._redirection(url, redirectNavigation);
+    let redirecting = this._redirectCheck(url, handleRedirect);
     if (redirecting) return redirecting;
 
     if (!this.owns(url)) {
@@ -444,51 +462,48 @@ export class Router {
     }
 
     const redirect = this._createRedirector(url, (redirectURL) => {
-      redirecting = redirectNavigation(redirectURL);
+      redirecting = handleRedirect(redirectURL);
     });
 
     for (const hook of this._beforeNavigate) {
-      hook({
-        from: this._currentRoute,
-        to: route,
-        params: route.params,
-        cancel,
-        redirect,
-      });
+      hook({ from: this._current, to: route, cancel, redirect });
     }
 
     if (cancelled) return;
     if (redirecting) return redirecting;
 
     this.scrollDelegate.savePosition?.();
+    this._$navigation.set({ from: url, to: url });
     accepted?.();
 
-    this.transition.set({ from: url, to: url });
-
-    // TODO: LOAD LAYOUTS -MOD + STATIC LOAD + SERVER LOAD
+    // match layouts in the correct order -> load layouts+page
+    // LOAD LAYOUTS -MOD + STATIC LOAD + SERVER LOAD (LOAD_ROUTE(...))
     const mod = await route.loader({ url, route });
 
-    if (redirecting) return redirecting;
+    // readonly staticData?: JSONData;
+    // readonly serverData?: JSONData;
+    // readonly error?: Error | ClientHttpError | null;
 
     if (!mod) {
       cancel();
       return;
     }
 
-    const fromRoute = this._currentRoute;
+    const from = this._current;
 
-    const toRoute: LoadedRoute = {
+    const to: LoadedClientRoute = {
       ...route,
-      module: mod,
+      module: { ...mod },
+      layouts: [],
     };
 
-    this._currentRoute = toRoute;
-    this._$route?.set(toRoute);
+    this._current = to;
+    this._$route?.set(to);
 
     // Wait a tick so page is rendered before updating history.
-    await new Promise((res) => window.requestAnimationFrame(res));
+    await tick();
 
-    this._changeHistoryState(url, state, replace);
+    this._changeHistoryState(to.url, state, replace);
 
     if (!keepfocus) {
       // Reset page selection and focus.
@@ -510,33 +525,26 @@ export class Router {
     }
 
     // Need to render the DOM before we can scroll to the rendered elements.
-    await new Promise((res) => window.requestAnimationFrame(res));
+    await tick();
 
     await this.scrollDelegate.scroll?.({
-      from: fromRoute,
-      to: toRoute,
+      from,
+      to,
       target: scroll,
-      hash: url.hash,
+      hash: to.url.hash,
     });
 
-    await Promise.all(
-      this._afterNavigate.map((hook) =>
-        hook({
-          from: fromRoute,
-          to: toRoute,
-          params: route.params,
-        }),
-      ),
-    );
+    await Promise.all(this._afterNavigate.map((hook) => hook({ from, to })));
+    await tick();
 
     this._url = url;
-    this.transition.set(null);
+    this._$navigation.set(null);
   }
 
   protected _createRedirector(
     from: URL,
     handle: (url: URL) => void | Promise<void>,
-  ): RouteRedirector {
+  ): NavigationRedirector {
     const fromURL = this.createURL(from);
     return async (pathnameOrURL) => {
       const redirectURL = this.createURL(pathnameOrURL);
@@ -545,7 +553,7 @@ export class Router {
     };
   }
 
-  protected _redirection(
+  protected _redirectCheck(
     url: URL,
     handle: (to: URL) => void | Promise<void> | null,
   ): void | Promise<void> | null {

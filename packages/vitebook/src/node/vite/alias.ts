@@ -5,7 +5,7 @@ export const VM_PREFIX = ':virtual/vitebook' as const;
 
 export const virtualModuleId = {
   noop: `${VM_PREFIX}/noop`,
-  routes: `${VM_PREFIX}/routes`,
+  manifest: `${VM_PREFIX}/manifest`,
   client: `${VM_PREFIX}/client`,
   app: `${VM_PREFIX}/app`,
 } as const;

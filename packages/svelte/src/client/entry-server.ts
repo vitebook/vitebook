@@ -3,12 +3,12 @@ import { type ServerEntryContext, type ServerRenderer } from 'vitebook/server';
 import app from ':virtual/vitebook/app';
 
 import { type SvelteServerModule } from '../shared';
-import { init } from './init';
+import { initClient } from './init-client';
 
-export const render: ServerRenderer = async (url, { staticData }) => {
-  const serverContext: ServerEntryContext = { modules: new Set(), staticData };
+export const render: ServerRenderer = async (url) => {
+  // const serverContext: ServerEntryContext = {};
 
-  const { router, context } = await init({ serverContext });
+  const { router, context } = await initClient();
 
   await router.go(decodeURI(url.pathname));
 
@@ -20,6 +20,6 @@ export const render: ServerRenderer = async (url, { staticData }) => {
     head,
     css,
     router,
-    context: serverContext,
+    context: {} as any,
   };
 };
