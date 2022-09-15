@@ -19,12 +19,9 @@ export class MarkdocSchema {
   getOwnedConfig(ownerFilePath: string): MarkdocConfig {
     const base = this._app.config.markdown.markdoc;
 
-    const isPageLike =
-      this._app.files.pages.is(ownerFilePath) ||
-      this._app.files.errors.is(ownerFilePath);
-
-    const nodes = isPageLike ? this._getOwnedNodesConfig(ownerFilePath) : {};
-    const tags = isPageLike ? this._getOwnedTagsConfig(ownerFilePath) : {};
+    const leafFile = this._app.files.findLeaf(ownerFilePath);
+    const nodes = leafFile ? this._getOwnedNodesConfig(ownerFilePath) : {};
+    const tags = leafFile ? this._getOwnedTagsConfig(ownerFilePath) : {};
 
     const config: MarkdocConfig = {
       ...base,

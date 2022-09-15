@@ -3,19 +3,42 @@ import type { PageFileRoute } from 'node/app/routes';
 import type { GetManualChunk } from 'rollup';
 import type { ManifestChunk as ViteManifestChunk } from 'vite';
 
-import type { BuildBundles } from './build';
+import type { BuildBundles, BuildData } from './build';
 
 export function extendManualChunks(): GetManualChunk {
   return (id) => {
     if (id.includes('vite/')) return 'vite';
 
     if (id.includes('node_modules')) {
-      if (/\/svelte\//.test(id)) return 'svelte';
-      if (/@vitebook/.test(id)) return 'vitebook';
+      if (/\/@?svelte\//.test(id)) return 'svelte';
+      if (/\/@?vue\//.test(id)) return 'vue';
+      if (/\/@?react\//.test(id)) return 'react';
+      if (/\/@?solid\//.test(id)) return 'solid';
+      if (/\/@?maverick\//.test(id)) return 'maverick';
+      if (/\/@?vitebook/.test(id)) return 'vitebook';
     }
 
     return null;
   };
+}
+
+export function resolveServerLoaderChunks(
+  app: App,
+  { chunks }: BuildBundles['server'],
+) {
+  const serverRoutes: BuildData['serverRoutes'] = new Set();
+
+  for (let i = 0; i < app.routes.client.length; i++) {
+    const route = app.routes.client[i];
+
+    const chunk = chunks.find(
+      (chunk) => chunk.facadeModuleId === route.file.path,
+    );
+
+    if (chunk?.exports.includes('serverLoader')) serverRoutes.add(route);
+  }
+
+  return serverRoutes;
 }
 
 export function resolvePageChunks(
@@ -89,11 +112,7 @@ export function resolvePageChunks(
 
   // Layouts
 
-  const layoutChunks = route.file.layouts.map((index) =>
-    app.files.layouts.getByIndex(index),
-  );
-
-  for (const layout of layoutChunks) {
+  for (const layout of route.file.layouts) {
     const chunk = viteManifest[layout.rootPath];
     if (chunk) {
       collectChunks(chunk);

@@ -1,17 +1,18 @@
 import type { ServerRequestHandler } from 'server/types';
+import { isHttpError } from 'shared/routing';
 
-import { handleHttpError, httpError, isHttpError } from './errors';
+import { handleHttpError, httpError } from './errors';
 import {
   createRequestEvent,
   getAllowedMethods,
   HttpMethod,
-  type RequestModule,
+  type HttpRequestModule,
 } from './request';
 
 export type EndpointHandlerInit = {
   pattern: URLPattern;
   methods?: HttpMethod[];
-  loader: () => RequestModule | Promise<RequestModule>;
+  loader: () => HttpRequestModule | Promise<HttpRequestModule>;
   getClientAddress: (request: Request) => unknown;
   onError?: (error: unknown) => void;
 };

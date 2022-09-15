@@ -48,14 +48,8 @@ export const isLinkHttp = (link: string): boolean =>
  */
 export const isLinkExternal = (link: string, base = '/'): boolean => {
   // http link
-  if (isLinkHttp(link)) {
-    return true;
-  }
-
+  if (isLinkHttp(link)) return true;
   // absolute link that does not start with `base`
-  if (link.startsWith('/') && !link.startsWith(base)) {
-    return true;
-  }
-
+  if (link.startsWith('/') && !link.startsWith(base)) return true;
   return false;
 };

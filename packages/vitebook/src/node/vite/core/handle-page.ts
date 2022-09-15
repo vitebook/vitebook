@@ -1,17 +1,16 @@
 import type { ServerResponse } from 'http';
 import type { App } from 'node/app/App';
-import type { PageFile } from 'node/app/files';
+import type { LeafModuleFile } from 'node/app/files';
 import { handleHTTPRequest } from 'node/http';
 import { createPageHandler } from 'server/http';
-import type { ServerEntryModule, ServerNodeLoader } from 'server/types';
-import { matchRouteInfo } from 'shared/routing';
+import type { ServerEntryModule, ServerModuleLoader } from 'server/types';
+import { matchRoute } from 'shared/routing';
 import { coalesceToError } from 'shared/utils/error';
 import type { Connect, ModuleNode, ViteDevServer } from 'vite';
 
 import { virtualModuleId } from '../alias';
-import { handleDevServerError, logDevError } from './dev-server';
+import { handleDevServerError } from './dev-server';
 import { readIndexHtmlFile } from './index-html';
-import { callStaticLoaders } from './static-loader';
 
 export async function handlePageRequest(
   base: string,
@@ -20,12 +19,13 @@ export async function handlePageRequest(
   req: Connect.IncomingMessage,
   res: ServerResponse,
 ) {
+  url.pathname = url.pathname.replace('/index.html', '/');
+
   const pathname = decodeURI(url.pathname);
   const index = readIndexHtmlFile(app);
+  const route = matchRoute(url, app.routes.pages.toArray());
 
-  const match = matchRouteInfo(url, app.routes.pages.toArray());
-  const route = app.routes.pages.getByIndex(match?.index ?? -1);
-
+  // TODO: let request handle this.
   if (!route) {
     res.statusCode = 404;
     res.end('Not found');
@@ -43,8 +43,8 @@ export async function handlePageRequest(
     // );
 
     // if (redirect) {
-    //   res.statusCode = redirect.statusCode;
-    //   res.setHeader('Location', redirect.path).end();
+    //   res.statusCode = redirect.status;
+    //   res.setHeader('Location', redirect.pathname).end();
     //   return;
     // }
 
@@ -78,7 +78,7 @@ export async function handlePageRequest(
   }
 }
 
-async function loadStyleTag(app: App, page: PageFile) {
+async function loadStyleTag(app: App, leafFile: LeafModuleFile) {
   const appFilePath = app.vite
     .server!.moduleGraph.getModuleById(`/${virtualModuleId.app}`)!
     .importedModules.values()
@@ -87,8 +87,8 @@ async function loadStyleTag(app: App, page: PageFile) {
   const stylesMap = await Promise.all(
     [
       appFilePath,
-      ...page.layouts.map((index) => app.files.layouts.getByIndex(index).path),
-      page.path,
+      ...leafFile.layouts.map((layout) => layout.path),
+      leafFile.path,
     ].map((file) => getStylesByFile(app.vite.server!, file)),
   );
 

@@ -21,13 +21,13 @@ export type BuildAdapter = {
 
   // --- LOAD
 
-  /** Started loading static data for page (includes any layouts). */
+  /** Started loading static data for page (includes layouts). */
   startLoadingStaticData?(
     pathname: string,
     route: PageFileRoute,
   ): void | Promise<void>;
 
-  /** Finished loading static data for page (includes any layouts). */
+  /** Finished loading static data for page (includes layouts). */
   finishLoadingStaticData?(
     pathname: string,
     route: PageFileRoute,

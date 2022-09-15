@@ -1,18 +1,17 @@
-import type { ServerBuild, ServerRequestHandler } from 'server/types';
+import type { ServerManifest, ServerRequestHandler } from 'server/types';
 
-export function createPageHandler(build: ServerBuild): ServerRequestHandler {
-  // Save anything we need across subsequent requests here.
-  const shared: Record<string, any> = {};
-
+export function createPageHandler(
+  manifest: ServerManifest,
+): ServerRequestHandler {
   return async (request) => {
     const url = new URL(request.url);
 
     let response: Response;
 
     if (url.searchParams.has('__data')) {
-      response = handleDataRequest(url, request, build);
+      response = handleDataRequest(url, request, manifest);
     } else {
-      response = handlePageRequest(url, request, build, shared);
+      response = handlePageRequest(url, request, manifest);
     }
 
     if (request.method === 'HEAD') {
@@ -30,18 +29,16 @@ export function createPageHandler(build: ServerBuild): ServerRequestHandler {
 export function handleDataRequest(
   url: URL,
   request: Request,
-  build: ServerBuild,
+  manifest: ServerManifest,
 ): Response {
-  // __data = layout index or -1 for page
-  // this can be either an action or
+  // __data
   return {} as any;
 }
 
 export function handlePageRequest(
   url: URL,
   request: Request,
-  build: ServerBuild,
-  shared: Record<string, any>,
+  manifest: ServerManifest,
 ): Response {
   // cache router (clear state)
   // this can be an action request

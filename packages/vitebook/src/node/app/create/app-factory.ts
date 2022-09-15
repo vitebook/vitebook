@@ -15,8 +15,8 @@ import {
   resolveAppConfig,
   type ResolvedAppConfig,
 } from '../config';
-import { AppFiles } from '../files';
-import { AppRoutes } from '../routes';
+import { Files } from '../files';
+import { Routes } from '../routes';
 import { createAppDirectories } from './app-dirs';
 import { getAppVersion } from './app-utils';
 import { DisposalBin } from './DisposalBin';
@@ -62,8 +62,8 @@ export const createAppFactory = async (
         logger,
         vite: { user: viteConfig, env },
         context: new Map(),
-        files: new AppFiles(),
-        routes: new AppRoutes(),
+        files: new Files(),
+        routes: new Routes(),
         markdoc: new MarkdocSchema(),
         disposal: new DisposalBin(),
         destroy: () => $app.disposal.empty(),

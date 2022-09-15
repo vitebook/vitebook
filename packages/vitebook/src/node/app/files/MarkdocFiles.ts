@@ -1,7 +1,6 @@
 import kleur from 'kleur';
 import path from 'node:path';
 import { toPascalCase } from 'shared/utils/string';
-import { isString } from 'shared/utils/unit';
 
 import type { App } from '../App';
 import {
@@ -17,7 +16,6 @@ export type MarkdocFile = SystemFileMeta & {
   name: string;
   cname: string;
   inline: boolean;
-  routePath: string;
   owningDir: string;
 };
 
@@ -31,17 +29,14 @@ export class MarkdocFiles extends SystemFiles<MarkdocFile> {
   }
 
   async add(filePath: string) {
-    filePath = this._normalizePath(filePath);
+    const file = this._createFile(filePath);
 
-    const rootPath = this._getRootPath(filePath);
-    const routePath = this._app.dirs.app.relative(filePath);
-    const ext = this._ext(rootPath);
     const owningDir = path.posix.dirname(
-      rootPath.replace(STRIP_MARKDOC_DIR_RE, '/root.md'),
+      file.rootPath.replace(STRIP_MARKDOC_DIR_RE, '/root.md'),
     );
 
     const name = path.posix
-      .basename(routePath, path.posix.extname(routePath))
+      .basename(file.routePath, path.posix.extname(file.routePath))
       .replace('@node', '')
       .replace('@inline', '');
 
@@ -58,22 +53,19 @@ export class MarkdocFiles extends SystemFiles<MarkdocFile> {
     }
 
     const cname = toPascalCase(name);
-    const inline = /@inline/.test(routePath);
+    const inline = /@inline/.test(file.routePath);
 
     const node: MarkdocFile = {
+      ...file,
       name,
       type,
       cname,
-      path: filePath,
-      rootPath,
-      ext,
-      routePath,
       inline,
       owningDir,
     };
 
     this._files.push(node);
-    this._callAddCallbacks(node);
+    this._add(node);
 
     return node;
   }
@@ -93,17 +85,11 @@ export class MarkdocFiles extends SystemFiles<MarkdocFile> {
     return filePath.includes('@markdoc') && this._filter(filePath);
   }
 
-  isOwnedBy(file: string | MarkdocFile, ownerFilePath: string) {
-    const rootPath = this._getRootPath(ownerFilePath);
-    const _node = isString(file) ? this.find(file) : file;
-    return _node && rootPath.startsWith(_node.owningDir);
-  }
-
   getOwnedNodes(ownerFilePath: string, type: '*' | 'node' | 'tag') {
     return Array.from(this._files).filter(
       (node) =>
         (type === '*' || node.type === type) &&
-        this.isOwnedBy(node, ownerFilePath),
+        this.isSameBranch(node, ownerFilePath),
     );
   }
 }

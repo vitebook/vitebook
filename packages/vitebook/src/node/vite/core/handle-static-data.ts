@@ -1,9 +1,9 @@
 import type { ServerResponse } from 'http';
 import type { App } from 'node/app/App';
 import { createStaticLoaderInput } from 'server';
-import type { ServerNodeLoader } from 'server/types';
-import { parseStaticDataAssetURL } from 'shared/data';
-import { matchRouteInfo } from 'shared/routing';
+import type { ServerModuleLoader } from 'server/types';
+import { testRoute } from 'shared/routing';
+import { isString } from 'shared/utils/unit';
 
 import { callStaticLoader } from './static-loader';
 
@@ -12,33 +12,32 @@ export async function handleStaticDataRequest(
   app: App,
   res: ServerResponse,
 ) {
-  const { url: dataUrl, layoutIndex } = parseStaticDataAssetURL(url);
+  const pathname = decodeURIComponent(url.searchParams.get('pathname')!),
+    id = decodeURIComponent(url.searchParams.get('id')!);
 
-  const match = matchRouteInfo(dataUrl, app.routes.pages.toArray());
+  const dataURL = new URL(url);
+  dataURL.pathname = pathname;
 
-  if (!match) {
+  const route = app.routes.client.find((route) => route.file.routePath === id);
+
+  if (!route || !testRoute(dataURL, route)) {
     res.statusCode = 404;
     res.end('Not found');
     return;
   }
 
-  const route = app.routes.pages.getByIndex(match.index);
-
-  const file =
-    layoutIndex >= 0 ? app.files.layouts.getByIndex(layoutIndex) : route.file;
-
   const output = await callStaticLoader(
     app,
-    file.path,
-    createStaticLoaderInput(dataUrl, route),
-    app.vite.server!.ssrLoadModule as ServerNodeLoader,
+    route.file.path,
+    createStaticLoaderInput(dataURL, route),
+    app.vite.server!.ssrLoadModule as ServerModuleLoader,
   );
 
   if (output.redirect) {
-    output.data = {
-      ...output.data,
-      __redirect__: output.redirect,
-    };
+    res.setHeader(
+      'X-Vitebook-Redirect',
+      isString(output.redirect) ? output.redirect : output.redirect.path,
+    );
   }
 
   res.statusCode = 200;

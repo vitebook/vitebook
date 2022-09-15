@@ -11,7 +11,7 @@ export function handleMarkdownHMR(app: App) {
     nodes.add(filePath);
 
     for (const pageFile of app.files.pages) {
-      if (nodes.isOwnedBy(filePath, pageFile.path)) {
+      if (nodes.isSameBranch(filePath, pageFile.path)) {
         clearMarkdownCache(pageFile.path);
         invalidateFile(pageFile.path);
       }

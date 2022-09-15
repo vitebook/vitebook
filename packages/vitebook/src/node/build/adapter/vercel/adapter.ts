@@ -61,7 +61,7 @@ export function createVercelBuildAdapter(
                 ? $.endslash(redirect.to)
                 : $.noendslash(redirect.to),
             },
-            status: redirect.statusCode,
+            status: redirect.status,
           }),
         );
 
@@ -95,28 +95,21 @@ export function createVercelBuildAdapter(
         );
 
         for (const route of app.routes.endpoints) {
-          const apiPath = app.dirs.app.relative(route.file.rootPath);
-          const apiDir = path.posix.dirname(apiPath);
+          const routeDir = route.file.routeDir;
           routes.push({
-            src: `^${$.slash(apiDir.replace(matchersRE, '([^/]+?)'))}/?$`, // ^/api/foo/?$
-            dest: $.slash(apiDir), // /api/foo
+            src: `^${$.slash(routeDir.replace(matchersRE, '([^/]+?)'))}/?$`, // ^/api/foo/?$
+            dest: $.slash(routeDir), // /api/foo
           });
         }
 
-        const serverChunks = bundles.server.chunks;
         await Promise.all(
           Array.from(app.routes.endpoints).map(async (route) => {
-            const chunk = serverChunks.find(
-              (chunk) => chunk.facadeModuleId === route.file.path,
-            );
-
+            const chunk = build.serverRouteChunks.get(route.id);
             const allowedMethods = chunk?.exports.filter((id) =>
               HTTP_METHODS.has(id),
             );
 
-            if (!chunk || !allowedMethods || allowedMethods.length === 0) {
-              return;
-            }
+            if (!chunk || allowedMethods!.length === 0) return;
 
             const isEdge =
               !!config?.edge?.all || chunk.exports.includes('EDGE');
@@ -126,7 +119,7 @@ export function createVercelBuildAdapter(
             const code = resolveCode(
               route.pattern.pathname,
               './+http.js',
-              allowedMethods,
+              allowedMethods!,
             );
 
             const vcConfig = isEdge
@@ -139,8 +132,7 @@ export function createVercelBuildAdapter(
                   ...config?.functions,
                 };
 
-            const apiPath = app.dirs.app.relative(route.file.rootPath);
-            const fndir = `${path.posix.dirname(apiPath)}.func`;
+            const fndir = `${route.file.routeDir}.func`;
             const outdir = vercelDirs.fns.resolve(fndir);
             const chunkdir = path.posix.dirname(
               app.dirs.server.resolve(chunk.fileName),

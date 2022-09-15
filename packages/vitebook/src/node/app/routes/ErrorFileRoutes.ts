@@ -1,16 +1,15 @@
+import type { Route } from 'shared/routing';
+
 import type { App } from '../App';
 import type { ErrorFile } from '../files';
-import { type FileRoute, FileRoutes } from './FileRoutes';
+import { type SystemFileRoute, SystemFileRoutes } from './SystemFileRoutes';
 
-export type ErrorFileRoute = FileRoute<ErrorFile>;
+export type ErrorFileRoute = SystemFileRoute<ErrorFile>;
 
-export class ErrorFileRoutes extends FileRoutes<ErrorFile> {
-  protected _errors = true;
-
+export class ErrorFileRoutes extends SystemFileRoutes<ErrorFile> {
+  protected _type: Route['type'] = 'error';
   init(app: App): void {
     super.init(app);
-    for (const error of app.files.errors) this.add(error);
-    app.files.errors.onAdd((file) => this.add(file));
-    app.files.errors.onRemove((file) => this.remove(file));
+    this._watch(app.files.errors);
   }
 }

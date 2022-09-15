@@ -13,16 +13,18 @@ import type {
 import { isMarkdownModule } from './utils';
 
 export type ClientInitOptions = {
+  tick: () => void | Promise<void>;
   $route: Reactive<LoadedClientRoute>;
   $navigation: Reactive<Navigation>;
 };
 
-export async function init({ $route, $navigation }: ClientInitOptions) {
+export async function init({ tick, $route, $navigation }: ClientInitOptions) {
   await installURLPattern();
 
   const router = new Router({
     baseUrl: app.baseUrl,
     trailingSlash: window['__VBK_TRAILING_SLASH__'],
+    tick,
     $route,
     $navigation,
   });
@@ -40,10 +42,7 @@ export async function init({ $route, $navigation }: ClientInitOptions) {
   if (import.meta.hot) {
     import.meta.hot.on('vitebook::md_meta', ({ filePath, meta }) => {
       const route = $route.get();
-      if (
-        isMarkdownModule(route.module.module) &&
-        filePath.endsWith(route.id)
-      ) {
+      if (isMarkdownModule(route.module) && filePath.endsWith(route.id)) {
         $route.set({
           ...route,
           module: {
@@ -72,6 +71,7 @@ export async function init({ $route, $navigation }: ClientInitOptions) {
 }
 
 const routeIds = new Set<string | symbol>();
+const routeIdRE = /^\d+~/;
 
 function readManifest(
   router: Router,
@@ -79,25 +79,37 @@ function readManifest(
 ) {
   const clientRoutes: ClientRoute[] = [];
 
+  /** path index. */
+  let p = 0;
+
   for (let i = 0; i < routes.length; i++) {
-    const route = routes[i];
-    const pathname = paths[route.p][0];
+    let id = routes[i],
+      type: ClientRoute['type'] = 'page';
+
+    if (routeIdRE.test(id)) {
+      const parts = id.split('~');
+      id = parts[1];
+      if (parts[0] == '1') type = 'error';
+      else type = 'layout';
+    }
+
+    if (i > 0 && type === 'page') p++;
+    const pathname = paths[p][0];
 
     clientRoutes.push({
-      id: route.i ?? Symbol(),
+      id,
+      type,
       pathname,
       pattern: new URLPattern({ pathname }),
-      score: paths[route.p][1],
-      fetch: fetch.includes(route.m),
-      loader: loaders[route.m],
-      layout: !!route.l,
-      error: !!route.e,
+      score: paths[p][1],
+      loader: loaders[i],
+      canFetch: fetch.includes(i),
     });
 
-    if (import.meta.hot) routeIds.add(route.i!);
+    if (import.meta.hot) routeIds.add(id!);
   }
 
-  router._addAll(clientRoutes);
+  router.addAll(clientRoutes);
 }
 
 function handleManifestChange(router: Router, manifest?: ClientManifest) {

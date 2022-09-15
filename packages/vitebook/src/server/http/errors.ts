@@ -1,3 +1,5 @@
+import { HttpError, isHttpError } from 'shared/routing';
+
 import { json } from './response';
 
 export function invariant(value: boolean, message?: string): asserts value;
@@ -33,20 +35,6 @@ export function httpError(
   data?: Record<string, unknown>,
 ) {
   throw new HttpError(message, init, data);
-}
-
-export class HttpError extends Error {
-  constructor(
-    message: string,
-    public readonly init?: number | ResponseInit,
-    public readonly data?: Record<string, unknown>,
-  ) {
-    super(message);
-  }
-}
-
-export function isHttpError(error: unknown): error is HttpError {
-  return error instanceof HttpError;
 }
 
 export function handleHttpError(error: unknown) {

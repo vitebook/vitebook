@@ -1,16 +1,27 @@
 /**
- * Inspired by:
+ * Initially inspired by:
  * - SvelteKit Router: https://github.com/sveltejs/kit
  * - Vue Router: https://github.com/vuejs/router
  */
 
-import { normalizeURL } from 'shared/routing';
-import { isFunction, isString } from 'shared/utils/unit';
-import { slash } from 'shared/utils/url';
-
-import { removeSSRStyles, tick } from '../utils';
 import {
-  createSimpleRoutesComparator,
+  resolveStaticDataAssetId,
+  STATIC_DATA_ASSET_BASE_PATH,
+} from 'shared/data';
+import {
+  findRoute,
+  LoadedServerData,
+  LoadedStaticData,
+  matchAllRoutes,
+  matchRoute,
+  normalizeURL,
+} from 'shared/routing';
+import { isFunction, isString } from 'shared/utils/unit';
+import { isLinkExternal } from 'shared/utils/url';
+
+import { removeSSRStyles } from '../utils';
+import {
+  createSimpleComparator,
   type RoutesComparator,
   type RoutesComparatorFactory,
 } from './comparators';
@@ -37,9 +48,14 @@ import type {
 export type RouterOptions = {
   baseUrl: string;
   trailingSlash?: boolean;
+  tick: () => void | Promise<void>;
   $route: Reactive<LoadedClientRoute>;
   $navigation: Reactive<Navigation>;
 };
+
+let idCount = 0;
+let navigationToken = {};
+const loading = new Map<string, Promise<LoadedClientRoute>>();
 
 export class Router {
   protected _url: URL;
@@ -47,10 +63,10 @@ export class Router {
   protected _scrollDelegate: ScrollDelegate;
   protected _comparator: RoutesComparator;
   protected _routes: ClientRoute[] = [];
+  protected _route: LoadedClientRoute | null = null;
   protected _redirectsMap = new Map<string, string>();
 
-  protected _current: LoadedClientRoute | null = null;
-
+  protected _tick: RouterOptions['tick'];
   protected _$route: RouterOptions['$route'];
   protected _$navigation: RouterOptions['$navigation'];
 
@@ -61,18 +77,6 @@ export class Router {
   _historyKey = 'vbk::index';
   /** Keeps track of the this._history index in order to prevent popstate navigation events. */
   _historyIndex!: number;
-
-  protected get _pages() {
-    return this._routes.filter((route) => !route.layout && !route.error);
-  }
-
-  protected get _layouts() {
-    return this._routes.filter((route) => route.layout);
-  }
-
-  protected get _errors() {
-    return this._routes.filter((route) => route.error);
-  }
 
   /**
    * The current URL.
@@ -117,7 +121,7 @@ export class Router {
    * The currently loaded route.
    */
   get currentRoute() {
-    return this._current;
+    return this._route;
   }
   /**
    * Delegate used to handle scroll-related tasks. The default delegate simply saves scroll
@@ -128,13 +132,14 @@ export class Router {
   }
 
   constructor(options: RouterOptions) {
-    this._$route = options.$route;
-    this._$navigation = options.$navigation;
-    this._comparator = createSimpleRoutesComparator();
-
     this.baseUrl = options.baseUrl;
     this.trailingSlash = !!options.trailingSlash;
+    this._comparator = createSimpleComparator();
     this._scrollDelegate = createSimpleScrollDelegate(this);
+
+    this._tick = options.tick;
+    this._$route = options.$route;
+    this._$navigation = options.$navigation;
 
     this._url = new URL(location.href);
 
@@ -169,7 +174,9 @@ export class Router {
       ? new URL(pathnameOrURL)
       : new URL(
           pathnameOrURL,
-          pathnameOrURL.startsWith('#')
+          isLinkExternal(pathnameOrURL, this.baseUrl)
+            ? undefined
+            : pathnameOrURL.startsWith('#')
             ? /(.*?)(#|$)/.exec(location.href)![1]
             : getBaseUri(this.baseUrl),
         );
@@ -187,58 +194,62 @@ export class Router {
   }
 
   /**
-   * Returns whether the given pathname matches any route.
+   * Returns whether the given pathname matches any page route.
    */
-  test(pathnameOrURL: string | URL): boolean {
+  test(
+    pathnameOrURL: string | URL,
+    type: ClientRoute['type'] = 'page',
+  ): boolean {
     const url = this.createURL(pathnameOrURL);
-    return this._comparator.match(url, this._pages) !== null;
+    return !!findRoute(url, this._routes, type);
   }
 
   /**
-   * Attempts to match route to given a pathname or URL and return a `MatchedRoute` object.
+   * Attempts to match a route to the given a pathname or URL and return a `MatchedRoute` object.
    */
-  match(pathnameOrURL: string | URL): MatchedClientRoute | null {
+  match(
+    pathnameOrURL: string | URL,
+    type: ClientRoute['type'] = 'page',
+  ): MatchedClientRoute | null {
     const url = this.createURL(pathnameOrURL);
+    return this.owns(url) ? matchRoute(url, this._routes, type) : null;
+  }
 
-    if (this.owns(url)) {
-      const route = this._comparator.match(url, this._pages);
-      if (!route) return null;
-      const pathname = decodeURI(
-        slash(url.pathname.slice(this.baseUrl.length)),
-      );
-      const query = new URLSearchParams(url.search);
-      const id = `${pathname}?${query}`;
-      return { ...route, id, url };
-    }
-
-    return null;
+  /**
+   * Attempts to match all routes to the given pathname or URL and returns their respective
+   * `MatchedRoute` object. This will ensure the leaf node is a page.
+   */
+  matchAll(pathnameOrURL: string | URL): MatchedClientRoute[] {
+    const url = this.createURL(pathnameOrURL);
+    return this.owns(url) ? matchAllRoutes(url, this._routes) : [];
   }
 
   /**
    * Registers a new route given a declaration.
    */
-  add(route: ClientRouteDeclaration): ClientRoute {
-    const exists = route.id && this._routes.find((r) => r.id === route.id);
+  add(declaration: ClientRouteDeclaration): ClientRoute {
+    const exists = declaration.id && this.findById(declaration.id);
     if (exists) return exists;
 
-    const normalized: ClientRoute = {
-      id: route.id ?? Symbol(),
-      ...route,
-      pattern: new URLPattern({ pathname: route.pathname }),
-      score: route.score ?? this._comparator.score(route),
+    const route: ClientRoute = {
+      id: declaration.id ?? `${idCount++}`,
+      ...declaration,
+      pattern: new URLPattern({ pathname: declaration.pathname }),
+      score: declaration.score ?? this._comparator.score(declaration),
     };
 
-    this._routes.push(normalized);
+    this._routes.push(route);
     this._routes = this._comparator.sort(this._routes);
 
-    return normalized;
+    return route;
   }
 
   /**
-   * @internal Quickly adds a batch of predefined routes.
+   * Quickly adds a batch of predefined routes.
    */
-  _addAll(routes: ClientRoute[]) {
-    for (const route of routes) this._routes.push(route);
+  addAll(routes: ClientRoute[]) {
+    this._routes.push(...routes);
+    this._routes = this._comparator.sort(this._routes);
   }
 
   /**
@@ -249,9 +260,9 @@ export class Router {
   }
 
   /**
-   * Attempts to find a registered route given a route `id`.
+   * Attempts to find and return a registered route given a route id.
    */
-  findById(id: string | symbol): ClientRoute | undefined {
+  findById(id: string | symbol) {
     return this._routes.find((route) => route.id === id);
   }
 
@@ -314,11 +325,7 @@ export class Router {
    * Add a redirect from a given pathname to another.
    */
   addRedirect(from: string | URL, to: string | URL): void {
-    const fromURL = this.normalizeURL(
-      isString(from) ? this.createURL(from) : from,
-    );
-    const toURL = this.normalizeURL(isString(to) ? this.createURL(to) : to);
-    this._redirectsMap.set(fromURL.href, toURL.href);
+    this._redirectsMap.set(this.createURL(from).href, this.createURL(to).href);
   }
 
   /**
@@ -331,29 +338,38 @@ export class Router {
     const redirecting = this._redirectCheck(url, (to) => this.prefetch(to));
     if (redirecting) return redirecting;
 
-    const route = this.match(url);
+    const matches = this.matchAll(url);
 
-    if (!route) {
-      throw new Error(
-        'Attempted to prefetch a URL that does not belong to this app',
-      );
+    if (matches.length === 0) {
+      if (import.meta.env.DEV) {
+        console.warn(
+          `[vitebook] attempted to prefetch a URL that does not belong to this app: \`${url.href}\``,
+        );
+      }
+      return;
     }
 
-    await route.prefetch?.({ route, url });
-    // TODO: LOAD ROUTE
+    await this._loadRoute(url, matches);
   }
 
+  /**
+   * Normalize trailing slashes.
+   */
   normalizeURL(url: URL) {
     return normalizeURL(url, this.trailingSlash);
   }
 
   /**
    * Start the router and begin listening for link clicks we can intercept them and handle SPA
-   * navigation.
+   * navigation. This has no effect after initial call.
    */
-  async start(mount: () => void | Promise<void>): Promise<void> {
+  async start(
+    mount: (target: HTMLElement) => void | Promise<void>,
+  ): Promise<void> {
     if (!this._listening) {
-      await mount();
+      await this.go(location.href, { replace: true });
+      const target = document.getElementById('app')!;
+      await mount(target);
       removeSSRStyles();
       listen(this);
       this._listening = true;
@@ -394,7 +410,7 @@ export class Router {
    * Adds a new route comparator to handle matching, scoring, and sorting routes.
    */
   setRouteComparator(factory: RoutesComparatorFactory): void {
-    this._comparator = factory() ?? createSimpleRoutesComparator();
+    this._comparator = factory() ?? createSimpleComparator();
   }
 
   /**
@@ -402,9 +418,9 @@ export class Router {
    */
   hashChanged(hash: string) {
     this._url.hash = hash;
-    if (this._current) {
+    if (this._route) {
       this._$route?.set({
-        ...this._current!,
+        ...this._route!,
         url: this._url,
       });
     }
@@ -423,6 +439,8 @@ export class Router {
       redirects = [],
     }: NavigationOptions,
   ) {
+    const token = (navigationToken = {});
+
     let cancelled = false;
     const cancel = () => {
       this._$navigation.set(null);
@@ -432,9 +450,15 @@ export class Router {
 
     // TODO: check for redirect loop here?? -> load first matching error page?
 
-    const handleRedirect = (url: URL) => {
-      redirects.push(url.pathname);
-      return this._navigate(url, {
+    const handleRedirect = (to: URL) => {
+      if (import.meta.env.DEV) {
+        console.info(
+          `[vitebook] redirecting from \`${url.href}\` to \`${to.href}\``,
+        );
+      }
+
+      redirects.push(to.pathname);
+      return this._navigate(to, {
         keepfocus,
         replace,
         state,
@@ -449,16 +473,42 @@ export class Router {
 
     if (!this.owns(url)) {
       cancel();
+      if (import.meta.env.DEV) {
+        console.warn(
+          `[vitebook] attempted to navigate to a URL that does not belong to this app: \`${url.href}\``,
+        );
+      }
       return;
     }
 
-    const route = this.match(url);
+    // Abort if user navigated during micotick.
+    await Promise.resolve();
+    if (token !== navigationToken) return;
 
-    if (!route) {
+    const matches = this.matchAll(url);
+    const leaf = matches[matches.length - 1];
+    const isLeafPage = leaf && leaf.type === 'page';
+
+    console.log(matches);
+
+    if (!isLeafPage) {
       cancel();
-      throw new Error(
-        'Attempted to navigate to a URL that does not belong to this app',
-      );
+
+      if (leaf?.type === 'error') {
+        // load it and pass in 404 http error??
+      }
+
+      // Happens in SPA fallback mode - don't go back to the server to prevent infinite reload.
+      if (
+        url.origin === location.origin &&
+        url.pathname === location.pathname
+      ) {
+        // TODO: this should be 404 -> root error page?
+      }
+
+      // Let the server decide what to do.
+      // await this.goLocation(url);
+      return;
     }
 
     const redirect = this._createRedirector(url, (redirectURL) => {
@@ -466,7 +516,7 @@ export class Router {
     });
 
     for (const hook of this._beforeNavigate) {
-      hook({ from: this._current, to: route, cancel, redirect });
+      await hook({ from: this._route, to: leaf, cancel, redirect });
     }
 
     if (cancelled) return;
@@ -476,32 +526,17 @@ export class Router {
     this._$navigation.set({ from: url, to: url });
     accepted?.();
 
-    // match layouts in the correct order -> load layouts+page
-    // LOAD LAYOUTS -MOD + STATIC LOAD + SERVER LOAD (LOAD_ROUTE(...))
-    const mod = await route.loader({ url, route });
+    const from = this._route;
 
-    // readonly staticData?: JSONData;
-    // readonly serverData?: JSONData;
-    // readonly error?: Error | ClientHttpError | null;
+    // TODO: this can return a possible redirect (prob need LoadRouteResult)
+    // TODO: this can return a bad result 400? - should it return error?
+    const to = await this._loadRoute(url, matches);
 
-    if (!mod) {
-      cancel();
-      return;
-    }
-
-    const from = this._current;
-
-    const to: LoadedClientRoute = {
-      ...route,
-      module: { ...mod },
-      layouts: [],
-    };
-
-    this._current = to;
+    this._route = to;
     this._$route?.set(to);
 
     // Wait a tick so page is rendered before updating history.
-    await tick();
+    await this._tick();
 
     this._changeHistoryState(to.url, state, replace);
 
@@ -525,8 +560,7 @@ export class Router {
     }
 
     // Need to render the DOM before we can scroll to the rendered elements.
-    await tick();
-
+    await this._tick();
     await this.scrollDelegate.scroll?.({
       from,
       to,
@@ -534,11 +568,64 @@ export class Router {
       hash: to.url.hash,
     });
 
-    await Promise.all(this._afterNavigate.map((hook) => hook({ from, to })));
-    await tick();
-
     this._url = url;
     this._$navigation.set(null);
+
+    for (const hook of this._afterNavigate) {
+      await hook({ from, to });
+    }
+  }
+
+  protected async _loadRoute(
+    url: URL,
+    branch: MatchedClientRoute[],
+  ): Promise<LoadedClientRoute> {
+    const leaf = branch[branch.length - 1]!;
+
+    const id = leaf.id + branch.length;
+    if (loading.has(id)) return loading.get(id)!;
+
+    let resolve!: (route: LoadedClientRoute) => void;
+    const promise = new Promise<LoadedClientRoute>((res) => (resolve = res));
+    loading.set(id, promise);
+
+    const loadedRoutes = await Promise.all(
+      branch.map(async (route) => {
+        const [mod, staticData, serverData] = await Promise.all([
+          route.loader(),
+          loadStaticData(url, route),
+          loadServerData(url, route),
+        ]);
+        return {
+          ...route,
+          staticData,
+          serverData,
+          module: mod,
+        };
+      }),
+    );
+
+    // we need to load static data (redirect?) + server data () + modules all at the same time.
+
+    // [LoadStaticDataResult, LoadServerDataResult, LoadedClientRoute]
+
+    // readonly staticData?: JSONData;
+    // readonly serverData?: JSONData;
+    // readonly error?: Error | ClientHttpError | null;
+
+    // process results -> look for static redirects first, then server redirects
+    // look for any unexpected errors (not HTTP) for both static/server
+    // if any error -> handle from specific route
+    // group everything
+
+    const result: LoadedClientRoute = {
+      ...loadedRoutes.pop()!,
+      branch: loadedRoutes,
+    };
+
+    resolve(result);
+    loading.delete(id);
+    return result;
   }
 
   protected _createRedirector(
@@ -555,11 +642,11 @@ export class Router {
 
   protected _redirectCheck(
     url: URL,
-    handle: (to: URL) => void | Promise<void> | null,
-  ): void | Promise<void> | null {
+    handle: (to: URL) => void | null | Promise<void>,
+  ): void | null | Promise<void> {
     const href = this.normalizeURL(url).href;
 
-    if (!this._redirectsMap.has(href)) return null;
+    if (!this._redirectsMap.has(href)) return;
 
     const redirectHref = this._redirectsMap.get(href)!;
     const redirectURL = new URL(redirectHref);
@@ -580,155 +667,89 @@ function getBaseUri(baseUrl = '/') {
   }`;
 }
 
-// export async function loadPage(
-//   router: Router,
-//   clientPage: ClientPage,
-//   clientLayouts: ClientLayout[],
-//   $currentPage: Reactive<LoadedClientPage>,
-//   { prefetch = false }: { prefetch?: boolean | URL } = {},
-// ): Promise<string | LoadedClientPage> {
-//   const prefetchURL = isBoolean(prefetch) ? undefined : prefetch;
+type LoadStaticDataResult = {
+  data?: LoadedStaticData;
+  redirect?: string;
+};
 
-//   let pageModule: ClientPageModule;
-//   let pageStaticData: JSONData;
-//   let layouts: LoadedClientLayout[];
+let initStaticData = true;
+async function loadStaticData(
+  url: URL,
+  route: MatchedClientRoute,
+): Promise<void | LoadStaticDataResult> {
+  if (!isString(route.id)) return;
 
-//   /**
-//    * Loading is slightly different during dev because we need to check for a page redirect which
-//    * is returned from the `/_immutable/data` endpoint. This is not needed in prod because the
-//    * complete redirect table is injected into the rendered HTML.
-//    */
-//   if (import.meta.env.DEV) {
-//     pageModule = await clientPage.loader();
+  let pathname = url.pathname;
+  if (!pathname.endsWith('/')) pathname += '/';
 
-//     pageStaticData = await loadStaticData(
-//       router,
-//       pageModule,
-//       undefined,
-//       prefetchURL,
-//     );
+  const id = resolveStaticDataAssetId(route.id, pathname),
+    dataAssetId = import.meta.env.PROD
+      ? window['__VBK_STATIC_DATA_HASH_MAP__'][await hashStaticDataAssetId(id)]
+      : id;
 
-//     if (import.meta.env.DEV && isString(pageStaticData.__redirect__)) {
-//       return pageStaticData.__redirect__;
-//     }
+  if (!dataAssetId) return;
 
-//     layouts = await loadPageLayouts(
-//       router,
-//       clientPage,
-//       clientLayouts,
-//       prefetchURL,
-//     );
-//   } else {
-//     [pageModule, layouts] = await Promise.all([
-//       (async () => {
-//         const mod = await clientPage.loader();
-//         pageStaticData = await loadStaticData(
-//           router,
-//           mod,
-//           undefined,
-//           prefetchURL,
-//         );
-//         return mod;
-//       })(),
-//       loadPageLayouts(router, clientPage, clientLayouts, prefetchURL),
-//     ]);
-//   }
+  if (initStaticData) {
+    initStaticData = false;
+    return { data: getStaticDataFromScript(dataAssetId) };
+  }
 
-//   const loadedPage: LoadedClientPage = {
-//     ...clientPage,
-//     $$loaded: true,
-//     module: pageModule,
-//     layouts,
-//     staticData: pageStaticData!,
-//     get default() {
-//       return pageModule.default;
-//     },
-//     get meta() {
-//       return isLoadedMarkdownPage(this) ? pageModule.meta : undefined;
-//     },
-//   };
+  try {
+    if (import.meta.env.DEV) {
+      const queryParams = `?id=${encodeURIComponent(
+        route.id,
+      )}&pathname=${encodeURIComponent(pathname)}`;
 
-//   if (!prefetch) {
-//     $currentPage.set(loadedPage);
-//   }
+      const response = await fetch(
+        `${STATIC_DATA_ASSET_BASE_PATH}/${route.id}.json${queryParams}`,
+      );
 
-//   return loadedPage;
-// }
+      const redirect = response.headers.get('X-Vitebook-Redirect');
+      if (redirect) return { redirect };
 
-// export function loadPageLayouts(
-//   router: Router,
-//   page: ClientPage,
-//   layouts: ClientLayout[],
-//   prefetchURL?: URL,
-// ): Promise<LoadedClientLayout[]> {
-//   return Promise.all(
-//     page.layouts.map(async (index) => {
-//       const layout = layouts[index];
-//       const mod = await layout.loader();
-//       return {
-//         $$loaded: true as const,
-//         ...layout,
-//         module: mod,
-//         staticData: await loadStaticData(router, mod, index, prefetchURL),
-//         get default() {
-//           return mod.default;
-//         },
-//       };
-//     }),
-//   );
-// }
+      return { data: await response.json() };
+    } else {
+      const response = await fetch(
+        `${STATIC_DATA_ASSET_BASE_PATH}/${dataAssetId}.json`,
+      );
 
-// export async function loadStaticData(
-//   router: Router,
-//   module: ClientPageModule | ClientLayoutModule,
-//   layoutIndex?: number,
-//   prefetchURL?: URL,
-// ): Promise<JSONData> {
-//   if (!module.loader) return {};
+      return { data: await response.json() };
+    }
+  } catch (e) {
+    // TODO: handle this with error boundaries?
+    if (import.meta.env.DEV) console.error(e);
+  }
+}
 
-//   let pathname = prefetchURL?.pathname ?? router.transition.get()!.to.pathname;
-//   if (!pathname.endsWith('/')) pathname += '/';
+export type LoadServerDataResult = {
+  redirect?: string;
+  data?: LoadedServerData;
+  error?: LoadedClientRoute['loadError'];
+};
 
-//   const id = resolveStaticDataAssetID(decodeURI(pathname), layoutIndex);
+async function loadServerData(
+  url: URL,
+  route: MatchedClientRoute,
+): Promise<void | LoadServerDataResult> {
+  if (import.meta.env.PROD && !route.canFetch) return;
 
-//   const hashId =
-//     import.meta.env.PROD && !import.meta.env.SSR
-//       ? window['__VBK_STATIC_DATA_HASH_MAP__'][await hashDataId(id)]
-//       : id;
+  // fetchable? + error? + redirect?
+  // qparam => ?__data
 
-//   if (!hashId) return {};
+  return {};
+}
 
-//   if (import.meta.env.SSR && router.serverContext) {
-//     return router.serverContext.staticData.get(hashId) ?? {};
-//   }
+function getStaticDataFromScript(id: string) {
+  return window['__VBK_STATIC_DATA__']?.[id] ?? {};
+}
 
-//   try {
-//     const json = !router.listening
-//       ? getStaticDataFromScript(hashId)
-//       : await (
-//           await fetch(`${STATIC_DATA_ASSET_BASE_PATH}/${hashId}.json`)
-//         ).json();
-
-//     return json;
-//   } catch (e) {
-//     // TODO: handle this with error boundaries?
-//     console.error(e);
-//   }
-
-//   return {};
-// }
-
-// function getStaticDataFromScript(id: string) {
-//   return window['__VBK_STATIC_DATA__']?.[id] ?? {};
-// }
-
-// // Used in production to hash data id.
-// async function hashDataId(id: string) {
-//   const encodedText = new TextEncoder().encode(id);
-//   const hashBuffer = await crypto.subtle.digest('SHA-1', encodedText);
-//   const hashArray = Array.from(new Uint8Array(hashBuffer));
-//   return hashArray
-//     .map((b) => b.toString(16).padStart(2, '0'))
-//     .join('')
-//     .substring(0, 8);
-// }
+// Used in production to hash data id.
+async function hashStaticDataAssetId(id: string) {
+  const encodedText = new TextEncoder().encode(id);
+  const hashBuffer = await crypto.subtle.digest('SHA-1', encodedText);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+    .substring(0, 8);
+}

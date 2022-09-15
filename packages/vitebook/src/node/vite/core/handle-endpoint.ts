@@ -7,9 +7,9 @@ import {
   createEndpointHandler,
   handleHttpError,
   httpError,
-  type RequestModule,
+  type HttpRequestModule,
 } from 'server/http';
-import { matchRouteInfo } from 'shared/routing';
+import { findRoute } from 'shared/routing';
 import { coalesceToError } from 'shared/utils/error';
 
 import { handleDevServerError, logDevError } from './dev-server';
@@ -20,16 +20,14 @@ export async function handleEndpointRequest(
   app: App,
   req: IncomingMessage,
   res: ServerResponse,
-  loader: (endpoint: EndpointFile) => Promise<RequestModule>,
+  loader: (endpoint: EndpointFile) => Promise<HttpRequestModule>,
 ) {
-  const match = matchRouteInfo(url, app.routes.endpoints.toArray());
+  const route = findRoute(url, app.routes.endpoints.toArray());
 
-  if (!match) {
+  if (!route) {
     await setResponse(res, handleHttpError(httpError('not found', 400)));
     return;
   }
-
-  const route = app.routes.endpoints.getByIndex(match.index);
 
   const handler = createEndpointHandler({
     pattern: route.pattern,

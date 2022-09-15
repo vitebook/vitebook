@@ -63,10 +63,10 @@ function normalizeTransformMatcher(value: RouteMatcher) {
 }
 
 export function resolveRouteFromFilePath(
+  type: Route['type'],
   routesDir: string,
   filePath: string,
   matchers: RouteMatcherConfig = [],
-  isEndpoint = false,
 ): Route {
   filePath = normalizePath(filePath);
 
@@ -74,6 +74,7 @@ export function resolveRouteFromFilePath(
   const basename = path.posix.basename(routePath);
   const orderMatch = basename.match(PAGE_ORDER_RE)?.[1];
   const order = orderMatch ? Number(orderMatch) : undefined;
+  const isEndpoint = type === 'endpoint';
 
   let route = stripRouteInfo(routePath);
 
@@ -113,6 +114,7 @@ export function resolveRouteFromFilePath(
 
   return {
     id: routePath,
+    type,
     pathname,
     pattern,
     dynamic,

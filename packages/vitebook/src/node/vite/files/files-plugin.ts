@@ -33,7 +33,7 @@ export function filesPlugin(): VitebookPlugin {
 }
 
 export function loadClientManifestModule(app: App) {
-  const routes = app.routes.all;
+  const routes = app.routes.client;
 
   const loaders = routes.map(
     (node) => `() => import('/${node.file.rootPath}')`,
@@ -41,17 +41,10 @@ export function loadClientManifestModule(app: App) {
 
   // We'll replace production version after chunks are built so we can be sure `serverLoader`
   // exists for a given chunk. This is not used during dev.
-  const fetch = app.config.isBuild ? '__VBK_CAN_FETCH__' : [];
-
-  const _routes: {
-    i?: string;
-    p: number;
-    m: number;
-    l?: 1;
-    e?: 1;
-  }[] = [];
+  const fetch = app.config.isBuild ? '__VBK_SERVER_FETCH__' : [];
 
   const paths: [pathname: string, score: number][] = [];
+  const _routes: string[] = [];
 
   for (let i = 0; i < routes.length; i++) {
     const route = routes[i];
@@ -65,13 +58,10 @@ export function loadClientManifestModule(app: App) {
       pathIndex = paths.length - 1;
     }
 
-    _routes.push({
-      i: !app.config.isBuild ? route.file.rootPath : undefined,
-      p: pathIndex,
-      m: i,
-      l: route.layout ? 1 : undefined,
-      e: route.error ? 1 : undefined,
-    });
+    const type = route.type === 'layout' ? 0 : route.type === 'error' ? 1 : 2;
+    _routes.push(
+      type < 2 ? `${type}~${route.file.routePath}` : route.file.routePath,
+    );
   }
 
   return `export default ${stripImportQuotesFromJson(

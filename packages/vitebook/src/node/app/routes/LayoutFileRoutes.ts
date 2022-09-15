@@ -1,16 +1,15 @@
+import type { Route } from 'shared/routing';
+
 import type { App } from '../App';
 import type { LayoutFile } from '../files';
-import { type FileRoute, FileRoutes } from './FileRoutes';
+import { type SystemFileRoute, SystemFileRoutes } from './SystemFileRoutes';
 
-export type LayoutFileRoute = FileRoute<LayoutFile>;
+export type LayoutFileRoute = SystemFileRoute<LayoutFile>;
 
-export class LayoutFileRoutes extends FileRoutes<LayoutFile> {
-  protected _layouts = true;
-
+export class LayoutFileRoutes extends SystemFileRoutes<LayoutFile> {
+  protected _type: Route['type'] = 'layout';
   init(app: App): void {
     super.init(app);
-    for (const layout of app.files.layouts) this.add(layout);
-    app.files.layouts.onAdd((file) => this.add(file));
-    app.files.layouts.onRemove((file) => this.remove(file));
+    this._watch(app.files.layouts);
   }
 }

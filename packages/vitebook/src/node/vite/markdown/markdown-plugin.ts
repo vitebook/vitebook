@@ -3,7 +3,7 @@ import { readFile } from 'fs/promises';
 import { toHtml } from 'hast-util-to-html';
 import kleur from 'kleur';
 import type { App } from 'node/app/App';
-import type { PageFile } from 'node/app/files';
+import type { LeafModuleFile } from 'node/app/files';
 import {
   clearMarkdownCache,
   type HighlightCodeBlock,
@@ -13,14 +13,14 @@ import {
 import type { MarkdownMeta } from 'shared/markdown';
 import type { ViteDevServer } from 'vite';
 
-import { invalidatePageModule } from '../files/files-hmr';
+import { invalidateLeafModule } from '../files/files-hmr';
 import { type VitebookPlugin } from '../Plugin';
 import { handleMarkdownHMR } from './hmr';
 
 export function markdownPlugin(): VitebookPlugin {
   let app: App;
   let filter: (id: string) => boolean;
-  let currentPage: PageFile | undefined = undefined;
+  let currentFile: LeafModuleFile | undefined = undefined;
   let parse: (filePath: string, content: string) => ParseMarkdownResult;
   let highlight: HighlightCodeBlock | null = null;
 
@@ -99,8 +99,8 @@ export function markdownPlugin(): VitebookPlugin {
     async configureServer(server) {
       handleMarkdownHMR(app);
       server.ws.on('vitebook::route_change', ({ id }) => {
-        const filePath = app.dirs.root.resolve(id);
-        currentPage = app.files.pages.find(filePath);
+        const filePath = app.dirs.app.resolve(id);
+        currentFile = app.files.findLeaf(filePath);
       });
     },
     transform(content, id) {
@@ -117,25 +117,24 @@ export function markdownPlugin(): VitebookPlugin {
       if (filter(file)) {
         const content = await read();
 
-        const layoutIndex = app.files.layouts.findIndex(file);
-        const isLayoutFile = layoutIndex >= 0;
+        const layout = app.files.layouts.find(file);
 
-        if (isLayoutFile && currentPage?.layouts.includes(layoutIndex)) {
-          clearMarkdownCache(currentPage.path);
-          invalidatePageModule(server, currentPage);
+        if (layout && currentFile?.layouts.includes(layout)) {
+          clearMarkdownCache(currentFile.path);
+          invalidateLeafModule(server, currentFile);
 
           const { meta } = parse(
-            currentPage.path,
-            await readFile(currentPage.path, { encoding: 'utf-8' }),
+            currentFile.path,
+            await readFile(currentFile.path, { encoding: 'utf-8' }),
           );
 
-          handleMarkdownMetaHMR(server, currentPage.path, meta);
+          handleMarkdownMetaHMR(server, currentFile.path, meta);
         }
 
         const { output, meta } = parse(file, content);
         ctx.read = () => output;
 
-        if (!isLayoutFile) handleMarkdownMetaHMR(server, file, meta);
+        if (!layout) handleMarkdownMetaHMR(server, file, meta);
       }
     },
   };

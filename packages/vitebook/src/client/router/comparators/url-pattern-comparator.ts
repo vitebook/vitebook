@@ -1,4 +1,4 @@
-import { calcRoutePathScore, compareRoutes, matchRoute } from 'shared/routing';
+import { calcRoutePathScore, compareRoutes } from 'shared/routing';
 
 import type { RoutesComparator } from './types';
 
@@ -7,14 +7,8 @@ import type { RoutesComparator } from './types';
  * implementation. This can be used when you're programtically creating routes client-side. Be
  * careful because this comparator weighs a ~few KB, hence why it's not the default.
  */
-export function createURLPatternRouteMatcher(): RoutesComparator {
+export function createURLPatternComparator(): RoutesComparator {
   return {
-    match(url, routes) {
-      const route = matchRoute(url, routes);
-      return route
-        ? { url, ...route, params: route?.match.groups ?? {} }
-        : null;
-    },
     score(route) {
       return calcRoutePathScore(route.pathname);
     },

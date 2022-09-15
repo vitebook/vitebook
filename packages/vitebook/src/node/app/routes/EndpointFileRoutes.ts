@@ -1,16 +1,15 @@
+import type { Route } from 'shared/routing';
+
 import type { App } from '../App';
 import type { EndpointFile } from '../files';
-import { type FileRoute, FileRoutes } from './FileRoutes';
+import { type SystemFileRoute, SystemFileRoutes } from './SystemFileRoutes';
 
-export type EndpointFileRoute = FileRoute<EndpointFile>;
+export type EndpointFileRoute = SystemFileRoute<EndpointFile>;
 
-export class EndpointFileRoutes extends FileRoutes<EndpointFile> {
-  protected _endpoints = true;
-
+export class EndpointFileRoutes extends SystemFileRoutes<EndpointFile> {
+  protected _type: Route['type'] = 'endpoint';
   init(app: App): void {
     super.init(app);
-    for (const endpoint of app.files.endpoints) this.add(endpoint);
-    app.files.endpoints.onAdd((file) => this.add(file));
-    app.files.endpoints.onRemove((file) => this.remove(file));
+    this._watch(app.files.endpoints);
   }
 }

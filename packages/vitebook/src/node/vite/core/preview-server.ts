@@ -17,11 +17,9 @@ export async function configurePreviewServer(
       ? 'https'
       : 'http';
 
-  const loader = (endpoint: EndpointFile) => {
+  const loader = (file: EndpointFile) => {
     return import(
-      app.dirs.server
-        .resolve(app.dirs.app.relative(endpoint.rootPath))
-        .replace(/\.ts$/, '.js')
+      app.dirs.server.resolve(file.routePath).replace(/\.ts$/, '.js')
     );
   };
 

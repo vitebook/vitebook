@@ -1,47 +1,39 @@
-import type { Route } from 'shared/routing';
+import type {
+  LoadableRoute,
+  LoadedRoute,
+  MatchedRoute,
+  Route,
+} from 'shared/routing';
 
 import type {
+  HttpRequestModule,
   RequestEvent,
-  RequestModule,
   RequestParams,
 } from './http/request';
+import type { JSONData } from './http/response';
 
 // ---------------------------------------------------------------------------------------
-// SSR
+// Server Module
 // ---------------------------------------------------------------------------------------
 
-export type ServerBuild = {
-  mode: 'development' | 'production';
-
-  template: string;
-  trailingSlash: boolean;
-
-  entry: {
-    filename: string;
-    loader: ServerEntryLoader;
-  };
-
-  statics: {
-    data: Record<string, StaticDataLoader>;
-    dataHashMap: Record<string, string>;
-    redirects: { from: string; to: string }[];
-  };
-
-  // id => head/body
-
-  routes: {
-    pages: ServerNodeRoute[];
-    layouts: ServerNodeRoute[];
-    errors: ServerNodeRoute[];
-    endpoints: ServerNodeRoute<ServerEndpointLoader>[];
-  };
+export type ServerModule = {
+  [id: string]: unknown;
+  serverLoader?: ServerLoader;
+  serverAction?: ServerAction;
 };
 
+export type ServerModuleLoader = (id?: string) => Promise<ServerModule>;
+
+// ---------------------------------------------------------------------------------------
+// Server Entry
+// ---------------------------------------------------------------------------------------
+
 export type ServerEntryContext = {
-  staticData: StaticLoaderDataMap;
+  route: LoadedServerRoute;
 };
 
 export type ServerEntryModule = {
+  [id: string]: unknown;
   render: ServerRenderer;
 };
 
@@ -49,7 +41,7 @@ export type ServerEntryLoader = () => Promise<ServerEntryModule>;
 
 export type ServerRenderer = (
   url: URL,
-  context: Partial<ServerEntryContext>,
+  context: ServerEntryContext,
 ) => Promise<ServerRenderResult>;
 
 export type ServerRenderResult = {
@@ -58,38 +50,47 @@ export type ServerRenderResult = {
   html: string;
 };
 
-export type ServerNode = {
-  staticLoader?: StaticLoader;
-  serverLoader?: ServerLoader;
-  serverAction?: ServerAction;
+// ---------------------------------------------------------------------------------------
+// Server Manifest
+// ---------------------------------------------------------------------------------------
+
+export type ServerManifest = {
+  template: string;
+  trailingSlash: boolean;
+  entry: {
+    filename: string;
+    loader: ServerEntryLoader;
+  };
+  routes: ServerRoute[];
+  endpoints: ServerEndpointRoute[];
+  html: {
+    stylesheet: string;
+    head: Record<string, string>;
+    body: Record<string, string>;
+  };
+  staticData: {
+    hashMap: string;
+    loader: StaticDataLoader;
+  };
 };
 
-export type ServerNodeLoader = (
-  id?: string,
-) => ServerNode | Promise<ServerNode>;
+export type ServerRoute = LoadableRoute<ServerModule>;
+export type MatchedServerRoute = MatchedRoute<ServerRoute>;
+export type LoadedServerRoute = LoadedRoute<MatchedServerRoute, ServerModule>;
 
-export type ServerNodeRoute<Loader = ServerNodeLoader> = {
-  pathname: string;
-  fetch?: boolean;
-  loader: Loader;
-};
-
+export type ServerEndpointRoute = LoadableRoute<HttpRequestModule>;
 export type ServerRequestHandler = (request: Request) => Promise<Response>;
 
 export type ServerRedirect = {
-  readonly pathname: string;
-  readonly statusCode: number;
+  readonly path: string;
+  readonly status: number;
 };
-
-export type ServerEndpointLoader = () => Promise<RequestModule>;
-
-export type JSONData = Record<string, unknown>;
-
-export type StaticDataLoader = () => Promise<JSONData>;
 
 // ---------------------------------------------------------------------------------------
 // Static Loader
 // ---------------------------------------------------------------------------------------
+
+export type StaticDataLoader = (id: string) => Promise<JSONData>;
 
 export type StaticLoaderInput<Params extends RequestParams = RequestParams> =
   Readonly<{
@@ -127,7 +128,7 @@ export type StaticLoader<
 
 export type StaticLoaderOutput<Data = JSONData> = {
   data?: Data;
-  readonly redirect?: string | { path: string; statusCode?: number };
+  readonly redirect?: string | { path: string; status?: number };
   readonly cache?: StaticLoaderCacheKeyBuilder;
 };
 

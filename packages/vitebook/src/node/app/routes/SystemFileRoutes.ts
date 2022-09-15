@@ -2,27 +2,24 @@ import { compareRoutes, type Route } from 'shared/routing';
 
 import type { App } from '../App';
 import type { RouteMatcherConfig } from '../config';
-import type { SystemFileMeta } from '../files';
+import type { SystemFileMeta, SystemFiles } from '../files';
 import { resolveRouteFromFilePath } from './resolve-file-route';
 
-export type FileRoute<T extends SystemFileMeta> = Route & {
-  file: T;
-  layout?: boolean;
-  error?: boolean;
-  endpoint?: boolean;
-};
+export type SystemFileRoute<T extends SystemFileMeta = SystemFileMeta> =
+  Route & { file: T };
 
-export class FileRoutes<T extends SystemFileMeta>
-  implements Iterable<FileRoute<T>>
+export class SystemFileRoutes<T extends SystemFileMeta>
+  implements Iterable<SystemFileRoute<T>>
 {
+  protected _type: Route['type'] = 'page';
   protected _routesDir!: string;
   protected _matchers!: RouteMatcherConfig;
-  protected _routes: FileRoute<T>[] = [];
+  protected _routes: SystemFileRoute<T>[] = [];
 
-  // Refactor this later doesn't matter right now.
-  protected _layouts: boolean | undefined;
-  protected _errors: boolean | undefined;
-  protected _endpoints: boolean | undefined;
+  protected _onAdd = new Set<(route: SystemFileRoute<T>) => void>();
+  protected _onRemove = new Set<
+    (route: SystemFileRoute<T>, index: number) => void
+  >();
 
   get size() {
     return this._routes.length;
@@ -34,31 +31,33 @@ export class FileRoutes<T extends SystemFileMeta>
   }
 
   add(file: T) {
-    const route: FileRoute<T> = {
+    const route: SystemFileRoute<T> = {
       file,
-      layout: this._layouts,
-      error: this._errors,
-      endpoint: this._endpoints,
       ...resolveRouteFromFilePath(
+        this._type,
         this._routesDir,
         file.rootPath,
         this._matchers,
-        this._endpoints,
       ),
     };
 
     this._routes.push(route);
     this._routes = this._routes.sort(compareRoutes);
+    for (const callback of this._onAdd) callback(route);
   }
 
   remove(file: T) {
     const index = this._routes.findIndex((route) => route.file === file);
-    if (index > -1) this._routes.splice(index, 1);
+    if (index > -1) {
+      const route = this._routes[index];
+      this._routes.splice(index, 1);
+      for (const callback of this._onRemove) callback(route, index);
+    }
   }
 
   test(
     pathname: string,
-    filter: (route: FileRoute<T>) => boolean = () => true,
+    filter: (route: SystemFileRoute<T>) => boolean = () => true,
   ) {
     for (let i = 0; i < this._routes.length; i++) {
       const route = this._routes[i];
@@ -68,12 +67,30 @@ export class FileRoutes<T extends SystemFileMeta>
     return false;
   }
 
+  getByFile(file: T) {
+    return this._routes.find((route) => route.file === file)!;
+  }
+
   getByIndex(index: number) {
     return this._routes[index];
   }
 
+  onAdd(callback: (route: SystemFileRoute<T>) => void) {
+    this._onAdd.add(callback);
+  }
+
+  onRemove(callback: (route: SystemFileRoute<T>, index: number) => void) {
+    this._onRemove.add(callback);
+  }
+
   toArray() {
     return this._routes;
+  }
+
+  protected _watch(files: SystemFiles<T>) {
+    for (const file of files) this.add(file);
+    files.onAdd((file) => this.add(file));
+    files.onRemove((file) => this.remove(file));
   }
 
   [Symbol.iterator]() {
@@ -86,6 +103,6 @@ export class FileRoutes<T extends SystemFileMeta>
           return { done: true };
         }
       },
-    } as IterableIterator<FileRoute<T>>;
+    } as IterableIterator<SystemFileRoute<T>>;
   }
 }

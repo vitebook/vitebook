@@ -23,7 +23,9 @@ export function createStaticBuildAdapter(
       startRenderingPages() {
         renderingSpinner.start(
           $.color.bold(
-            `Rendering ${$.color.underline(app.routes.pages.size)} pages...`,
+            `Rendering ${$.color.underline(
+              build.staticPages.size,
+            )} static pages...`,
           ),
         );
       },
@@ -31,7 +33,9 @@ export function createStaticBuildAdapter(
         renderingSpinner.stopAndPersist({
           symbol: $.icons.success,
           text: $.color.bold(
-            `Rendered ${$.color.underline(app.routes.pages.size)} pages`,
+            `Rendered ${$.color.underline(
+              build.staticPages.size,
+            )} static pages`,
           ),
         });
       },
@@ -41,9 +45,7 @@ export function createStaticBuildAdapter(
         // REDIRECTS
         // ---------------------------------------------------------------------------------------
 
-        let redirectsScriptTag = '';
         const redirectFiles = $.createFilesArray();
-
         const redirectsTable: Record<string, string> = {};
 
         for (const redirect of build.staticRedirects.values()) {
@@ -54,12 +56,16 @@ export function createStaticBuildAdapter(
           redirectsTable[redirect.from] = redirect.to;
         }
 
-        // Embedded as a string and `JSON.parsed` from the client because it's faster than
-        // embedding as a JS object literal.
-        const serializedRedirectsTable = JSON.stringify(
-          JSON.stringify(redirectsTable),
-        );
-        redirectsScriptTag = `<script>__VBK_STATIC_REDIRECTS_MAP__ = JSON.parse(${serializedRedirectsTable});</script>`;
+        let redirectsScriptTag = '';
+        if (Object.keys(redirectsTable).length > 0) {
+          // Embedded as a string and `JSON.parsed` from the client because it's faster than
+          // embedding as a JS object literal.
+          const serializedRedirectsTable = JSON.stringify(
+            JSON.stringify(redirectsTable),
+          );
+
+          redirectsScriptTag = `<script>__VBK_STATIC_REDIRECTS_MAP__ = JSON.parse(${serializedRedirectsTable});</script>`;
+        }
 
         // ---------------------------------------------------------------------------------------
         // Data
@@ -76,10 +82,13 @@ export function createStaticBuildAdapter(
           dataTable[data.idHash] = data.contentHash;
         }
 
-        // Embedded as a string and `JSON.parsed` from the client because it's faster than
-        // embedding as a JS object literal.
-        const serializedDataTable = JSON.stringify(JSON.stringify(dataTable));
-        const dataHashScriptTag = `<script>__VBK_STATIC_DATA_HASH_MAP__ = JSON.parse(${serializedDataTable});</script>`;
+        let dataHashScriptTag = '';
+        if (Object.keys(dataTable).length > 0) {
+          // Embedded as a string and `JSON.parsed` from the client because it's faster than
+          // embedding as a JS object literal.
+          const serializedDataTable = JSON.stringify(JSON.stringify(dataTable));
+          dataHashScriptTag = `<script>__VBK_STATIC_DATA_HASH_MAP__ = JSON.parse(${serializedDataTable});</script>`;
+        }
 
         // ---------------------------------------------------------------------------------------
         // HTML Pages
@@ -129,7 +138,9 @@ export function createStaticBuildAdapter(
             $.createStaticDataScriptTag(render.dataAssetIds),
             trailingSlashTag,
             entryScriptTag,
-          ].join('');
+          ]
+            .filter((t) => t.length > 0)
+            .join('');
 
           const pageHtml = template
             .replace(`<!--@vitebook/head-->`, headTags)

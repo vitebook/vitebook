@@ -1,30 +1,16 @@
-import { execRouteMatch } from 'shared/routing';
-
 import type { RoutesComparator } from './types';
 
 /**
  * Default routes comparator. It doesn't sort or score routes and relies on the work being done
- * server-side. This comparator's main job is match routes to the given URL.
+ * server-side.
  */
-export function createSimpleRoutesComparator(): RoutesComparator {
+export function createSimpleComparator(): RoutesComparator {
   return {
-    match(url, routes) {
-      const route = routes.find((route) =>
-        route.pattern.test({ pathname: url.pathname }),
-      );
-
-      if (route) {
-        const match = execRouteMatch(url, route);
-        return { url, ...route, params: match?.groups ?? {} };
-      }
-
-      return null;
-    },
     score() {
-      return 1000;
+      return 10000;
     },
     sort(routes) {
-      return routes.sort((a, b) => b.score - a.score);
+      return routes;
     },
   };
 }

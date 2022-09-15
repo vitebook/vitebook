@@ -3,7 +3,7 @@ import type { App } from 'node/app/App';
 import type { PageFileRoute } from 'node/app/routes';
 import { createStaticLoaderInput } from 'server';
 import type {
-  ServerNodeLoader,
+  ServerModuleLoader,
   ServerRedirect,
   StaticLoaderCacheKeyBuilder,
   StaticLoaderCacheMap,
@@ -11,7 +11,7 @@ import type {
   StaticLoaderOutput,
   StaticLoaderOutputMap,
 } from 'server/types';
-import { resolveStaticDataAssetID } from 'shared/data';
+import { resolveStaticDataAssetId } from 'shared/data';
 import { isFunction, isString } from 'shared/utils/unit';
 import { isLinkExternal, slash } from 'shared/utils/url';
 
@@ -19,18 +19,16 @@ export async function callStaticLoaders(
   url: URL,
   app: App,
   route: PageFileRoute,
-  loader: ServerNodeLoader,
+  loader: ServerModuleLoader,
 ) {
   const map: StaticLoaderOutputMap = new Map();
-
-  const pathname = decodeURI(url.pathname);
   const input = createStaticLoaderInput(url, route);
 
   let redirect: ServerRedirect | undefined;
 
   // Load page first - if it has a redirect we'll skip loading layouts.
   await (async () => {
-    const id = resolveStaticDataAssetID(pathname);
+    const id = resolveStaticDataAssetId(route.file.routePath, url.pathname);
     const output = await callStaticLoader(app, route.file.path, input, loader);
 
     map.set(id, output);
@@ -40,30 +38,24 @@ export async function callStaticLoaders(
         ? output.redirect
         : output.redirect.path;
 
-      const statusCode = isString(output.redirect)
+      const status = isString(output.redirect)
         ? 302
-        : output.redirect.statusCode ?? 302;
+        : output.redirect.status ?? 302;
 
       const normalizedPath = !isLinkExternal(path, app.vite.resolved!.base)
         ? slash(path)
         : path;
 
-      redirect = {
-        pathname: normalizedPath,
-        statusCode,
-      };
+      redirect = { path: normalizedPath, status };
     }
   })();
 
   if (redirect) return { output: map, redirect };
 
   await Promise.all(
-    route.file.layouts.map(async (index) => {
-      const id = resolveStaticDataAssetID(pathname, index);
-      const layout = app.files.layouts.getByIndex(index);
-
+    route.file.layouts.map(async (layout) => {
       const output = await callStaticLoader(app, layout.path, input, loader);
-
+      const id = resolveStaticDataAssetId(layout.routePath, url.pathname);
       map.set(id, output);
     }),
   );
@@ -86,7 +78,7 @@ export async function callStaticLoader(
   app: App,
   filePath: string | null,
   input: StaticLoaderInput,
-  loader: ServerNodeLoader,
+  loader: ServerModuleLoader,
 ): Promise<StaticLoaderOutput> {
   if (!filePath) return {};
 

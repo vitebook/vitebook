@@ -11,6 +11,8 @@ export type TypedResponse<T extends unknown = unknown> = Response & {
   json(): Promise<T>;
 };
 
+export type JSONData = Record<string, unknown>;
+
 /**
  * This is a shortcut for creating `application/json` responses. Converts `data` to JSON and sets
  * the `Content-Type` header.

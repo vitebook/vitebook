@@ -110,6 +110,8 @@ export function getBuildAdapterUtils(
         }
       }
 
+      if (Object.keys(table).length === 0) return '';
+
       return [
         '<script>',
         `__VBK_STATIC_DATA__ = JSON.parse(${JSON.stringify(

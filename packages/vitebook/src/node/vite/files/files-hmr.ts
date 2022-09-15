@@ -1,5 +1,5 @@
 import type { App } from 'node/app/App';
-import type { PageFile } from 'node/app/files';
+import type { LeafModuleFile } from 'node/app/files';
 import { normalizePath } from 'node/utils';
 import type { ViteDevServer } from 'vite';
 
@@ -24,11 +24,12 @@ export function handleFilesHMR(app: App) {
   ] as const;
 
   function clearLayoutChildrenMarkdownCache(layoutFilePath: string) {
-    const layoutIndex = layouts.findIndex(layoutFilePath);
+    const layout = layouts.find(layoutFilePath);
+    if (!layout) return;
     for (const page of pages) {
-      if (page.layouts.includes(layoutIndex)) {
+      if (page.layouts.includes(layout)) {
         clearMarkdownCache(page.path);
-        invalidatePageModule(server, page);
+        invalidateLeafModule(server, page);
       }
     }
   }
@@ -116,9 +117,12 @@ export function handleFilesHMR(app: App) {
   }
 }
 
-export function invalidatePageModule(server: ViteDevServer, page: PageFile) {
+export function invalidateLeafModule(
+  server: ViteDevServer,
+  leaf: LeafModuleFile,
+) {
   const module = server.moduleGraph
-    .getModulesByFile(page.path)
+    .getModulesByFile(leaf.path)
     ?.values()
     .next();
 

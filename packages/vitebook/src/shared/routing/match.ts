@@ -1,156 +1,80 @@
-import { noslash, slash } from 'shared/utils/url';
+import { slash } from 'shared/utils/url';
 
-import type { MatchableRoute, Route, WithRouteMatch } from './types';
+import type { Route } from './types';
 
-const PATH_SCORE = {
-  Segment: 6,
-  Static: 5,
-  Group: 3, // /:id or /{:id} or /something{:id}
-  Dynamic: 2,
-  BonusRegExp: 1, // /:id(\d+)
-  BonusExt: 3, // .html
-  PenaltyOptional: -4, // /:id? or {id}? or (\d)?
-  PenaltyWildcard: -7, // /posts/* or /:id*
-  PenaltyRepeatable: -8, // /:id+ or /:id* or {id}+
-  PenaltyRegexWildcard: -10, // /(.*)
-};
+export function filterRoutes<T extends Route>(url: URL, routes: T[]) {
+  if (routes.length === 0) return [];
 
-const bonusRegexRE = /\(.*?\)/;
-const bonusExtRE = /\.html$/;
-const penaltyOptionalRE = /(^\/:(\w|\.)+\?)|({:?.*?}\?)|(\(.*?\)\?)/;
-const penaltyWildcardRE = /^\/(\*|(:?\w*?\*))/;
-const penaltyRepeatableRE = /^\/(:(\w|\.)+(\+|\*))|({:?.*?}(\+|\*))/;
-const penaltyRegexWildcardRE = /(\(\.\*\??\)|(\.\+\??))/;
+  const filter: [URL, T][] = [];
 
-const scoreCache = new Map<string, number>();
-export function calcRoutePathScore(pathname: string): number {
-  if (scoreCache.has(pathname)) return scoreCache.get(pathname)!;
+  // Reverse to ensure correct render order.
+  const branch = routes.filter((route) => route.type !== 'page').reverse();
+  const segments = decodeURI(url.pathname.slice(1)).split('/');
 
-  const segments = splitRoutePath(pathname);
+  let startIndex = 0;
+  for (let i = 1; i <= segments.length; i++) {
+    url.pathname = segments.slice(0, i).join('/');
 
-  let score = 0;
+    const index = branch
+      .slice(startIndex)
+      .findIndex((route) => route.pattern.test({ pathname: url.pathname }));
 
-  for (const segment of segments) {
-    const isDynamic = isRoutePathDynamic(segment);
-    const isNamedGroup = segment.startsWith('/:') || segment.startsWith('/{:');
-
-    let isSegment = true;
-
-    if (bonusExtRE.test(segment)) {
-      score += PATH_SCORE.BonusExt;
+    if (index >= 0) {
+      filter.push([new URL(url), branch[index]]);
+      startIndex = index;
     }
-
-    if (isNamedGroup) {
-      score += PATH_SCORE.Group;
-    } else if (isDynamic) {
-      score += PATH_SCORE.Dynamic;
-    }
-
-    if (isNamedGroup || isDynamic) {
-      if (bonusRegexRE.test(segment)) {
-        score += PATH_SCORE.BonusRegExp;
-      }
-
-      if (penaltyOptionalRE.test(segment)) {
-        score += PATH_SCORE.PenaltyOptional;
-        isSegment = false;
-      }
-
-      if (penaltyWildcardRE.test(segment)) {
-        score += PATH_SCORE.PenaltyWildcard;
-        isSegment = false;
-      }
-
-      if (penaltyRepeatableRE.test(segment)) {
-        score += PATH_SCORE.PenaltyRepeatable;
-        isSegment = false;
-      }
-
-      if (penaltyRegexWildcardRE.test(segment)) {
-        score += PATH_SCORE.PenaltyRegexWildcard;
-        isSegment = false;
-      }
-    } else {
-      score += PATH_SCORE.Static;
-    }
-
-    if (isSegment) score += PATH_SCORE.Segment;
   }
 
-  scoreCache.set(pathname, score);
-  return score;
+  const page = findRoute(url, routes, 'page');
+  if (page) filter.push([url, page]);
+
+  return filter;
 }
 
-export function compareRoutes(routeA: Route, routeB: Route) {
-  if (routeA.score !== routeB.score) {
-    return routeB.score - routeA.score; // higher score first
-  }
-
-  const segmentsA = splitRoutePath(routeA.pattern.pathname).length;
-  const segmentsB = splitRoutePath(routeB.pattern.pathname).length;
-
-  return segmentsA != segmentsB
-    ? segmentsB - segmentsA // deeper path first
-    : routeB.pattern.pathname.length - routeA.pattern.pathname.length; // longer path first
-}
-
-const trailingHtmlExtGroupRE = /{\.html}\?$/;
-const trailingSlashGroupRE = /{\/}\?{index}\?{\.html}\?$/;
-export function cleanRoutePath(pathname: string) {
-  return pathname
-    .replace(trailingSlashGroupRE, '/index.html')
-    .replace(trailingHtmlExtGroupRE, '.html');
-}
-
-const routeSplitRE = /\/(?![^{(]*}|\))/g; // split by / but ignore if inside () or {}
-export function splitRoutePath(pathname: string) {
-  return noslash(cleanRoutePath(pathname)).split(routeSplitRE).map(slash);
-}
-
-const dynamicPathRE = /(\*|\(.*\)|{.*}|\/:)/;
-export function isRoutePathDynamic(pathname: string) {
-  return (
-    pathname.startsWith('/:') || dynamicPathRE.test(cleanRoutePath(pathname))
+export function matchAllRoutes<T extends Route>(url: URL, routes: T[]) {
+  return filterRoutes(url, routes).map(
+    ([url, route]) => matchRoute(url, [route])!,
   );
 }
 
-export function matchRoute<T extends MatchableRoute>(
+export function matchRoute<T extends Route>(
   url: URL,
-  routes: T[] | { route: T }[],
-): WithRouteMatch<T> | undefined {
-  const result = matchRouteInfo(url, routes);
-  return result ? { ...result.route, match: result.match } : undefined;
-}
-
-export function matchRouteInfo<T extends MatchableRoute>(
-  url: URL,
-  routes: T[] | { route: T }[],
-): WithRouteMatch<{ index: number; route: T }> | undefined {
-  const normalized: T[] =
-    'route' in routes[0] ? routes.map((r) => r.route) : routes;
-
-  const index = normalized.findIndex((route) =>
-    route.pattern.test({ pathname: getRouteMatchingPathname(url) }),
-  );
-
-  const route = normalized[index];
+  routes: T[],
+  type?: Route['type'],
+) {
+  const route = findRoute(url, routes, type);
   const match = execRouteMatch(url, route);
-
-  return route && match ? { index, route, match } : undefined;
+  return route && match
+    ? { ...route, url, pathId: createPathId(url), params: match.groups }
+    : null;
 }
 
-export function execRouteMatch<T extends MatchableRoute>(url: URL, route?: T) {
-  return route?.pattern.exec({ pathname: getRouteMatchingPathname(url) })
-    ?.pathname;
+export function findRoute<T extends Route>(
+  url: URL,
+  routes: T[],
+  type?: Route['type'],
+) {
+  return routes.find(
+    (route) => (!type || route.type === type) && testRoute(url, route),
+  );
 }
 
-const htmlExtRE = /\.html$/;
-export function getRouteMatchingPathname(url: URL) {
-  return url.pathname.replace(htmlExtRE, '');
+export function testRoute<T extends Route>(url: URL, route: T) {
+  return route.pattern.test({ pathname: url.pathname });
+}
+
+export function execRouteMatch<T extends Route>(url: URL, route?: T) {
+  return route?.pattern.exec({ pathname: url.pathname })?.pathname;
 }
 
 export function normalizeURL(url: URL, trailingSlash = true) {
   url.pathname = url.pathname.replace('/index.html', '/');
   if (!trailingSlash) url.pathname = url.pathname.replace(/\/$/, '');
   return url;
+}
+
+export function createPathId(url: URL, baseUrl = '/') {
+  const pathname = decodeURI(slash(url.pathname.slice(baseUrl.length)));
+  const query = new URLSearchParams(url.search);
+  return `${pathname}?${query}`;
 }

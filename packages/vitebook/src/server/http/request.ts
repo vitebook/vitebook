@@ -44,7 +44,7 @@ export interface RequestHandler<Params extends RequestParams = RequestParams> {
   (event: RequestEvent<Params>): Response | Promise<Response>;
 }
 
-export type RequestModule = {
+export type HttpRequestModule = {
   [httpMethod: string]: RequestHandler | undefined;
 };
 
@@ -58,7 +58,7 @@ export const HTTP_METHODS: Set<string> = new Set([
   'DELETE',
 ]);
 
-export function getAllowedMethods(mod: RequestModule) {
+export function getAllowedMethods(mod: HttpRequestModule) {
   const allowed: string[] = [];
 
   for (const method of HTTP_METHODS) {

@@ -1,14 +1,15 @@
+import type { Route } from 'shared/routing';
+
 import type { App } from '../App';
 import type { PageFile } from '../files';
-import { type FileRoute, FileRoutes } from './FileRoutes';
+import { type SystemFileRoute, SystemFileRoutes } from './SystemFileRoutes';
 
-export type PageFileRoute = FileRoute<PageFile>;
+export type PageFileRoute = SystemFileRoute<PageFile>;
 
-export class PageFileRoutes extends FileRoutes<PageFile> {
+export class PageFileRoutes extends SystemFileRoutes<PageFile> {
+  protected _type: Route['type'] = 'page';
   init(app: App): void {
     super.init(app);
-    for (const page of app.files.pages) this.add(page);
-    app.files.pages.onAdd((file) => this.add(file));
-    app.files.pages.onRemove((file) => this.remove(file));
+    this._watch(app.files.pages);
   }
 }

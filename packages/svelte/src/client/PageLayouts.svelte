@@ -5,11 +5,11 @@
 
   export let index = 0;
 
-  $: layout = $route.layouts[index];
+  $: branch = $route.branch[index];
 </script>
 
-{#if index < $route.layouts.length}
-  <svelte:component this={layout.module.default}>
+{#if index < $route.branch.length}
+  <svelte:component this={branch.module.default}>
     <svelte:self index={index + 1}>
       <slot />
     </svelte:self>

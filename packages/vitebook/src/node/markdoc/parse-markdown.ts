@@ -4,7 +4,7 @@ import Markdoc, { type RenderableTreeNode, type Tag } from '@markdoc/markdoc';
 import matter from 'gray-matter';
 import yaml from 'js-yaml';
 import LRUCache from 'lru-cache';
-import { PageFile, resolveStaticRouteFromFilePath } from 'node';
+import { type LeafModuleFile, resolveStaticRouteFromFilePath } from 'node';
 import type { App } from 'node/app/App';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -102,9 +102,8 @@ export function parseMarkdown(
     lastUpdated,
   };
 
-  const pageLike =
-    app.files.pages.find(filePath) || app.files.errors.find(filePath);
-  if (pageLike) mergeLayoutMeta(app, pageLike, meta, opts);
+  const leafFile = app.files.findLeaf(filePath);
+  if (leafFile) mergeLayoutMeta(app, leafFile, meta, opts);
 
   for (const transformer of opts.transformMeta ?? []) {
     transformer({ filePath, meta, imports, stuff });
@@ -140,15 +139,13 @@ export function getFrontmatter(source: string | Buffer): MarkdownFrontmatter {
 
 function mergeLayoutMeta(
   app: App,
-  page: PageFile,
+  leafFile: LeafModuleFile,
   meta: MarkdownMeta,
   opts: Partial<ParseMarkdownConfig> = {},
 ) {
-  const layoutFiles = page.layouts.map(
-    (index) => app.files.layouts.getByIndex(index).path,
-  );
+  const layoutFiles = leafFile.layouts.map((layout) => layout.path);
 
-  for (const layoutFile of layoutFiles.reverse()) {
+  for (const layoutFile of layoutFiles) {
     if (!opts.filter?.(layoutFile) ?? !layoutFile.endsWith('.md')) continue;
 
     const { ast: layoutAst, meta: layoutMeta } = parseMarkdown(

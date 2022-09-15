@@ -52,7 +52,6 @@ export function configureDevServer(app: App, server: ViteDevServer) {
       }
 
       if (app.routes.pages.test(decodedUrl)) {
-        url.pathname = url.pathname.replace('/index.html', '/');
         return await handlePageRequest(base, url, app, req, res);
       }
 
