@@ -2,12 +2,13 @@
 
 [![package-badge]][package]
 
-> 🚨&nbsp;&nbsp;Vitebook is still in early stages of development, so this means you can expect bugs
-> and certain [features to be missing](#missing-features). As much as we'll try not to break
-> existing API's, occasionally it _might_ happen.
-Vitebook is a fast and lightweight alternative to [Storybook][storybook] that's
-powered by [Vite][vite]. If you'd like to explore more about Vite vs traditional bundlers/dev
-environments such as [Webpack][webpack], check out [Why Vite][vite-why].
+**ARCHIVED**
+
+Due to a lack of time, resources, and change in direction this repository is no longer maintained. I'm sorry for any issues that were unresolved and for not being able to help as much as I wanted too. The work that was started here is continued in another OSS project called [Vessel](https://github.com/vessel-js/vessel). 
+
+If you're still looking for a Storybook alternative that's powered by Vite, I highly recommend checking out [Histoire](https://histoire.dev/). 
+
+---
 
 If you're unfamiliar with Storybook, it's an open source tool for building UI components and
 pages in isolation. It streamlines UI development, testing, and documentation. Vitebook aims
@@ -26,10 +27,6 @@ to provide the same capabilities but in a more laxed, lighter, faster and config
 ## Documentation
 
 Visit [vitebook.dev][vitebook].
-
-## Contributing
-
-See [contributing.md](./.github/contributing.md).
 
 ## License
 
